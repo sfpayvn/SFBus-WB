@@ -5,6 +5,7 @@ import { debounce, debounceTime, delay, interval, map, of, Subscription, switchM
   selector: 'app-table-action',
   templateUrl: './table-action.component.html',
   styleUrl: './table-action.component.scss',
+  standalone: false
 })
 export class TableActionComponent {
   @Input() title: string = '';
@@ -13,9 +14,9 @@ export class TableActionComponent {
   @Output() searchDataEvent = new EventEmitter<any>();
   @Output() sortDataEvent = new EventEmitter<any>();
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  constructor() {}
+  constructor() { }
 
   onEnter($event: any) {
     const keyword = $event.target.value;

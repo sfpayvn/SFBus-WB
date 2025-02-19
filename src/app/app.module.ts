@@ -10,8 +10,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { MaterialModule } from './library-modules/material-module';
 import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
-import { UtilsService } from './base/utils.sevice';
-import { ENV } from '@app/env';
+import { Utils } from './shared/utils/utils';
+import { AppComponent } from './app.component';
+
 
 @NgModule({
   declarations: [],
@@ -25,9 +26,13 @@ import { ENV } from '@app/env';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-
   ],
-  providers: [provideAnimationsAsync(), provideAnimations(), provideNzI18n(en_US), UtilsService],
+  providers: [
+    provideAnimationsAsync(), 
+    provideAnimations(), 
+    provideNzI18n(en_US), 
+    Utils,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {}
+export class AppModule { }

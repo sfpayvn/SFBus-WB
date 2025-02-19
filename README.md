@@ -28,7 +28,7 @@ See [Demo](https://at.lanno.dev) page.
 
 #### Versions
 
-<a href="https://angular.io"><img height= "24" src= "https://img.shields.io/badge/Angular 18-DD0031?style=for-the-badge&logo=angular&logoColor=white"></a> <a href="https://tailwindcss.com"><img height= "24" src= "https://img.shields.io/badge/Tailwind 3-0ea5e9?style=for-the-badge&logo=tailwind-css&logoColor=white"></a>
+<a href="https://angular.io"><img height= "24" src= "https://img.shields.io/badge/Angular 19-DD0031?style=for-the-badge&logo=angular&logoColor=white"></a> <a href="https://tailwindcss.com"><img height= "24" src= "https://img.shields.io/badge/Tailwind 4-0ea5e9?style=for-the-badge&logo=tailwind-css&logoColor=white"></a>
 
 #### Features
 
@@ -42,9 +42,9 @@ See [Demo](https://at.lanno.dev) page.
 - [x] Angular Signals
 - [x] Multi Theme
 - [x] Tests E2E
-- [ ] User Module
 - [ ] Guards
 - [ ] Animations
+- [ ] Jasmine tests
 
 #### Commands
 
@@ -55,7 +55,7 @@ See [Demo](https://at.lanno.dev) page.
 | `npm run prettier`        | Runs prettier on entire src folder            |
 | `npm run prettier:verify` | Runs prettier-check and throws error if fails |
 | `npm run prettier:staged` | Runs prettier on only staged (changed) files  |
-| `npm run e2e-ui`          | Runs playwright e2e test with UI              |
+| `npm run test:e2e`        | Runs playwright e2e test with UI              |
 
 #### Dependencies
 
@@ -82,8 +82,9 @@ This project use [Hero Icons](https://heroicons.com/) , [Hero Patterns](https://
 
 Check out our awesome sponsors!
 
-[<img src="https://avatars.githubusercontent.com/u/19482926?v=4" width="50">](https://github.com/jhonnygarcia)
-[<img src="https://avatars.githubusercontent.com/u/44730111?v=4" width="50">](https://github.com/ramses-i)
+[<img src="https://avatars.githubusercontent.com/u/19482926?v=4" width="60">](https://github.com/jhonnygarcia)
+[<img src="https://avatars.githubusercontent.com/u/44730111?v=4" width="60">](https://github.com/ramses-i)
+[<img src="https://avatars.githubusercontent.com/u/67803716?v=4" width="60">](https://github.com/walteribanez555)
 
 ### Repo Activity
 
@@ -93,14 +94,3 @@ Check out our awesome sponsors!
 
 The Tailwind name and logos are trademarks of Tailwind Labs Inc.
 The Angular name and logos are trademarks of Google.
-
-### config for angular editor add this on angular json
-"assets": [
-    "src/favicon.ico",
-    "src/assets",
-    {
-    "glob": "**/*",
-    "input": "./node_modules/@kolkov/angular-editor/assets/",
-    "output": "./assets/fonts/"
-    }
-],

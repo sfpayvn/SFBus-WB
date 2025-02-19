@@ -4,6 +4,7 @@ import { Component, Input } from '@angular/core';
   selector: 'app-tooltip',
   templateUrl: './tooltip.component.html',
   styleUrls: ['./tooltip.component.scss'],
+  standalone: false
 })
 export class TooltipComponent {
   @Input() disable = false;

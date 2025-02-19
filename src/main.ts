@@ -1,16 +1,14 @@
-/// <reference types="@angular/localize" />
-
 import { enableProdMode, importProvidersFrom } from '@angular/core';
-
-import { ENV } from '@app/env';
 import { AppComponent } from './app/app.component';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { AppModule } from './app/app.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoadingInterceptor } from './app/shared/Interceptor/loading-interceptor';
-import { LoadingService } from './app/shared/utils/loading.service';
+import { LoadingService } from './app/shared/services/loading.service';
+import { AppModule } from './app/app.module';
+import { ENV } from '@app/env';
+import { TokenInterceptor } from './app/shared/Interceptor/token.interceptor';
 
 if (ENV.production) {
   enableProdMode();
@@ -23,6 +21,7 @@ if (ENV.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(BrowserModule, AppModule, LoadingService), provideAnimations(), provideAnimationsAsync(), provideAnimationsAsync(),
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoadingInterceptor,

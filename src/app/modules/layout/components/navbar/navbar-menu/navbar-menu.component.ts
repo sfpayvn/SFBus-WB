@@ -1,14 +1,13 @@
+import { NgClass, NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'src/app/core/models/menu.model';
 import { MenuService } from '../../../services/menu.service';
 import { NavbarSubmenuComponent } from '../navbar-submenu/navbar-submenu.component';
-import { NgFor, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-navbar-menu',
   templateUrl: './navbar-menu.component.html',
-  styleUrls: ['./navbar-menu.component.scss'],
-  standalone: true,
+  styleUrls: ['./navbar-menu.component.css'],
   imports: [NgFor, NgClass, NavbarSubmenuComponent],
 })
 export class NavbarMenuComponent implements OnInit {

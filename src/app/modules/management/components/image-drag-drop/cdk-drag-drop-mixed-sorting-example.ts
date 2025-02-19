@@ -5,6 +5,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   selector: 'cdk-drag-drop-mixed',
   templateUrl: 'cdk-drag-drop-mixed-sorting-example.html',
   styleUrl: 'cdk-drag-drop-mixed-sorting-example.scss',
+  standalone: false
 })
 export class CdkDragDropMixedSortingExample {
   images = [

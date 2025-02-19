@@ -2,12 +2,10 @@ import { Component, Input } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { RouteConfigLoadEnd, RouteConfigLoadStart, Router } from '@angular/router';
-import { LoadingService } from '../../utils/loading.service';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-loadding-screen',
-  standalone: true,
-  imports: [AsyncPipe],
   templateUrl: './loadding-screen.component.html',
   styleUrl: './loadding-screen.component.scss'
 })

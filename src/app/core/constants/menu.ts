@@ -12,7 +12,7 @@ export class Menu {
           route: '/dashboard',
           children: [
             { label: 'Nfts', route: '/dashboard/nfts' },
-            // { label: 'Podcast', route: '/dashboard/podcast' },
+            { label: 'Podcast', route: '/dashboard/podcast' },
           ],
         },
         {
@@ -29,7 +29,7 @@ export class Menu {
         },
         {
           icon: 'assets/icons/heroicons/outline/exclamation-triangle.svg',
-          label: 'Erros',
+          label: 'Errors',
           route: '/errors',
           children: [
             { label: '404', route: '/errors/404' },
@@ -38,21 +38,17 @@ export class Menu {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Categories',
-          route: '/management/categories'
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Options',
+          label: 'Bus',
+          route: '/management',
           children: [
-            { label: 'Options', route: '/management/options' },
-            { label: 'Options Value', route: '/management/options-value' },
+            { label: 'Bus Types', route: '/management/bus-types' },
           ],
         },
         {
-          icon: 'assets/icons/heroicons/outline/BuildingStorefront.svg',
-          label: 'Products',
-          route: '/management/products',
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Components',
+          route: '/components',
+          children: [{ label: 'Table', route: '/components/table' }],
         },
       ],
     },

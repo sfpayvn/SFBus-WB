@@ -1,0 +1,63 @@
+<div class="toolbar">
+  <label for="type-select">Chọn Kiểu:</label>
+  <button class="btn btn-type" *ngFor="let type of types" (click)="selectType(type.value)">
+    <svg-icon src="assets/icons/{{ type.icon }}" [svgClass]="'h-5 w-5'"> </svg-icon>
+  </button>
+  <button class="btn btn-save" (click)="saveSelected()">Lưu</button>
+  <button class="btn btn-save" (click)="resetSelected()">Reset</button>
+</div>
+
+<div class="matrix">
+  <div *ngFor="let row of matrix; let i = index" class="row">
+    <div
+      *ngFor="let cell of row; let j = index"
+      id="cell-{{ i }}-{{ j }}"
+      class="relative flex items-center justify-center">
+      <div
+        [class.cell]="!cell.isSelected"
+        [class.selected]="cell.isSelected"
+        [class.editing]="cell.isEditing"
+        [class.has-error]="cell.hasError"
+        (mousedown)="onMouseDown(i, j, $event)"
+        (mouseup)="onMouseUp(i, j, $event)"
+        (mouseleave)="onMouseLeave($event)"
+        (contextmenu)="startEdit(i, j, $event)"
+        (click)="onClick(i, j, $event)">
+        <ng-container *ngIf="cell.type > 0">
+          <svg-icon
+            [src]="getIconByType(cell.type, cell.status)"
+            [svgClass]="'h-16 w-16'"
+            [ngClass]="{
+              'show-icon': cell.isSelected,
+            }"></svg-icon>
+          <div *ngIf="cell.allowAutoNameEdit && !cell.isEditing" class="cell-name">
+            {{ cell.name }}
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="cell.allowAutoNameEdit && cell.isEditing" class="absolute">
+        <input
+          #cellInput
+          class="cell-input"
+          [class.has-error]="cell.hasError"
+          [(ngModel)]="cell.name"
+          (keydown.enter)="saveEdit(i, j)" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>Ma trận thứ hai</h3>
+<div class="matrix">
+  <div *ngFor="let row of selectedMatrix; let i = index" class="row" [style.display]="displayRows[i] ? 'flex' : 'none'">
+    <div
+      *ngFor="let cell of row; let j = index"
+      class="selected"
+      [style.display]="visibleColumns[j] ? 'flex' : 'none'"
+      [style.visibility]="cell.type > 0 ? 'visible' : 'hidden'">
+      <!-- Hiển thị icon và tên nếu type > 0 -->
+      <svg-icon [src]="getIconByType(cell.type, cell.status)" [svgClass]="'h-16 w-16'"></svg-icon>
+      <div class="cell-name">{{ cell.name }}</div>
+    </div>
+  </div>
+</div>

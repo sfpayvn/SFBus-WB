@@ -1,17 +1,17 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { CommonModule, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { NgClass } from '@angular/common';
-import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
+import { RouterLink, Router } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
+import { AuthService } from 'src/app/modules/auth/service/auth.service';
 
 @Component({
   selector: 'app-profile-menu',
   templateUrl: './profile-menu.component.html',
-  styleUrls: ['./profile-menu.component.scss'],
-  standalone: true,
-  imports: [ClickOutsideDirective, NgClass, RouterLink, AngularSvgIconModule],
+  styleUrls: ['./profile-menu.component.css'],
+  imports: [CommonModule, ClickOutsideDirective, NgClass, RouterLink, AngularSvgIconModule],
   animations: [
     trigger('openClose', [
       state(
@@ -48,11 +48,6 @@ export class ProfileMenuComponent implements OnInit {
       icon: './assets/icons/heroicons/outline/cog-6-tooth.svg',
       link: '/settings',
     },
-    {
-      title: 'Log out',
-      icon: './assets/icons/heroicons/outline/logout.svg',
-      link: '/auth',
-    },
   ];
 
   public themeColors = [
@@ -88,9 +83,12 @@ export class ProfileMenuComponent implements OnInit {
 
   public themeMode = ['light', 'dark'];
 
-  constructor(public themeService: ThemeService) {}
+  constructor(
+    public themeService: ThemeService,
+    private authService: AuthService,
+    private readonly _router: Router) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   public toggleMenu(): void {
     this.isOpen = !this.isOpen;
@@ -107,5 +105,10 @@ export class ProfileMenuComponent implements OnInit {
     this.themeService.theme.update((theme) => {
       return { ...theme, color: color };
     });
+  }
+
+  async logout() {
+    await this.authService.logout();
+    this._router.navigate(['/auth']);
   }
 }

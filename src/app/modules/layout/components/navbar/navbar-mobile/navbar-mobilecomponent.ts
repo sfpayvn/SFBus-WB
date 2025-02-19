@@ -7,8 +7,7 @@ import { NgClass } from '@angular/common';
 @Component({
   selector: 'app-navbar-mobile',
   templateUrl: './navbar-mobile.component.html',
-  styleUrls: ['./navbar-mobile.component.scss'],
-  standalone: true,
+  styleUrls: ['./navbar-mobile.component.css'],
   imports: [NgClass, AngularSvgIconModule, NavbarMobileMenuComponent],
 })
 export class NavbarMobileComponent implements OnInit {

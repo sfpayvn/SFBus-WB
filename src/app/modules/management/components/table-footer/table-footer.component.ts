@@ -10,6 +10,7 @@ interface PerPageOption {
   selector: 'app-table-footer',
   templateUrl: './table-footer.component.html',
   styleUrl: './table-footer.component.scss',
+  standalone: false
 })
 export class TableFooterComponent implements OnChanges {
   @Input() pageIdx = 1;

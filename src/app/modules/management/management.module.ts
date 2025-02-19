@@ -10,16 +10,22 @@ import { ManagementRoutingModule } from './management-routing.module';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NZModule } from 'src/app/library-modules/nz-module';
-import { CreateEditOptionDialogComponent } from './modules/options/component/create-edit-option-dialog/create-edit-option-dialog.component';
-import { MaterialModule } from 'src/app/material-module';
-import { CreateEditCategoriesDialogComponent } from './modules/categories/component/create-edit-category-dialog/create-edit-category-dialog.component';
+import { OptionsComponent } from './pages/options/pages/options/options.component';
+import { OptionsValueComponent } from './pages/options/pages/options-value/options-value.component';
+import { CreateEditOptionDialogComponent } from './pages/options/component/create-edit-option-dialog/create-edit-option-dialog.component';
+import { MaterialModule } from '../material/material-module';
+import { CreateEditBusTypeDialogComponent } from './pages/bus-types/component/create-edit-bus-type-dialog/create-bus-type-dialog.component';
+import { BusTypesComponent } from './pages/bus-types/bus-types.component';
 
 @NgModule({
   declarations: [
     TableHeaderComponent, TableFooterComponent,
     TableActionComponent, TooltipComponent,
+    OptionsComponent,
+    OptionsValueComponent,
     CreateEditOptionDialogComponent,
-    CreateEditCategoriesDialogComponent,
+    CreateEditBusTypeDialogComponent,
+    BusTypesComponent
   ],
   imports: [
     CommonModule,

@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "css"
         },
         "@schematics/angular:application": {
           "strict": true
@@ -18,26 +18,32 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/angular-tailwind",
+            "outputPath": {
+              "base": "dist/angular-tailwind"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": ["src/polyfills.ts", "@angular/localize/init"],
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
+            "inlineStyleLanguage": "css",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "./node_modules/@kolkov/angular-editor/assets/",
-                "output": "./assets/fonts/"
-              }
+              "src/assets"
             ],
-            "styles": ["src/styles.scss", "node_modules/ng-zorro-antd/ng-zorro-antd.min.css"],
-            "scripts": ["node_modules/apexcharts/dist/apexcharts.min.js"],
-            "allowedCommonJsDependencies": ["apexcharts" , "lodash"]
+            "styles": [
+              "src/custom-theme.scss",
+              "src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/apexcharts/dist/apexcharts.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "apexcharts"
+            ],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -62,18 +68,10 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
@@ -100,34 +98,26 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": ["src/polyfills.ts", "@angular/localize/init"],
+            "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "inlineStyleLanguage": "scss",
+            "inlineStyleLanguage": "css",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "./node_modules/@kolkov/angular-editor/assets/",
-                "output": "./assets/fonts/"
-              }
+              "src/assets"
             ],
-            "styles": ["src/styles.scss", "node_modules/ng-zorro-antd/ng-zorro-antd.min.css"],
-            "scripts": ["node_modules/apexcharts/dist/apexcharts.min.js"]
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/apexcharts/dist/apexcharts.min.js"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": false,
-    "schematicCollections": ["@angular-eslint/schematics"]
+    "analytics": false
   }
 }

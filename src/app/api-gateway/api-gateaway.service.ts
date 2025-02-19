@@ -1,87 +1,61 @@
-import { HttpClient, HttpContext, HttpHandler, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ENV } from '@app/env';
+import { Observable } from 'rxjs';
 import { SkipLoading } from '../shared/Interceptor/loading-interceptor';
-
-export type HttpObserve = 'body' | 'event' | 'response';
+import { ENV } from 'src/environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ApiGateawayService extends HttpClient {
+export class ApiGatewayService {
   protected api = ENV.apiUrl;
 
-  constructor(handler: HttpHandler) {
-    super(handler);
-  }
-
-  Cget(url: string, skipLoading: boolean = false) {
-    url = this.api + url;
+  constructor(private http: HttpClient) { }
+  private createHeaders(skipLoading: boolean): { headers: HttpHeaders; context: HttpContext } {
     let headers = new HttpHeaders();
     let context = new HttpContext().set(SkipLoading, skipLoading);
+
     headers = headers.set('Access-Control-Allow-Origin', '*');
     headers = headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT');
     headers = headers.set(
       'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
+      'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization'
     );
-    return super.get(url, { headers, context });
+
+    return { headers, context };
   }
 
-  Cpost(url: string, body: any, skipLoading: boolean = false) {
+  request(method: string, url: string, body: any = null, skipLoading: boolean = false): Observable<any> {
+    const { headers, context } = this.createHeaders(skipLoading);
     url = this.api + url;
-    let headers = new HttpHeaders();
-    let context = new HttpContext().set(SkipLoading, skipLoading);
-    headers = headers.set('Access-Control-Allow-Origin', '*');
-    headers = headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT');
-    headers = headers.set(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
-    );
-    return super.post(url, body, { headers, context });
+
+    switch (method) {
+      case 'GET':
+        return this.http.get(url, { headers, context });
+      case 'POST':
+        return this.http.post(url, body, { headers, context });
+      case 'PUT':
+        return this.http.put(url, body, { headers, context });
+      case 'DELETE':
+        return this.http.delete(url, { headers, context });
+      default:
+        throw new Error('Unsupported request method');
+    }
   }
 
-  Cput(url: string, body: any, skipLoading: boolean = false) {
-    url = this.api + url;
-    let headers = new HttpHeaders();
-    let context = new HttpContext().set(SkipLoading, skipLoading);
-    headers = headers.set('Access-Control-Allow-Origin', '*');
-    headers = headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT');
-    headers = headers.set(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
-    );
-    return super.put(url, body, { headers, context });
+  get(url: string, skipLoading: boolean = false): Observable<any> {
+    return this.request('GET', url, null, skipLoading);
   }
 
-  Cdelete(url: string, skipLoading: boolean = false) {
-    url = this.api + url;
-    let headers = new HttpHeaders();
-    let context = new HttpContext().set(SkipLoading, skipLoading);
-    headers = headers.set('Access-Control-Allow-Origin', '*');
-    headers = headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT');
-    headers = headers.set(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
-    );
-    return super.delete(url, { headers, context });
+  post(url: string, body: any, skipLoading: boolean = false): Observable<any> {
+    return this.request('POST', url, body, skipLoading);
   }
 
-  // request(method: string, url: string, options: {
-  //   body?: any;
-  //   headers?: HttpHeaders | {
-  //     [header: string]: string | string[];
-  //   };
-  //   context?: HttpContext;
-  //   observe?: HttpObserve;
-  //   params?: HttpParams | {
-  //     [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
-  //   };
-  //   reportProgress?: boolean;
-  //   responseType: 'arraybuffer' | '' | '' | "";
-  //   withCredentials?: boolean;
-  // }): Observable<any> {
-  //   url += this.api;
-  //   return super.request(method as string, url, options as any);
-  // }
+  put(url: string, body: any, skipLoading: boolean = false): Observable<any> {
+    return this.request('PUT', url, body, skipLoading);
+  }
+
+  delete(url: string, skipLoading: boolean = false): Observable<any> {
+    return this.request('DELETE', url, null, skipLoading);
+  }
 }

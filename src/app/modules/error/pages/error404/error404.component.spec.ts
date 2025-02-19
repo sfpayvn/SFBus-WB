@@ -8,9 +8,10 @@ describe('Error404Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Error404Component],
-    }).compileComponents();
-
+      imports: [Error404Component]
+    })
+    .compileComponents();
+    
     fixture = TestBed.createComponent(Error404Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
