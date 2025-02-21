@@ -16,16 +16,29 @@ import { CreateEditOptionDialogComponent } from './pages/options/component/creat
 import { MaterialModule } from '../material/material-module';
 import { CreateEditBusTypeDialogComponent } from './pages/bus-types/component/create-edit-bus-type-dialog/create-bus-type-dialog.component';
 import { BusTypesComponent } from './pages/bus-types/bus-types.component';
+import { CreateEditBusServiceDialogComponent } from './pages/bus-services/component/create-edit-bus-service-dialog/create-bus-service-dialog.component';
+import { BusServicesComponent } from './pages/bus-services/bus-services.component';
+import { FilesComponent } from './pages/files-center/files-center.component';
+import { TriggerModalComponent } from './components/trigger-modal/trigger-modal.component';
+import { ClickOutsideDirective } from 'src/app/shared/directives/click-outside.directive';
 
 @NgModule({
   declarations: [
     TableHeaderComponent, TableFooterComponent,
     TableActionComponent, TooltipComponent,
+    TriggerModalComponent,
+
     OptionsComponent,
     OptionsValueComponent,
     CreateEditOptionDialogComponent,
+
     CreateEditBusTypeDialogComponent,
-    BusTypesComponent
+    BusTypesComponent,
+
+    CreateEditBusServiceDialogComponent,
+    BusServicesComponent,
+
+    FilesComponent,
   ],
   imports: [
     CommonModule,
@@ -35,7 +48,8 @@ import { BusTypesComponent } from './pages/bus-types/bus-types.component';
     AngularSvgIconModule,
     DragDropModule,
     MaterialModule,
-    NZModule
+    NZModule,
+    ClickOutsideDirective,
   ],
   exports: [
     TableHeaderComponent,

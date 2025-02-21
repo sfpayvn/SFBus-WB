@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CredentialService } from '../shared/services/credential.service';
 
@@ -11,16 +11,13 @@ export class NoAuthGuard implements CanActivate {
     constructor(private credentialService: CredentialService, private router: Router) { }
 
     canActivate(): Observable<boolean> {
-        return this.credentialService.getCurrentUser().pipe(
-            map(user => {
-                console.log("🚀 ~ NoAuthGuard ~ canActivate ~ user:", user)
-                if (!user) {
-                    return true;
-                } else {
-                    this.router.navigate(['/dashboard/nfts']);
-                    return false;
-                }
-            })
-        );
+        const token = this.credentialService.getToken();
+        const user = this.credentialService.getCurrentUser();
+        if (!token || !user) {
+            return of(true);
+        } else {
+            this.router.navigate(['/auth/sign-in']);
+            return of(false);
+        }
     }
 }

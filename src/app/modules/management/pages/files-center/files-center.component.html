@@ -1,0 +1,152 @@
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-4 py-4">
+  <label>Trung tâm phương tiện</label>
+  <div class="grid grid-cols-12 pt-5">
+    <div class="col-span-3 border-r-[1px] border-gray-300 pb-5 pr-4">
+      <div class="flex">
+        <label class="text-muted-foreground relative w-full">
+          <div class="absolute left-2.5 top-2.5">
+            <svg-icon src="./assets/icons/heroicons/outline/magnifying-glass.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+          </div>
+          <input
+            class="text-muted-foreground w-full py-2.5 pl-8 pr-2 text-sm"
+            placeholder="Tìm kiếm thư mục"
+            type="text"
+            (keyup.enter)="searchFolder($event)" />
+        </label>
+        <button mat-raised-button class="ml-2 !h-[36px] !rounded-sm !bg-blue-100" (click)="addFileFolderInput()">
+          <svg-icon svgClass="w-6 h-6" src="./assets/icons/add-folder.svg"></svg-icon>
+        </button>
+      </div>
+      <ul class="flex flex-col space-y-1 pl-2 pt-5" cdkDropList [cdkDropListData]="fileFolders" class="example-list">
+        <li *ngFor="let item of fileFolders">
+          <div
+            [ngClass]="{ 'hover:bg-card hover:text-foreground': !item.isEditing }"
+            class="text-muted-foreground flex h-8 items-center justify-between rounded-sm px-2">
+            <div
+              class="flex w-full cursor-pointer items-center"
+              *ngIf="!item.isEditing"
+              (click)="selectFileFolder(item)">
+              <svg-icon svgClass="w-6 h-6" src="./assets/icons/folder.svg"></svg-icon>
+              <label
+                [ngClass]="{ 'text-primary font-semibold': item.selected }"
+                class="w-full cursor-pointer truncate pl-2 text-xs font-medium tracking-wide focus:outline-hidden">
+                {{ item.name }}
+              </label>
+            </div>
+            <div *ngIf="item.isEditing">
+              <input
+                type="text"
+                [(ngModel)]="item.name"
+                (keydown.enter)="handleActoinFolderInput(item)"
+                (blur)="handleActoinFolderInput(item)"
+                (keydown.esc)="cancelEditFileFolder(item)"
+                placeholder="Nhập tên thư mục"
+                class="w-full rounded-sm border focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <app-trigger-modal *ngIf="item._id !== 'all-media' && !item.isEditing">
+              <svg-icon svgClass="w-4 h-4 cursor-pointer" src="./assets/icons/more-horizontal.svg"></svg-icon>
+              <div triggerModalContent>
+                <ul>
+                  <li>
+                    <button mat-button class="w-full !justify-start !rounded-none" (click)="setIsEditFileFolder(item)">
+                      <div class="flex items-center">
+                        <svg-icon svgClass="w-6 h-6" src="./assets/icons/edit.svg"></svg-icon>
+                        <label class="pl-2 text-sm">Sửa tên</label>
+                      </div>
+                    </button>
+                  </li>
+                  <li>
+                    <button mat-button class="w-full !justify-start !rounded-none" (click)="deleteFileFolder(item)">
+                      <div class="flex items-center">
+                        <svg-icon svgClass="w-6 h-6" src="./assets/icons/trash.svg"></svg-icon>
+                        <label class="pl-2 text-sm">Xóa thư mục</label>
+                      </div>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </app-trigger-modal>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-span-9 pb-5 pl-4">
+      <div class="flex flex-row gap-4">
+        <div class="flex w-10/12">
+          <label class="text-muted-foreground relative w-full">
+            <div class="absolute left-2.5 top-2.5">
+              <svg-icon src="./assets/icons/heroicons/outline/magnifying-glass.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+            </div>
+            <input
+              class="text-muted-foreground w-full py-2.5 pl-8 pr-2 text-sm"
+              placeholder="Tìm kiếm thư mục"
+              type="text"
+              (keyup.enter)="searchFileData($event)" />
+          </label>
+        </div>
+        <div class="flex w-2/12">
+          <button
+            (click)="uploadFile()"
+            class="bg-primary text-primary-foreground w-full cursor-pointer rounded-md py-2.5 text-xs font-semibold"
+            aria-label="Tải ảnh lên">
+            Tải ảnh lên
+          </button>
+        </div>
+      </div>
+      @if(!searchFile || searchFile.files.length <= 0){
+      <div class="flex flex-col items-center justify-between">
+        <img class="h-64 w-64 object-contain" src="assets/images/upload-media.png" />
+        <label class="mb-2 text-lg font-medium">Đồng bộ với bộ nhớ đám mây</label>
+        <label class="mb-5 text-sm text-gray-500"
+          >Tránh lặp lại quá trình tải lên và nâng cao hiệu quả tái sử dụng tài liệu.</label
+        >
+        <button
+          (click)="uploadFile()"
+          class="bg-primary text-primary-foreground w-22 rounded-md py-2.5 text-xs font-semibold"
+          aria-label="Tải ảnh lên">
+          Tải ảnh lên
+        </button>
+      </div>
+      } @else {
+      <div
+        class="grid grid-cols-12 gap-4 py-6"
+        cdkDropList
+        [cdkDropListData]="searchFile.files"
+        cdkDropListSortingDisabled
+        (cdkDropListDropped)="drop($event)">
+        <div
+          class="file col-span-2"
+          *ngFor="let file of searchFile.files"
+          cdkDrag
+          (click)="toggleFile(file)"
+          [ngClass]="{ selected: isSelected(file) }">
+          <div class="box-img rounded-sm border border-gray-300 p-2">
+            <img class="cursor-pointer object-contain" [src]="file.link" />
+          </div>
+          <ng-container *ngFor="let selectedFile of selectedFiles">
+            <div class="selected-file rounded-sm border border-gray-300 p-2" *ngIf="selectedFile._id !== file._id">
+              <img class="cursor-pointer object-contain" [src]="selectedFile.link" />
+            </div>
+          </ng-container>
+          <input
+            [value]="file.filename"
+            matTooltip="{{ file.filename }}"
+            [(ngModel)]="file.filename"
+            (click)="setEditFile(file)"
+            (blur)="handleUpdateFile(file)"
+            (keydown.enter)="handleUpdateFile(file, $event)"
+            class="file-input line-clamp-1 mt-1 block w-full truncate rounded-sm border-none p-1 text-center text-sm" />
+        </div>
+      </div>
+      <app-table-footer
+        [pageIdx]="pageIdx"
+        [pageSize]="pageSize"
+        [totalItem]="totalItem"
+        [isLoading]="isLoadingFile"
+        [totalPage]="totalPage"
+        (reloadDataAndPageEvent)="reloadFilePage($event)">
+      </app-table-footer>
+      }
+    </div>
+  </div>
+</div>

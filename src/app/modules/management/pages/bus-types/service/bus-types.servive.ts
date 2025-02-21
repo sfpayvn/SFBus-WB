@@ -7,7 +7,7 @@ import { BusType, BusType2Create, BusType2Update } from '../model/bus-type.model
   providedIn: 'root',
 })
 export class BusTypesService {
-  url = '/bus-types';
+  url = '/bus-type';
 
   constructor(private apiGatewayService: ApiGatewayService) { }
 

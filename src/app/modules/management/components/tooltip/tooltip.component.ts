@@ -11,6 +11,10 @@ export class TooltipComponent {
   isVisible: boolean = false;
   position: { top: string; left: string } = { top: '-5.3rem', left: '0%' };
 
+  constructor(){
+    // this.show();
+  }
+
   show() {
     this.isVisible = true;
   }

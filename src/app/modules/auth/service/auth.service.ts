@@ -127,19 +127,4 @@ export class AuthService {
       }),
     );
   }
-
-  validateToken() {
-    const url = `/auth/validate-token`
-    return this.apiGatewayService.get(url).pipe(
-      tap((res: any) => {
-      }),
-      map((res: any) => {
-        return res;
-      }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
-      }),
-    );
-  }
 }

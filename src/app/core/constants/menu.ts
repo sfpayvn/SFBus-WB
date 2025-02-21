@@ -42,7 +42,13 @@ export class Menu {
           route: '/management',
           children: [
             { label: 'Bus Types', route: '/management/bus-types' },
+            { label: 'Bus Services', route: '/management/bus-services' },
           ],
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Media Center',
+          route: '/management/media-center',
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
