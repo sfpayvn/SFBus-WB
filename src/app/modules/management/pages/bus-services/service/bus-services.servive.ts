@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
-import { BusService, BusService2Create, BusService2Update } from '../model/bus-service.model';
-import { FileUploadService } from 'src/app/shared/services/file-upload.service';
+import { BusService2Create, BusService2Update } from '../model/bus-service.model';
+import { FilesService } from '../../files-center/service/files-center.servive';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class BusServicesService {
 
   constructor(
     private apiGatewayService: ApiGatewayService,
-    private fileUploadService: FileUploadService
+    private filesService: FilesService
   ) { }
 
   searchBusService(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
@@ -26,12 +26,14 @@ export class BusServicesService {
     );
   }
 
-  createBusService(busService2CreateIcon: Blob, busService2Create: BusService2Create) {
+  createBusService(busServiceIconFile: FileList, busService2Create: BusService2Create) {
     const url = this.url;
 
-    return this.fileUploadService.uploadFile(busService2CreateIcon, busService2Create.name + '.svg').pipe(
+    return this.filesService.uploadFiles(busServiceIconFile).pipe(
       switchMap((res: any) => {
-        busService2Create.icon = res.ids.first();
+        console.log("🚀 ~ BusServicesService ~ switchMap ~ res:", res)
+        busService2Create.icon = res.ids[0];
+        console.log("🚀 ~ BusServicesService ~ switchMap ~ busService2Create:", busService2Create)
         return this.apiGatewayService.post(url, busService2Create).pipe(
           tap((res: any) => {
           }),

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, from, Observable, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
-import { File2Create, File2Update, FileFolder2Create, FileFolder2Update } from '../model/file-center.model';
+import { File2Update, FileFolder2Create, FileFolder2Update } from '../model/file-center.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,20 +22,29 @@ export class FilesService {
     );
   }
 
-  createFile(file2Create: File2Create) {
-    const url = this.url;
-    return this.apiGatewayService.post(url, file2Create).pipe(
-      tap((res: any) => {
-      }),
-      catchError((error) => {
-        //write log
-        return of(null);
-      }),
+
+  uploadFiles(filesList: FileList, folderId?: string): Observable<any> {
+    const formData: FormData = new FormData();
+    // Sử dụng Promise.all để chờ tất cả các file được thêm vào FormData
+    const formDataPromise = Promise.all(Array.from(filesList).map(file => {
+      return new Promise((resolve) => {
+        formData.append('files', file);
+        resolve(null);
+      });
+    })).then(() => formData);
+    const url = `/file/upload-file/${folderId}`;
+
+    // Chuyển đổi Promise thành Observable
+    return from(formDataPromise).pipe(
+      switchMap((formData: FormData) => {
+        return this.apiGatewayService.post(url, formData);
+      })
     );
   }
 
+
   updateFile(file2Update: File2Update) {
-    const url = this.url;
+    const url = '/file';
     return this.apiGatewayService.put(url, file2Update).pipe(
       tap((res: any) => {
       }),
@@ -46,9 +55,21 @@ export class FilesService {
     );
   }
 
+  updateFiles2Folder(files2Update: File2Update[], folderId: string) {
+    const url = `/file/update-files-folder/${folderId}`;
+    return this.apiGatewayService.put(url, files2Update).pipe(
+      tap((res: any) => {
+      }),
+      catchError((error) => {
+        //write log
+        return of(null);
+      }),
+    );
+  }
+
   deleteFile(id: string) {
-    const deleteOptionUrl = this.url + `/${id}`;
-    return this.apiGatewayService.delete(deleteOptionUrl).pipe(
+    const url = `/file/${id}`;
+    return this.apiGatewayService.delete(url).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {

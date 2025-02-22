@@ -5,21 +5,21 @@ export class SearchFile {
   totalPage: number = 0;
 }
 
-
 export class File {
   _id: string = '';
   filename: string = '';
   link: string = '';
+  folderId: string = '';
+  isFavorite: boolean = false;
   selected: boolean = false;
   oldValue: string = '';
 }
 
-export class File2Create {
-  filename: string = '';
-}
-
-export class File2Update extends File2Create {
+export class File2Update {
   _id: string = '';
+  filename: string = '';
+  folderId: string = '';
+  isFavorite: boolean = false;
 }
 
 export class FileFolder {

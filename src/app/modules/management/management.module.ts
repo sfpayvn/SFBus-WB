@@ -21,12 +21,14 @@ import { BusServicesComponent } from './pages/bus-services/bus-services.componen
 import { FilesComponent } from './pages/files-center/files-center.component';
 import { TriggerModalComponent } from './components/trigger-modal/trigger-modal.component';
 import { ClickOutsideDirective } from 'src/app/shared/directives/click-outside.directive';
+import { TriggerMaskComponent } from './components/trigger-mask/trigger-mask.component';
 
 @NgModule({
   declarations: [
     TableHeaderComponent, TableFooterComponent,
     TableActionComponent, TooltipComponent,
     TriggerModalComponent,
+    TriggerMaskComponent,
 
     OptionsComponent,
     OptionsValueComponent,

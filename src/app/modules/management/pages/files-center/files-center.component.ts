@@ -7,6 +7,7 @@ import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { FileFolder, SearchFile, File, FileFolder2Create, FileFolder2Update, File2Update } from './model/file-center.model';
 import { FilesService } from './service/files-center.servive';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Utils } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-files-center',
@@ -24,6 +25,8 @@ export class FilesComponent implements OnInit {
       selected: true,
     }
   ];
+
+  oldFileFolders: FileFolder[] = [];
 
   searchFile: SearchFile = new SearchFile();
 
@@ -44,8 +47,7 @@ export class FilesComponent implements OnInit {
     private fileService: FilesService,
     private dialog: MatDialog,
     private utilsModal: UtilsModal,
-    private renderer: Renderer2,
-    private el: ElementRef
+    private utils: Utils,
   ) { }
 
   ngOnInit(): void {
@@ -65,9 +67,7 @@ export class FilesComponent implements OnInit {
   }
 
   loadFiles() {
-
-    const selectedItem = this.fileFolders.find((item) => item.selected);
-    const fileFolderId = selectedItem?._id === 'all-media' ? '' : selectedItem?._id;
+    const fileFolderId = this.getActiveFolderId();
 
     this.fileService.searchFile(this.pageIdx, this.pageSize, this.keyword, this.sortBy, fileFolderId).subscribe({
       next: (res: SearchFile) => {
@@ -81,10 +81,23 @@ export class FilesComponent implements OnInit {
         this.isLoadingFile = false;
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
         this.isLoadingFile = false;
       },
     });
+  }
+
+  resetFileData(): void {
+    this.searchFile = new SearchFile();
+    this.selectedFiles = [];
+    this.pageIdx = 1;
+    this.pageSize = 30;
+    this.totalPage = 0;
+    this.totalItem = 0;
+    this.keyword = '';
+    this.sortBy = '';
+    this.isLoadingFile = false;
+    this.loadFiles();
   }
 
   toggleFile(file: File): void {
@@ -105,7 +118,16 @@ export class FilesComponent implements OnInit {
     this.selectAll = !this.searchFile.files.some((file) => !file.selected);
   }
 
-  deleteFile(id: string): void {
+  setFavoriteFile($event: any, file: File): void {
+    $event.stopPropagation();
+    console.log("🚀 ~ FilesComponent ~ setFavoriteFile ~ file:", file)
+    file.isFavorite = !file.isFavorite;
+    console.log("🚀 ~ FilesComponent ~ setFavoriteFile ~ file:", file)
+    this.updateFile(file);
+  }
+
+  deleteFile($event: any, file: File): void {
+    $event.stopPropagation();
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -113,7 +135,7 @@ export class FilesComponent implements OnInit {
         },
         title: 'Delete File',
         content:
-          'Are you sure you want to delete this media? All of your data will be permanently removed. This action cannot be undone.',
+          `Are you sure you want to delete this file "${file.filename}? All of your data will be permanently removed. This action cannot be undone.`,
         btn: [
           {
             label: 'NO',
@@ -129,32 +151,38 @@ export class FilesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.fileService.deleteFile(id).subscribe({
+        this.fileService.deleteFile(file._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchFile.files = this.searchFile.files.filter((file) => file._id !== id);
-              toast.success('File deleted successfully');
+              this.loadFiles();
+              toast.success('Xóa file thành công');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
   }
 
-  addFile(): void {
-    // this.fileService.createFile(null).subscribe({
-    //   next: (res: File) => {
-    //     if (res) {
-    //       this.loadData();
-    //       toast.success('File added successfully');
-    //     }
-    //   },
-    //   error: (error: any) => this.handleRequestError(error),
-    // });
+  zoomFile($event: any, file: File): void {
+    $event.stopPropagation();
   }
 
-  updateFile(item: File2Update) {
+  uploadFile(files2Upload: FileList): void {
+
+    const folderId = this.getActiveFolderId();
+    this.fileService.uploadFiles(files2Upload, folderId).subscribe({
+      next: (res: File) => {
+        if (res) {
+          this.loadFiles();
+          toast.success('File added successfully');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
+  }
+
+  updateFile(item: File) {
     this.fileService.updateFile(item).subscribe((res: any) => {
       if (!res) {
         toast.error("Cập nhập thư mục không thành công");
@@ -164,21 +192,42 @@ export class FilesComponent implements OnInit {
     })
   }
 
+
+  updateFiles2Folder(files: File[], fileFolderId: string) {
+    this.fileService.updateFiles2Folder(files, fileFolderId).subscribe((res: any) => {
+      if (!res) {
+        toast.error("Cập nhập thư mục không thành công");
+        return;
+      }
+      const isNotFolder = this.getActiveFolderId() === '';
+      if (!isNotFolder) {
+        this.loadFiles();
+      }
+      toast.success("Cập nhập thư mục thành công");
+    })
+  }
+
   setEditFile(item: File) {
     item.oldValue = item.filename;
   }
 
+  onEnterFile($event?: any) {
+    const inputElement = $event.target as HTMLInputElement;
+    inputElement.blur();
+  }
+
+  onEscFile(item: File, $event?: any) {
+    item.filename = item.oldValue;
+    const inputElement = $event.target as HTMLInputElement;
+    inputElement.blur();
+  }
+
   handleUpdateFile(item: File, $event?: any) {
-    console.log("🚀 ~ FilesComponent ~ handleUpdateFile ~ item:", item)
     const trimmedName = item.filename.trim();
-    if (trimmedName != '') {
+    if (trimmedName != '' && item.filename !== item.oldValue) {
       this.updateFile(item);
     } else {
       item.filename = item.oldValue;
-      if ($event) {
-        const inputElement = $event.target as HTMLInputElement;
-        inputElement.blur();
-      }
     }
   }
 
@@ -199,34 +248,24 @@ export class FilesComponent implements OnInit {
     this.loadFiles();
   }
 
+  getActiveFolderId(): string {
+    return this.fileFolders.find((item) => item.selected && this.utils.isValidObjectId(item._id))?._id ?? '';
+  }
+
   selectFileFolder(item: any) {
+    if (item.selected) {
+      return
+    }
     this.fileFolders = this.fileFolders.map(folder => ({
       ...folder,
       selected: folder._id === item._id
     }));
+    this.selectedFiles = [];
     this.loadFiles();
-  }
-
-  private handleRequestError(error: any): void {
-    const msg = 'An error occurred while processing your request';
-    toast.error(msg, {
-      position: 'bottom-right',
-      description: error.message || 'Please try again later',
-      action: {
-        label: 'Dismiss',
-        onClick: () => { },
-      },
-      actionButtonStyle: 'background-color:#DC2626; color:white;',
-    });
-
   }
 
   searchFolder($event: any) {
     const keyword = $event.target.value;
-  }
-
-  uploadFile() {
-
   }
 
   addFileFolderInput() {
@@ -337,6 +376,11 @@ export class FilesComponent implements OnInit {
     })
   }
 
+  onFileChange($event: any) {
+    const files: FileList = $event.target.files;
+    this.uploadFile(files);
+  }
+
   onDragBeforeStarted(file: File) {
     console.log("🚀 ~ FilesComponent ~ onDragBeforeStarted ~ file:", file)
   }
@@ -346,6 +390,43 @@ export class FilesComponent implements OnInit {
     console.log("🚀 ~ FilesComponent ~ onDragStarted ~ file:", file)
   }
 
-  drop(event: CdkDragDrop<File[]>): void {
+  drop(event: CdkDragDrop<any[]>): void {
+    const droppedElement = event.event.target as HTMLElement;
+
+    const parentDrop = this.getParentDrop(droppedElement);
+    if (!parentDrop) {
+      return;
+    }
+    const fileFolderId = parentDrop.id;
+    console.log("🚀 ~ FilesComponent ~ drop ~ fileFolderId:", fileFolderId)
+
+    const listFile2MoveFolder = [];
+    const fileDrop = event.item.data;
+    // Thêm fileDrop vào danh sách
+    listFile2MoveFolder.push(fileDrop);
+    // Lọc các file đã chọn để loại bỏ fileDrop
+    const fileSelected = this.selectedFiles.filter(file => file !== fileDrop);
+
+    // Thêm các file đã chọn (trừ fileDrop) vào danh sách
+    listFile2MoveFolder.push(...fileSelected);
+
+    this.updateFiles2Folder(listFile2MoveFolder, fileFolderId);
+
+    console.log(listFile2MoveFolder); // Kiểm tra danh sách kết quả
+
   }
+
+  getParentDrop(element: HTMLElement): HTMLElement | null {
+    // Lặp lại lên trên cây DOM cho đến khi tìm thấy phần tử cha là <li>
+    while (element && element.nodeName !== 'LI') {
+      element = element.parentElement as HTMLElement;
+    }
+
+    // Kiểm tra nếu phần tử cha là <li> và trả về phần tử này
+    return element && element.nodeName === 'LI' ? element : null;
+  }
+
+
 }
+
+

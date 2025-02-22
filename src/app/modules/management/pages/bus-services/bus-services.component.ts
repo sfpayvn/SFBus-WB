@@ -134,13 +134,12 @@ export class BusServicesComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log("🚀 ~ BusServicesComponent ~ dialogRef.afterClosed ~ result:", result)
       if (result) {
 
         const busService2Create = new BusService2Create();
         busService2Create.name = result.name;
 
-        this.busServicesService.createBusService(result.icon, busService2Create).subscribe({
+        this.busServicesService.createBusService(result.file, busService2Create).subscribe({
           next: (res: BusService) => {
             if (res) {
               this.loadData();

@@ -24,7 +24,7 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
   busServiceForm!: FormGroup;
 
   busServiceIcon!: string;
-  busServiceIconBlob!: Blob;
+  busServiceIconFile!: FileList;
 
   constructor(
     private fb: FormBuilder,
@@ -51,6 +51,7 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
 
   onFileChange(event: any) {
     const files: FileList = event.target.files;
+    this.busServiceIconFile = files;
     if (!files || files.length === 0) return;
     const file = files[0];
 
@@ -66,8 +67,6 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
       const arrayBuffer = event.target.result as ArrayBuffer;
       const blob = new Blob([arrayBuffer], { type: file.type });
       this.busServiceIcon = URL.createObjectURL(blob);
-      this.busServiceIconBlob = blob;
-      console.log("🚀 ~ CreateEditBusServiceDialogComponent ~ readAndSetImage ~ this.busServiceIcon:", this.busServiceIcon)
     };
     reader.readAsArrayBuffer(file);  // Đọc file dưới dạng ArrayBuffer
   }
@@ -86,7 +85,7 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
     const { name } = this.busServiceForm.getRawValue();
     const data = {
       name,
-      icon: this.busServiceIconBlob
+      file: this.busServiceIconFile,
     }
     this.dialogRef.close(data);
   }
