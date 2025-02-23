@@ -13,6 +13,7 @@ export class File {
   isFavorite: boolean = false;
   selected: boolean = false;
   oldValue: string = '';
+  temp: boolean = false;
 }
 
 export class File2Update {
@@ -25,6 +26,7 @@ export class File2Update {
 export class FileFolder {
   _id: string = '';
   name: string = '';
+  icon?: string = '';
   selected?: boolean = false;
   isEditing?: boolean = false;
   oldValue?: string = '';

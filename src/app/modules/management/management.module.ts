@@ -22,6 +22,10 @@ import { FilesComponent } from './pages/files-center/files-center.component';
 import { TriggerModalComponent } from './components/trigger-modal/trigger-modal.component';
 import { ClickOutsideDirective } from 'src/app/shared/directives/click-outside.directive';
 import { TriggerMaskComponent } from './components/trigger-mask/trigger-mask.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { FilesCenterDialogComponent } from './pages/files-center/components/files-center-dialog/files-center-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +45,7 @@ import { TriggerMaskComponent } from './components/trigger-mask/trigger-mask.com
     BusServicesComponent,
 
     FilesComponent,
+    FilesCenterDialogComponent
   ],
   imports: [
     CommonModule,

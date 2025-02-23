@@ -1,13 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
-import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import _ from 'lodash';
+import _, { remove } from 'lodash';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { FileFolder, SearchFile, File, FileFolder2Create, FileFolder2Update, File2Update } from './model/file-center.model';
 import { FilesService } from './service/files-center.servive';
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragEnter, CdkDragExit, } from '@angular/cdk/drag-drop';
 import { Utils } from 'src/app/shared/utils/utils';
+import { ViewImageDialogComponent } from './components/view-image-dialog/view-image-dialog.component';
 
 @Component({
   selector: 'app-files-center',
@@ -18,15 +18,25 @@ import { Utils } from 'src/app/shared/utils/utils';
 export class FilesComponent implements OnInit {
   @ViewChild('inputFileFolder') inputFileFolder!: ElementRef;
 
+  @Input() isDialog: boolean = false;
+  @Input() isChooseMultiple: boolean = true;
+  @Output() chooseFileEvent = new EventEmitter<any>();
+
   fileFolders: FileFolder[] = [
     {
       _id: 'all-media',
       name: 'Tất cả ảnh',
+      icon: 'multi-folder.svg',
       selected: true,
+    },
+    {
+      _id: 'favorite',
+      name: 'Yêu thích',
+      icon: 'favorite.svg',
+      selected: false,
     }
   ];
-
-  oldFileFolders: FileFolder[] = [];
+  originalFileFolders: FileFolder[] = [];
 
   searchFile: SearchFile = new SearchFile();
 
@@ -40,6 +50,7 @@ export class FilesComponent implements OnInit {
   totalItem: number = 0;
   keyword: string = '';
   sortBy: string = '';
+  filter: string = '';
 
   isLoadingFile: boolean = false;
 
@@ -47,7 +58,7 @@ export class FilesComponent implements OnInit {
     private fileService: FilesService,
     private dialog: MatDialog,
     private utilsModal: UtilsModal,
-    private utils: Utils,
+    public utils: Utils,
   ) { }
 
   ngOnInit(): void {
@@ -55,28 +66,30 @@ export class FilesComponent implements OnInit {
   }
 
   loadData(): void {
-
     this.isLoadingFile = true;
+    this.loadFileFolders();
+    this.loadFiles();
+  }
 
+  loadFileFolders() {
     this.fileService.getFileFolder().subscribe((res: any) => {
       if (res) {
         this.fileFolders.push(...res);
+        this.originalFileFolders = [...this.fileFolders]; // Save original folders
       }
     })
-    this.loadFiles();
   }
 
   loadFiles() {
     const fileFolderId = this.getActiveFolderId();
+    this.filter = this.getFilter()
 
-    this.fileService.searchFile(this.pageIdx, this.pageSize, this.keyword, this.sortBy, fileFolderId).subscribe({
+    this.fileService.searchFile(this.pageIdx, this.pageSize, this.keyword, this.sortBy, this.filter, fileFolderId).subscribe({
       next: (res: SearchFile) => {
         if (res) {
           this.searchFile = res;
-          console.log("🚀 ~ FileComponent ~ this.fileService.searchFile ~ this.searchFile:", this.searchFile)
           this.totalItem = this.searchFile.totalItem;
           this.totalPage = this.searchFile.totalPage;
-
         }
         this.isLoadingFile = false;
       },
@@ -101,6 +114,11 @@ export class FilesComponent implements OnInit {
   }
 
   toggleFile(file: File): void {
+    if (!this.isChooseMultiple && this.selectedFiles.length > 0 && !this.isSelected(file)) {
+      this.selectedFiles = [];
+      this.selectedFiles.push(file);
+      return;
+    }
     const index = this.selectedFiles.findIndex(f => f._id === file._id);
     if (index >= 0) {
       this.selectedFiles.splice(index, 1);
@@ -114,42 +132,50 @@ export class FilesComponent implements OnInit {
     return this.selectedFiles.some(f => f._id === file._id);
   }
 
+  getIndexSelectedFile(file: File): string {
+    const index = this.selectedFiles.findIndex(f => f._id === file._id);
+    return index !== -1 ? (index + 1).toString() : '';
+  }
+
   checkSelectAll(): void {
     this.selectAll = !this.searchFile.files.some((file) => !file.selected);
   }
 
+  unSelectAllfile() {
+    this.selectedFiles = [];
+  }
+
+  deleteFileSelected() {
+    this.utilsModal.openModalConfirm('Xóa file',
+      `Are you sure you want to delete this file? All of your data will be permanently removed. This action cannot be undone.`,
+      'dangerous').subscribe((result) => {
+        if (result) {
+          const ids = this.selectedFiles.map(file => file._id);
+          this.fileService.deleteFiles(ids).subscribe({
+            next: (res: any) => {
+              if (res) {
+                this.loadFiles();
+                toast.success('Xóa file thành công');
+                this.selectedFiles = [];
+              }
+            },
+            error: (error: any) => this.utils.handleRequestError(error),
+          });
+        }
+      });
+  }
+
   setFavoriteFile($event: any, file: File): void {
     $event.stopPropagation();
-    console.log("🚀 ~ FilesComponent ~ setFavoriteFile ~ file:", file)
     file.isFavorite = !file.isFavorite;
-    console.log("🚀 ~ FilesComponent ~ setFavoriteFile ~ file:", file)
     this.updateFile(file);
   }
 
   deleteFile($event: any, file: File): void {
     $event.stopPropagation();
-    const dialogRef = this.dialog.open(MaterialDialogComponent, {
-      data: {
-        icon: {
-          type: 'dangerous'
-        },
-        title: 'Delete File',
-        content:
-          `Are you sure you want to delete this file "${file.filename}? All of your data will be permanently removed. This action cannot be undone.`,
-        btn: [
-          {
-            label: 'NO',
-            type: 'cancel'
-          },
-          {
-            label: 'YES',
-            type: 'submit'
-          },
-        ]
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
+    const dialogRef = this.utilsModal.openModalConfirm('Xóa file',
+      `Are you sure you want to delete this file "${file.filename}? All of your data will be permanently removed. This action cannot be undone.`, 'dangerous');
+    dialogRef.subscribe((result) => {
       if (result) {
         this.fileService.deleteFile(file._id).subscribe({
           next: (res: any) => {
@@ -166,6 +192,16 @@ export class FilesComponent implements OnInit {
 
   zoomFile($event: any, file: File): void {
     $event.stopPropagation();
+    const dialogRef = this.dialog.open(ViewImageDialogComponent, {
+      height: 'max-content',
+      width: 'max-content',
+      maxWidth: 'max-content',
+      panelClass: 'custom-dialog-view-image',
+      backdropClass: 'custom-back-drop-view-image',
+      data: {
+        file: file
+      }
+    });
   }
 
   uploadFile(files2Upload: FileList): void {
@@ -249,7 +285,12 @@ export class FilesComponent implements OnInit {
   }
 
   getActiveFolderId(): string {
-    return this.fileFolders.find((item) => item.selected && this.utils.isValidObjectId(item._id))?._id ?? '';
+    const id = this.fileFolders.find((item) => item.selected && this.utils.isValidObjectId(item._id))?._id ?? '';
+    return id;
+  }
+
+  getFilter(): string {
+    return this.fileFolders.find((item) => item.selected && !this.utils.isValidObjectId(item._id))?._id ?? '';
   }
 
   selectFileFolder(item: any) {
@@ -265,12 +306,13 @@ export class FilesComponent implements OnInit {
   }
 
   searchFolder($event: any) {
-    const keyword = $event.target.value;
+    const keyword = $event.target.value.toLowerCase();
+    this.fileFolders = this.originalFileFolders.filter(folder =>
+      folder.name.toLowerCase().includes(keyword)
+    );
   }
 
   addFileFolderInput() {
-    toast.success('Category deleted successfully', { duration: 10000 });
-
     const isCreatingFileFolder = this.fileFolders.find((item) => item._id === 'create-new');
     if (isCreatingFileFolder) {
       return;
@@ -340,8 +382,10 @@ export class FilesComponent implements OnInit {
         _.remove(this.fileFolders, { _id: item._id })
         return;
       }
+      item._id = res._id;
       toast.success("Tạo thư mục thành công");
       item.isEditing = false;
+      this.originalFileFolders = this.fileFolders;
     })
   }
 
@@ -351,6 +395,7 @@ export class FilesComponent implements OnInit {
         toast.error("Cập nhập thư mục không thành công");
         return;
       }
+      this.originalFileFolders = this.fileFolders;
       toast.success("Cập nhập thư mục thành công");
     })
   }
@@ -368,6 +413,7 @@ export class FilesComponent implements OnInit {
             return;
           }
           _.remove(this.fileFolders, { _id: item._id })
+          this.originalFileFolders = this.fileFolders;
           toast.success("Xóa thư mực thành công");
         }, (error: any) => {
           console.log("🚀 ~ FileComponent ~ ).subscribe ~ error:", error)
@@ -381,16 +427,8 @@ export class FilesComponent implements OnInit {
     this.uploadFile(files);
   }
 
-  onDragBeforeStarted(file: File) {
-    console.log("🚀 ~ FilesComponent ~ onDragBeforeStarted ~ file:", file)
-  }
-
-
-  onDragStarted(file: File) {
-    console.log("🚀 ~ FilesComponent ~ onDragStarted ~ file:", file)
-  }
-
   drop(event: CdkDragDrop<any[]>): void {
+    remove(this.searchFile.files, { temp: true });
     const droppedElement = event.event.target as HTMLElement;
 
     const parentDrop = this.getParentDrop(droppedElement);
@@ -398,8 +436,9 @@ export class FilesComponent implements OnInit {
       return;
     }
     const fileFolderId = parentDrop.id;
-    console.log("🚀 ~ FilesComponent ~ drop ~ fileFolderId:", fileFolderId)
-
+    if(!this.utils.isValidObjectId(fileFolderId)) {
+      return;
+    }
     const listFile2MoveFolder = [];
     const fileDrop = event.item.data;
     // Thêm fileDrop vào danh sách
@@ -409,11 +448,21 @@ export class FilesComponent implements OnInit {
 
     // Thêm các file đã chọn (trừ fileDrop) vào danh sách
     listFile2MoveFolder.push(...fileSelected);
-
     this.updateFiles2Folder(listFile2MoveFolder, fileFolderId);
+  }
 
-    console.log(listFile2MoveFolder); // Kiểm tra danh sách kết quả
+  noReturnPredicate() {
+    return false;
+  }
 
+  onSourceListExited(event: CdkDragExit<any>) {
+    console.log("🚀 ~ FilesComponent ~ onSourceListExited ~ event:", event)
+    const itemIdx = this.searchFile.files.findIndex((file: File) => file._id == event.item.data._id);
+    this.searchFile.files.splice(itemIdx + 1, 0, { ...event.item.data, temp: true });
+  }
+
+  onSourceListEntered(event: CdkDragEnter<any>) {
+    _.remove(this.searchFile.files, { temp: true });
   }
 
   getParentDrop(element: HTMLElement): HTMLElement | null {
@@ -426,7 +475,19 @@ export class FilesComponent implements OnInit {
     return element && element.nodeName === 'LI' ? element : null;
   }
 
+  onDbClickFile($event: any, file: File): void {
+    $event.stopPropagation();
+    if (!this.isDialog) {
+      return;
+    }
+    this.selectedFiles = [];
+    this.selectedFiles.push(file);
+    this.chooseFile();
+  }
 
+  chooseFile() {
+    this.chooseFileEvent.emit(this.selectedFiles);
+  }
 }
 
 

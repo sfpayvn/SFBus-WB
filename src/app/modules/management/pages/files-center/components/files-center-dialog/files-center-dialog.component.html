@@ -1,0 +1,13 @@
+<mat-dialog-content class="flex h-full !max-h-full w-full justify-center rounded-xl bg-white !p-4">
+  <app-files-center
+    class="flex h-full w-full"
+    [isChooseMultiple]="false"
+    [isDialog]="true"
+    (chooseFileEvent)="chooseFiles($event)"></app-files-center>
+  <div class="absolute right-[15px] top-[15px] flex">
+    <button class="m-0 rounded-lg p-2 hover:bg-gray-700">
+      <svg-icon src="./assets/icons/close.svg" [svgClass]="'h-6 w-6 cursor-pointer '" (click)="closeDialog()">
+      </svg-icon>
+    </button>
+  </div>
+</mat-dialog-content>

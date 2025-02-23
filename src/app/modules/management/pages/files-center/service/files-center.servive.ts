@@ -11,8 +11,8 @@ export class FilesService {
 
   constructor(private apiGatewayService: ApiGatewayService) { }
 
-  searchFile(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "", fileFolderId: string = "") {
-    const url = `/file/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}&fileFolderId=${fileFolderId}`;
+  searchFile(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "", filter: string = "", fileFolderId: string = "") {
+    const url = `/file/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}&&filter=${filter}&fileFolderId=${fileFolderId}`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
       catchError((error) => {
@@ -79,7 +79,17 @@ export class FilesService {
     );
   }
 
-
+  deleteFiles(ids: string[]) {
+    const url = `/file/delete-files`;
+    return this.apiGatewayService.post(url, ids).pipe(
+      tap((res: any) => {
+      }),
+      catchError((error) => {
+        //write log
+        return of(null);
+      }),
+    );
+  }
   getFileFolder() {
     const url = `/file-folder`;
     return this.apiGatewayService.get(url).pipe(

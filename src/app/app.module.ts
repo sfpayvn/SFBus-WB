@@ -11,7 +11,6 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 import { MaterialModule } from './library-modules/material-module';
 import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
 import { Utils } from './shared/utils/utils';
-import { AppComponent } from './app.component';
 
 
 @NgModule({

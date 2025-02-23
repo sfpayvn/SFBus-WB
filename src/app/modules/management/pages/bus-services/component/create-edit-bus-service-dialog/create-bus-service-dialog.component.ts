@@ -1,12 +1,14 @@
 import { Component, inject, model, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BusService, BusService2Create } from '../../model/bus-service.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
+import { FilesCenterDialogComponent } from '../../../files-center/components/files-center-dialog/files-center-dialog.component';
+import { File as FileDto } from '../../../files-center/model/file-center.model';
 
 export interface DialogData {
   title: string;
-  busType: BusService;
+  busService: BusService;
 }
 
 @Component({
@@ -18,7 +20,7 @@ export interface DialogData {
 export class CreateEditBusServiceDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<CreateEditBusServiceDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
-  busType: BusService = this.data.busType ?? new BusService2Create();
+  busService: BusService = this.data.busService ?? new BusService2Create();
 
 
   busServiceForm!: FormGroup;
@@ -28,18 +30,23 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private utils: Utils
+    private utils: Utils,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
+    if (this.data) {
+      this.busServiceIcon = this.busService.icon;
+      console.log("🚀 ~ CreateEditBusServiceDialogComponent ~ ngOnInit ~ this.busService:", this.busService)
+    }
     this.initForm();
   }
 
 
   private async initForm() {
     this.busServiceForm = this.fb.group({
-      name: ['', [Validators.required]],
-      icon: ['', Validators.required],
+      name: [this.busService.name, [Validators.required]],
+      icon: [this.busService.icon, Validators.required],
     });
   }
 
@@ -75,6 +82,21 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
   removeFileImage() {
     this.busServiceIcon = '';
     this.busServiceForm.patchValue({ image: '' });
+  }
+
+  openFilesCenterDialog() {
+    const dialogRef = this.dialog.open(FilesCenterDialogComponent, {
+      height: '80%',
+      width: '80%',
+      maxWidth: '80%',
+      panelClass: 'custom-dialog-files-center',
+      // backdropClass: 'custom-back-drop-view-image',
+    });
+    dialogRef.afterClosed().subscribe((files: FileDto[]) => {
+      if (!files || files.length === 0) return;
+      this.busServiceIcon = files[0].link;
+      this.busServiceForm.patchValue({ icon: files[0]._id });
+    });
   }
 
   onSubmit() {

@@ -54,14 +54,14 @@ export class BusServicesComponent implements OnInit {
 
   toggleBusService(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusService.busServices = this.searchBusService.busServices.map((busType: BusService) => ({
-      ...busType,
+    this.searchBusService.busServices = this.searchBusService.busServices.map((busService: BusService) => ({
+      ...busService,
       selected: checked,
     }));
   }
 
   checkSelectAll(): void {
-    this.selectAll = !this.searchBusService.busServices.some((busType) => !busType.selected);
+    this.selectAll = !this.searchBusService.busServices.some((busService) => !busService.selected);
   }
 
   deleteBusService(id: string): void {
@@ -72,7 +72,7 @@ export class BusServicesComponent implements OnInit {
         },
         title: 'Delete BusService',
         content:
-          'Are you sure you want to delete this busType? All of your data will be permanently removed. This action cannot be undone.',
+          'Are you sure you want to delete this busService? All of your data will be permanently removed. This action cannot be undone.',
         btn: [
           {
             label: 'NO',
@@ -91,7 +91,7 @@ export class BusServicesComponent implements OnInit {
         this.busServicesService.deleteBusService(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusService.busServices = this.searchBusService.busServices.filter((busType) => busType._id !== id);
+              this.searchBusService.busServices = this.searchBusService.busServices.filter((busService) => busService._id !== id);
               toast.success('BusService deleted successfully');
             }
           },
@@ -101,11 +101,11 @@ export class BusServicesComponent implements OnInit {
     });
   }
 
-  editBusService(busType: BusService): void {
+  editBusService(busService: BusService): void {
     const dialogRef = this.dialog.open(CreateEditBusServiceDialogComponent, {
       data: {
         title: 'Edit BusService',
-        busType: { ...busType },
+        busService: { ...busService },
       },
     });
 
@@ -114,8 +114,8 @@ export class BusServicesComponent implements OnInit {
         this.busServicesService.updateBusService(result).subscribe({
           next: (res: BusService) => {
             if (res) {
-              this.searchBusService.busServices = this.searchBusService.busServices.map((busType: BusService) =>
-                busType._id === res._id ? { ...busType, ...res } : busType,
+              this.searchBusService.busServices = this.searchBusService.busServices.map((busService: BusService) =>
+                busService._id === res._id ? { ...busService, ...res } : busService,
               );
               toast.success('BusService updated successfully');
             }
