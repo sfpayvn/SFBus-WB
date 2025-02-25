@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { FilesCenterDialogComponent } from '../../../files-center/components/files-center-dialog/files-center-dialog.component';
 import { File as FileDto } from '../../../files-center/model/file-center.model';
+import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 
 export interface DialogData {
   title: string;
@@ -31,7 +32,7 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
-    private dialog: MatDialog,
+    private utilsModal: UtilsModal,
   ) { }
 
   ngOnInit(): void {
@@ -85,14 +86,7 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
   }
 
   openFilesCenterDialog() {
-    const dialogRef = this.dialog.open(FilesCenterDialogComponent, {
-      height: '80%',
-      width: '80%',
-      maxWidth: '80%',
-      panelClass: 'custom-dialog-files-center',
-      // backdropClass: 'custom-back-drop-view-image',
-    });
-    dialogRef.afterClosed().subscribe((files: FileDto[]) => {
+    const dialogRef = this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
       this.busServiceIcon = files[0].link;
       this.busServiceForm.patchValue({ icon: files[0]._id });

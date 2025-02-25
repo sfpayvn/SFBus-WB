@@ -33,4 +33,27 @@ export class UtilsModal {
     });
     return dialogRef.afterClosed();
   }
+
+  openModal(component: any, data: any, size: string = 'small') {
+
+    let height = '';
+    let width = ''
+    if (size == 'medium') {
+      height = width = '60%'
+    } else if (size == 'large') {
+      height = width = '80%'
+    }
+    else if (size == 'full') {
+      height = width = '100%'
+    }
+
+    const dialogRef = this.dialog.open(component, {
+      height: height,
+      width: width,
+      maxWidth: width,
+      panelClass: 'custom-dialog',
+      data: data
+    });
+    return dialogRef.afterClosed();
+  }
 }

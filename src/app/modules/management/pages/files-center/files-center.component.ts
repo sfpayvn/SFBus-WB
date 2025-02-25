@@ -5,7 +5,7 @@ import _, { remove } from 'lodash';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { FileFolder, SearchFile, File, FileFolder2Create, FileFolder2Update, File2Update } from './model/file-center.model';
 import { FilesService } from './service/files-center.servive';
-import { CdkDragDrop, CdkDragEnter, CdkDragExit, } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDragStart, } from '@angular/cdk/drag-drop';
 import { Utils } from 'src/app/shared/utils/utils';
 import { ViewImageDialogComponent } from './components/view-image-dialog/view-image-dialog.component';
 
@@ -428,6 +428,7 @@ export class FilesComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<any[]>): void {
+    console.log("🚀 ~ FilesComponent ~ drop ~ drop:");
     remove(this.searchFile.files, { temp: true });
     const droppedElement = event.event.target as HTMLElement;
 
@@ -436,11 +437,12 @@ export class FilesComponent implements OnInit {
       return;
     }
     const fileFolderId = parentDrop.id;
-    if(!this.utils.isValidObjectId(fileFolderId)) {
+    const fileDrop = event.item.data;
+
+    if (!this.utils.isValidObjectId(fileFolderId) || fileDrop.folderId === fileFolderId) {
       return;
     }
     const listFile2MoveFolder = [];
-    const fileDrop = event.item.data;
     // Thêm fileDrop vào danh sách
     listFile2MoveFolder.push(fileDrop);
     // Lọc các file đã chọn để loại bỏ fileDrop
@@ -455,9 +457,24 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
+  onDragStarted(file: File) {
+    console.log("🚀 ~ FilesComponent ~ onDragStarted ~ onDragStarted:")
+    const itemIdx = this.searchFile.files.findIndex((f: File) => f._id == file._id);
+    this.searchFile.files.splice(itemIdx + 1, 0, { ...file, temp: true });
+  }
+
+  onDragEnded(file: File) {
+    console.log("🚀 ~ FilesComponent ~ onDragEnded ~ onDragEnded:")
+    _.remove(this.searchFile.files, { temp: true });
+  }
+
   onSourceListExited(event: CdkDragExit<any>) {
-    console.log("🚀 ~ FilesComponent ~ onSourceListExited ~ event:", event)
+    console.log("🚀 ~ FilesComponent ~ onSourceListExited ~ onSourceListExited:")
     const itemIdx = this.searchFile.files.findIndex((file: File) => file._id == event.item.data._id);
+    const fileWithTemp = this.searchFile.files.find((file: File) => file.temp === true);
+    if (fileWithTemp) {
+      return;
+    }
     this.searchFile.files.splice(itemIdx + 1, 0, { ...event.item.data, temp: true });
   }
 

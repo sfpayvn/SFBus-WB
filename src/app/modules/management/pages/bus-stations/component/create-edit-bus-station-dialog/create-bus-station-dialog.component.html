@@ -1,0 +1,49 @@
+<mat-dialog-title class="text-center">
+  <span class="text-xl font-bold">{{ this.data.title }}</span>
+  <button class="absolute right-3" [matDialogClose]="">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+      <path
+        fill-rule="evenodd"
+        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd" />
+    </svg>
+  </button>
+</mat-dialog-title>
+<mat-dialog-content class="pb-5 pt-3">
+  <form class="sm:min-w-36 md:min-w-96 mx-auto" [formGroup]="busStationForm" (ngSubmit)="onSubmit()">
+    <div class="mb-5">
+      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">NAME</label>
+      <input
+        type="text"
+        id="busType-name"
+        formControlName="name"
+        [ngClass]="{'!border-red-500' : busStationForm.controls['name'].errors?.['required'] && busStationForm.controls['name'].touched}"
+        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" />
+      <p
+        class="mt-1 text-xs text-red-500"
+        *ngIf="busStationForm.controls['name'].errors?.['required'] && busStationForm.controls['name'].touched">
+        Vui lòng điền vào trường này
+      </p>
+    </div>
+    <div class="mb-5">
+      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Province</label>
+      <nz-select
+        class="border-border block w-full rounded-md border p-2 text-sm"
+        nzShowSearch
+        formControlName="busProvice"
+        nzPlaceHolder="Vui lòng chọn 1 Tỉnh">
+        @for (busProvice of busProvices; track busProvice._id) {
+        <nz-option [nzLabel]="busProvice.name" [nzValue]="busProvice._id"></nz-option>
+        }
+      </nz-select>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="line-block space-x-4 text-center">
+  <button
+    [matDialogClose]="this.busStation"
+    (click)="onSubmit()"
+    class="bg-primary text-primary-foreground flex-none rounded-md px-4 py-2.5 text-xs font-semibold">
+    SAVE
+  </button>
+</mat-dialog-actions>

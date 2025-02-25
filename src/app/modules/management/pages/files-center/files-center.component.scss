@@ -135,7 +135,8 @@ th {
 }
 
 .cdk-drag-placeholder {
-  opacity: 1;
+  opacity: 0;
+  display: none;
 }
 
 .cdk-drag-animating {

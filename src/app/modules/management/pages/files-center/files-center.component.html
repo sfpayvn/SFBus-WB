@@ -1,5 +1,5 @@
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl px-4 py-4">
-  <div class="flex min-h-[42px] pb-4">
+  <div class="flex min-h-[44px] pb-4">
     <div class="flex w-3/12">
       <label class="text-base font-medium">Trung tâm phương tiện</label>
     </div>
@@ -46,7 +46,7 @@
           [cdkDragData]="item"
           [cdkDragDisabled]="true"
           [id]="item._id"
-          class="disabled rounded-sm min-h-[34px]"
+          class="disabled min-h-[34px] rounded-sm"
           [ngClass]="{
             'hover:bg-card hover:text-foreground': !item.isEditing,
             'not-drop': !utils.isValidObjectId(item._id)
@@ -118,7 +118,7 @@
                 class="text-muted-foreground w-full py-2.5 pl-8 pr-2 text-sm"
                 placeholder="Tìm kiếm thư mục"
                 type="text"
-                (keyup.enter)="searchFileData($event)" />
+                (keyup)="searchFileData($event)" />
             </label>
           </div>
           <div class="flex w-4/12 justify-end">
@@ -171,13 +171,14 @@
           cdkDropListSortingDisabled
           [cdkDropListConnectedTo]="[fileFoldersList]"
           [cdkDropListEnterPredicate]="noReturnPredicate"
-          (cdkDropListExited)="onSourceListExited($event)"
-          (cdkDropListEntered)="onSourceListEntered($event)">
+          (cdkDropListExited)="onSourceListExited($event)">
           <div
             class="file col-span-2 {{ selectedFiles.length <= 5 ? 'file-p-' + selectedFiles.length : 'file-p-5' }}"
             *ngFor="let file of searchFile.files"
             cdkDrag
             [cdkDragData]="file"
+            (cdkDragStarted)="onDragStarted(file)"
+            (cdkDragEnded)="onDragEnded(file)"
             [ngClass]="{ selected: isSelected(file) }">
             <div
               class="box-img rounded-sm border border-gray-300"

@@ -1,0 +1,28 @@
+nz-select {
+    border: none !important;
+
+    nz-select-top-control {
+        height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
+        border-radius: var(--radius-md) !important;
+        border-style: var(--tw-border-style) !important;
+        border-width: 1px !important;
+        border-color: var(--color-border) !important;
+        background-color: var(--color-background) !important;
+        width: 100% !important;
+        font-size: var(--text-xs) !important;
+        line-height: var(--tw-leading, var(--text-xs--line-height)) !important;
+        color: var(--color-foreground) !important;
+
+        input {
+            height: 100% !important;
+            border: none !important;
+        }
+
+        input:focus {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+}

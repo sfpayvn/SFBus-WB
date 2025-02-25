@@ -11,6 +11,8 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 import { MaterialModule } from './library-modules/material-module';
 import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
 import { Utils } from './shared/utils/utils';
+import { AngularSvgIconModule } from 'angular-svg-icon';
+import { UtilsModal } from './shared/utils/utils-modal';
 
 
 @NgModule({
@@ -25,12 +27,12 @@ import { Utils } from './shared/utils/utils';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    AngularSvgIconModule.forRoot()
   ],
   providers: [
-    provideAnimationsAsync(), 
-    provideAnimations(), 
-    provideNzI18n(en_US), 
-    Utils,
+    provideAnimationsAsync(),
+    provideAnimations(),
+    provideNzI18n(en_US),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -16,7 +16,7 @@
     }
 }
 
-.custom-dialog-files-center {
+.custom-dialog {
     .mat-mdc-dialog-container {
         max-width: 100%;
 
@@ -26,8 +26,14 @@
 
     }
 
+    mat-dialog-content {
+        overflow: hidden;
+    }
+
     .mat-mdc-dialog-surface {
         max-width: 100%;
         padding: 0;
+
+
     }
 }

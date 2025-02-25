@@ -22,10 +22,13 @@ import { FilesComponent } from './pages/files-center/files-center.component';
 import { TriggerModalComponent } from './components/trigger-modal/trigger-modal.component';
 import { ClickOutsideDirective } from 'src/app/shared/directives/click-outside.directive';
 import { TriggerMaskComponent } from './components/trigger-mask/trigger-mask.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
 import { FilesCenterDialogComponent } from './pages/files-center/components/files-center-dialog/files-center-dialog.component';
+import { CreateEditBusProvinceDialogComponent } from './pages/bus-provices/component/create-edit-bus-province-dialog/create-bus-province-dialog.component';
+import { BusProvincesComponent } from './pages/bus-provices/bus-provinces.component';
+import { BusStationsComponent } from './pages/bus-stations/bus-stations.component';
+import { CreateEditBusStationDialogComponent } from './pages/bus-stations/component/create-edit-bus-station-dialog/create-bus-station-dialog.component';
+import { BusesComponent } from './pages/buses/buses.component';
+import { CreateEditBusDialogComponent } from './pages/buses/component/create-edit-bus-dialog/create-bus-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +48,16 @@ import { FilesCenterDialogComponent } from './pages/files-center/components/file
     BusServicesComponent,
 
     FilesComponent,
-    FilesCenterDialogComponent
+    FilesCenterDialogComponent,
+
+    CreateEditBusProvinceDialogComponent,
+    BusProvincesComponent,
+
+    CreateEditBusStationDialogComponent,
+    BusStationsComponent,
+
+    CreateEditBusDialogComponent,
+    BusesComponent
   ],
   imports: [
     CommonModule,
@@ -56,6 +68,7 @@ import { FilesCenterDialogComponent } from './pages/files-center/components/file
     DragDropModule,
     MaterialModule,
     NZModule,
+    ClickOutsideDirective,
     ClickOutsideDirective,
   ],
   exports: [
