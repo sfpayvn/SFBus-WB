@@ -5,6 +5,7 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusType, SearchBusType } from './model/bus-type.model';
 import { CreateEditBusTypeDialogComponent } from './component/create-edit-bus-type-dialog/create-bus-type-dialog.component';
 import { BusTypesService } from './service/bus-types.servive';
+import { Utils } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-bus-types',
@@ -24,7 +25,11 @@ export class BusTypesComponent implements OnInit {
 
   isLoadingBusType: boolean = false;
 
-  constructor(private busTypesService: BusTypesService, private dialog: MatDialog) { }
+  constructor(
+    private busTypesService: BusTypesService,
+    private dialog: MatDialog,
+    private utils: Utils
+  ) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -42,7 +47,7 @@ export class BusTypesComponent implements OnInit {
         this.isLoadingBusType = false;
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
         this.isLoadingBusType = false;
       },
     });
@@ -91,7 +96,7 @@ export class BusTypesComponent implements OnInit {
               toast.success('BusType deleted successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -116,7 +121,7 @@ export class BusTypesComponent implements OnInit {
               toast.success('BusType updated successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -138,7 +143,7 @@ export class BusTypesComponent implements OnInit {
               toast.success('BusType added successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });

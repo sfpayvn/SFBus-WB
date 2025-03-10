@@ -8,9 +8,10 @@ import { BusServicesComponent } from './pages/bus-services/bus-services.componen
 import { FilesComponent } from './pages/files-center/files-center.component';
 import { BusStationsComponent } from './pages/bus-stations/bus-stations.component';
 import { BusProvincesComponent } from './pages/bus-provices/bus-provinces.component';
-import { BusSeatTypesComponent } from './pages/bus-seat-types/bus-seat-types.component';
 import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.component';
 import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
+import { SeatTypesComponent } from './pages/seat-types/seat-types.component';
+import { BusesComponent } from './pages/buses/buses.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
     component: ManagementComponent,
     children: [
       { path: '', redirectTo: 'options', pathMatch: 'full' },
+      {
+        path: 'buses',
+        component: BusesComponent,
+      },
       {
         path: 'bus-provinves',
         component: BusProvincesComponent,
@@ -35,8 +40,8 @@ const routes: Routes = [
         component: BusServicesComponent,
       },
       {
-        path: 'bus-seat-type',
-        component: BusSeatTypesComponent,
+        path: 'seat-type',
+        component: SeatTypesComponent,
       },
       {
         path: 'bus-templates',

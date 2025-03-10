@@ -5,6 +5,7 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { CreateEditOptionDialogComponent } from '../../component/create-edit-option-dialog/create-edit-option-dialog.component';
 import { OptionsService } from '../../service/options.servive';
 import { Options, SearchOptions } from '../../model/options.model';
+import { Utils } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-options',
@@ -24,7 +25,7 @@ export class OptionsComponent implements OnInit {
 
   isLoadingOptions: boolean = false;
 
-  constructor(private optionsService: OptionsService, private dialog: MatDialog) { }
+  constructor(private optionsService: OptionsService, private dialog: MatDialog, private utils: Utils) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -42,7 +43,7 @@ export class OptionsComponent implements OnInit {
         this.isLoadingOptions = false;
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
         this.isLoadingOptions = false;
       },
     });
@@ -91,7 +92,7 @@ export class OptionsComponent implements OnInit {
               toast.success('Option deleted successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -116,7 +117,7 @@ export class OptionsComponent implements OnInit {
               toast.success('Option updated successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -138,7 +139,7 @@ export class OptionsComponent implements OnInit {
               toast.success('Option added successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });

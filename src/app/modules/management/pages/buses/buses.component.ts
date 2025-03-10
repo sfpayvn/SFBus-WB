@@ -5,6 +5,7 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { Bus, Bus2Create, SearchBus } from './model/bus.model';
 import { CreateEditBusDialogComponent } from './component/create-edit-bus-dialog/create-bus-dialog.component';
 import { BusService } from './service/buses.servive';
+import { Utils } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-buses',
@@ -28,6 +29,7 @@ export class BusesComponent implements OnInit {
   constructor(
     private busService: BusService,
     private dialog: MatDialog,
+    private utils: Utils
   ) { }
 
   ngOnInit(): void {
@@ -40,13 +42,14 @@ export class BusesComponent implements OnInit {
       next: (res: SearchBus) => {
         if (res) {
           this.searchBus = res;
+          console.log("🚀 ~ BusesComponent ~ this.busService.searchBus ~ this.searchBus:", this.searchBus)
           this.totalItem = this.searchBus.totalItem;
           this.totalPage = this.searchBus.totalPage;
         }
         this.isLoadingBus = false;
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
         this.isLoadingBus = false;
       },
     });
@@ -95,7 +98,7 @@ export class BusesComponent implements OnInit {
               toast.success('Bus deleted successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -120,7 +123,7 @@ export class BusesComponent implements OnInit {
               toast.success('Bus updated successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -146,7 +149,7 @@ export class BusesComponent implements OnInit {
               toast.success('Bus added successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });

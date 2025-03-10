@@ -29,10 +29,10 @@ import { BusStationsComponent } from './pages/bus-stations/bus-stations.componen
 import { CreateEditBusStationDialogComponent } from './pages/bus-stations/component/create-edit-bus-station-dialog/create-bus-station-dialog.component';
 import { BusesComponent } from './pages/buses/buses.component';
 import { CreateEditBusDialogComponent } from './pages/buses/component/create-edit-bus-dialog/create-bus-dialog.component';
-import { BusSeatTypesComponent } from './pages/bus-seat-types/bus-seat-types.component';
-import { CreateEditBusSeatTypeDialogComponent } from './pages/bus-seat-types/component/create-edit-bus-seat-types-dialog/create-bus-seat-type-dialog.component';
 import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.component';
 import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
+import { CreateEditSeatTypeDialogComponent } from './pages/seat-types/component/create-edit-seat-types-dialog/create-seat-type-dialog.component';
+import { SeatTypesComponent } from './pages/seat-types/seat-types.component';
 
 @NgModule({
   declarations: [
@@ -63,8 +63,8 @@ import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-temp
     CreateEditBusDialogComponent,
     BusesComponent,
 
-    CreateEditBusSeatTypeDialogComponent,
-    BusSeatTypesComponent,
+    CreateEditSeatTypeDialogComponent,
+    SeatTypesComponent,
 
     BusTemplatesComponent,
     BusTemplateDetailComponent
@@ -78,7 +78,6 @@ import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-temp
     DragDropModule,
     MaterialModule,
     NZModule,
-    ClickOutsideDirective,
     ClickOutsideDirective,
   ],
   exports: [

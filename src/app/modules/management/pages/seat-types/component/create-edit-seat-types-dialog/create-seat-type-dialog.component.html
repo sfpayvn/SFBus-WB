@@ -10,28 +10,28 @@
   </button>
 </mat-dialog-title>
 <mat-dialog-content>
-  <form class="sm:max-w-36 md:max-w-96" [formGroup]="busSeatTypeForm" nz-form (ngSubmit)="onSubmit()">
+  <form class="sm:max-w-36 md:max-w-96" [formGroup]="seatTypeForm" nz-form (ngSubmit)="onSubmit()">
     <div class="mb-5 flex w-full flex-row items-start gap-4">
       <div class="flex w-7/12 flex-col">
         <nz-form-item>
           <nz-form-label [nzSpan]="6" nzFor="name" class="!flex !h-[36px] !items-center !justify-start"
             >Name</nz-form-label
           >
-          <nz-form-control [nzErrorTip]="busSeatTypeNameErrorTpl" class="!flex !h-[56px] flex-col">
-            <nz-input-group [nzSuffix]="busSeatTypeNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+          <nz-form-control [nzErrorTip]="seatTypeNameErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group [nzSuffix]="seatTypeNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
               <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
             </nz-input-group>
-            <ng-template #busSeatTypeNameClearTpl>
+            <ng-template #seatTypeNameClearTpl>
               <span
                 nz-icon
                 class="ant-input-clear-icon"
                 nzTheme="fill"
                 nzType="close-circle"
-                (click)="busSeatTypeForm.controls['name'].patchValue('')"></span>
+                (click)="seatTypeForm.controls['name'].patchValue('')"></span>
             </ng-template>
-            <ng-template #busSeatTypeNameErrorTpl let-control>
+            <ng-template #seatTypeNameErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
-                @if (busSeatTypeForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+                @if (seatTypeForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
               </span>
             </ng-template>
           </nz-form-control>
@@ -40,7 +40,7 @@
       <div class="flex w-5/12">
         <label
           nz-checkbox
-          [(ngModel)]="this.busSeatType.isEnv"
+          [(ngModel)]="this.seatType.isEnv"
           [ngModelOptions]="{ standalone: true }"
           (ngModelChange)="processIsEnv($event)"
           >Is Environment</label
@@ -52,13 +52,13 @@
         <div>
           <label for="base-input" class="mb-2 block text-sm text-gray-900 dark:text-white">Main Icon</label>
         </div>
-        @if(!busSeatTypeIcon){
+        @if(!seatTypeIcon){
         <div
           nz-popover
           [nzPopoverContent]="contentIconTemplate"
           class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500"
-          [ngClass]="{'border-red-500' : busSeatTypeForm.controls['icon'].errors?.['required']
-            && busSeatTypeForm.controls['icon'].touched}">
+          [ngClass]="{'border-red-500' : seatTypeForm.controls['icon'].errors?.['required']
+            && seatTypeForm.controls['icon'].touched}">
           <div class="mx-auto-8 left-0 m-auto block flex h-full w-full flex-wrap content-center items-center px-4">
             <div class="flex w-full flex-wrap justify-center pb-5 text-center">
               <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
@@ -91,13 +91,13 @@
         </ng-template>
         <p
           class="animate-fade-in-down mt-1 text-xs text-red-500"
-          *ngIf="busSeatTypeForm.controls['icon'].errors?.['required'] && busSeatTypeForm.controls['icon'].touched">
+          *ngIf="seatTypeForm.controls['icon'].errors?.['required'] && seatTypeForm.controls['icon'].touched">
           Vui lòng upload ảnh cho trường này
         </p>
         }@else {
         <div class="relative h-32 w-32 select-none rounded border border-gray-200">
           <div class="flex h-full w-full cursor-pointer items-center justify-center">
-            <svg-icon svgClass="w-10 h-10" [src]="busSeatTypeIcon"></svg-icon>
+            <svg-icon svgClass="w-10 h-10" [src]="seatTypeIcon"></svg-icon>
             <div
               class="action-preview-img absolute top-0 right-0 flex h-full w-full items-center justify-center opacity-0">
               <button (click)="removeFileImage('icon')">
@@ -119,17 +119,17 @@
         </div>
         }
       </div>
-      <div class="flex w-4/12 flex-col" [ngClass]="{ 'pointer-events-none opacity-[0.3]': this.busSeatType.isEnv }">
+      <div class="flex w-4/12 flex-col" [ngClass]="{ 'pointer-events-none opacity-[0.3]': this.seatType.isEnv }">
         <div>
           <label for="base-input" class="mb-2 block text-sm text-gray-900 dark:text-white">Block Icon</label>
         </div>
-        @if(!busSeatTypeBlockIcon){
+        @if(!seatTypeBlockIcon){
         <div
           nz-popover
           [nzPopoverContent]="contentBlockIconTemplate"
           class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500"
-          [ngClass]="{'border-red-500' : busSeatTypeForm.controls['blockIcon'].errors?.['required']
-            && busSeatTypeForm.controls['blockIcon'].touched}">
+          [ngClass]="{'border-red-500' : seatTypeForm.controls['blockIcon'].errors?.['required']
+            && seatTypeForm.controls['blockIcon'].touched}">
           <div class="mx-auto-8 left-0 m-auto block flex h-full w-full flex-wrap content-center items-center px-4">
             <div class="flex w-full flex-wrap justify-center pb-5 text-center">
               <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
@@ -162,13 +162,13 @@
         </ng-template>
         <p
           class="animate-fade-in-down mt-1 text-xs text-red-500"
-          *ngIf="busSeatTypeForm.controls['blockIcon'].errors?.['required'] && busSeatTypeForm.controls['blockIcon'].touched">
+          *ngIf="seatTypeForm.controls['blockIcon'].errors?.['required'] && seatTypeForm.controls['blockIcon'].touched">
           Vui lòng upload ảnh cho trường này
         </p>
         }@else {
         <div class="relative h-32 w-32 select-none rounded border border-gray-200">
           <div class="flex h-full w-full cursor-pointer items-center justify-center">
-            <svg-icon svgClass="w-10 h-10" [src]="busSeatTypeBlockIcon"></svg-icon>
+            <svg-icon svgClass="w-10 h-10" [src]="seatTypeBlockIcon"></svg-icon>
             <div
               class="action-preview-img absolute top-0 right-0 flex h-full w-full items-center justify-center opacity-0">
               <button (click)="removeFileImage('blockIcon')">
@@ -190,17 +190,17 @@
         </div>
         }
       </div>
-      <div class="flex w-4/12 flex-col" [ngClass]="{ 'pointer-events-none opacity-[0.3]': this.busSeatType.isEnv }">
+      <div class="flex w-4/12 flex-col" [ngClass]="{ 'pointer-events-none opacity-[0.3]': this.seatType.isEnv }">
         <div>
           <label for="base-input" class="mb-2 block text-sm text-gray-900 dark:text-white">Selected Icon</label>
         </div>
-        @if(!busSeatTypeSelectedIcon){
+        @if(!seatTypeSelectedIcon){
         <div
           nz-popover
           [nzPopoverContent]="contentSelectedIconTemplate"
           class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500"
-          [ngClass]="{'border-red-500' : busSeatTypeForm.controls['selectedIcon'].errors?.['required']
-            && busSeatTypeForm.controls['selectedIcon'].touched}">
+          [ngClass]="{'border-red-500' : seatTypeForm.controls['selectedIcon'].errors?.['required']
+            && seatTypeForm.controls['selectedIcon'].touched}">
           <div class="mx-auto-8 left-0 m-auto block flex h-full w-full flex-wrap content-center items-center px-4">
             <div class="flex w-full flex-wrap justify-center pb-5 text-center">
               <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
@@ -233,13 +233,13 @@
         </ng-template>
         <p
           class="animate-fade-in-down mt-1 text-xs text-red-500"
-          *ngIf="busSeatTypeForm.controls['selectedIcon'].errors?.['required'] && busSeatTypeForm.controls['selectedIcon'].touched">
+          *ngIf="seatTypeForm.controls['selectedIcon'].errors?.['required'] && seatTypeForm.controls['selectedIcon'].touched">
           Vui lòng upload ảnh cho trường này
         </p>
         }@else {
         <div class="relative h-32 w-32 select-none rounded border border-gray-200">
           <div class="flex h-full w-full cursor-pointer items-center justify-center">
-            <svg-icon svgClass="w-10 h-10" [src]="busSeatTypeSelectedIcon"></svg-icon>
+            <svg-icon svgClass="w-10 h-10" [src]="seatTypeSelectedIcon"></svg-icon>
             <div
               class="action-preview-img absolute top-0 right-0 flex h-full w-full items-center justify-center opacity-0">
               <button (click)="removeFileImage('selectedIcon')">

@@ -6,6 +6,8 @@
 /* Row styling */
 .row {
     display: flex;
+    gap: 5px;
+    flex-direction: row;
 }
 
 /* Cell styling */

@@ -5,16 +5,28 @@ export class SearchBusTemplate {
   totalPage: number = 0;
 }
 
+export class BusTemplateSeat {
+  _id: string = '';
+  index: number = 0;
+  typeId: string = '';
+  name: string = '';
+  status: string = '';
+}
+
+export class BusTemplateSeatLayout {
+  name: string = '';
+  seats: BusTemplateSeat[] = [];
+}
+
 export class BusTemplate {
   _id: string = '';
   name: string = '';
-  icon: string = '';
+  seatLayouts: BusTemplateSeatLayout[] = [];
   selected: boolean = false;
 }
 
+export interface BusTemplate2Create extends Omit<BusTemplate, '_id' | 'selected'> { }
 export class BusTemplate2Create {
-  icon!: string;
-  name: string = '';
 }
 
 export class BusTemplate2Update extends BusTemplate2Create {

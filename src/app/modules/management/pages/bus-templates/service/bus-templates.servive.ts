@@ -26,24 +26,16 @@ export class BusTemplatesService {
     );
   }
 
-  createBusTemplate(busServiceIconFile: FileList, busService2Create: BusTemplate2Create) {
+  createBusTemplate(busService2Create: BusTemplate2Create) {
     const url = this.url;
-
-    return this.filesService.uploadFiles(busServiceIconFile).pipe(
-      switchMap((res: any) => {
-        console.log("🚀 ~ BusTemplatesService ~ switchMap ~ res:", res)
-        busService2Create.icon = res.ids[0];
-        console.log("🚀 ~ BusTemplatesService ~ switchMap ~ busService2Create:", busService2Create)
-        return this.apiGatewayService.post(url, busService2Create).pipe(
-          tap((res: any) => {
-          }),
-          catchError((error) => {
-            //write log
-            return of([]);
-          }),
-        );
-      })
-    )
+    return this.apiGatewayService.post(url, busService2Create).pipe(
+      tap((res: any) => {
+      }),
+      catchError((error) => {
+        //write log
+        return of([]);
+      }),
+    );
   }
 
   updateBusTemplate(busService2Update: BusTemplate2Update) {

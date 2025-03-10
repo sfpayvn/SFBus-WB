@@ -9,6 +9,7 @@ import { BusStationsService } from '../bus-stations/service/bus-stations.servive
 import { combineLatest } from 'rxjs';
 import { BusStation } from '../bus-stations/model/bus-station.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
+import { Utils } from 'src/app/shared/utils/utils';
 
 export interface filteredProvinces extends BusProvince {
   busStations: BusStation[],
@@ -44,6 +45,7 @@ export class BusProvincesComponent implements OnInit {
     private busProvincesService: BusProvincesService,
     private busStationsService: BusStationsService,
     private utilsModal: UtilsModal,
+    private utils: Utils
   ) { }
 
   ngOnInit(): void {
@@ -159,7 +161,7 @@ export class BusProvincesComponent implements OnInit {
     //           toast.success('BusProvince deleted successfully');
     //         }
     //       },
-    //       error: (error: any) => this.handleRequestError(error),
+    //       error: (error: any) => this.utils.handleRequestError(error),
     //     });
     //   }
     // });
@@ -186,7 +188,7 @@ export class BusProvincesComponent implements OnInit {
               this.loadData();
               toast.success('Cập nhập thành công ');
             }
-          }, error: (error: any) => this.handleRequestError(error),
+          }, error: (error: any) => this.utils.handleRequestError(error),
         });
 
       }
@@ -213,7 +215,7 @@ export class BusProvincesComponent implements OnInit {
     //           toast.success('BusProvince added successfully');
     //         }
     //       },
-    //       error: (error: any) => this.handleRequestError(error),
+    //       error: (error: any) => this.utils.handleRequestError(error),
     //     });
     //   }
     // });

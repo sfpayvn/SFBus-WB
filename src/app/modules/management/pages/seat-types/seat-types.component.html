@@ -6,31 +6,31 @@
       Import CSV
     </button>
     <button
-      (click)="addBusSeatType()"
+      (click)="addSeatType()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
-      aria-label="Add BusSeatType">
-      Add BusSeatType
+      aria-label="Add SeatType">
+      Add SeatType
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'BusSeatType'"
+    [title]="'SeatType'"
     [totalItem]="totalItem"
-    (sortDataEvent)="sortBusSeatTypePage($event)"
-    (searchDataEvent)="searchBusSeatTypePage($event)"></app-table-action>
+    (sortDataEvent)="sortSeatTypePage($event)"
+    (searchDataEvent)="searchSeatTypePage($event)"></app-table-action>
   <div class="overflow-x-auto">
     <table class="text-muted-foreground w-full table-auto border-collapse text-left align-middle leading-5">
       <thead class="border-muted/20 text-muted-foreground border text-xs">
         <tr>
           <th class="w-[50px]">
             <input
-              (change)="toggleBusSeatType($event)"
+              (change)="toggleSeatType($event)"
               [(ngModel)]="selectAll"
               class="checkbox checkbox-sm"
               type="checkbox"
-              aria-label="Select all busSeatType" />
+              aria-label="Select all seatType" />
           </th>
           <th class="w-[50px]">Icon</th>
           <th class="min-w-[200px]">Name</th>
@@ -38,7 +38,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (busService of searchBusSeatType.seatTypes; track busService._id) {
+        @for (busService of searchSeatType.seatTypes; track busService._id) {
         <tr class="hover:bg-card/50">
           <td class="text-center">
             <input
@@ -54,7 +54,7 @@
           <td>{{ busService.name }}</td>
           <td class="text-center">
             <button
-              (click)="editBusSeatType(busService)"
+              (click)="editSeatType(busService)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
               aria-label="Edit busService">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -63,7 +63,7 @@
               </svg>
             </button>
             <button
-              (click)="deleteBusSeatType(busService._id)"
+              (click)="deleteSeatType(busService._id)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
               aria-label="Delete busService">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -77,7 +77,7 @@
         </tr>
         } @empty {
         <tr>
-          <td class="py-4 text-center text-sm" colspan="4">No busSeatType found</td>
+          <td class="py-4 text-center text-sm" colspan="4">No seatType found</td>
         </tr>
         }
       </tbody>
@@ -87,8 +87,8 @@
     [pageIdx]="pageIdx"
     [pageSize]="pageSize"
     [totalItem]="totalItem"
-    [isLoading]="isLoadingBusSeatType"
+    [isLoading]="isLoadingSeatType"
     [totalPage]="totalPage"
-    (reloadDataAndPageEvent)="reloadBusSeatTypePage($event)">
+    (reloadDataAndPageEvent)="reloadSeatTypePage($event)">
   </app-table-footer>
 </div>

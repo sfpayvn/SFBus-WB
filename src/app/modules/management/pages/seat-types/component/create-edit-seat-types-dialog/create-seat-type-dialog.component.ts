@@ -1,6 +1,6 @@
 import { Component, inject, model, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { BusSeatType, BusSeatType2Create } from '../../model/bus-seat-type.model';
+import { SeatType, SeatType2Create } from '../../model/seat-type.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { FilesCenterDialogComponent } from '../../../files-center/components/files-center-dialog/files-center-dialog.component';
@@ -9,30 +9,30 @@ import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 
 export interface DialogData {
   title: string;
-  busSeatType: BusSeatType;
+  seatType: SeatType;
 }
 
 @Component({
-  selector: 'app-create-bus-seat-type-dialog',
-  templateUrl: './create-bus-seat-type-dialog.component.html',
-  styleUrl: './create-bus-seat-type-dialog.component.scss',
+  selector: 'app-create-seat-type-dialog',
+  templateUrl: './create-seat-type-dialog.component.html',
+  styleUrl: './create-seat-type-dialog.component.scss',
   standalone: false
 })
-export class CreateEditBusSeatTypeDialogComponent implements OnInit {
-  dialogRef = inject(MatDialogRef<CreateEditBusSeatTypeDialogComponent>);
+export class CreateEditSeatTypeDialogComponent implements OnInit {
+  dialogRef = inject(MatDialogRef<CreateEditSeatTypeDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
-  busSeatType: BusSeatType = this.data.busSeatType ?? new BusSeatType2Create();
+  seatType: SeatType = this.data.seatType ?? new SeatType2Create();
 
-  busSeatTypeForm!: FormGroup;
+  seatTypeForm!: FormGroup;
 
-  busSeatTypeIcon!: string;
-  busSeatTypeIconFile!: File;
+  seatTypeIcon!: string;
+  seatTypeIconFile!: File;
 
-  busSeatTypeBlockIcon!: string;
-  busSeatTypeBlockIconFile!: File;
+  seatTypeBlockIcon!: string;
+  seatTypeBlockIconFile!: File;
 
-  busSeatTypeSelectedIcon!: string;
-  busSeatTypeSelectedIconFile!: File;
+  seatTypeSelectedIcon!: string;
+  seatTypeSelectedIconFile!: File;
 
   constructor(
     private fb: FormBuilder,
@@ -42,22 +42,22 @@ export class CreateEditBusSeatTypeDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data) {
-      this.busSeatTypeIcon = this.busSeatType.icon;
-      this.busSeatTypeBlockIcon = this.busSeatType.blockIcon;
-      this.busSeatTypeSelectedIcon = this.busSeatType.selectedIcon;
+      this.seatTypeIcon = this.seatType.icon;
+      this.seatTypeBlockIcon = this.seatType.blockIcon;
+      this.seatTypeSelectedIcon = this.seatType.selectedIcon;
     }
     this.initForm();
   }
 
 
   private async initForm() {
-    this.busSeatTypeForm = this.fb.group({
-      name: [this.busSeatType.name, [Validators.required]],
-      icon: [this.busSeatType.icon, Validators.required],
-      blockIcon: [this.busSeatType.blockIcon],
-      selectedIcon: [this.busSeatType.selectedIcon],
+    this.seatTypeForm = this.fb.group({
+      name: [this.seatType.name, [Validators.required]],
+      icon: [this.seatType.icon, Validators.required],
+      blockIcon: [this.seatType.blockIcon],
+      selectedIcon: [this.seatType.selectedIcon],
     });
-    this.processIsEnv(this.busSeatType.isEnv);
+    this.processIsEnv(this.seatType.isEnv);
   }
 
   processIsEnv(isEnv: any) {
@@ -71,7 +71,7 @@ export class CreateEditBusSeatTypeDialogComponent implements OnInit {
   }
 
   updateValidators = (controlName: string, shouldSet: boolean) => {
-    const control = this.busSeatTypeForm.get(controlName);
+    const control = this.seatTypeForm.get(controlName);
     if (control) {
       shouldSet ? control.setValidators(Validators.required) : control.clearValidators();
       control.updateValueAndValidity(); // Cập nhật giá trị và trạng thái của validator
@@ -92,13 +92,13 @@ export class CreateEditBusSeatTypeDialogComponent implements OnInit {
 
     switch (type) {
       case 'icon':
-        this.busSeatTypeIconFile = file;
+        this.seatTypeIconFile = file;
         break;
       case 'blockIcon':
-        this.busSeatTypeBlockIconFile = file;
+        this.seatTypeBlockIconFile = file;
         break;
       case 'selectedIcon':
-        this.busSeatTypeSelectedIconFile = file;
+        this.seatTypeSelectedIconFile = file;
         break;
 
       default:
@@ -120,13 +120,13 @@ export class CreateEditBusSeatTypeDialogComponent implements OnInit {
 
       switch (type) {
         case 'icon':
-          this.busSeatTypeIcon = blobUrl;
+          this.seatTypeIcon = blobUrl;
           break;
         case 'blockIcon':
-          this.busSeatTypeBlockIcon = blobUrl;
+          this.seatTypeBlockIcon = blobUrl;
           break;
         case 'selectedIcon':
-          this.busSeatTypeSelectedIcon = blobUrl;
+          this.seatTypeSelectedIcon = blobUrl;
           break;
 
         default:
@@ -141,16 +141,16 @@ export class CreateEditBusSeatTypeDialogComponent implements OnInit {
 
     switch (type) {
       case 'icon':
-        this.busSeatTypeIcon = '';
-        this.busSeatTypeForm.patchValue({ icon: '' });
+        this.seatTypeIcon = '';
+        this.seatTypeForm.patchValue({ icon: '' });
         break;
       case 'blockIcon':
-        this.busSeatTypeBlockIcon = '';
-        this.busSeatTypeForm.patchValue({ blockIcon: '' });
+        this.seatTypeBlockIcon = '';
+        this.seatTypeForm.patchValue({ blockIcon: '' });
         break;
       case 'selectedIcon':
-        this.busSeatTypeSelectedIcon = '';
-        this.busSeatTypeForm.patchValue({ selectedIcon: '' });
+        this.seatTypeSelectedIcon = '';
+        this.seatTypeForm.patchValue({ selectedIcon: '' });
         break;
 
       default:
@@ -161,35 +161,35 @@ export class CreateEditBusSeatTypeDialogComponent implements OnInit {
   openFilesCenterDialog(type: string) {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
-      this.busSeatTypeIcon = files[0].link;
-      this.busSeatTypeForm.patchValue({ icon: files[0]._id });
+      this.seatTypeIcon = files[0].link;
+      this.seatTypeForm.patchValue({ icon: files[0]._id });
     });
   }
 
   onSubmit() {
-    if (!this.busSeatTypeForm.valid) {
-      this.utils.markFormGroupTouched(this.busSeatTypeForm);
+    if (!this.seatTypeForm.valid) {
+      this.utils.markFormGroupTouched(this.seatTypeForm);
       return;
     }
 
-    const { name } = this.busSeatTypeForm.getRawValue();
+    const { name } = this.seatTypeForm.getRawValue();
 
     let dataTransfer = new DataTransfer();
 
-    // Validate and add busSeatTypeIconFile
-    if (this.busSeatTypeIconFile) {
-      dataTransfer.items.add(this.busSeatTypeIconFile);
+    // Validate and add seatTypeIconFile
+    if (this.seatTypeIconFile) {
+      dataTransfer.items.add(this.seatTypeIconFile);
     }
 
-    if (!this.busSeatType.isEnv) {
-      // Validate and add busSeatTypeBlockIconFile
-      if (this.busSeatTypeBlockIconFile) {
-        dataTransfer.items.add(this.busSeatTypeBlockIconFile);
+    if (!this.seatType.isEnv) {
+      // Validate and add seatTypeBlockIconFile
+      if (this.seatTypeBlockIconFile) {
+        dataTransfer.items.add(this.seatTypeBlockIconFile);
       }
 
-      // Validate and add busSeatTypeSelectedIconFile
-      if (this.busSeatTypeSelectedIconFile) {
-        dataTransfer.items.add(this.busSeatTypeSelectedIconFile);
+      // Validate and add seatTypeSelectedIconFile
+      if (this.seatTypeSelectedIconFile) {
+        dataTransfer.items.add(this.seatTypeSelectedIconFile);
       }
     }
 
@@ -197,7 +197,7 @@ export class CreateEditBusSeatTypeDialogComponent implements OnInit {
 
     const data = {
       name,
-      isEnv: this.busSeatType.isEnv,
+      isEnv: this.seatType.isEnv,
       files: files,
     };
     this.dialogRef.close(data);

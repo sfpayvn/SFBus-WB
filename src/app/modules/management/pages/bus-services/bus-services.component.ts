@@ -5,6 +5,7 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusService, BusService2Create, SearchBusService } from './model/bus-service.model';
 import { CreateEditBusServiceDialogComponent } from './component/create-edit-bus-service-dialog/create-bus-service-dialog.component';
 import { BusServicesService } from './service/bus-services.servive';
+import { Utils } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-bus-services',
@@ -28,6 +29,7 @@ export class BusServicesComponent implements OnInit {
   constructor(
     private busServicesService: BusServicesService,
     private dialog: MatDialog,
+    private utils: Utils
   ) { }
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class BusServicesComponent implements OnInit {
         this.isLoadingBusService = false;
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
         this.isLoadingBusService = false;
       },
     });
@@ -95,7 +97,7 @@ export class BusServicesComponent implements OnInit {
               toast.success('BusService deleted successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -124,7 +126,7 @@ export class BusServicesComponent implements OnInit {
               toast.success('BusService updated successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -150,7 +152,7 @@ export class BusServicesComponent implements OnInit {
               toast.success('BusService added successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });

@@ -8,7 +8,7 @@ import { FilesService } from '../../files-center/service/files-center.servive';
   providedIn: 'root',
 })
 export class BusService {
-  url = '/bus-province';
+  url = '/buses';
 
   constructor(
     private apiGatewayService: ApiGatewayService,

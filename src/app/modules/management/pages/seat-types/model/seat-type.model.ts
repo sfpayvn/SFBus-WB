@@ -1,11 +1,11 @@
-export class SearchBusSeatType {
-  seatTypes: BusSeatType[] = [];
+export class SearchSeatType {
+  seatTypes: SeatType[] = [];
   pageIdx: number = 0;
   totalItem: number = 0;
   totalPage: number = 0;
 }
 
-export class BusSeatType {
+export class SeatType {
   _id: string = '';
   name: string = '';
   icon: string = '';
@@ -15,7 +15,7 @@ export class BusSeatType {
   isEnv: boolean = false;
 }
 
-export class BusSeatType2Create {
+export class SeatType2Create {
   icon!: string;
   isEnv: boolean = false;
   blockIcon!: string;
@@ -23,6 +23,6 @@ export class BusSeatType2Create {
   name: string = '';
 }
 
-export class BusSeatType2Update extends BusSeatType2Create {
+export class SeatType2Update extends SeatType2Create {
   _id: string = '';
 }

@@ -5,6 +5,7 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusTemplate, BusTemplate2Create, SearchBusTemplate } from './model/bus-template.model';
 import { BusTemplatesService } from './service/bus-templates.servive';
 import { Router } from '@angular/router';
+import { Utils } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-bus-templates',
@@ -28,7 +29,8 @@ export class BusTemplatesComponent implements OnInit {
   constructor(
     private busTemplateService: BusTemplatesService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private utils: Utils
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +49,7 @@ export class BusTemplatesComponent implements OnInit {
         this.isLoadingBusTemplate = false;
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
         this.isLoadingBusTemplate = false;
       },
     });
@@ -96,14 +98,16 @@ export class BusTemplatesComponent implements OnInit {
               toast.success('BusTemplate deleted successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
   }
 
   editBusTemplate(busTemplate: BusTemplate): void {
-    this.router.navigate(['/management/bus-templates/bus-tempalte-detail', { state: busTemplate }]);
+    const params = { busTemplate: JSON.stringify(busTemplate) };
+    this.router.navigateByUrl('/management/bus-templates/bus-tempalte-detail', { state: params });
+    console.log("🚀 ~ BusTemplatesComponent ~ editBusTemplate ~ params:", params)
   }
 
   addBusTemplate(): void {

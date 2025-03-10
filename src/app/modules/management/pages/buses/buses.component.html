@@ -33,6 +33,7 @@
               aria-label="Select all busProvinces" />
           </th>
           <th class="min-w-[200px]">Name</th>
+          <th class="min-w-[200px]">License Plate</th>
           <th class="w-[100px] text-center">Actions</th>
         </tr>
       </thead>
@@ -48,6 +49,7 @@
               [attr.aria-label]="'Select ' + busProvince.name" />
           </td>
           <td>{{ busProvince.name }}</td>
+          <td>{{ busProvince.licensePlate }}</td>
           <td class="text-center">
             <button
               (click)="editBus(busProvince)"

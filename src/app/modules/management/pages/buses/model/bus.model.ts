@@ -8,13 +8,12 @@ export class SearchBus {
 export class Bus {
   _id: string = '';
   name: string = '';
-  icon: string = '';
+  licensePlate: string = '';
   selected: boolean = false;
 }
 
+export interface Bus2Create extends Omit<Bus, '_id' | 'selected'> { }
 export class Bus2Create {
-  icon!: string;
-  name: string = '';
 }
 
 export class Bus2Update extends Bus2Create {

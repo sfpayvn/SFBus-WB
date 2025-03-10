@@ -41,13 +41,13 @@ export class Menu {
           label: 'Bus',
           route: '/management',
           children: [
+            { label: 'Buses', route: '/management/buses' },
             { label: 'Bus Provices', route: '/management/bus-provinves' },
             { label: 'Bus Stations', route: '/management/bus-stations' },
             { label: 'Bus Types', route: '/management/bus-types' },
             { label: 'Bus Services', route: '/management/bus-services' },
-            { label: 'Bus Seat Types', route: '/management/bus-seat-type' },
             { label: 'Bus Templates', route: '/management/bus-templates' },
-
+            { label: 'Seat Types', route: '/management/seat-type' },
           ],
         },
         {

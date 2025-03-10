@@ -7,6 +7,7 @@ import { CreateEditBusStationDialogComponent } from './component/create-edit-bus
 import { BusStationsService } from './service/bus-stations.servive';
 import { BusProvince } from '../bus-provices/model/bus-province.model';
 import { BusProvincesService } from '../bus-provices/service/bus-provinces.servive';
+import { Utils } from 'src/app/shared/utils/utils';
 
 @Component({
   selector: 'app-bus-stations',
@@ -32,7 +33,8 @@ export class BusStationsComponent implements OnInit {
   constructor(
     private busStationsService: BusStationsService,
     private dialog: MatDialog,
-    private busProvincesService: BusProvincesService
+    private busProvincesService: BusProvincesService,
+    private utils: Utils
   ) { }
 
   ngOnInit(): void {
@@ -51,7 +53,7 @@ export class BusStationsComponent implements OnInit {
         this.isLoadingBusStation = false;
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
         this.isLoadingBusStation = false;
       },
     });
@@ -62,7 +64,7 @@ export class BusStationsComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.handleRequestError(error);
+        this.utils.handleRequestError(error);
       },
     })
   }
@@ -110,7 +112,7 @@ export class BusStationsComponent implements OnInit {
               toast.success('BusStation deleted successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -136,7 +138,7 @@ export class BusStationsComponent implements OnInit {
               toast.success('BusStation updated successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });
@@ -163,7 +165,7 @@ export class BusStationsComponent implements OnInit {
               toast.success('BusStation added successfully');
             }
           },
-          error: (error: any) => this.handleRequestError(error),
+          error: (error: any) => this.utils.handleRequestError(error),
         });
       }
     });

@@ -9,7 +9,7 @@
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
-  <form class="sm:min-w-36 md:min-w-96" [formGroup]="busTemplateDetailForm" nz-form (ngSubmit)="onSubmit()">
+  <form class="sm:min-w-36 md:min-w-96" [formGroup]="busTemplateDetailForm" nz-form *ngIf="busTemplateDetailForm">
     <div class="mb-5 w-full">
       <nz-form-item>
         <nz-form-label [nzSpan]="6" nzFor="name" class="!flex !h-[36px] !items-center !justify-start"
@@ -37,7 +37,7 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-    <div formArrayName="layouts">
+    <div formArrayName="layouts" *ngIf="layouts">
       <nz-tabset
         [(nzSelectedIndex)]="selectedIndex"
         nzType="editable-card"
@@ -80,17 +80,10 @@
               </div>
               <div class="flex gap-4">
                 <button
-                  class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
-                  nz-button
-                  nzType="default"
-                  (click)="saveSelected()">
-                  Lưu
-                </button>
-                <button
                   class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
                   nz-button
                   nzType="default"
-                  (click)="resetSelected()">
+                  (click)="resetLayout()">
                   Reset
                 </button>
               </div>
@@ -98,21 +91,21 @@
             <div class="flex gap-4">
               <button
                 class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!bg-blue-200"
-                [ngClass]="{ '!border !border-blue-500 !bg-blue-200': currentBusSeatTypeId == busSeatType._id }"
+                [ngClass]="{ '!border !border-blue-500 !bg-blue-200': currentSeatTypeId == seatType._id }"
                 nz-button
                 nzType="default"
-                *ngFor="let busSeatType of busSeatTypes"
-                (click)="selectBusSeatType(busSeatType._id)">
-                <svg-icon [src]="busSeatType.icon" [svgClass]="'h-8 w-8'"> </svg-icon>
+                *ngFor="let seatType of seatTypes"
+                (click)="selectSeatType(seatType._id)">
+                <svg-icon [src]="seatType.icon" [svgClass]="'h-8 w-8'"> </svg-icon>
               </button>
             </div>
           </div>
-          <div class="matrix">
-            <div *ngFor="let row of layout.get('seatsLayoutForMatrix')?.value; let i = index" class="row">
+          <div class="matrix justify-center pt-10">
+            <div *ngFor="let row of layout.get('seats')?.value; let i = index" class="row">
               <div
                 *ngFor="let cell of row; let j = index"
                 id="cell-{{ i }}-{{ j }}"
-                class="relative flex items-center justify-center">
+                class="relative flex items-center justify-center status-{{ cell.status }}">
                 <div
                   [class.cell]="!cell.isSelected"
                   [class.selected]="cell.isSelected"
@@ -123,7 +116,7 @@
                   (mouseleave)="onMouseLeave($event)"
                   (contextmenu)="startEdit(i, j, $event)"
                   (click)="onClick(i, j, $event)">
-                  <ng-container *ngIf="cell.busSeatTypeId !== ''">
+                  <ng-container *ngIf="cell.typeId !== ''">
                     <svg-icon
                       [src]="cell.icon"
                       [svgClass]="'h-16 w-16'"
@@ -141,6 +134,8 @@
                     class="cell-input"
                     [class.has-error]="cell.hasError"
                     [(ngModel)]="cell.name"
+                    (blur)="saveEdit(i, j)"
+                    [ngModelOptions]="{ standalone: true }"
                     (keydown.enter)="saveEdit(i, j)" />
                 </div>
               </div>
@@ -153,6 +148,15 @@
           <svg-icon src="assets/icons/create-new-layout.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
         </div>
       </ng-template>
+    </div>
+    <div class="my-5 flex w-full justify-end">
+      <button
+        class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+        nz-button
+        nzType="default"
+        (click)="onSubmit()">
+        SAVE
+      </button>
     </div>
   </form>
 </div>
