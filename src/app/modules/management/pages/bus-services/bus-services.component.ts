@@ -111,7 +111,11 @@ export class BusServicesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busServicesService.updateBusService(result).subscribe({
+        const busServiceType2Update = {
+          ...busService,
+          name: result.name,
+        };
+        this.busServicesService.processUpdateBusService(result.files, busServiceType2Update).subscribe({
           next: (res: BusService) => {
             if (res) {
               this.searchBusService.busServices = this.searchBusService.busServices.map((busService: BusService) =>
@@ -139,7 +143,7 @@ export class BusServicesComponent implements OnInit {
         const busService2Create = new BusService2Create();
         busService2Create.name = result.name;
 
-        this.busServicesService.createBusService(result.file, busService2Create).subscribe({
+        this.busServicesService.createBusService(result.files, busService2Create).subscribe({
           next: (res: BusService) => {
             if (res) {
               this.loadData();

@@ -29,6 +29,10 @@ import { BusStationsComponent } from './pages/bus-stations/bus-stations.componen
 import { CreateEditBusStationDialogComponent } from './pages/bus-stations/component/create-edit-bus-station-dialog/create-bus-station-dialog.component';
 import { BusesComponent } from './pages/buses/buses.component';
 import { CreateEditBusDialogComponent } from './pages/buses/component/create-edit-bus-dialog/create-bus-dialog.component';
+import { BusSeatTypesComponent } from './pages/bus-seat-types/bus-seat-types.component';
+import { CreateEditBusSeatTypeDialogComponent } from './pages/bus-seat-types/component/create-edit-bus-seat-types-dialog/create-bus-seat-type-dialog.component';
+import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.component';
+import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +61,13 @@ import { CreateEditBusDialogComponent } from './pages/buses/component/create-edi
     BusStationsComponent,
 
     CreateEditBusDialogComponent,
-    BusesComponent
+    BusesComponent,
+
+    CreateEditBusSeatTypeDialogComponent,
+    BusSeatTypesComponent,
+
+    BusTemplatesComponent,
+    BusTemplateDetailComponent
   ],
   imports: [
     CommonModule,

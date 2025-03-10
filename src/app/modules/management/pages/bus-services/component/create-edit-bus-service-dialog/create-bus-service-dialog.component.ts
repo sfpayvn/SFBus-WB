@@ -27,7 +27,7 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
   busServiceForm!: FormGroup;
 
   busServiceIcon!: string;
-  busServiceIconFile!: FileList;
+  busServiceIconFile!: File;
 
   constructor(
     private fb: FormBuilder,
@@ -59,9 +59,9 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
 
   onFileChange(event: any) {
     const files: FileList = event.target.files;
-    this.busServiceIconFile = files;
     if (!files || files.length === 0) return;
     const file = files[0];
+    this.busServiceIconFile = file;
 
     if (file) {
       this.readAndSetImage(file);
@@ -82,11 +82,11 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
 
   removeFileImage() {
     this.busServiceIcon = '';
-    this.busServiceForm.patchValue({ image: '' });
+    this.busServiceForm.patchValue({ icon: '' });
   }
 
   openFilesCenterDialog() {
-    const dialogRef = this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
+    this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
       this.busServiceIcon = files[0].link;
       this.busServiceForm.patchValue({ icon: files[0]._id });
@@ -99,10 +99,20 @@ export class CreateEditBusServiceDialogComponent implements OnInit {
       return;
     }
     const { name } = this.busServiceForm.getRawValue();
+
+
+    let dataTransfer = new DataTransfer();
+
+    // Validate and add busSeatTypeIconFile
+    if (this.busServiceIconFile) {
+      dataTransfer.items.add(this.busServiceIconFile);
+    }
+    const files: FileList = dataTransfer.files;
+
     const data = {
       name,
-      file: this.busServiceIconFile,
-    }
+      files: files,
+    };
     this.dialogRef.close(data);
   }
 }

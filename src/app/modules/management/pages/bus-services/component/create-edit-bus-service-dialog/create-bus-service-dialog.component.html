@@ -10,35 +10,49 @@
   </button>
 </mat-dialog-title>
 <mat-dialog-content>
-  <form class="sm:min-w-36 md:min-w-96" [formGroup]="busServiceForm" (ngSubmit)="onSubmit()">
+  <form class="sm:min-w-36 md:min-w-96" [formGroup]="busServiceForm" nz-form (ngSubmit)="onSubmit()">
     <div class="mb-5 w-full">
-      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">NAME</label>
-      <input
-        type="text"
-        formControlName="name"
-        [ngClass]="{'!border-red-500' : busServiceForm.controls['name'].errors?.['required'] && busServiceForm.controls['name'].touched}"
-        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" />
-      <p
-        class="mt-1 text-xs text-red-500"
-        *ngIf="busServiceForm.controls['name'].errors?.['required'] && busServiceForm.controls['name'].touched">
-        Vui lòng điền vào trường này
-      </p>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="name" class="!flex !h-[36px] !items-center !justify-start"
+          >Name</nz-form-label
+        >
+        <nz-form-control [nzErrorTip]="busServiceNameErrorTpl" class="!flex !h-[56px] flex-col">
+          <nz-input-group [nzSuffix]="busServiceNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+            <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+          </nz-input-group>
+          <ng-template #busServiceNameClearTpl>
+            <span
+              nz-icon
+              class="ant-input-clear-icon"
+              nzTheme="fill"
+              nzType="close-circle"
+              (click)="busServiceForm.controls['name'].patchValue('')"></span>
+          </ng-template>
+          <ng-template #busServiceNameErrorTpl let-control>
+            <span class="mt-1 !text-xs text-red-500">
+              @if (busServiceForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+            </span>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
     </div>
     <div>
       @if(!busServiceIcon){
-      <app-tooltip>
-        <div
-          class="relative h-32 w-32 select-none rounded border border-dashed border-gray-500"
-          [ngClass]="{'border-red-500' : busServiceForm.controls['icon'].errors?.['required']  
+      <div
+        nz-popover
+        [nzPopoverContent]="contentIconTemplate"
+        class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500"
+        [ngClass]="{'border-red-500' : busServiceForm.controls['icon'].errors?.['required']
           && busServiceForm.controls['icon'].touched}">
-          <div class="mx-auto-8 left-0 m-auto block flex h-full w-full flex-wrap content-center items-center px-4">
-            <div class="flex w-full flex-wrap justify-center pb-5 text-center">
-              <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
-              <p class="w-full pt-1 text-sm">Tải ảnh lên</p>
-            </div>
+        <div class="mx-auto-8 left-0 m-auto block flex h-full w-full flex-wrap content-center items-center px-4">
+          <div class="flex w-full flex-wrap justify-center pb-5 text-center">
+            <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
+            <p class="w-full pt-1 text-sm">Tải ảnh lên</p>
           </div>
         </div>
-        <div tooltipContent class="grap-2 grid cursor-pointer grid-cols-2">
+      </div>
+      <ng-template #contentIconTemplate>
+        <div class="grap-2 grid w-96 cursor-pointer grid-cols-2">
           <div class="relative flex h-12 cursor-pointer flex-wrap items-center justify-center px-2">
             <input
               formControlName="icon"
@@ -59,7 +73,12 @@
             <p class="w-full pt-1 text-center text-xs">Trung tâm phương tiện</p>
           </div>
         </div>
-      </app-tooltip>
+      </ng-template>
+      <p
+        class="animate-fade-in-down mt-1 text-xs text-red-500"
+        *ngIf="busServiceForm.controls['icon'].errors?.['required'] && busServiceForm.controls['icon'].touched">
+        Vui lòng upload ảnh cho trường này
+      </p>
       }@else {
       <div class="relative h-32 w-32 select-none rounded border border-gray-200">
         <div class="flex h-full w-full cursor-pointer items-center justify-center">
@@ -84,11 +103,6 @@
         </div>
       </div>
       }
-      <p
-        class="mt-1 text-xs text-red-500"
-        *ngIf="busServiceForm.controls['icon'].errors?.['required'] && busServiceForm.controls['icon'].touched">
-        Vui lòng upload ảnh cho trường này
-      </p>
     </div>
   </form>
 </mat-dialog-content>
