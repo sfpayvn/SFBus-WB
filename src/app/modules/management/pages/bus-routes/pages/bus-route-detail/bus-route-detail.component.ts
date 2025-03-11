@@ -151,8 +151,8 @@ export class BusRouteDetailComponent implements OnInit {
     this.location.back();
   }
 
-  drop(event: CdkDragDrop<BusStation[]>) {
-    moveItemInArray(this.busStations, event.previousIndex, event.currentIndex);
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.breakPoints.controls, event.previousIndex, event.currentIndex);
   }
 
 
