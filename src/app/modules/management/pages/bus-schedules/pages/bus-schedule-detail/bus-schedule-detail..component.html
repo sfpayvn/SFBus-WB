@@ -1,0 +1,189 @@
+<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
+      (click)="backPage()">
+      Back
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
+  <form [formGroup]="busScheduleDetailForm" nz-form *ngIf="busScheduleDetailForm" (ngSubmit)="onSubmit()">
+    <div class="flex gap-4">
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
+          <nz-form-control [nzErrorTip]="busScheduleDetailDistanceTimeErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group
+              [nzSuffix]="busScheduleDetailDistanceTimeClearTpl"
+              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+              <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+            </nz-input-group>
+            <ng-template #busScheduleDetailNameClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="busScheduleDetailForm.controls['name'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #busScheduleDetailNameErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busScheduleDetailForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="distance" class="!flex !h-[36px] !items-center !justify-start">Distance</nz-form-label>
+          <nz-form-control [nzErrorTip]="busScheduleDetailDistanceErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group
+              [nzSuffix]="busScheduleDetailDistanceClearTpl"
+              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+              <input type="number" nz-input formControlName="distance" placeholder="Nhập Distance" />
+            </nz-input-group>
+            <ng-template #busScheduleDetailDistanceClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="busScheduleDetailForm.controls['distance'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #busScheduleDetailDistanceErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busScheduleDetailForm.controls['distance'].errors?.['required']) { Vui lòng nhập trường này }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="distanceTime" class="!flex !h-[36px] !items-center !justify-start"
+            >DistanceTime</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busScheduleDetailDistanceTimeErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group
+              [nzSuffix]="busScheduleDetailDistanceTimeClearTpl"
+              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+              <input type="text" nz-input formControlName="distanceTime" placeholder="Nhập Distance" />
+            </nz-input-group>
+            <ng-template #busScheduleDetailDistanceTimeClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="busScheduleDetailForm.controls['distanceTime'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #busScheduleDetailDistanceTimeErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busScheduleDetailForm.controls['distanceTime'].errors?.['required']) { Vui lòng nhập trường này }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="price" class="!flex !h-[36px] !items-center !justify-start">Price</nz-form-label>
+          <nz-form-control [nzErrorTip]="busScheduleDetailPriceTimeErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group
+              [nzSuffix]="busScheduleDetailPriceTimeClearTpl"
+              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+              <input type="text" nz-input formControlName="price" placeholder="Nhập Price" />
+            </nz-input-group>
+            <ng-template #busScheduleDetailPriceTimeClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="busScheduleDetailForm.controls['price'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #busScheduleDetailPriceTimeErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busScheduleDetailForm.controls['price'].errors?.['required']) { Vui lòng nhập trường này }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-6/12 flex-col">
+        <div>
+          <label class="ant-form-item-label ant-col !flex !h-[36px] !items-center !justify-start">Bus Station</label>
+        </div>
+        <div
+          formArrayName="breakPoints"
+          cdkDropList
+          (cdkDropListDropped)="drop($event)"
+          class="drag-drop-list flex flex-col gap-4">
+          <nz-form-item cdkDrag *ngFor="let breakPoint of breakPoints.controls; let i = index" [formGroupName]="i">
+            <nz-form-control>
+              <nz-input-group class="!flex !items-center">
+                <nz-select nzShowSearch nzAllowClear formControlName="busStationId" nzPlaceHolder="Chọn Bus Station">
+                  @for (busProvince of filteredProvinces; track busProvince) {
+                  <nz-option-group nzLabel="{{ busProvince.name }}">
+                    @for (busStation of busProvince.busStations; track busStation) {
+                    <nz-option nzCustomContent [nzLabel]="busStation.name" [nzValue]="busStation._id">
+                      <div class="flex items-center">
+                        <span class="pl-4 !font-medium">
+                          {{ busStation.name }}
+                        </span>
+                      </div>
+                    </nz-option>
+                    }
+                  </nz-option-group>
+                  }
+                </nz-select>
+                <svg-icon
+                  src="assets/icons/trash-red-outline.svg"
+                  [svgClass]="'h-5 w-5 ml-2 cursor-pointer'"
+                  (click)="removeBreakPoint(i)"
+                  *ngIf="breakPoints.controls.length > 2">
+                </svg-icon>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="mt-4 flex justify-end gap-4">
+          <button
+            class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+            nz-button
+            nzType="default"
+            (click)="addBreakPoint()">
+            <svg-icon src="assets/icons/add-square.svg" [svgClass]="'h-5 w-5 mr-2'"> </svg-icon>
+            Add Break Point
+          </button>
+        </div>
+        <div
+          *ngIf="busScheduleDetailForm.controls['breakPoints'].touched && checkBreakPointsErrors()"
+          class="animate-fade-down">
+          <span class="pt-1 text-xs text-red-500">Vui lòng chọn ít nhất 2 bus station.</span>
+        </div>
+        <div
+          *ngIf="busScheduleDetailForm.controls['breakPoints'].touched && checkBreakPointsDuplicateErrors()"
+          class="animate-fade-down">
+          <span class="pt-1 text-xs text-red-500">Không được chọn 2 bus station giống nhau.</span>
+        </div>
+      </div>
+    </div>
+    <div class="my-5 flex w-full justify-end">
+      <button
+        class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+        nz-button
+        nzType="default"
+        type="submit">
+        SAVE
+      </button>
+    </div>
+  </form>
+</div>

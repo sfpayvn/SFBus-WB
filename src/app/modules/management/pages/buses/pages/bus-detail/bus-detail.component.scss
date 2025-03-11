@@ -1,0 +1,41 @@
+.matrix {
+  display: grid;
+  gap: 15px;
+  justify-items: start;
+
+  .cell {
+    width: auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    text-align: center;
+
+    .cell-name {
+      position: absolute;
+      font-size: 10px;
+    }
+
+    /* Ẩn các ô không được chọn */
+    .hidden {
+      visibility: hidden;
+    }
+
+    /* Icon styling */
+    .icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* Animation cho status chuyển đổi */
+    &.status-changed {
+      animation: statusChange 0.3s forwards;
+    }
+
+    /* Animation khi bỏ chọn */
+    &.status-deselected {
+      animation: statusDeselect 0.3s forwards;
+    }
+  }
+}

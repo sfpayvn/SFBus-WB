@@ -2,19 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { Bus, SearchBus } from './model/bus.model';
-import { BusesService } from './service/buses.servive';
+import { BusSchedulesService } from './service/bus-schedules.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
+import { BusSchedule, SearchBusSchedule } from './model/bus-schedule.model';
 
 @Component({
-  selector: 'app-buses',
-  templateUrl: './buses.component.html',
-  styleUrls: ['./buses.component.scss'],
+  selector: 'app-bus-schedules',
+  templateUrl: './bus-schedules.component.html',
+  styleUrls: ['./bus-schedules.component.scss'],
   standalone: false
 })
-export class BusesComponent implements OnInit {
-  searchBus: SearchBus = new SearchBus();
+export class BusSchedulesComponent implements OnInit {
+  searchBusSchedule: SearchBusSchedule = new SearchBusSchedule();
   selectAll: boolean = false;
 
   pageIdx: number = 1;
@@ -27,7 +27,7 @@ export class BusesComponent implements OnInit {
   isLoadingBus: boolean = false;
 
   constructor(
-    private busesService: BusesService,
+    private busSchedulesService: BusSchedulesService,
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
@@ -39,13 +39,13 @@ export class BusesComponent implements OnInit {
 
   loadData(): void {
     this.isLoadingBus = true;
-    this.busesService.searchBus(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
-      next: (res: SearchBus) => {
+    this.busSchedulesService.searchBusSchedule(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+      next: (res: SearchBusSchedule) => {
         if (res) {
-          this.searchBus = res;
-          console.log("🚀 ~ BusesComponent ~ this.busesService.searchBus ~ this.searchBus:", this.searchBus)
-          this.totalItem = this.searchBus.totalItem;
-          this.totalPage = this.searchBus.totalPage;
+          this.searchBusSchedule = res;
+          console.log("🚀 ~ BusesComponent ~ this.busSchedulesService.searchBus ~ this.searchBusSchedule:", this.searchBusSchedule)
+          this.totalItem = this.searchBusSchedule.totalItem;
+          this.totalPage = this.searchBusSchedule.totalPage;
         }
         this.isLoadingBus = false;
       },
@@ -58,14 +58,14 @@ export class BusesComponent implements OnInit {
 
   toggleBus(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    this.searchBus.buses = this.searchBus.buses.map((bus: Bus) => ({
-      ...bus,
+    this.searchBusSchedule.busSchedules = this.searchBusSchedule.busSchedules.map((busSchedule: BusSchedule) => ({
+      ...busSchedule,
       selected: checked,
     }));
   }
 
   checkSelectAll(): void {
-    this.selectAll = !this.searchBus.buses.some((bus) => !bus.selected);
+    this.selectAll = !this.searchBusSchedule.busSchedules.some((busSchedule) => !busSchedule.selected);
   }
 
   deleteBus(id: string): void {
@@ -92,10 +92,10 @@ export class BusesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busesService.deleteBus(id).subscribe({
+        this.busSchedulesService.deleteBusSchedule(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBus.buses = this.searchBus.buses.filter((bus) => bus._id !== id);
+              this.searchBusSchedule.busSchedules = this.searchBusSchedule.busSchedules.filter((bus) => bus._id !== id);
               toast.success('Bus deleted successfully');
             }
           },
@@ -105,13 +105,13 @@ export class BusesComponent implements OnInit {
     });
   }
 
-  editBus(bus: Bus): void {
-    const params = { bus: JSON.stringify(bus) };
-    this.router.navigateByUrl('/management/buses/bus-detail', { state: params });
+  editBus(busSchedule: BusSchedule): void {
+    const params = { busSchedule: JSON.stringify(busSchedule) };
+    this.router.navigateByUrl('/management/bus-routes/bus-route-detail', { state: params });
   }
 
   addBus(): void {
-    this.router.navigate(['/management/buses/bus-detail']);
+    this.router.navigate(['/management/bus-routes/bus-route-detail']);
   }
 
   reloadBusPage(data: any): void {

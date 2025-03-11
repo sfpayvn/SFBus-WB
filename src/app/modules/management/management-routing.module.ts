@@ -12,6 +12,11 @@ import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.compo
 import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
 import { SeatTypesComponent } from './pages/seat-types/seat-types.component';
 import { BusesComponent } from './pages/buses/buses.component';
+import { BusDetailComponent } from './pages/buses/pages/bus-detail/bus-detail.component';
+import { BusRoutesComponent } from './pages/bus-routes/bus-routes.component';
+import { BusRouteDetailComponent } from './pages/bus-routes/pages/bus-route-detail/bus-route-detail.component';
+import { BusSchedulesComponent } from './pages/bus-schedules/bus-schedules.component';
+import { BusScheduleDetailComponent } from './pages/bus-schedules/pages/bus-schedule-detail/bus-schedule-detail.component';
 
 const routes: Routes = [
   {
@@ -22,6 +27,26 @@ const routes: Routes = [
       {
         path: 'buses',
         component: BusesComponent,
+      },
+      {
+        path: 'buses/bus-detail',
+        component: BusDetailComponent,
+      },
+      {
+        path: 'bus-routes',
+        component: BusRoutesComponent,
+      },
+      {
+        path: 'bus-routes/bus-route-detail',
+        component: BusRouteDetailComponent,
+      },
+      {
+        path: 'bus-schedules',
+        component: BusSchedulesComponent,
+      },
+      {
+        path: 'bus-schedules/bus-schedule-detail',
+        component: BusScheduleDetailComponent,
       },
       {
         path: 'bus-provinves',

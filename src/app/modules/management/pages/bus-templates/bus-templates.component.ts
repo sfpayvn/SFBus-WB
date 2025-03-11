@@ -107,7 +107,6 @@ export class BusTemplatesComponent implements OnInit {
   editBusTemplate(busTemplate: BusTemplate): void {
     const params = { busTemplate: JSON.stringify(busTemplate) };
     this.router.navigateByUrl('/management/bus-templates/bus-tempalte-detail', { state: params });
-    console.log("🚀 ~ BusTemplatesComponent ~ editBusTemplate ~ params:", params)
   }
 
   addBusTemplate(): void {

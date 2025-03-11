@@ -1,0 +1,207 @@
+<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
+      (click)="backPage()">
+      Back
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
+  <form [formGroup]="busDetailForm" nz-form *ngIf="busDetailForm" (ngSubmit)="onSubmit()">
+    <div class="flex gap-4">
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
+          <nz-form-control [nzErrorTip]="busTemplateDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group
+              [nzSuffix]="busTemplateDetailNameClearTpl"
+              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+              <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+            </nz-input-group>
+            <ng-template #busTemplateDetailNameClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="busDetailForm.controls['name'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #busTemplateDetailNameErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busDetailForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="licensePlate" class="!flex !h-[36px] !items-center !justify-start"
+            >License Plate</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busTemplateDetailLicensePlateErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group
+              [nzSuffix]="busTemplateDetailLicensePlateClearTpl"
+              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+              <input type="text" nz-input formControlName="licensePlate" placeholder="Nhập License Plate" />
+            </nz-input-group>
+            <ng-template #busTemplateDetailLicensePlateClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="busDetailForm.controls['licensePlate'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #busTemplateDetailLicensePlateErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busDetailForm.controls['licensePlate'].errors?.['required']) { Vui lòng nhập trường này }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="busServiceIds" class="!flex !h-[36px] !items-center !justify-start"
+            >Bus Services</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busTemplateDetailBusServiceIdsErrorTpl">
+            <nz-select formControlName="busServiceIds" nzMode="multiple" nzPlaceHolder="Chọn Bus Services">
+              @for (busService of busServices; track busService) {
+              <nz-option nzCustomContent [nzLabel]="busService.name" [nzValue]="busService._id">
+                <div class="flex items-center">
+                  <svg-icon [src]="busService.icon" [svgClass]="'h-5 w-5'"> </svg-icon>
+                  <span class="pl-4 !font-medium">
+                    {{ busService.name }}
+                  </span>
+                </div>
+              </nz-option>
+              }
+            </nz-select>
+            <ng-template #busTemplateDetailBusServiceIdsErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busDetailForm.controls['busServiceIds'].errors?.['required']) { Vui lòng chọn Bus Services}
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label [nzSpan]="6" nzFor="busTypeId" class="!flex !h-[36px] !items-center !justify-start"
+            >Bus Types</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busTemplateDetailBusTypeIdErrorTpl">
+            <nz-select formControlName="busTypeId" nzPlaceHolder="Chọn Bus Type">
+              @for (busTypes of busTypes; track busTypes) {
+              <nz-option nzCustomContent [nzLabel]="busTypes.name" [nzValue]="busTypes._id">
+                <div class="flex items-center">
+                  <span class="pl-4 !font-medium">
+                    {{ busTypes.name }}
+                  </span>
+                </div>
+              </nz-option>
+              }
+            </nz-select>
+            <ng-template #busTemplateDetailBusTypeIdErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busDetailForm.controls['busTypeId'].errors?.['required']) { Vui lòng chọn Bus Type}
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-6/12">
+        <nz-form-item class="!w-full">
+          <nz-form-label [nzSpan]="6" nzFor="busTemplateId" class="!flex !h-[36px] !items-center !justify-start"
+            >Bus Template</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busTemplateDetailBusTemplateIdErrorTpl">
+            <nz-select
+              formControlName="busTemplateId"
+              nzPlaceHolder="Chọn Bus Tempate"
+              (ngModelChange)="chooseBusTemplate($event)">
+              @for (busTemplate of busTemplates; track busTemplate) {
+              <nz-option nzCustomContent [nzLabel]="busTemplate.name" [nzValue]="busTemplate._id">
+                <div class="flex items-center">
+                  <span class="pl-4 !font-medium">
+                    {{ busTemplate.name }}
+                  </span>
+                </div>
+              </nz-option>
+              }
+            </nz-select>
+            <ng-template #busTemplateDetailBusTemplateIdErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busDetailForm.controls['busTemplateId'].errors?.['required']) { Vui lòng chọn Bus Tempate}
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4 pt-5" *ngIf="busDetailForm.controls['busTemplateId'].value">
+      <div class="flex justify-between">
+        <label>Bus Tempalte Review</label>
+        <button
+          class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+          nz-button
+          nzType="default"
+          (click)="editBusTempate()">
+          Edit BusTempate
+        </button>
+      </div>
+      <ng-container *ngIf="busTemplateReview?.layoutsForMatrix">
+        <div class="flex w-full justify-center gap-10">
+          <div *ngFor="let layoutForMatrix of busTemplateReview.layoutsForMatrix">
+            <div class="p-2">
+              <div class="text-center">
+                <label class="text-base">{{ layoutForMatrix.name }}</label>
+              </div>
+            </div>
+            <div class="px-2 py-3">
+              <div>
+                <div>
+                  <div class="matrix">
+                    <div
+                      *ngFor="let row of layoutForMatrix.seatsLayoutForMatrix; let i = index"
+                      class="row"
+                      [style.display]="layoutForMatrix.seatDisplayRows[i] ? 'flex' : 'none'">
+                      <div
+                        *ngFor="let cell of row; let j = index"
+                        class="cell"
+                        [class.status-changed]="cell.statusChanged"
+                        [class.status-deselected]="cell.statusDeselected"
+                        [style.display]="layoutForMatrix.seatVisibleColumns[j] ? 'flex' : 'none'"
+                        [style.visibility]="cell.typeId ? 'visible' : 'hidden'">
+                        <!-- Hiển thị icon và tên nếu type > 0 -->
+                        <svg-icon [svgClass]="'icon !h-[40px] !w-[40px]'" [src]="getIconByType(cell)"></svg-icon>
+                        <div class="cell-name !text-xs">{{ cell.name }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="my-5 flex w-full justify-end">
+      <button
+        class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+        nz-button
+        nzType="default"
+        type="submit">
+        SAVE
+      </button>
+    </div>
+  </form>
+</div>

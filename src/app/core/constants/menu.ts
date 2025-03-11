@@ -42,6 +42,8 @@ export class Menu {
           route: '/management',
           children: [
             { label: 'Buses', route: '/management/buses' },
+            { label: 'Bus Routes', route: '/management/bus-routes' },
+            { label: 'Bus Schedules', route: '/management/bus-schedules' },
             { label: 'Bus Provices', route: '/management/bus-provinves' },
             { label: 'Bus Stations', route: '/management/bus-stations' },
             { label: 'Bus Types', route: '/management/bus-types' },

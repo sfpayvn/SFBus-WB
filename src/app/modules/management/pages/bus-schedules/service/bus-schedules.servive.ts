@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
-import { Bus2Create, Bus2Update } from '../model/bus.model';
-import { FilesService } from '../../files-center/service/files-center.servive';
+import { BusSchedule2Create, BusSchedule2Update } from '../model/bus-schedule.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BusesService {
-  url = '/buses';
+export class BusSchedulesService {
+  url = '/bus-schedules';
 
   constructor(
     private apiGatewayService: ApiGatewayService,
@@ -26,8 +25,8 @@ export class BusesService {
     );
   }
 
-  searchBus(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
+  searchBusSchedule(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
+    const url = `${this.url}/search-paging?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
       catchError((error) => {
@@ -37,10 +36,10 @@ export class BusesService {
     );
   }
 
-  createBus(busService2Create: Bus2Create) {
+  createBusSchedule(busSchedule2Create: BusSchedule2Create) {
     const url = this.url;
 
-    return this.apiGatewayService.post(url, busService2Create).pipe(
+    return this.apiGatewayService.post(url, busSchedule2Create).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {
@@ -50,9 +49,9 @@ export class BusesService {
     );
   }
 
-  updateBus(bus2Update: Bus2Update) {
+  updateBusSchedule(busSchedule2Update: BusSchedule2Update) {
     const url = this.url;
-    return this.apiGatewayService.put(url, bus2Update).pipe(
+    return this.apiGatewayService.put(url, busSchedule2Update).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {
@@ -62,7 +61,7 @@ export class BusesService {
     );
   }
 
-  deleteBus(id: string) {
+  deleteBusSchedule(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {

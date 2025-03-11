@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
-import { Bus2Create, Bus2Update } from '../model/bus.model';
-import { FilesService } from '../../files-center/service/files-center.servive';
+import { BusRoute2Create, BusRoute2Update } from '../model/bus-route.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BusesService {
-  url = '/buses';
+export class BusRoutesService {
+  url = '/bus-routes';
 
   constructor(
     private apiGatewayService: ApiGatewayService,
@@ -26,7 +25,7 @@ export class BusesService {
     );
   }
 
-  searchBus(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
+  searchBusRoute(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
@@ -37,10 +36,10 @@ export class BusesService {
     );
   }
 
-  createBus(busService2Create: Bus2Create) {
+  createBusRoute(busRoute2Create: BusRoute2Create) {
     const url = this.url;
 
-    return this.apiGatewayService.post(url, busService2Create).pipe(
+    return this.apiGatewayService.post(url, busRoute2Create).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {
@@ -50,9 +49,9 @@ export class BusesService {
     );
   }
 
-  updateBus(bus2Update: Bus2Update) {
+  updateBusRoute(busRoute2Update: BusRoute2Update) {
     const url = this.url;
-    return this.apiGatewayService.put(url, bus2Update).pipe(
+    return this.apiGatewayService.put(url, busRoute2Update).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {
@@ -62,7 +61,7 @@ export class BusesService {
     );
   }
 
-  deleteBus(id: string) {
+  deleteBusRoute(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {

@@ -11,6 +11,17 @@ export class BusTypesService {
 
   constructor(private apiGatewayService: ApiGatewayService) { }
 
+  findAll() {
+    const url = `${this.url}/findAll`;
+    return this.apiGatewayService.get(url).pipe(
+      tap((res: any) => { }),
+      catchError((error) => {
+        //write log
+        return of([]);
+      }),
+    );
+  }
+
   searchBusType(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
     return this.apiGatewayService.get(url).pipe(

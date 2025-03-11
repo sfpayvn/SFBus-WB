@@ -9,6 +9,9 @@ export class Bus {
   _id: string = '';
   name: string = '';
   licensePlate: string = '';
+  busServiceIds: string[] = [];
+  busTypeId: string = '';
+  busTemplateId: string = '';
   selected: boolean = false;
 }
 

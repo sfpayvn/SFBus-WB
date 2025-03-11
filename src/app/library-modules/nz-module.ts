@@ -33,7 +33,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
         NzPopoverModule,
         NzRadioModule,
         NzModalModule,
-        NzIconModule
+        NzIconModule,
     ]
 })
 export class NZModule { }

@@ -9,14 +9,14 @@
       (click)="addBus()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
       aria-label="Add Bus">
-      Add Bus
+      Add Bus Schedule
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'Bus'"
+    [title]="'Bus Schedule'"
     [totalItem]="totalItem"
     (sortDataEvent)="sortBusPage($event)"
     (searchDataEvent)="searchBusPage($event)"></app-table-action>
@@ -30,40 +30,38 @@
               [(ngModel)]="selectAll"
               class="checkbox checkbox-sm"
               type="checkbox"
-              aria-label="Select all bus" />
+              aria-label="Select all busSchedules" />
           </th>
           <th class="min-w-[200px]">Name</th>
-          <th class="min-w-[200px]">License Plate</th>
           <th class="w-[100px] text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (bus of searchBus.buses; track bus._id) {
+        @for (busSchedule of searchBusSchedule.busSchedules; track busSchedule._id) {
         <tr class="hover:bg-card/50">
           <td class="text-center">
             <input
-              [(ngModel)]="bus.selected"
+              [(ngModel)]="busSchedule.selected"
               (change)="checkSelectAll()"
               class="checkbox checkbox-sm"
               type="checkbox"
-              [attr.aria-label]="'Select ' + bus.name" />
+              [attr.aria-label]="'Select ' + busSchedule.name" />
           </td>
-          <td>{{ bus.name }}</td>
-          <td>{{ bus.licensePlate }}</td>
+          <td>{{ busSchedule.name }}</td>
           <td class="text-center">
             <button
-              (click)="editBus(bus)"
+              (click)="editBus(busSchedule)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-              aria-label="Edit bus">
+              aria-label="Edit busSchedule">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                 <path
                   d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
               </svg>
             </button>
             <button
-              (click)="deleteBus(bus._id)"
+              (click)="deleteBus(busSchedule._id)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-              aria-label="Delete bus">
+              aria-label="Delete busSchedule">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                 <path
                   fill-rule="evenodd"
@@ -75,7 +73,7 @@
         </tr>
         } @empty {
         <tr>
-          <td class="py-4 text-center text-sm" colspan="4">No buss found</td>
+          <td class="py-4 text-center text-sm" colspan="4">No busSchedules found</td>
         </tr>
         }
       </tbody>

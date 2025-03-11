@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { BusTemplate2Create, BusTemplate2Update } from '../model/bus-template.model';
-import { FilesService } from '../../files-center/service/files-center.servive';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +11,18 @@ export class BusTemplatesService {
 
   constructor(
     private apiGatewayService: ApiGatewayService,
-    private filesService: FilesService
   ) { }
+
+  findAll() {
+    const url = `${this.url}/findAll`;
+    return this.apiGatewayService.get(url).pipe(
+      tap((res: any) => { }),
+      catchError((error) => {
+        //write log
+        return of([]);
+      }),
+    );
+  }
 
   searchBusTemplate(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;

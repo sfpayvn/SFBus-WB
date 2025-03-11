@@ -8,6 +8,7 @@ layer(base);
 @import '../node_modules/ng-zorro-antd/button/style/index.min.css';
 
 @import 'tailwindcss';
+@import "tailwindcss-animated";
 
 /** Plugins **/
 @import './styles/apexchart.scss';
@@ -18,6 +19,7 @@ layer(base);
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/aspect-ratio";
 @plugin "tailwind-scrollbar";
+
 
 @custom-variant dark (&:where(.dark, .dark *));
 

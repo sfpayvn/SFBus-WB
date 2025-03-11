@@ -2,19 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { Bus, SearchBus } from './model/bus.model';
-import { BusesService } from './service/buses.servive';
+import { BusRoutesService } from './service/bus-routes.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
+import { BusRoute, SearchBusRoute } from './model/bus-route.model';
 
 @Component({
-  selector: 'app-buses',
-  templateUrl: './buses.component.html',
-  styleUrls: ['./buses.component.scss'],
+  selector: 'app-bus-routes',
+  templateUrl: './bus-routes.component.html',
+  styleUrls: ['./bus-routes.component.scss'],
   standalone: false
 })
-export class BusesComponent implements OnInit {
-  searchBus: SearchBus = new SearchBus();
+export class BusRoutesComponent implements OnInit {
+  searchBusRoute: SearchBusRoute = new SearchBusRoute();
   selectAll: boolean = false;
 
   pageIdx: number = 1;
@@ -27,7 +27,7 @@ export class BusesComponent implements OnInit {
   isLoadingBus: boolean = false;
 
   constructor(
-    private busesService: BusesService,
+    private busRoutesService: BusRoutesService,
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
@@ -39,13 +39,13 @@ export class BusesComponent implements OnInit {
 
   loadData(): void {
     this.isLoadingBus = true;
-    this.busesService.searchBus(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
-      next: (res: SearchBus) => {
+    this.busRoutesService.searchBusRoute(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+      next: (res: SearchBusRoute) => {
         if (res) {
-          this.searchBus = res;
-          console.log("🚀 ~ BusesComponent ~ this.busesService.searchBus ~ this.searchBus:", this.searchBus)
-          this.totalItem = this.searchBus.totalItem;
-          this.totalPage = this.searchBus.totalPage;
+          this.searchBusRoute = res;
+          console.log("🚀 ~ BusesComponent ~ this.busRoutesService.searchBus ~ this.searchBusRoute:", this.searchBusRoute)
+          this.totalItem = this.searchBusRoute.totalItem;
+          this.totalPage = this.searchBusRoute.totalPage;
         }
         this.isLoadingBus = false;
       },
@@ -58,14 +58,14 @@ export class BusesComponent implements OnInit {
 
   toggleBus(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    this.searchBus.buses = this.searchBus.buses.map((bus: Bus) => ({
-      ...bus,
+    this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.map((busRoute: BusRoute) => ({
+      ...busRoute,
       selected: checked,
     }));
   }
 
   checkSelectAll(): void {
-    this.selectAll = !this.searchBus.buses.some((bus) => !bus.selected);
+    this.selectAll = !this.searchBusRoute.busRoutes.some((busRoute) => !busRoute.selected);
   }
 
   deleteBus(id: string): void {
@@ -92,10 +92,10 @@ export class BusesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busesService.deleteBus(id).subscribe({
+        this.busRoutesService.deleteBusRoute(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBus.buses = this.searchBus.buses.filter((bus) => bus._id !== id);
+              this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.filter((bus) => bus._id !== id);
               toast.success('Bus deleted successfully');
             }
           },
@@ -105,13 +105,13 @@ export class BusesComponent implements OnInit {
     });
   }
 
-  editBus(bus: Bus): void {
-    const params = { bus: JSON.stringify(bus) };
-    this.router.navigateByUrl('/management/buses/bus-detail', { state: params });
+  editBus(busRoute: BusRoute): void {
+    const params = { busRoute: JSON.stringify(busRoute) };
+    this.router.navigateByUrl('/management/bus-routes/bus-route-detail', { state: params });
   }
 
   addBus(): void {
-    this.router.navigate(['/management/buses/bus-detail']);
+    this.router.navigate(['/management/bus-routes/bus-route-detail']);
   }
 
   reloadBusPage(data: any): void {
