@@ -43,7 +43,6 @@ export class BusRoutesComponent implements OnInit {
       next: (res: SearchBusRoute) => {
         if (res) {
           this.searchBusRoute = res;
-          console.log("🚀 ~ BusesComponent ~ this.busRoutesService.searchBus ~ this.searchBusRoute:", this.searchBusRoute)
           this.totalItem = this.searchBusRoute.totalItem;
           this.totalPage = this.searchBusRoute.totalPage;
         }
