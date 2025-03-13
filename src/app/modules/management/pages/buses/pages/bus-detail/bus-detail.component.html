@@ -14,13 +14,13 @@
       <div class="flex w-6/12">
         <nz-form-item class="!w-full">
           <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
-          <nz-form-control [nzErrorTip]="busTemplateDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
+          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
             <nz-input-group
-              [nzSuffix]="busTemplateDetailNameClearTpl"
+              [nzSuffix]="busLayoutTemplateDetailNameClearTpl"
               class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
               <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
             </nz-input-group>
-            <ng-template #busTemplateDetailNameClearTpl>
+            <ng-template #busLayoutTemplateDetailNameClearTpl>
               <span
                 nz-icon
                 class="ant-input-clear-icon"
@@ -28,7 +28,7 @@
                 nzType="close-circle"
                 (click)="busDetailForm.controls['name'].patchValue('')"></span>
             </ng-template>
-            <ng-template #busTemplateDetailNameErrorTpl let-control>
+            <ng-template #busLayoutTemplateDetailNameErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
                 @if (busDetailForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
               </span>
@@ -41,13 +41,13 @@
           <nz-form-label nzFor="licensePlate" class="!flex !h-[36px] !items-center !justify-start"
             >License Plate</nz-form-label
           >
-          <nz-form-control [nzErrorTip]="busTemplateDetailLicensePlateErrorTpl" class="!flex !h-[56px] flex-col">
+          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailLicensePlateErrorTpl" class="!flex !h-[56px] flex-col">
             <nz-input-group
-              [nzSuffix]="busTemplateDetailLicensePlateClearTpl"
+              [nzSuffix]="busLayoutTemplateDetailLicensePlateClearTpl"
               class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
               <input type="text" nz-input formControlName="licensePlate" placeholder="Nhập License Plate" />
             </nz-input-group>
-            <ng-template #busTemplateDetailLicensePlateClearTpl>
+            <ng-template #busLayoutTemplateDetailLicensePlateClearTpl>
               <span
                 nz-icon
                 class="ant-input-clear-icon"
@@ -55,7 +55,7 @@
                 nzType="close-circle"
                 (click)="busDetailForm.controls['licensePlate'].patchValue('')"></span>
             </ng-template>
-            <ng-template #busTemplateDetailLicensePlateErrorTpl let-control>
+            <ng-template #busLayoutTemplateDetailLicensePlateErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
                 @if (busDetailForm.controls['licensePlate'].errors?.['required']) { Vui lòng nhập trường này }
               </span>
@@ -70,7 +70,7 @@
           <nz-form-label nzFor="busServiceIds" class="!flex !h-[36px] !items-center !justify-start"
             >Bus Services</nz-form-label
           >
-          <nz-form-control [nzErrorTip]="busTemplateDetailBusServiceIdsErrorTpl">
+          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusServiceIdsErrorTpl">
             <nz-select formControlName="busServiceIds" nzMode="multiple" nzPlaceHolder="Chọn Bus Services">
               @for (busService of busServices; track busService) {
               <nz-option nzCustomContent [nzLabel]="busService.name" [nzValue]="busService._id">
@@ -83,7 +83,7 @@
               </nz-option>
               }
             </nz-select>
-            <ng-template #busTemplateDetailBusServiceIdsErrorTpl let-control>
+            <ng-template #busLayoutTemplateDetailBusServiceIdsErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
                 @if (busDetailForm.controls['busServiceIds'].errors?.['required']) { Vui lòng chọn Bus Services}
               </span>
@@ -96,7 +96,7 @@
           <nz-form-label [nzSpan]="6" nzFor="busTypeId" class="!flex !h-[36px] !items-center !justify-start"
             >Bus Types</nz-form-label
           >
-          <nz-form-control [nzErrorTip]="busTemplateDetailBusTypeIdErrorTpl">
+          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusTypeIdErrorTpl">
             <nz-select formControlName="busTypeId" nzPlaceHolder="Chọn Bus Type">
               @for (busTypes of busTypes; track busTypes) {
               <nz-option nzCustomContent [nzLabel]="busTypes.name" [nzValue]="busTypes._id">
@@ -108,7 +108,7 @@
               </nz-option>
               }
             </nz-select>
-            <ng-template #busTemplateDetailBusTypeIdErrorTpl let-control>
+            <ng-template #busLayoutTemplateDetailBusTypeIdErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
                 @if (busDetailForm.controls['busTypeId'].errors?.['required']) { Vui lòng chọn Bus Type}
               </span>
@@ -120,34 +120,34 @@
     <div class="flex gap-4">
       <div class="flex w-6/12">
         <nz-form-item class="!w-full">
-          <nz-form-label [nzSpan]="6" nzFor="busTemplateId" class="!flex !h-[36px] !items-center !justify-start"
+          <nz-form-label [nzSpan]="6" nzFor="busLayoutTemplateId" class="!flex !h-[36px] !items-center !justify-start"
             >Bus Template</nz-form-label
           >
-          <nz-form-control [nzErrorTip]="busTemplateDetailBusTemplateIdErrorTpl">
+          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailbusLayoutTemplateIdErrorTpl">
             <nz-select
-              formControlName="busTemplateId"
+              formControlName="busLayoutTemplateId"
               nzPlaceHolder="Chọn Bus Tempate"
               (ngModelChange)="chooseBusTemplate($event)">
-              @for (busTemplate of busTemplates; track busTemplate) {
-              <nz-option nzCustomContent [nzLabel]="busTemplate.name" [nzValue]="busTemplate._id">
+              @for (busLayoutTemplate of busLayoutTemplates; track busLayoutTemplate) {
+              <nz-option nzCustomContent [nzLabel]="busLayoutTemplate.name" [nzValue]="busLayoutTemplate._id">
                 <div class="flex items-center">
                   <span class="pl-4 !font-medium">
-                    {{ busTemplate.name }}
+                    {{ busLayoutTemplate.name }}
                   </span>
                 </div>
               </nz-option>
               }
             </nz-select>
-            <ng-template #busTemplateDetailBusTemplateIdErrorTpl let-control>
+            <ng-template #busLayoutTemplateDetailbusLayoutTemplateIdErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
-                @if (busDetailForm.controls['busTemplateId'].errors?.['required']) { Vui lòng chọn Bus Tempate}
+                @if (busDetailForm.controls['busLayoutTemplateId'].errors?.['required']) { Vui lòng chọn Bus Tempate}
               </span>
             </ng-template>
           </nz-form-control>
         </nz-form-item>
       </div>
     </div>
-    <div class="flex flex-col gap-4 pt-5" *ngIf="busDetailForm.controls['busTemplateId'].value">
+    <div class="flex flex-col gap-4 pt-5" *ngIf="busDetailForm.controls['busLayoutTemplateId'].value">
       <div class="flex justify-between">
         <label>Bus Tempalte Review</label>
         <button
@@ -158,9 +158,9 @@
           Edit BusTempate
         </button>
       </div>
-      <ng-container *ngIf="busTemplateReview?.layoutsForMatrix">
+      <ng-container *ngIf="busLayoutTemplateReview?.layoutsForMatrix">
         <div class="flex w-full justify-center gap-10">
-          <div *ngFor="let layoutForMatrix of busTemplateReview.layoutsForMatrix">
+          <div *ngFor="let layoutForMatrix of busLayoutTemplateReview.layoutsForMatrix">
             <div class="p-2">
               <div class="text-center">
                 <label class="text-base">{{ layoutForMatrix.name }}</label>

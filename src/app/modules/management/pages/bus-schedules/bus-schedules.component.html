@@ -6,7 +6,7 @@
       Import CSV
     </button>
     <button
-      (click)="addBus()"
+      (click)="addBusSchedule()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
       aria-label="Add Bus">
       Add Bus Schedule
@@ -18,15 +18,15 @@
   <app-table-action
     [title]="'Bus Schedule'"
     [totalItem]="totalItem"
-    (sortDataEvent)="sortBusPage($event)"
-    (searchDataEvent)="searchBusPage($event)"></app-table-action>
+    (sortDataEvent)="sortBusSchedulePage($event)"
+    (searchDataEvent)="searchBusSchedulePage($event)"></app-table-action>
   <div class="overflow-x-auto">
     <table class="text-muted-foreground w-full table-auto border-collapse text-left align-middle leading-5">
       <thead class="border-muted/20 text-muted-foreground border text-xs">
         <tr>
           <th class="w-[50px]">
             <input
-              (change)="toggleBus($event)"
+              (change)="toggleBusSchedule($event)"
               [(ngModel)]="selectAll"
               class="checkbox checkbox-sm"
               type="checkbox"
@@ -50,7 +50,7 @@
           <td>{{ busSchedule.name }}</td>
           <td class="text-center">
             <button
-              (click)="editBus(busSchedule)"
+              (click)="editBusSchedule(busSchedule)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
               aria-label="Edit busSchedule">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -59,7 +59,7 @@
               </svg>
             </button>
             <button
-              (click)="deleteBus(busSchedule._id)"
+              (click)="deleteBusSchedule(busSchedule._id)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
               aria-label="Delete busSchedule">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -85,6 +85,6 @@
     [totalItem]="totalItem"
     [isLoading]="isLoadingBus"
     [totalPage]="totalPage"
-    (reloadDataAndPageEvent)="reloadBusPage($event)">
+    (reloadDataAndPageEvent)="reloadBusSchedulePage($event)">
   </app-table-footer>
 </div>

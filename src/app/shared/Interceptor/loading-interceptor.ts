@@ -18,7 +18,8 @@ export class LoadingInterceptor
     ): Observable<HttpEvent<any>> {
         // Check for a custom attribute 
         // to avoid showing loading spinner
-        if (req.context.get(SkipLoading)) {
+
+        if (req.context.get(SkipLoading) || req.url.includes('file/view')) {
             // Pass the request directly to the next handler
             return next.handle(req);
         }

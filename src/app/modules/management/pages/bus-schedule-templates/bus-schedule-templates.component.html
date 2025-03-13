@@ -6,62 +6,62 @@
       Import CSV
     </button>
     <button
-      (click)="addBusTemplate()"
+      (click)="addBusScheduleTemplate()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
-      aria-label="Add BusTemplate">
-      Add BusTemplate
+      aria-label="Add Bus">
+      Add Bus Schedule Template
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'BusTemplate'"
+    [title]="'Bus Schedule'"
     [totalItem]="totalItem"
-    (sortDataEvent)="sortBusTemplatePage($event)"
-    (searchDataEvent)="searchBusTemplatePage($event)"></app-table-action>
+    (sortDataEvent)="sortBusScheduleTemplatePage($event)"
+    (searchDataEvent)="searchBusScheduleTemplatePage($event)"></app-table-action>
   <div class="overflow-x-auto">
     <table class="text-muted-foreground w-full table-auto border-collapse text-left align-middle leading-5">
       <thead class="border-muted/20 text-muted-foreground border text-xs">
         <tr>
           <th class="w-[50px]">
             <input
-              (change)="toggleBusTemplate($event)"
+              (change)="toggleBus($event)"
               [(ngModel)]="selectAll"
               class="checkbox checkbox-sm"
               type="checkbox"
-              aria-label="Select all busTemplates" />
+              aria-label="Select all busScheduleTemplates" />
           </th>
           <th class="min-w-[200px]">Name</th>
           <th class="w-[100px] text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (busService of searchBusTemplate.busTemplates; track busService._id) {
+        @for (busScheduleTemplate of searchBusScheduleTemplate.busScheduleTemplates; track busScheduleTemplate._id) {
         <tr class="hover:bg-card/50">
           <td class="text-center">
             <input
-              [(ngModel)]="busService.selected"
+              [(ngModel)]="busScheduleTemplate.selected"
               (change)="checkSelectAll()"
               class="checkbox checkbox-sm"
               type="checkbox"
-              [attr.aria-label]="'Select ' + busService.name" />
+              [attr.aria-label]="'Select ' + busScheduleTemplate.name" />
           </td>
-          <td>{{ busService.name }}</td>
+          <td>{{ busScheduleTemplate.name }}</td>
           <td class="text-center">
             <button
-              (click)="editBusTemplate(busService)"
+              (click)="editBusScheduleTemplate(busScheduleTemplate)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-              aria-label="Edit busService">
+              aria-label="Edit busScheduleTemplate">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                 <path
                   d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
               </svg>
             </button>
             <button
-              (click)="deleteBusTemplate(busService._id)"
+              (click)="deleteBusScheduleTemplate(busScheduleTemplate._id)"
               class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-              aria-label="Delete busService">
+              aria-label="Delete busScheduleTemplate">
               <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                 <path
                   fill-rule="evenodd"
@@ -73,7 +73,7 @@
         </tr>
         } @empty {
         <tr>
-          <td class="py-4 text-center text-sm" colspan="4">No busTemplates found</td>
+          <td class="py-4 text-center text-sm" colspan="4">No busScheduleTemplates found</td>
         </tr>
         }
       </tbody>
@@ -83,8 +83,8 @@
     [pageIdx]="pageIdx"
     [pageSize]="pageSize"
     [totalItem]="totalItem"
-    [isLoading]="isLoadingBusTemplate"
+    [isLoading]="isLoadingBus"
     [totalPage]="totalPage"
-    (reloadDataAndPageEvent)="reloadBusTemplatePage($event)">
+    (reloadDataAndPageEvent)="reloadBusScheduleTemplatePage($event)">
   </app-table-footer>
 </div>

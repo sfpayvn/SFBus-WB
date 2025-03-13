@@ -16,7 +16,7 @@ export class BusesService {
 
 
   findAll() {
-    const url = `${this.url}/findAll`;
+    const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
       catchError((error) => {

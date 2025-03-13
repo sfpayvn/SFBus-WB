@@ -56,7 +56,7 @@ export class BusSchedulesComponent implements OnInit {
     });
   }
 
-  toggleBus(event: Event): void {
+  toggleBusSchedule(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.searchBusSchedule.busSchedules = this.searchBusSchedule.busSchedules.map((busSchedule: BusSchedule) => ({
       ...busSchedule,
@@ -68,7 +68,7 @@ export class BusSchedulesComponent implements OnInit {
     this.selectAll = !this.searchBusSchedule.busSchedules.some((busSchedule) => !busSchedule.selected);
   }
 
-  deleteBus(id: string): void {
+  deleteBusSchedule(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -105,28 +105,28 @@ export class BusSchedulesComponent implements OnInit {
     });
   }
 
-  editBus(busSchedule: BusSchedule): void {
+  editBusSchedule(busSchedule: BusSchedule): void {
     const params = { busSchedule: JSON.stringify(busSchedule) };
     this.router.navigateByUrl('/management/bus-routes/bus-route-detail', { state: params });
   }
 
-  addBus(): void {
+  addBusSchedule(): void {
     this.router.navigate(['/management/bus-routes/bus-route-detail']);
   }
 
-  reloadBusPage(data: any): void {
+  reloadBusSchedulePage(data: any): void {
     this.pageIdx = data.pageIdx;
     this.pageSize = data.pageSize;
     this.loadData();
   }
 
-  searchBusPage(keyword: string) {
+  searchBusSchedulePage(keyword: string) {
     this.pageIdx = 1;
     this.keyword = keyword;
     this.loadData();
   }
 
-  sortBusPage(sortBy: string) {
+  sortBusSchedulePage(sortBy: string) {
     this.sortBy = sortBy;
     this.loadData();
   }

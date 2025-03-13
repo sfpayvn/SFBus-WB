@@ -3,12 +3,7 @@ import { BusRoute, BusRoute2Create, BusRoute2Update } from '../../model/bus-rout
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common'
-import { BusServicesService } from '../../../bus-services/service/bus-services.servive';
 import { combineLatest } from 'rxjs';
-import { BusTypesService } from '../../../bus-types/service/bus-types.servive';
-import { BusTemplatesService } from '../../../bus-templates/service/bus-templates.servive';
-import { BusTemplate } from '../../../bus-templates/model/bus-template.model';
-import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
 import { Router } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { BusRoutesService } from '../../service/bus-routes.servive';
@@ -63,7 +58,6 @@ export class BusRouteDetailComponent implements OnInit {
     let findAllBusStations = this.busStationsService.findAll();
     let findAllBusProvinces = this.busProvincesService.findAll();
 
-
     let request = [findAllBusStations, findAllBusProvinces];
     combineLatest(request).subscribe(async ([busStations, busProvinces]) => {
       this.busStations = busStations;
@@ -87,8 +81,6 @@ export class BusRouteDetailComponent implements OnInit {
       )
     });
   }
-
-
 
   createBreakPoint(busStationId: string = ''): FormGroup {
     return this.fb.group({

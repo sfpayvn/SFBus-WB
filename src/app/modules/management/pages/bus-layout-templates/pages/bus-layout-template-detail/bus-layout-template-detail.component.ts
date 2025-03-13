@@ -1,24 +1,24 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { BusTemplatesService } from '../../service/bus-templates.servive';
+import { BusLayoutTemplatesService } from '../../service/bus-layout-templates.servive';
 import { Location } from '@angular/common'
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import { SeatType } from '../../../seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
-import { BusTemplate, BusTemplate2Create, BusTemplate2Update, BusTemplateSeat, BusTemplateSeatLayout } from '../../model/bus-template.model';
+import { BusLayoutTemplate, BusLayoutTemplate2Create, BusLayoutTemplate2Update, Seat, BusSeatLayoutTemplate } from '../../model/bus-layout-templates.model';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-bus-template-detail',
-  templateUrl: './bus-template-detail.component.html',
-  styleUrls: ['./bus-template-detail.component.scss'],
+  selector: 'app-bus-layout-template-detail',
+  templateUrl: './bus-layout-template-detail.component.html',
+  styleUrls: ['./bus-layout-template-detail.component.scss'],
   standalone: false
 })
-export class BusTemplateDetailComponent implements OnInit {
+export class BusLayoutTemplateDetailComponent implements OnInit {
   @ViewChild('cellInput', { static: false }) cellInput: ElementRef | undefined;
 
-  busTemplate!: BusTemplate;
+  busTemplate!: BusLayoutTemplate;
 
   busTemplateDetailForm!: FormGroup;
   tabs = ['seat layout 1'];
@@ -51,7 +51,7 @@ export class BusTemplateDetailComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private location: Location,
-    private busTemplatesService: BusTemplatesService,
+    private busLayoutTemplatesService: BusLayoutTemplatesService,
     private seatTypesService: SeatTypesService,
     private el: ElementRef,
     private renderer: Renderer2,
@@ -287,7 +287,7 @@ export class BusTemplateDetailComponent implements OnInit {
         }
       }
     }
-    console.log("🚀 ~ BusTemplateDetailComponent ~ updateCellType ~ this.usedNames:", this.usedNames)
+    console.log("🚀 ~ BusLayoutTemplateDetailComponent ~ updateCellType ~ this.usedNames:", this.usedNames)
 
     cell.icon = selectedType.icon; // Cập nhật icon cho ô
   }
@@ -412,17 +412,17 @@ export class BusTemplateDetailComponent implements OnInit {
     const data = this.busTemplateDetailForm.getRawValue();
 
     // Chuyển đổi sang cấu trúc class và lọc những seat có typeId
-    const busTemplate2Create = new BusTemplate2Create();
+    const busTemplate2Create = new BusLayoutTemplate2Create();
     busTemplate2Create.name = data.name;
 
     busTemplate2Create.seatLayouts = data.layouts.map((layout: any) => ({
-      ...new BusTemplateSeatLayout(),
+      ...new BusSeatLayoutTemplate(),
       name: layout.name,
       seats: layout.seats
         .flat()
         .filter((seat: any) => seat.typeId) // Lọc những seat có typeId
         .map((seat: any) => ({
-          ...new BusTemplateSeat(),
+          ...new Seat(),
           _id: seat._id,
           index: seat.index,
           typeId: seat.typeId,
@@ -437,31 +437,31 @@ export class BusTemplateDetailComponent implements OnInit {
         _id: this.busTemplate._id, // Thêm thuộc tính _id
       };
 
-      this.updateBusTemplate(busTemplate2Update);
+      this.updateBusLayoutTemplate(busTemplate2Update);
       return;
     }
 
-    this.createBusTemplate(busTemplate2Create);
+    this.createBusLayoutTemplate(busTemplate2Create);
   }
 
-  updateBusTemplate(busTemplate2Update: BusTemplate2Update) {
-    this.busTemplatesService.updateBusTemplate(busTemplate2Update).subscribe({
-      next: (res: BusTemplate) => {
+  updateBusLayoutTemplate(busTemplate2Update: BusLayoutTemplate2Update) {
+    this.busLayoutTemplatesService.updateBusLayoutTemplate(busTemplate2Update).subscribe({
+      next: (res: BusLayoutTemplate) => {
         if (res) {
           const updatedState = { ...history.state, busTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('BusTemplate update successfully');
+          toast.success('BusLayoutTemplate update successfully');
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 
-  createBusTemplate(busTemplate2Create: BusTemplate2Create) {
-    this.busTemplatesService.createBusTemplate(busTemplate2Create).subscribe({
-      next: (res: BusTemplate) => {
+  createBusLayoutTemplate(busTemplate2Create: BusLayoutTemplate2Create) {
+    this.busLayoutTemplatesService.createBusLayoutTemplate(busTemplate2Create).subscribe({
+      next: (res: BusLayoutTemplate) => {
         if (res) {
-          toast.success('BusTemplate added successfully');
+          toast.success('BusLayoutTemplate added successfully');
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

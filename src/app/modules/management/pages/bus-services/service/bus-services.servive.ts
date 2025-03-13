@@ -15,9 +15,9 @@ export class BusServicesService {
     private filesService: FilesService
   ) { }
 
-  findAll() {
+  findAll(skipLoading?: boolean) {
     const url = `${this.url}/findAll`;
-    return this.apiGatewayService.get(url).pipe(
+    return this.apiGatewayService.get(url, skipLoading).pipe(
       tap((res: any) => { }),
       catchError((error) => {
         //write log

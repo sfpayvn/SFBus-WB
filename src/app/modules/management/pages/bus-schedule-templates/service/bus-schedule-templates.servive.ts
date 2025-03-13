@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
-import { BusType, BusType2Create, BusType2Update } from '../model/bus-type.model';
+import { BusScheduleTemplate2Create, BusScheduleTemplate2Update } from '../model/bus-schedule-template.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BusTypesService {
-  url = '/bus-type';
+export class BusScheduleTemplatesService {
+  url = '/bus-schedules';
 
-  constructor(private apiGatewayService: ApiGatewayService) { }
+  constructor(
+    private apiGatewayService: ApiGatewayService,
+  ) { }
+
 
   findAll() {
     const url = `${this.url}/findAll`;
@@ -22,19 +25,8 @@ export class BusTypesService {
     );
   }
 
-  findOne(_id: string, skipLoading?: boolean) {
-    const url = `${this.url}/${_id}`;
-    return this.apiGatewayService.get(url, skipLoading).pipe(
-      tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
-    );
-  }
-
-  searchBusType(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
+  searchBusScheduleTemplate(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
+    const url = `${this.url}/search-paging?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
       catchError((error) => {
@@ -44,9 +36,10 @@ export class BusTypesService {
     );
   }
 
-  createBusType(busType2Create: BusType2Create) {
+  createBusScheduleTemplate(busSchedule2Create: BusScheduleTemplate2Create) {
     const url = this.url;
-    return this.apiGatewayService.post(url, busType2Create).pipe(
+
+    return this.apiGatewayService.post(url, busSchedule2Create).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {
@@ -56,9 +49,9 @@ export class BusTypesService {
     );
   }
 
-  updateBusType(busType2Update: BusType2Update) {
+  updateBusScheduleTemplate(busSchedule2Update: BusScheduleTemplate2Update) {
     const url = this.url;
-    return this.apiGatewayService.put(url, busType2Update).pipe(
+    return this.apiGatewayService.put(url, busSchedule2Update).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {
@@ -68,7 +61,7 @@ export class BusTypesService {
     );
   }
 
-  deleteBusType(id: string) {
+  deleteBusScheduleTemplate(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {

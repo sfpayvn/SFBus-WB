@@ -8,15 +8,15 @@ import { BusServicesService } from '../../../bus-services/service/bus-services.s
 import { combineLatest } from 'rxjs';
 import { BusType } from '../../../bus-types/model/bus-type.model';
 import { BusTypesService } from '../../../bus-types/service/bus-types.servive';
-import { BusTemplatesService } from '../../../bus-templates/service/bus-templates.servive';
-import { BusTemplate } from '../../../bus-templates/model/bus-template.model';
 import { SeatType } from '../../../seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
 import { Router } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { BusesService } from '../../service/buses.servive';
+import { BusLayoutTemplate } from '../../../bus-layout-templates/model/bus-layout-templates.model';
+import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service/bus-layout-templates.servive';
 
-interface BusTemplateWithLayoutsMatrix extends BusTemplate {
+interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
 }
 @Component({
@@ -31,10 +31,10 @@ export class BusDetailComponent implements OnInit {
 
   busServices: BusService[] = [];
   busTypes: BusType[] = [];
-  busTemplates: BusTemplate[] = [];
+  busLayoutTemplates: BusLayoutTemplate[] = [];
   seatTypes: SeatType[] = [];
 
-  busTemplateReview!: BusTemplateWithLayoutsMatrix;
+  busLayoutTemplateReview!: BusTemplateWithLayoutsMatrix;
 
   rows: number = 11; // Number of rows in the matrix
   cols: number = 7; // Number of columns in the matrix
@@ -47,7 +47,7 @@ export class BusDetailComponent implements OnInit {
     private location: Location,
     private busServicesService: BusServicesService,
     private busTypesService: BusTypesService,
-    private busTemplatesService: BusTemplatesService,
+    private busLayoutTemplatesService: BusLayoutTemplatesService,
     private seatTypesService: SeatTypesService,
     private busesService: BusesService,
     private router: Router,
@@ -69,15 +69,15 @@ export class BusDetailComponent implements OnInit {
   initData() {
     let findAllBusService = this.busServicesService.findAll();
     let findAllBusType = this.busTypesService.findAll();
-    let findAllBusTemplate = this.busTemplatesService.findAll();
+    let findAllBusTemplate = this.busLayoutTemplatesService.findAll();
     let findAllSeatType = this.seatTypesService.findAll();
 
     let request = [findAllBusService, findAllBusType, findAllBusTemplate, findAllSeatType];
 
-    combineLatest(request).subscribe(async ([busServices, busTypes, busTemplates, seatTypes]) => {
+    combineLatest(request).subscribe(async ([busServices, busTypes, busLayoutTemplates, seatTypes]) => {
       this.busServices = busServices;
       this.busTypes = busTypes;
-      this.busTemplates = busTemplates;
+      this.busLayoutTemplates = busLayoutTemplates;
       this.seatTypes = seatTypes;
       this.initForm();
     });
@@ -89,21 +89,21 @@ export class BusDetailComponent implements OnInit {
       licensePlate: [this.bus?.licensePlate ?? '', [Validators.required]],
       busServiceIds: [this.bus?.busServiceIds ?? [], [Validators.required]],
       busTypeId: [this.bus?.busTypeId ?? '', [Validators.required]],
-      busTemplateId: [this.bus?.busTemplateId ?? '', [Validators.required]],
+      busLayoutTemplateId: [this.bus?.busLayoutTemplateId ?? '', [Validators.required]],
     });
 
 
-    if (this.busDetailForm.get('busTemplateId')?.value) {
-      this.chooseBusTemplate(this.busDetailForm.get('busTemplateId')?.value);
+    if (this.busDetailForm.get('busLayoutTemplateId')?.value) {
+      this.chooseBusTemplate(this.busDetailForm.get('busLayoutTemplateId')?.value);
     }
   }
 
-  async chooseBusTemplate(busTemplateId: string) {
-    this.busTemplateReview = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busTemplateId) as BusTemplateWithLayoutsMatrix;
-    this.busTemplateReview.layoutsForMatrix = [];
+  async chooseBusTemplate(busLayoutTemplateId: string) {
+    this.busLayoutTemplateReview = this.busLayoutTemplates.find((busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === busLayoutTemplateId) as BusTemplateWithLayoutsMatrix;
+    this.busLayoutTemplateReview.layoutsForMatrix = [];
 
-    await this.initializeMatrix(this.busTemplateReview.seatLayouts, this.busTemplateReview.layoutsForMatrix, (layouts) => {
-      this.busTemplateReview.layoutsForMatrix = layouts;
+    await this.initializeMatrix(this.busLayoutTemplateReview.seatLayouts, this.busLayoutTemplateReview.layoutsForMatrix, (layouts) => {
+      this.busLayoutTemplateReview.layoutsForMatrix = layouts;
     });
   }
 
@@ -215,15 +215,15 @@ export class BusDetailComponent implements OnInit {
   editBusTempate() {
 
     const allowedKeys = ["_id", "name", "seatLayouts"]; // Danh sách các thuộc tính trong BusTemplate
-    const combinedBusTemplate: BusTemplate = Object.fromEntries(
-      Object.entries(this.busTemplateReview).filter(([key]) => allowedKeys.includes(key))
-    ) as BusTemplate;
+    const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
+      Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key))
+    ) as BusLayoutTemplate;
 
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
     const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/management/bus-templates/bus-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-layout-templates/bus-layout-template-detail', { state: params });
   }
 
 

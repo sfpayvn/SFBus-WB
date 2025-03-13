@@ -11,7 +11,7 @@ export class Bus {
   licensePlate: string = '';
   busServiceIds: string[] = [];
   busTypeId: string = '';
-  busTemplateId: string = '';
+  busLayoutTemplateId: string = '';
   selected: boolean = false;
 }
 

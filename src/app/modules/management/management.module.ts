@@ -28,8 +28,6 @@ import { BusProvincesComponent } from './pages/bus-provices/bus-provinces.compon
 import { BusStationsComponent } from './pages/bus-stations/bus-stations.component';
 import { CreateEditBusStationDialogComponent } from './pages/bus-stations/component/create-edit-bus-station-dialog/create-bus-station-dialog.component';
 import { BusesComponent } from './pages/buses/buses.component';
-import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.component';
-import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
 import { CreateEditSeatTypeDialogComponent } from './pages/seat-types/component/create-edit-seat-types-dialog/create-seat-type-dialog.component';
 import { SeatTypesComponent } from './pages/seat-types/seat-types.component';
 import { BusDetailComponent } from './pages/buses/pages/bus-detail/bus-detail.component';
@@ -37,6 +35,10 @@ import { BusRoutesComponent } from './pages/bus-routes/bus-routes.component';
 import { BusRouteDetailComponent } from './pages/bus-routes/pages/bus-route-detail/bus-route-detail.component';
 import { BusSchedulesComponent } from './pages/bus-schedules/bus-schedules.component';
 import { BusScheduleDetailComponent } from './pages/bus-schedules/pages/bus-schedule-detail/bus-schedule-detail.component';
+import { BusLayoutTemplatesComponent } from './pages/bus-layout-templates/bus-layout-templates.component';
+import { BusLayoutTemplateDetailComponent } from './pages/bus-layout-templates/pages/bus-layout-template-detail/bus-layout-template-detail.component';
+import { BusScheduleTemplatesComponent } from './pages/bus-schedule-templates/bus-schedule-templates.component';
+import { BusScheduleTemplateDetailComponent } from './pages/bus-schedule-templates/pages/bus-schedule-template-detail/bus-schedule-template-detail.component';
 
 @NgModule({
   declarations: [
@@ -70,14 +72,17 @@ import { BusScheduleDetailComponent } from './pages/bus-schedules/pages/bus-sche
     CreateEditSeatTypeDialogComponent,
     SeatTypesComponent,
 
-    BusTemplatesComponent,
-    BusTemplateDetailComponent,
+    BusLayoutTemplatesComponent,
+    BusLayoutTemplateDetailComponent,
 
     BusRoutesComponent,
     BusRouteDetailComponent,
 
     BusSchedulesComponent,
-    BusScheduleDetailComponent
+    BusScheduleDetailComponent,
+
+    BusScheduleTemplatesComponent,
+    BusScheduleTemplateDetailComponent,
   ],
   imports: [
     CommonModule,

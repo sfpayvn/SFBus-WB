@@ -14,10 +14,8 @@
       <div class="flex w-6/12">
         <nz-form-item class="!w-full">
           <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
-          <nz-form-control [nzErrorTip]="busRouteDetailDistanceTimeErrorTpl" class="!flex !h-[56px] flex-col">
-            <nz-input-group
-              [nzSuffix]="busRouteDetailDistanceTimeClearTpl"
-              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+          <nz-form-control [nzErrorTip]="busRouteDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
+            <nz-input-group [nzSuffix]="busRouteDetailNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
               <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
             </nz-input-group>
             <ng-template #busRouteDetailNameClearTpl>
@@ -119,7 +117,7 @@
     <div class="flex gap-4">
       <div class="flex w-6/12 flex-col">
         <div>
-          <label class="ant-form-item-label ant-col !flex !h-[36px] !items-center !justify-start">Bus Station</label>
+          <label class="ant-form-item-label ant-col !flex !h-[36px] !items-center !justify-start">Break Points</label>
         </div>
         <div
           formArrayName="breakPoints"
@@ -164,14 +162,10 @@
             Add Break Point
           </button>
         </div>
-        <div
-          *ngIf="busRouteDetailForm.controls['breakPoints'].touched && checkBreakPointsErrors()"
-          class="animate-fade-down">
+        <div *ngIf="breakPoints.touched && checkBreakPointsErrors()" class="animate-fade-down">
           <span class="pt-1 text-xs text-red-500">Vui lòng chọn ít nhất 2 bus station.</span>
         </div>
-        <div
-          *ngIf="busRouteDetailForm.controls['breakPoints'].touched && checkBreakPointsDuplicateErrors()"
-          class="animate-fade-down">
+        <div *ngIf="breakPoints.touched && checkBreakPointsDuplicateErrors()" class="animate-fade-down">
           <span class="pt-1 text-xs text-red-500">Không được chọn 2 bus station giống nhau.</span>
         </div>
       </div>

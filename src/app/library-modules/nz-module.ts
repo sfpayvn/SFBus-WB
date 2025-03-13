@@ -15,6 +15,8 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+
 @NgModule({
     imports: [NzIconModule],
     exports: [
@@ -34,6 +36,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
         NzRadioModule,
         NzModalModule,
         NzIconModule,
+        NzSkeletonModule
     ]
 })
 export class NZModule { }

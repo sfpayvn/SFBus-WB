@@ -2,19 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { BusRoutesService } from './service/bus-routes.servive';
+import { BusScheduleTemplatesService } from './service/bus-schedule-templates.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
-import { BusRoute, SearchBusRoute } from './model/bus-route.model';
+import { BusScheduleTemplate, SearchBusScheduleTemplate } from './model/bus-schedule-template.model';
 
 @Component({
-  selector: 'app-bus-routes',
-  templateUrl: './bus-routes.component.html',
-  styleUrls: ['./bus-routes.component.scss'],
+  selector: 'app-bus-schedule-templates',
+  templateUrl: './bus-schedule-templates.component.html',
+  styleUrls: ['./bus-schedule-templates.component.scss'],
   standalone: false
 })
-export class BusRoutesComponent implements OnInit {
-  searchBusRoute: SearchBusRoute = new SearchBusRoute();
+export class BusScheduleTemplatesComponent implements OnInit {
+  searchBusScheduleTemplate: SearchBusScheduleTemplate = new SearchBusScheduleTemplate();
   selectAll: boolean = false;
 
   pageIdx: number = 1;
@@ -27,7 +27,7 @@ export class BusRoutesComponent implements OnInit {
   isLoadingBus: boolean = false;
 
   constructor(
-    private busRoutesService: BusRoutesService,
+    private busScheduleTemplatesService: BusScheduleTemplatesService,
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
@@ -39,13 +39,13 @@ export class BusRoutesComponent implements OnInit {
 
   loadData(): void {
     this.isLoadingBus = true;
-    this.busRoutesService.searchBusRoute(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
-      next: (res: SearchBusRoute) => {
+    this.busScheduleTemplatesService.searchBusScheduleTemplate(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+      next: (res: SearchBusScheduleTemplate) => {
         if (res) {
-          this.searchBusRoute = res;
-          console.log("🚀 ~ BusesComponent ~ this.busRoutesService.searchBus ~ this.searchBusRoute:", this.searchBusRoute)
-          this.totalItem = this.searchBusRoute.totalItem;
-          this.totalPage = this.searchBusRoute.totalPage;
+          this.searchBusScheduleTemplate = res;
+          console.log("🚀 ~ BusesComponent ~ this.busScheduleTemplatesService.searchBus ~ this.searchBusScheduleTemplate:", this.searchBusScheduleTemplate)
+          this.totalItem = this.searchBusScheduleTemplate.totalItem;
+          this.totalPage = this.searchBusScheduleTemplate.totalPage;
         }
         this.isLoadingBus = false;
       },
@@ -56,25 +56,25 @@ export class BusRoutesComponent implements OnInit {
     });
   }
 
-  toggleBusRoute(event: Event): void {
+  toggleBus(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.map((busRoute: BusRoute) => ({
-      ...busRoute,
+    this.searchBusScheduleTemplate.busScheduleTemplates = this.searchBusScheduleTemplate.busScheduleTemplates.map((busScheduleTemplate: BusScheduleTemplate) => ({
+      ...busScheduleTemplate,
       selected: checked,
     }));
   }
 
   checkSelectAll(): void {
-    this.selectAll = !this.searchBusRoute.busRoutes.some((busRoute) => !busRoute.selected);
+    this.selectAll = !this.searchBusScheduleTemplate.busScheduleTemplates.some((busScheduleTemplate) => !busScheduleTemplate.selected);
   }
 
-  deleteBusRoute(id: string): void {
+  deleteBusScheduleTemplate(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
           type: 'dangerous'
         },
-        title: 'Delete Bus',
+        title: 'Delete Bus Schedule Template',
         content:
           'Are you sure you want to delete this bus? All of your data will be permanently removed. This action cannot be undone.',
         btn: [
@@ -92,10 +92,10 @@ export class BusRoutesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busRoutesService.deleteBusRoute(id).subscribe({
+        this.busScheduleTemplatesService.deleteBusScheduleTemplate(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.filter((bus) => bus._id !== id);
+              this.searchBusScheduleTemplate.busScheduleTemplates = this.searchBusScheduleTemplate.busScheduleTemplates.filter((bus) => bus._id !== id);
               toast.success('Bus deleted successfully');
             }
           },
@@ -105,28 +105,28 @@ export class BusRoutesComponent implements OnInit {
     });
   }
 
-  editBusRoute(busRoute: BusRoute): void {
-    const params = { busRoute: JSON.stringify(busRoute) };
-    this.router.navigateByUrl('/management/bus-routes/bus-route-detail', { state: params });
+  editBusScheduleTemplate(busScheduleTemplate: BusScheduleTemplate): void {
+    const params = { busScheduleTemplate: JSON.stringify(busScheduleTemplate) };
+    this.router.navigateByUrl('/management/bus-schedule-templates/bus-schedule-template-detail', { state: params });
   }
 
-  addBusRoute(): void {
-    this.router.navigate(['/management/bus-routes/bus-route-detail']);
+  addBusScheduleTemplate(): void {
+    this.router.navigate(['/management/bus-schedule-templates/bus-schedule-template-detail']);
   }
 
-  reloadBusRoutePage(data: any): void {
+  reloadBusScheduleTemplatePage(data: any): void {
     this.pageIdx = data.pageIdx;
     this.pageSize = data.pageSize;
     this.loadData();
   }
 
-  searchBusRoutePage(keyword: string) {
+  searchBusScheduleTemplatePage(keyword: string) {
     this.pageIdx = 1;
     this.keyword = keyword;
     this.loadData();
   }
 
-  sortBusRoutePage(sortBy: string) {
+  sortBusScheduleTemplatePage(sortBy: string) {
     this.sortBy = sortBy;
     this.loadData();
   }

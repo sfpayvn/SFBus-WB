@@ -8,7 +8,8 @@ export class SearchBusStation {
 export class BusStation {
   _id: string = '';
   name: string = '';
-  icon: string = '';
+  detailAddress: string = '';
+  location: string = '';
   provinceId: string = '';
   selected: boolean = false;
 }
