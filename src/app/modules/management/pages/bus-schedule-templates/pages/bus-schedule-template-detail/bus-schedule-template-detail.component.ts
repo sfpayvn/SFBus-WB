@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BusRouteScheduleBreakPoints, BusScheduleTemplate, BusScheduleTemplate2Create, BusScheduleTemplate2Update, BusScheduleTemplateRoute } from '../../model/bus-schedule-template.model';
+import { BusRouteScheduleTemplateBreakPoints, BusScheduleTemplate, BusScheduleTemplate2Create, BusScheduleTemplate2Update, BusScheduleTemplateRoute } from '../../model/bus-schedule-template.model';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
@@ -68,6 +68,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     const params = history.state;
     if (params) {
       this.busScheduleTemplate = params["busScheduleTemplate"] ? JSON.parse(params["busScheduleTemplate"]) : null;
+      console.log("🚀 ~ BusScheduleTemplateDetailComponent ~ getQueryParams ~ this.busScheduleTemplate:", this.busScheduleTemplate)
     }
   }
 
@@ -86,19 +87,26 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
   }
 
   async initForm() {
-    const { name = '', busId = '', busRouteId, busRoute } = this.busScheduleTemplate || {};
+    const { name = '', busId = '', busRouteId, busRoute, price } = this.busScheduleTemplate || {};
 
     this.busScheduleTemplateDetailForm = this.fb.group({
       name: [name, [Validators.required]],
       busId: [busId, [Validators.required]],
       busRouteId: [busRouteId, [Validators.required]],
       busRoute: this.fb.group({
-        name: [],
+        name: [busRoute?.name || ''],
         breakPoints: this.fb.array([]),
-        distance: [],
-        distanceTime: []
-      })
+        distance: [busRoute?.distance || ''],
+        distanceTime: [busRoute?.distanceTime || '']
+      }),
+      price: [price, [Validators.required]],
     });
+
+    if (busRoute) {
+      for (const breakPoint of busRoute.breakPoints) {
+        this.breakPoints.push(this.createBreakPoint(breakPoint));
+      }
+    }
   }
 
   get breakPoints(): FormArray {
@@ -147,12 +155,11 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     }
   }
 
-  createBreakPoint(breakPoint: BusRouteScheduleBreakPoints): FormGroup {
-
-
+  createBreakPoint(breakPoint: BusRouteScheduleTemplateBreakPoints): FormGroup {
+    const { timeOffset = '' } = breakPoint;
     return this.fb.group({
       busStationId: [breakPoint.busStationId],
-      timeOffset: ['', [Validators.required]]
+      timeOffset: [timeOffset, [Validators.required, Validators.pattern(/^(\d{1,2}(h|m)?|\d{1,2})$/)]]
     });
   }
 
@@ -190,7 +197,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     this.busScheduleTemplatesService.updateBusScheduleTemplate(busSchedule2Update).subscribe({
       next: (res: BusScheduleTemplate) => {
         if (res) {
-          const updatedState = { ...history.state, busSchedule: JSON.stringify(res) };
+          const updatedState = { ...history.state, busScheduleTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus Route update successfully');
         }

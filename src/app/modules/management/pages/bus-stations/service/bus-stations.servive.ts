@@ -16,25 +16,19 @@ export class BusStationsService {
 
 
 
-  findAll() {
-    const url = `${this.url}/findAll`;
-    return this.apiGatewayService.get(url).pipe(
+  findAll(skipLoadding?: boolean) {
+    const url = `${this.url}/find-all`;
+    return this.apiGatewayService.get(url, skipLoadding).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
   searchBusStation(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
-    return this.apiGatewayService.get(url).pipe(
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -44,10 +38,7 @@ export class BusStationsService {
     return this.apiGatewayService.post(url, busService2Create).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -56,10 +47,7 @@ export class BusStationsService {
     return this.apiGatewayService.put(url, busStation2Update).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -70,10 +58,7 @@ export class BusStationsService {
     return this.apiGatewayService.put(url, busStations2Update).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -82,10 +67,7 @@ export class BusStationsService {
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 }

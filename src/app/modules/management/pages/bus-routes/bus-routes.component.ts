@@ -24,7 +24,7 @@ export class BusRoutesComponent implements OnInit {
   keyword: string = '';
   sortBy: string = '';
 
-  isLoadingBus: boolean = false;
+  isLoadingBusRoute: boolean = false;
 
   constructor(
     private busRoutesService: BusRoutesService,
@@ -38,7 +38,7 @@ export class BusRoutesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBus = true;
+    this.isLoadingBusRoute = true;
     this.busRoutesService.searchBusRoute(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
       next: (res: SearchBusRoute) => {
         if (res) {
@@ -46,11 +46,11 @@ export class BusRoutesComponent implements OnInit {
           this.totalItem = this.searchBusRoute.totalItem;
           this.totalPage = this.searchBusRoute.totalPage;
         }
-        this.isLoadingBus = false;
+        this.isLoadingBusRoute = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingBus = false;
+        this.isLoadingBusRoute = false;
       },
     });
   }

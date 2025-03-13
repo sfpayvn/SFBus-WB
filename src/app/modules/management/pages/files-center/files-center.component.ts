@@ -53,6 +53,7 @@ export class FilesComponent implements OnInit {
   filter: string = '';
 
   isLoadingFile: boolean = false;
+  isLoadingFileFolder: boolean = false;
 
   constructor(
     private fileService: FilesService,
@@ -66,21 +67,23 @@ export class FilesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingFile = true;
     this.loadFileFolders();
     this.loadFiles();
   }
 
   loadFileFolders() {
+    this.isLoadingFileFolder = true;
     this.fileService.getFileFolder().subscribe((res: any) => {
       if (res) {
         this.fileFolders.push(...res);
         this.originalFileFolders = [...this.fileFolders]; // Save original folders
+        this.isLoadingFileFolder = false;
       }
     })
   }
 
   loadFiles() {
+    this.isLoadingFile = true;
     const fileFolderId = this.getActiveFolderId();
     this.filter = this.getFilter()
 
@@ -110,6 +113,7 @@ export class FilesComponent implements OnInit {
     this.keyword = '';
     this.sortBy = '';
     this.isLoadingFile = false;
+    this.isLoadingFileFolder = false;
     this.loadFiles();
   }
 

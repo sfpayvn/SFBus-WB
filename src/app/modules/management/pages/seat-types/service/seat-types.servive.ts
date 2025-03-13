@@ -19,21 +19,15 @@ export class SeatTypesService {
     const url = `${this.url}`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
   searchSeatType(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
-    return this.apiGatewayService.get(url).pipe(
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -100,10 +94,7 @@ export class SeatTypesService {
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 }

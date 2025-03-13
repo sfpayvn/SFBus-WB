@@ -12,13 +12,10 @@ export class BusTypesService {
   constructor(private apiGatewayService: ApiGatewayService) { }
 
   findAll() {
-    const url = `${this.url}/findAll`;
+    const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -26,21 +23,15 @@ export class BusTypesService {
     const url = `${this.url}/${_id}`;
     return this.apiGatewayService.get(url, skipLoading).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
   searchBusType(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
-    return this.apiGatewayService.get(url).pipe(
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -49,10 +40,7 @@ export class BusTypesService {
     return this.apiGatewayService.post(url, busType2Create).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -61,10 +49,7 @@ export class BusTypesService {
     return this.apiGatewayService.put(url, busType2Update).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -73,10 +58,7 @@ export class BusTypesService {
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 }

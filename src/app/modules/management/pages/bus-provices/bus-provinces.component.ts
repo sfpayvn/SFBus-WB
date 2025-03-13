@@ -56,7 +56,7 @@ export class BusProvincesComponent implements OnInit {
     this.isLoadingBusProvince = true;
 
     const searchBusProvince$ = this.busProvincesService.searchBusProvince(this.pageIdx, this.pageSize, this.keyword, this.sortBy);
-    const searchBusStation$ = this.busStationsService.findAll();
+    const searchBusStation$ = this.busStationsService.findAll(true);
 
     let request = [searchBusProvince$, searchBusStation$];
 

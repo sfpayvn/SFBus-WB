@@ -51,57 +51,68 @@
             'hover:bg-card hover:text-foreground': !item.isEditing,
             'not-drop': !utils.isValidObjectId(item._id)
           }">
-          <div class="text-muted-foreground flex h-8 items-center justify-between px-2">
-            <div
-              class="flex w-full cursor-pointer items-center"
-              *ngIf="!item.isEditing"
-              (click)="selectFileFolder(item)">
-              <svg-icon
-                *ngIf="!utils.isValidObjectId(item._id)"
-                svgClass="w-6 h-6"
-                src="./assets/icons/{{ item.icon }}"></svg-icon>
-              <div *ngIf="utils.isValidObjectId(item._id)" class="bg-icon"></div>
-              <label
-                [ngClass]="{ 'text-primary font-semibold': item.selected }"
-                class="w-full cursor-pointer truncate pl-2 text-xs font-medium tracking-wide focus:outline-hidden">
-                {{ item.name }}
-              </label>
-            </div>
-            <div *ngIf="item.isEditing">
-              <input
-                #inputFileFolder
-                type="text"
-                [(ngModel)]="item.name"
-                (keydown.enter)="handleActoinFolderInput(item)"
-                (blur)="handleActoinFolderInput(item)"
-                (keydown.esc)="cancelEditFileFolder(item)"
-                placeholder="Nhập tên thư mục"
-                class="w-full rounded-sm border focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <app-trigger-modal *ngIf="utils.isValidObjectId(item._id) && !item.isEditing">
-              <svg-icon svgClass="w-4 h-4 cursor-pointer" src="./assets/icons/more-horizontal.svg"></svg-icon>
-              <div triggerModalContent>
-                <ul>
-                  <li>
-                    <button mat-button class="w-full !justify-start !rounded-none" (click)="setIsEditFileFolder(item)">
-                      <div class="flex items-center">
-                        <svg-icon svgClass="w-6 h-6" src="./assets/icons/edit.svg"></svg-icon>
-                        <label class="pl-2 text-sm">Sửa tên</label>
-                      </div>
-                    </button>
-                  </li>
-                  <li>
-                    <button mat-button class="w-full !justify-start !rounded-none" (click)="deleteFileFolder(item)">
-                      <div class="flex items-center">
-                        <svg-icon svgClass="w-6 h-6" src="./assets/icons/trash.svg"></svg-icon>
-                        <label class="pl-2 text-sm">Xóa thư mục</label>
-                      </div>
-                    </button>
-                  </li>
-                </ul>
+          <nz-skeleton
+            [ngClass]="{ 'pb-2': isLoadingFileFolder }"
+            class="nz-skeleton-large"
+            [nzLoading]="isLoadingFileFolder"
+            [nzParagraph]="false"
+            [nzTitle]="{ width: '100%' }"
+            [nzActive]="true">
+            <div class="text-muted-foreground flex h-8 items-center justify-between px-2">
+              <div
+                class="flex w-full cursor-pointer items-center"
+                *ngIf="!item.isEditing"
+                (click)="selectFileFolder(item)">
+                <svg-icon
+                  *ngIf="!utils.isValidObjectId(item._id)"
+                  svgClass="w-6 h-6"
+                  src="./assets/icons/{{ item.icon }}"></svg-icon>
+                <div *ngIf="utils.isValidObjectId(item._id)" class="bg-icon"></div>
+                <label
+                  [ngClass]="{ 'text-primary font-semibold': item.selected }"
+                  class="w-full cursor-pointer truncate pl-2 text-xs font-medium tracking-wide focus:outline-hidden">
+                  {{ item.name }}
+                </label>
               </div>
-            </app-trigger-modal>
-          </div>
+              <div *ngIf="item.isEditing">
+                <input
+                  #inputFileFolder
+                  type="text"
+                  [(ngModel)]="item.name"
+                  (keydown.enter)="handleActoinFolderInput(item)"
+                  (blur)="handleActoinFolderInput(item)"
+                  (keydown.esc)="cancelEditFileFolder(item)"
+                  placeholder="Nhập tên thư mục"
+                  class="w-full rounded-sm border focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <app-trigger-modal *ngIf="utils.isValidObjectId(item._id) && !item.isEditing">
+                <svg-icon svgClass="w-4 h-4 cursor-pointer" src="./assets/icons/more-horizontal.svg"></svg-icon>
+                <div triggerModalContent>
+                  <ul>
+                    <li>
+                      <button
+                        mat-button
+                        class="w-full !justify-start !rounded-none"
+                        (click)="setIsEditFileFolder(item)">
+                        <div class="flex items-center">
+                          <svg-icon svgClass="w-6 h-6" src="./assets/icons/edit.svg"></svg-icon>
+                          <label class="pl-2 text-sm">Sửa tên</label>
+                        </div>
+                      </button>
+                    </li>
+                    <li>
+                      <button mat-button class="w-full !justify-start !rounded-none" (click)="deleteFileFolder(item)">
+                        <div class="flex items-center">
+                          <svg-icon svgClass="w-6 h-6" src="./assets/icons/trash.svg"></svg-icon>
+                          <label class="pl-2 text-sm">Xóa thư mục</label>
+                        </div>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </app-trigger-modal>
+            </div>
+          </nz-skeleton>
         </li>
       </ul>
     </div>
@@ -181,7 +192,15 @@
             (cdkDragStarted)="onDragStarted(file)"
             (cdkDragEnded)="onDragEnded(file)"
             [ngClass]="{ selected: isSelected(file) }">
+            <nz-skeleton-element
+              nzType="image"
+              *ngIf="isLoadingFile"
+              [nzParagraph]="false"
+              [nzTitle]="{ width: '100%' }"
+              [nzActive]="true">
+            </nz-skeleton-element>
             <div
+              *ngIf="!isLoadingFile"
               class="box-img rounded-sm border border-gray-300"
               (click)="toggleFile(file)"
               (dblclick)="onDbClickFile($event, file)">
@@ -191,12 +210,14 @@
                   class="absolute top-[5px] left-[5px] z-10 flex h-[24px] w-[24px] items-center justify-center rounded-xl border border-gray-300 bg-blue-500">
                   <label class="text-sm text-white">{{ getIndexSelectedFile(file) }}</label>
                 </div>
+
                 <img class="cursor-pointer object-contain p-2" [src]="file.link" />
                 <div *ngIf="file.isFavorite" class="file-favorite absolute bottom-0 z-10 w-full bg-black pb-2 pt-4">
                   <div class="flex justify-between px-2 text-white">
                     <svg-icon svgClass="w-5 h-5" src="./assets/icons/favorite-white.svg"></svg-icon>
                   </div>
                 </div>
+
                 <div triggerMaskContent class="trigger-mask-content flex justify-between px-2 pb-2 pt-4 text-white">
                   <button (click)="setFavoriteFile($event, file)">
                     <svg-icon
@@ -223,16 +244,23 @@
                 </div>
               </ng-container>
             </ng-container>
-            <input
-              [value]="file.filename"
-              matTooltip="{{ file.filename }}"
-              [(ngModel)]="file.filename"
-              (click)="setEditFile(file)"
-              (focus)="setEditFile(file)"
-              (blur)="handleUpdateFile(file)"
-              (keydown.enter)="onEnterFile($event)"
-              (keydown.esc)="onEscFile(file, $event)"
-              class="file-input text-foreground mt-1 w-full truncate rounded-sm border-none bg-transparent p-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <nz-skeleton
+              [ngClass]="{ 'pt-2': isLoadingFile }"
+              [nzLoading]="isLoadingFile"
+              [nzParagraph]="false"
+              [nzTitle]="{ width: '90%' }"
+              [nzActive]="true">
+              <input
+                [value]="file.filename"
+                matTooltip="{{ file.filename }}"
+                [(ngModel)]="file.filename"
+                (click)="setEditFile(file)"
+                (focus)="setEditFile(file)"
+                (blur)="handleUpdateFile(file)"
+                (keydown.enter)="onEnterFile($event)"
+                (keydown.esc)="onEscFile(file, $event)"
+                class="file-input text-foreground mt-1 w-full truncate rounded-sm border-none bg-transparent p-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </nz-skeleton>
           </div>
         </div>
         }

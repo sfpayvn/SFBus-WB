@@ -10,10 +10,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { MaterialModule } from './library-modules/material-module';
 import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
-import { Utils } from './shared/utils/utils';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { UtilsModal } from './shared/utils/utils-modal';
-
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @NgModule({
   declarations: [],
@@ -27,12 +25,14 @@ import { UtilsModal } from './shared/utils/utils-modal';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    AngularSvgIconModule.forRoot()
+    AngularSvgIconModule.forRoot(),
+    NgxMaskDirective
   ],
   providers: [
     provideAnimationsAsync(),
     provideAnimations(),
     provideNzI18n(en_US),
+    provideNgxMask()
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

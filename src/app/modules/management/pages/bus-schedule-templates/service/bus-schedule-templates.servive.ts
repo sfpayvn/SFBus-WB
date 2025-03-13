@@ -7,7 +7,7 @@ import { BusScheduleTemplate2Create, BusScheduleTemplate2Update } from '../model
   providedIn: 'root',
 })
 export class BusScheduleTemplatesService {
-  url = '/bus-schedules';
+  url = '/bus-schedule_templates';
 
   constructor(
     private apiGatewayService: ApiGatewayService,
@@ -15,24 +15,18 @@ export class BusScheduleTemplatesService {
 
 
   findAll() {
-    const url = `${this.url}/findAll`;
+    const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
   searchBusScheduleTemplate(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search-paging?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
-    return this.apiGatewayService.get(url).pipe(
+    const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -42,10 +36,6 @@ export class BusScheduleTemplatesService {
     return this.apiGatewayService.post(url, busSchedule2Create).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
     );
   }
 
@@ -54,10 +44,7 @@ export class BusScheduleTemplatesService {
     return this.apiGatewayService.put(url, busSchedule2Update).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -66,10 +53,7 @@ export class BusScheduleTemplatesService {
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 }

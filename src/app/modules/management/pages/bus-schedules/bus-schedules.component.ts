@@ -24,7 +24,7 @@ export class BusSchedulesComponent implements OnInit {
   keyword: string = '';
   sortBy: string = '';
 
-  isLoadingBus: boolean = false;
+  isLoadingBusSchedule: boolean = false;
 
   constructor(
     private busSchedulesService: BusSchedulesService,
@@ -38,7 +38,7 @@ export class BusSchedulesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBus = true;
+    this.isLoadingBusSchedule = true;
     this.busSchedulesService.searchBusSchedule(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
       next: (res: SearchBusSchedule) => {
         if (res) {
@@ -47,11 +47,11 @@ export class BusSchedulesComponent implements OnInit {
           this.totalItem = this.searchBusSchedule.totalItem;
           this.totalPage = this.searchBusSchedule.totalPage;
         }
-        this.isLoadingBus = false;
+        this.isLoadingBusSchedule = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingBus = false;
+        this.isLoadingBusSchedule = false;
       },
     });
   }
@@ -107,11 +107,11 @@ export class BusSchedulesComponent implements OnInit {
 
   editBusSchedule(busSchedule: BusSchedule): void {
     const params = { busSchedule: JSON.stringify(busSchedule) };
-    this.router.navigateByUrl('/management/bus-routes/bus-route-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-schedules/bus-schedule-detail', { state: params });
   }
 
   addBusSchedule(): void {
-    this.router.navigate(['/management/bus-routes/bus-route-detail']);
+    this.router.navigate(['/management/bus-schedules/bus-schedule-detail']);
   }
 
   reloadBusSchedulePage(data: any): void {

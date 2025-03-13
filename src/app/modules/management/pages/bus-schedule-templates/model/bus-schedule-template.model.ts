@@ -9,16 +9,11 @@ export class SearchBusScheduleTemplate {
 }
 
 export class BusScheduleTemplateRoute extends BusRoute {
-  override breakPoints: BusRouteScheduleBreakPoints[] = [];
+  override breakPoints: BusRouteScheduleTemplateBreakPoints[] = [];
 }
 
-export class BusRouteScheduleBreakPoints extends BusRouteBreakPoints {
-  timeSchedule: string = '';
-  provinceId: string = '';
-  province: BusProvince | undefined;
-  name: string = '';
-  detailAddress: string = '';
-  location: string = '';
+export class BusRouteScheduleTemplateBreakPoints extends BusRouteBreakPoints {
+  timeOffset: string = '';
 }
 
 export class BusScheduleTemplate {
@@ -27,10 +22,7 @@ export class BusScheduleTemplate {
   busId: string = '';
   busRouteId: string = '';
   busRoute: BusScheduleTemplateRoute | undefined;
-  busScheduleTemplateId: string = '';
   price: number = 0;
-  remainSeat: number = 0;
-  status: string = '';
   selected: boolean = false;
 }
 

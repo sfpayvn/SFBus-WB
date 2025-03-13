@@ -88,33 +88,6 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div class="flex w-6/12">
-        <nz-form-item class="!w-full">
-          <nz-form-label nzFor="price" class="!flex !h-[36px] !items-center !justify-start">Price</nz-form-label>
-          <nz-form-control [nzErrorTip]="busRouteDetailPriceTimeErrorTpl" class="!flex !h-[56px] flex-col">
-            <nz-input-group
-              [nzSuffix]="busRouteDetailPriceTimeClearTpl"
-              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
-              <input type="text" nz-input formControlName="price" placeholder="Nhập Price" />
-            </nz-input-group>
-            <ng-template #busRouteDetailPriceTimeClearTpl>
-              <span
-                nz-icon
-                class="ant-input-clear-icon"
-                nzTheme="fill"
-                nzType="close-circle"
-                (click)="busRouteDetailForm.controls['price'].patchValue('')"></span>
-            </ng-template>
-            <ng-template #busRouteDetailPriceTimeErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busRouteDetailForm.controls['price'].errors?.['required']) { Vui lòng nhập trường này }
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </div>
-    <div class="flex gap-4">
       <div class="flex w-6/12 flex-col">
         <div>
           <label class="ant-form-item-label ant-col !flex !h-[36px] !items-center !justify-start">Break Points</label>

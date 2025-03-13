@@ -39,6 +39,7 @@ import { BusLayoutTemplatesComponent } from './pages/bus-layout-templates/bus-la
 import { BusLayoutTemplateDetailComponent } from './pages/bus-layout-templates/pages/bus-layout-template-detail/bus-layout-template-detail.component';
 import { BusScheduleTemplatesComponent } from './pages/bus-schedule-templates/bus-schedule-templates.component';
 import { BusScheduleTemplateDetailComponent } from './pages/bus-schedule-templates/pages/bus-schedule-template-detail/bus-schedule-template-detail.component';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { BusScheduleTemplateDetailComponent } from './pages/bus-schedule-templat
     MaterialModule,
     NZModule,
     ClickOutsideDirective,
+    NgxMaskDirective
   ],
   exports: [
     TableHeaderComponent,
@@ -107,6 +109,9 @@ import { BusScheduleTemplateDetailComponent } from './pages/bus-schedule-templat
     DragDropModule,
     NZModule,
     ClickOutsideDirective
+  ],
+  providers: [
+    provideNgxMask()
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

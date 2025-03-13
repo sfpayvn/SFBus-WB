@@ -13,7 +13,7 @@ export class FilesService {
 
   searchFile(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "", filter: string = "", fileFolderId: string = "") {
     const url = `/file/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}&&filter=${filter}&fileFolderId=${fileFolderId}`;
-    return this.apiGatewayService.get(url).pipe(
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
       catchError((error) => {
         //write log
@@ -92,7 +92,7 @@ export class FilesService {
   }
   getFileFolder() {
     const url = `/file-folder`;
-    return this.apiGatewayService.get(url).pipe(
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => {
       }),
       catchError((error) => {

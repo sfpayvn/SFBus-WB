@@ -15,10 +15,7 @@ export class OptionsService {
     const url = `${this.url}?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+     
     );
   }
 

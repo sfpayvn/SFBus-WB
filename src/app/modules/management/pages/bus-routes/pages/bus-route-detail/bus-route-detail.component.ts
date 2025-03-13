@@ -68,13 +68,12 @@ export class BusRouteDetailComponent implements OnInit {
   }
 
   async initForm() {
-    const { name = '', distance = 0, distanceTime = '', price = 0, breakPoints = [] } = this.busRoute || {};
+    const { name = '', distance = 0, distanceTime = '', breakPoints = [] } = this.busRoute || {};
 
     this.busRouteDetailForm = this.fb.group({
       name: [name, [Validators.required]],
       distance: [distance, [Validators.required]],
       distanceTime: [distanceTime, [Validators.required]],
-      price: [price, [Validators.required]],
       breakPoints: this.fb.array(breakPoints.length > 0
         ? breakPoints.map(bp => this.createBreakPoint(bp.busStationId))
         : [this.createBreakPoint(), this.createBreakPoint()] // Add 2 default breakpoints if none exist

@@ -15,24 +15,18 @@ export class BusSchedulesService {
 
 
   findAll() {
-    const url = `${this.url}/findAll`;
+    const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
   searchBusSchedule(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search-paging?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
-    return this.apiGatewayService.get(url).pipe(
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -42,10 +36,7 @@ export class BusSchedulesService {
     return this.apiGatewayService.post(url, busSchedule2Create).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -54,10 +45,7 @@ export class BusSchedulesService {
     return this.apiGatewayService.put(url, busSchedule2Update).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 
@@ -66,10 +54,7 @@ export class BusSchedulesService {
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
       tap((res: any) => {
       }),
-      catchError((error) => {
-        //write log
-        return of([]);
-      }),
+
     );
   }
 }
