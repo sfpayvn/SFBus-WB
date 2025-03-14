@@ -26,7 +26,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     ReactiveFormsModule,
     MaterialModule,
     AngularSvgIconModule.forRoot(),
-    NgxMaskDirective
+    NgxMaskDirective,
   ],
   providers: [
     provideAnimationsAsync(),

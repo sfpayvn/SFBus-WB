@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
-import { Bus2Create, Bus2Update } from '../model/bus.model';
-import { FilesService } from '../../files-center/service/files-center.servive';
+import { BusTemplate2Create, BusTemplate2Update } from '../model/bus-template.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BusesService {
-  url = '/buses';
+export class BusTemplatesService {
+  url = '/bus-templates';
 
   constructor(
     private apiGatewayService: ApiGatewayService,
@@ -23,39 +22,32 @@ export class BusesService {
     );
   }
 
-  searchBus(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
+  searchBusTemplate(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
     return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
-
     );
   }
 
-  createBus(bus2Create: Bus2Create) {
+  createBusTemplate(busTemplate2Create: BusTemplate2Create) {
     const url = this.url;
 
-    return this.apiGatewayService.post(url, bus2Create).pipe(
-      tap((res: any) => {
-      }),
-
+    return this.apiGatewayService.post(url, busTemplate2Create).pipe(
+      tap((res: any) => { }),
     );
   }
 
-  updateBus(bus2Update: Bus2Update) {
+  updateBusTemplate(busTemplate2Update: BusTemplate2Update) {
     const url = this.url;
-    return this.apiGatewayService.put(url, bus2Update).pipe(
-      tap((res: any) => {
-      }),
-
+    return this.apiGatewayService.put(url, busTemplate2Update).pipe(
+      tap((res: any) => { }),
     );
   }
 
-  deleteBus(id: string) {
+  deleteBusTemplate(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(
-      tap((res: any) => {
-      }),
-
+      tap((res: any) => { }),
     );
   }
 }

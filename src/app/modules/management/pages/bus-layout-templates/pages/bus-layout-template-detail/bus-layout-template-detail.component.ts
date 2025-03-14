@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class BusLayoutTemplateDetailComponent implements OnInit {
   @ViewChild('cellInput', { static: false }) cellInput: ElementRef | undefined;
 
-  busTemplate!: BusLayoutTemplate;
+  busLayoutTemplate!: BusLayoutTemplate;
 
   busTemplateDetailForm!: FormGroup;
   tabs = ['seat layout 1'];
@@ -67,7 +67,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   async getQueryParams() {
     const params = history.state;
     if (params) {
-      this.busTemplate = params["busTemplate"] ? JSON.parse(params["busTemplate"]) : null;
+      this.busLayoutTemplate = params["busLayoutTemplate"] ? JSON.parse(params["busLayoutTemplate"]) : null;
     }
   }
 
@@ -80,8 +80,11 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   }
 
   private async initForm() {
+
+    const { name = '' } = this.busLayoutTemplate || {};
+
     this.busTemplateDetailForm = this.fb.group({
-      name: [this.busTemplate?.name ?? '', [Validators.required]],
+      name: [name, [Validators.required]],
       layouts: this.fb.array([]),
     });
 
@@ -89,8 +92,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
 
     // nếu có busTemplate initializeLayout để edit 
-    if (this.busTemplate) {
-      for (const layout of this.busTemplate.seatLayouts) {
+    if (this.busLayoutTemplate) {
+      for (const layout of this.busLayoutTemplate.seatLayouts) {
         const temp = await this.initializeLayout(layout);
         layoutsForMatrixForm.push(temp);
       }
@@ -431,10 +434,10 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
         })),
     }));
 
-    if (this.busTemplate) {
+    if (this.busLayoutTemplate) {
       const busTemplate2Update = {
         ...busTemplate2Create,
-        _id: this.busTemplate._id, // Thêm thuộc tính _id
+        _id: this.busLayoutTemplate._id, // Thêm thuộc tính _id
       };
 
       this.updateBusLayoutTemplate(busTemplate2Update);

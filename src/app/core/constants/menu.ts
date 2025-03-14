@@ -41,7 +41,9 @@ export class Menu {
           label: 'Bus',
           route: '/management',
           children: [
+            { label: 'Bus Schedule Autogenerators', route: '/management/bus-schedule-autogenerators' },
             { label: 'Buses', route: '/management/buses' },
+            { label: 'Bus Templates', route: '/management/bus-templates' },
             { label: 'Bus Routes', route: '/management/bus-routes' },
             { label: 'Bus Schedules', route: '/management/bus-schedules' },
             { label: 'Bus Schedule Templates', route: '/management/bus-schedule-templates' },

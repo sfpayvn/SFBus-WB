@@ -104,8 +104,8 @@ export class BusLayoutTemplatesComponent implements OnInit {
     });
   }
 
-  editBusLayoutTemplate(busTemplate: BusLayoutTemplate): void {
-    const params = { busTemplate: JSON.stringify(busTemplate) };
+  editBusLayoutTemplate(busLayoutTemplate: BusLayoutTemplate): void {
+    const params = { busLayoutTemplate: JSON.stringify(busLayoutTemplate) };
     this.router.navigateByUrl('/management/bus-layout-templates/bus-layout-template-detail', { state: params });
   }
 

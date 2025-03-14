@@ -74,79 +74,105 @@
       </div>
     </div>
     <div class="flex gap-4">
-      <div class="flex w-6/12">
-        <nz-form-item class="!min-h-[98px] !w-full">
-          <nz-form-label nzFor="busId" class="!flex !h-[36px] !items-center !justify-start">Buses</nz-form-label>
-          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusIdErrorTpl">
-            <nz-select formControlName="busId" nzPlaceHolder="Chọn Buses" (ngModelChange)="chooseBus($event)">
-              @for (bus of buses; track bus) {
-              <nz-option nzCustomContent [nzLabel]="bus.name" [nzValue]="bus._id">
-                <div class="flex items-center">
-                  <span class="!font-medium">
-                    {{ bus.name }}
-                  </span>
-                </div>
-              </nz-option>
-              }
-            </nz-select>
-            <ng-template #busLayoutTemplateDetailBusIdErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busScheduleTemplateDetailForm.controls['busId'].errors?.['required']) { Vui lòng chọn Bus}
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
+      <div class="flex w-6/12 gap-4">
+        <div class="flex w-6/12">
+          <nz-form-item class="!min-h-[98px] !w-full">
+            <nz-form-label nzFor="busTemplateId" class="!flex !h-[36px] !items-center !justify-start"
+              >Bus Templates</nz-form-label
+            >
+            <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusTemplateIdErrorTpl">
+              <nz-select
+                formControlName="busTemplateId"
+                nzPlaceHolder="Chọn Template"
+                (ngModelChange)="chooseBusTemplate($event)">
+                @for (busTemplate of busTemplates; track busTemplate) {
+                <nz-option nzCustomContent [nzLabel]="busTemplate.name" [nzValue]="busTemplate._id">
+                  <div class="flex items-center">
+                    <span class="!font-medium">
+                      {{ busTemplate.name }}
+                    </span>
+                  </div>
+                </nz-option>
+                }
+              </nz-select>
+              <ng-template #busLayoutTemplateDetailBusTemplateIdErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busScheduleTemplateDetailForm.controls['busTemplateId'].errors?.['required']) { Vui lòng chọn Bus
+                  Template}
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="flex w-6/12">
+          <nz-form-item class="!min-h-[98px] !w-full" *ngIf="filterdBuses.length > 0">
+            <nz-form-label nzFor="busId" class="!flex !h-[36px] !items-center !justify-start">Buses</nz-form-label>
+            <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusIdErrorTpl">
+              <nz-select formControlName="busId" nzPlaceHolder="Chọn Bus" (ngModelChange)="chooseBus($event)">
+                @for (bus of filterdBuses; track bus) {
+                <nz-option nzCustomContent [nzLabel]="bus.name" [nzValue]="bus._id">
+                  <div class="flex items-center">
+                    <span class="!font-medium">
+                      {{ bus.name }}
+                    </span>
+                  </div>
+                </nz-option>
+                }
+              </nz-select>
+              <ng-template #busLayoutTemplateDetailBusIdErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busScheduleTemplateDetailForm.controls['busId'].errors?.['required']) { Vui lòng chọn Bus }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
       <div class="flex w-6/12 flex-col">
-        <ng-container *ngIf="busReview">
+        <ng-container *ngIf="busTemplateReview">
           <label class="flex h-[36px] items-center">Bus Review</label>
           <div class="flex flex-row flex-wrap gap-4">
             <div class="flex w-5/12 justify-between">
               <nz-skeleton
-                [nzLoading]="busReview.isLoading"
+                [nzLoading]="busTemplateReview.isLoading"
                 [nzParagraph]="false"
                 [nzTitle]="{ width: '100%' }"
                 [nzActive]="true"
                 class="!flex justify-between">
                 <label class="text-xs text-green-700">Name:</label>
-                <label class="text-xs">{{ busReview.name }}</label>
+                <label class="text-xs">{{ busTemplateReview.name }}</label>
               </nz-skeleton>
             </div>
             <div class="flex w-5/12 justify-between">
-              <nz-skeleton
-                [nzLoading]="busReview.isLoading"
-                [nzParagraph]="false"
-                [nzTitle]="{ width: '100%' }"
-                [nzActive]="true"
-                class="!flex justify-between">
+              <ng-container>
                 <label class="text-xs text-green-700">License Plate:</label>
-                <label class="text-xs">{{ busReview.licensePlate }}</label>
-              </nz-skeleton>
+                <label class="text-xs" *ngIf="busReview && busReview.licensePlate">{{ busReview.licensePlate }}</label>
+              </ng-container>
             </div>
             <div class="flex w-5/12 justify-between">
               <nz-skeleton
-                [nzLoading]="busReview.isLoading"
+                [nzLoading]="busTemplateReview.isLoading"
                 [nzParagraph]="false"
                 [nzTitle]="{ width: '100%' }"
                 [nzActive]="true"
                 class="!flex justify-between">
                 <label class="text-xs text-green-700">Services:</label>
                 <div class="flex flex-row">
-                  @for(busService of busReview.busServices; track busService){
+                  @for(busService of busTemplateReview.busServices; track busService){
                   <svg-icon svgClass="w-6 h-full mx-1" [src]="busService.icon"></svg-icon>
                   }
                 </div>
               </nz-skeleton>
             </div>
-            <div class="flex w-5/12 justify-between" *ngIf="busReview.busType">
+            <div class="flex w-5/12 justify-between" *ngIf="busTemplateReview.busType">
               <nz-skeleton
-                [nzLoading]="busReview.isLoading"
+                [nzLoading]="busTemplateReview.isLoading"
                 [nzParagraph]="false"
                 [nzTitle]="{ width: '100%' }"
                 [nzActive]="true"
                 class="!flex justify-between">
                 <label class="text-xs text-green-700">Type:</label>
-                <label class="text-xs">{{ busReview.busType.name }}</label>
+                <label class="text-xs">{{ busTemplateReview.busType.name }}</label>
               </nz-skeleton>
             </div>
           </div>

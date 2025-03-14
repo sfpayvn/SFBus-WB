@@ -19,6 +19,10 @@ import { BusLayoutTemplatesComponent } from './pages/bus-layout-templates/bus-la
 import { BusLayoutTemplateDetailComponent } from './pages/bus-layout-templates/pages/bus-layout-template-detail/bus-layout-template-detail.component';
 import { BusScheduleTemplatesComponent } from './pages/bus-schedule-templates/bus-schedule-templates.component';
 import { BusScheduleTemplateDetailComponent } from './pages/bus-schedule-templates/pages/bus-schedule-template-detail/bus-schedule-template-detail.component';
+import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.component';
+import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
+import { BusScheduleAutoGeneratorsComponent } from './pages/bus-schedule-autogenerators/bus-schedule-autogenerator.component';
+import { BusScheduleAutoGeneratorDetailComponent } from './pages/bus-schedule-autogenerators/pages/bus-schedule-autogenerator-detail/bus-schedule-autogenerator-detail.component';
 
 const routes: Routes = [
   {
@@ -33,6 +37,14 @@ const routes: Routes = [
       {
         path: 'buses/bus-detail',
         component: BusDetailComponent,
+      },
+      {
+        path: 'bus-templates',
+        component: BusTemplatesComponent,
+      },
+      {
+        path: 'bus-templates/bus-template-detail',
+        component: BusTemplateDetailComponent,
       },
       {
         path: 'bus-routes',
@@ -87,16 +99,16 @@ const routes: Routes = [
         component: BusLayoutTemplateDetailComponent,
       },
       {
+        path: 'bus-schedule-autogenerators',
+        component: BusScheduleAutoGeneratorsComponent,
+      },
+      {
+        path: 'bus-schedule-autogenerators/bus-schedule-autogenerator-detail',
+        component: BusScheduleAutoGeneratorDetailComponent,
+      },
+      {
         path: 'media-center',
         component: FilesComponent,
-      },
-      {
-        path: 'options',
-        component: OptionsComponent,
-      },
-      {
-        path: 'options-value',
-        component: OptionsValueComponent,
       },
       { path: '**', redirectTo: 'errors/404' },
 

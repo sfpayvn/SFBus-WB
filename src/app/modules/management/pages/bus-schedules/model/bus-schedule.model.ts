@@ -1,6 +1,7 @@
 import { BusProvince } from "../../bus-provices/model/bus-province.model";
 import { BusRoute, BusRouteBreakPoints } from "../../bus-routes/model/bus-route.model";
 import { BusRouteScheduleTemplateBreakPoints, BusScheduleTemplateRoute } from "../../bus-schedule-templates/model/bus-schedule-template.model";
+import { BusTemplate } from "../../bus-templates/model/bus-template.model";
 import { Bus } from "../../buses/model/bus.model";
 
 export class SearchBusSchedule {
@@ -28,6 +29,8 @@ export class BusSchedule {
   name: string = '';
   busId: string = '';
   bus: Bus | undefined;
+  busTemplateId: string = '';
+  busTemplate: BusTemplate | undefined;
   busRouteId: string = '';
   busRoute: BusScheduleRoute | undefined;
   busScheduleTemplateId: string = '';

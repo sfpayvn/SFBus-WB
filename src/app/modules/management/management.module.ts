@@ -40,6 +40,10 @@ import { BusLayoutTemplateDetailComponent } from './pages/bus-layout-templates/p
 import { BusScheduleTemplatesComponent } from './pages/bus-schedule-templates/bus-schedule-templates.component';
 import { BusScheduleTemplateDetailComponent } from './pages/bus-schedule-templates/pages/bus-schedule-template-detail/bus-schedule-template-detail.component';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.component';
+import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
+import { BusScheduleAutoGeneratorsComponent } from './pages/bus-schedule-autogenerators/bus-schedule-autogenerator.component';
+import { BusScheduleAutoGeneratorDetailComponent } from './pages/bus-schedule-autogenerators/pages/bus-schedule-autogenerator-detail/bus-schedule-autogenerator-detail.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +74,9 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     BusDetailComponent,
     BusesComponent,
 
+    BusTemplateDetailComponent,
+    BusTemplatesComponent,
+
     CreateEditSeatTypeDialogComponent,
     SeatTypesComponent,
 
@@ -84,6 +91,9 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
     BusScheduleTemplatesComponent,
     BusScheduleTemplateDetailComponent,
+
+    BusScheduleAutoGeneratorDetailComponent,
+    BusScheduleAutoGeneratorsComponent,
   ],
   imports: [
     CommonModule,
