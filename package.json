@@ -3,10 +3,10 @@
   "displayName": "Angular Tailwind",
   "version": "0.10.1",
   "description": "Angular & Tailwind CSS Admin Dashboard Starter Kit, Free and Open Source",
-  "homepage": "https://github.com/lannodev/angular-tailwind#readme",
+  "homepage": "https://github.com/sfpayvn/SFBus-WB",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lannodev/angular-tailwind.git"
+    "url": "git+https://github.com/sfpayvn/SFBus-WB.git"
   },
   "keywords": [
     "angular",
@@ -21,14 +21,16 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
-    "build": "ng build",
+    "build": "ng build --configuration development --output-path dist --base-href /sfbus-wb/browser/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:e2e": "npx playwright test --ui",
     "prettier": "prettier --config ./.prettierrc --write \"src/{app,environments}/**/*{.ts,.html,.scss,.json}\"",
     "prettier:verify": "prettier --config ./.prettierrc --check \"src/{app,environments}/**/*{.ts,.html,.scss,.json}\"",
     "prettier:staged": "pretty-quick --staged",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "private": true,
   "dependencies": {
@@ -48,6 +50,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "angular-svg-icon": "^13.0.0",
     "apexcharts": "^3.35.3",
+    "gh-pages": "^6.3.0",
     "ng-apexcharts": "^1.7.1",
     "ng-zorro-antd": "^19.0.2",
     "ngx-cookie-service": "^19.1.0",
