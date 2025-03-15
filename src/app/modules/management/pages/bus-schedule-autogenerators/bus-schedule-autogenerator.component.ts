@@ -107,11 +107,11 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
 
   editBusScheduleAutoGenerator(busScheduleAutoGenerator: BusScheduleAutoGenerator): void {
     const params = { busScheduleAutoGenerator: JSON.stringify(busScheduleAutoGenerator) };
-    this.router.navigateByUrl('/management/bus-schedules/bus-schedule-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-schedule-autogenerators/bus-schedule-autogenerator-detail', { state: params });
   }
 
   addBusScheduleAutoGenerator(): void {
-    this.router.navigate(['/management/bus-schedules/bus-schedule-detail']);
+    this.router.navigate(['/management/bus-schedule-autogenerators/bus-schedule-autogenerator-detail']);
   }
 
   reloadBusScheduleAutoGeneratorPage(data: any): void {

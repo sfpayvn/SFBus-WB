@@ -23,7 +23,7 @@ export class BusScheduleAutoGeneratorsService {
   }
 
   searchBusScheduleAutoGenerator(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search-paging?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
+    const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
     return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
 

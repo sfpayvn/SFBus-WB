@@ -5,10 +5,23 @@ export class SearchBusScheduleAutoGenerator {
   totalPage: number = 0;
 }
 
+
+export class specificTimeSlot {
+  timeSlot: string = '';
+}
+
+
 export class BusScheduleAutoGenerator {
   _id: string = '';
   name: string = '';
-
+  busScheduleTemplateId: string = '';
+  repeatType: string = '';
+  repeatInterval: number = 0;
+  specificTimeSlots: specificTimeSlot[] = [];
+  repeatDaysPerWeek: string[] = [];
+  preGenerateDays: number = 0;
+  startDate: number[] = [];
+  endDate: number[] = [];
   selected: boolean = false;
 }
 

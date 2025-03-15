@@ -88,8 +88,7 @@ export class BusRouteDetailComponent implements OnInit {
   }
 
   addBreakPoint(busStationId: string = ''): void {
-    const breakPoints = this.busRouteDetailForm.get('breakPoints') as FormArray;
-    breakPoints.push(this.createBreakPoint(busStationId));
+    this.breakPoints.push(this.createBreakPoint(busStationId));
   }
 
   filterProvinces() {

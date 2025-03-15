@@ -17,6 +17,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 
 @NgModule({
     imports: [NzIconModule],
@@ -38,7 +39,8 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
         NzModalModule,
         NzIconModule,
         NzSkeletonModule,
-        NzDatePickerModule
+        NzDatePickerModule,
+        NzTimePickerModule
     ]
 })
 export class NZModule { }
