@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/auth/pages/sign-in/sign-in.component.css"],
+  "sourcesContent": ["/*! tailwindcss v4.0.14 | MIT License | https://tailwindcss.com */\n.is__invalid-input{border-style:var(--tw-border-style);border-width:1px;border-color:var(--color-destructive,var(--destructive))}.is__invalid-input:focus{border-color:var(--color-destructive,var(--destructive));--tw-ring-color:transparent;--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.is__invalid-input:focus{outline-offset:2px;outline:2px solid #0000}}.is__invalid-error{padding-inline:calc(var(--spacing,.25rem)*1);padding-top:calc(var(--spacing,.25rem)*1);font-size:var(--text-xs,.75rem);line-height:var(--tw-leading,var(--text-xs--line-height,calc(1/.75)));color:var(--color-destructive,var(--destructive))}@property --tw-border-style{syntax:\"*\";inherits:false;initial-value:solid}"],
+  "mappings": ";AACA,CAAA;AAAmB,gBAAA,IAAA;AAAoC,gBAAA;AAAiB,gBAAA,IAAA,mBAAA,CAAA,IAAA;AAAwD;AAAC,CAAjI,iBAAiI;AAAyB,gBAAA,IAAA,mBAAA,CAAA,IAAA;AAAyD,kBAAA;AAA4B,qBAAA;AAAwB,iBAAA;AAAkB;AAAC,OAAA,CAAA,aAAA,CAAA;AAA8B,GAAxT,iBAAwT;AAAyB,oBAAA;AAAmB,aAAA,IAAA,MAAA;AAAuB;AAAC;AAAC,CAAA;AAAmB,kBAAA,KAAA,IAAA,SAAA,CAAA,OAAA,CAAA;AAA6C,eAAA,KAAA,IAAA,SAAA,CAAA,OAAA,CAAA;AAA0C,aAAA,IAAA,SAAA,CAAA;AAAgC,eAAA,IAAA,YAAA,CAAA,IAAA,sBAAA,CAAA,KAAA,CAAA,CAAA;AAAsE,SAAA,IAAA,mBAAA,CAAA,IAAA;AAAiD;AAAC,UAAA,kBAAA,EAA4B,MAAA,CAAA,GAAU,CAAC,QAAA,CAAA,KAAc,CAAC,aAAA,CAAA;",
+  "names": []
+}

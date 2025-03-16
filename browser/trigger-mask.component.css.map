@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/management/components/trigger-mask/trigger-mask.component.scss", "src/app/modules/management/components/trigger-mask/trigger-mask.component.scss"],
+  "sourcesContent": [".action-preview-img {\n  opacity: 1;\n}", ".action-preview-img {\n  opacity: 1;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmaWxlOi8vL1VzZXJzL3ZpZXRsZS9Qcm9qZWN0cy9zZnBheS9TRkJ1cy1XQi9zcmMvYXBwL21vZHVsZXMvbWFuYWdlbWVudC9jb21wb25lbnRzL3RyaWdnZXItbWFzay90cmlnZ2VyLW1hc2suY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSIsInNvdXJjZXNDb250ZW50IjpbIi5hY3Rpb24tcHJldmlldy1pbWcge1xuICBvcGFjaXR5OiAxO1xufSJdfQ== */"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;ACCF;",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/management/pages/bus-services/component/create-edit-bus-service-dialog/create-bus-service-dialog.component.scss", "src/app/modules/management/pages/bus-services/component/create-edit-bus-service-dialog/create-bus-service-dialog.component.scss"],
+  "sourcesContent": [".action-preview-img:hover {\n    opacity: 1;\n    background: rgba(0, 0, 0, .5);\n  }", ".action-preview-img:hover {\n  opacity: 1;\n  background: rgba(0, 0, 0, 0.5);\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmaWxlOi8vL1VzZXJzL3ZpZXRsZS9Qcm9qZWN0cy9zZnBheS9TRkJ1cy1XQi9zcmMvYXBwL21vZHVsZXMvbWFuYWdlbWVudC9wYWdlcy9idXMtc2VydmljZXMvY29tcG9uZW50L2NyZWF0ZS1lZGl0LWJ1cy1zZXJ2aWNlLWRpYWxvZy9jcmVhdGUtYnVzLXNlcnZpY2UtZGlhbG9nLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0k7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5hY3Rpb24tcHJldmlldy1pbWc6aG92ZXIge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAuNSk7XG4gIH0iXX0= */"],
+  "mappings": ";AAAA,CAAA,kBAAA;AACI,WAAA;AACA,cAAA,KAAA,CAAA,EAAA,CAAA,EAAA,CAAA,EAAA;ACCJ;",
+  "names": []
+}

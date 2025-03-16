@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/management/pages/bus-types/bus-types.component.scss"],
+  "sourcesContent": ["/*! tailwindcss v4.0.14 | MIT License | https://tailwindcss.com */\ntd{padding:.75rem 1rem;font-size:.85rem}th{vertical-align:middle;border-right-style:var(--tw-border-style);border-right-width:1px;border-bottom-style:var(--tw-border-style);border-bottom-width:1px;padding:.625rem 1rem;font-size:.8125rem;font-weight:500;line-height:1.125rem}@property --tw-border-style{syntax:\"*\";inherits:false;initial-value:solid}"],
+  "mappings": ";AACA;AAAG,WAAA,OAAA;AAAoB,aAAA;AAAgB;AAAC;AAAG,kBAAA;AAAsB,sBAAA,IAAA;AAA0C,sBAAA;AAAuB,uBAAA,IAAA;AAA2C,uBAAA;AAAwB,WAAA,QAAA;AAAqB,aAAA;AAAmB,eAAA;AAAgB,eAAA;AAAoB;AAAC,UAAA,kBAAA,EAA4B,MAAA,CAAA,GAAU,CAAC,QAAA,CAAA,KAAc,CAAC,aAAA,CAAA;",
+  "names": []
+}
