@@ -225,7 +225,7 @@
             class="!flex !w-full flex-col">
             <input type="text" class="!hidden" nz-input formControlName="repeatDaysPerWeek" />
             <div class="flex min-h-[36px] flex-row justify-between gap-1">
-              <div *ngFor="let day of daysOfWeek; let i = index">
+              <div *ngFor="let day of daysOfWeek; let i = index" class="flex w-max items-center">
                 <input
                   type="checkbox"
                   id="choose-day-{{ i }}"
@@ -234,7 +234,7 @@
                   (change)="chooseDayOfWeek(day)" />
                 <label
                   for="choose-day-{{ i }}"
-                  class="min-w-[60px] cursor-pointer select-none rounded-md border border-gray-200 py-2 px-4 text-xs transition-colors duration-200 ease-in-out peer-checked:border-blue-700 peer-checked:bg-blue-200 peer-checked:font-medium peer-checked:text-blue-600">
+                  class="flex w-max min-w-[60px] cursor-pointer select-none justify-center rounded-md border border-gray-200 py-2 px-4 text-xs transition-colors duration-200 ease-in-out peer-checked:border-blue-700 peer-checked:bg-blue-200 peer-checked:font-medium peer-checked:text-blue-600">
                   {{ day }}
                 </label>
               </div>
@@ -266,6 +266,7 @@
                     [nzDisabledHours]="checkTimeDisableTime(i).nzDisabledHours"
                     [nzDisabledMinutes]="checkTimeDisableTime(i).nzDisabledMinutes"
                     [nzDisabledSeconds]="checkTimeDisableTime(i).nzDisabledSeconds"
+                    (ngModelChange)="specificTimeSlotChange(i)"
                     class="!flex h-[36px] !w-full !rounded border-gray-200"
                     formControlName="timeSlot"></nz-time-picker>
                   <svg-icon

@@ -131,6 +131,38 @@ export class BusSchedulesComponent implements OnInit {
     this.loadData();
   }
 
+  convertToCalendarEventData(busSchedules: BusSchedule[]): { name: string; startDate: Date }[] {
+    // Kiểm tra xem busSchedules có dữ liệu hay không
+    if (!busSchedules || busSchedules.length === 0) {
+      return [];
+    }
+
+    // // Lặp qua danh sách busSchedules và tạo dữ liệu sự kiện lịch
+    // return busSchedules.map((schedule: any) => {
+    //   const breakpoints = schedule.busRoute?.breakPoints;
+    //   const startDate = breakpoints?.[0].timeSchedule ? new Date(breakpoints?.[0].timeSchedule) : new Date();
+
+    //   return {
+    //     name: schedule.name || "Unnamed Event",
+    //     startDate: startDate,
+    //   };
+    // });
+    const events = busSchedules.map((schedule: any) => {
+      const breakpoints = schedule.busRoute?.breakPoints;
+      const startDate = breakpoints?.[0]?.timeSchedule
+        ? new Date(breakpoints[0].timeSchedule)
+        : new Date();
+
+      return {
+        name: schedule.name || "Unnamed Event",
+        startDate,
+      };
+    });
+
+    return [...events, ...events, ...events];
+  }
+
+
   private handleRequestError(error: any): void {
     const msg = 'An error occurred while processing your request';
     toast.error(msg, {

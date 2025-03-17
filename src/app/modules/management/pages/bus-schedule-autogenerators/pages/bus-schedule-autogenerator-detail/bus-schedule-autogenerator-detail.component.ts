@@ -176,6 +176,39 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     endDateControl?.updateValueAndValidity();
   }
 
+  specificTimeSlotChange(idx: number) {
+    // Lấy control hiện tại tại vị trí idx
+    const currentControl = this.specificTimeSlots.at(idx);
+    const currentTimeValue = currentControl.value.timeSlot;
+
+    if (!currentTimeValue) {
+      return; // Nếu không có giá trị thì không xử lý
+    }
+
+    // Chuyển đổi giá trị thành đối tượng Date
+    let baselineTime = new Date(currentTimeValue);
+
+    // Duyệt qua các item picker sau idx
+    for (let i = idx + 1; i < this.specificTimeSlots.length; i++) {
+      const control = this.specificTimeSlots.at(i);
+      const nextTimeValue = control.value.timeSlot;
+      const nextTime = nextTimeValue ? new Date(nextTimeValue) : null;
+
+      // Tính thời gian mong muốn cho picker tiếp theo = baselineTime + 10 phút
+      const expectedTime = new Date(baselineTime.getTime() + 5 * 60 * 1000);
+
+      // Nếu picker kế tiếp chưa có giá trị hoặc có giá trị nhỏ hơn expectedTime
+      if (!nextTime || nextTime.getTime() < expectedTime.getTime()) {
+        control.patchValue({ timeSlot: expectedTime });
+        // Cập nhật baselineTime thành expectedTime để tính cho picker tiếp theo
+        baselineTime = expectedTime;
+      } else {
+        // Nếu picker kế tiếp đã có giá trị >= expectedTime, cho phép giữ nguyên và sử dụng giá trị đó làm baseline cho bước sau
+        baselineTime = nextTime;
+      }
+    }
+  }
+
   checkTimeDisableTime(idx: number): {
     nzDisabledHours: () => number[],
     nzDisabledMinutes: (selectedHour: number) => number[],
@@ -243,7 +276,6 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
       };
     }
   }
-
 
   checkDateDisableDate(idx: number): (current: Date) => boolean {
     // Nếu là picker đầu tiên, vô hiệu hóa các ngày nhỏ hơn ngày hiện tại.

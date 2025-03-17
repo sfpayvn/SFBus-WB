@@ -1,7 +1,8 @@
 import { ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { toast } from 'ngx-sonner';
-
+import moment from "moment-timezone";
+import 'moment/locale/vi';
 @Injectable({
   providedIn: 'root',
 })
@@ -55,5 +56,182 @@ export class Utils {
   isValidObjectId(id: string): boolean {
     const objectIdPattern = /^[0-9a-fA-F]{24}$/;
     return objectIdPattern.test(id);
+  }
+
+  getCurrentDate(): Date {
+    // Lấy timestamp tại timezone Asia/Ho_Chi_Minh và tạo đối tượng Date
+    const now = moment().tz("Asia/Ho_Chi_Minh").toDate();
+    return now;
+  }
+
+  converToTimeZone(date: Date): Date {
+    // Chuyển đổi đối tượng Date sang múi giờ Asia/Ho_Chi_Minh
+    const converted = moment(date).tz("Asia/Ho_Chi_Minh").toDate();
+    return converted;
+  }
+
+
+  getCurrentDateInISO(): string {
+    // Lấy ngày giờ hiện tại tại timezone Asia/Ho_Chi_Minh và định dạng ISO string
+    return moment().tz("Asia/Ho_Chi_Minh").format();
+  }
+
+  formatDateToISOString(date: Date): string {
+    // Định dạng ngày tháng theo kiểu ISO string với timezone Asia/Ho_Chi_Minh
+    return moment(date).tz("Asia/Ho_Chi_Minh").format();
+  }
+
+  isISODateString(dateString: string): boolean {
+    const isoDatePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/;
+    return isoDatePattern.test(dateString);
+  }
+
+  formatDateFromISOString(dateString: string) {
+
+    if (!this.isISODateString(dateString)) {
+      return '';
+    }
+    // Tạo đối tượng Date từ chuỗi định dạng 'MM/DD/YYYY, h:mm:ss A'
+    const date = new Date(dateString);
+
+    // Lấy ngày, tháng, năm từ đối tượng Date
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+
+    // Trả về chuỗi định dạng 'DD/MM/YYYY'
+    return `${day}/${month}/${year}`;
+  }
+
+  formatToDateWeek(date: Date): string {
+    return moment(date)
+      .tz("Asia/Ho_Chi_Minh")
+      .locale("vi")
+      .format("ddd, D");
+  }
+
+  formatToDay(date: Date): string {
+    // Chuyển đổi date sang múi giờ "Asia/Ho_Chi_Minh" và lấy ngày dưới dạng số
+    return moment(date).tz('Asia/Ho_Chi_Minh').format('D');
+  }
+
+  /**
+   * Trả về chuỗi tháng dạng "tháng X", ví dụ: "tháng 3", "tháng 12"
+   */
+  formatToMonthText(date: Date): string {
+    // Chuyển đổi date sang múi giờ "Asia/Ho_Chi_Minh"
+    const m = moment(date).tz('Asia/Ho_Chi_Minh');
+
+    // Mảng tên tháng bằng chữ tiếng Việt
+    const monthNames: string[] = [
+      'Một',
+      'Hai',
+      'Ba',
+      'Tư',
+      'Năm',
+      'Sáu',
+      'Bảy',
+      'Tám',
+      'Chín',
+      'Mười',
+      'Mười Một',
+      'Mười Hai'
+    ];
+    // Lấy số tháng (tháng tính từ 0) và trả về chuỗi định dạng
+    return `Tháng ${monthNames[m.month()]}`;
+  }
+
+
+  formatToMonth(date: Date): string {
+    return moment(date)
+      .tz("Asia/Ho_Chi_Minh")
+      .format("M");
+  }
+  /**
+   * Định dạng khoảng tuần dựa vào ngày bắt đầu và ngày kết thúc.
+   * - Nếu cùng tháng và cùng năm: "6 - 12 tháng 3 2025"
+   * - Nếu cùng năm nhưng khác tháng: "6 tháng 3 - 12 tháng 4, 2025"
+   * - Nếu khác năm: "6 tháng 12, 2025 - 12 tháng 1, 2026"
+   * 
+   * @param start ngày bắt đầu
+   * @param end   ngày kết thúc
+   * @returns chuỗi định dạng khoảng tuần
+   */
+  formatWeekRange(start: Date, end: Date): string {
+    const startDay = this.formatToDay(start); // Ví dụ: "6"
+    const endDay = this.formatToDay(end);       // Ví dụ: "12"
+    const startMonthText = this.formatToMonthText(start); // Ví dụ: "tháng 3"
+    const endMonthText = this.formatToMonthText(end);     // Ví dụ: "tháng 4"
+    const startYear = start.getFullYear();
+    const endYear = end.getFullYear();
+
+    if (startYear === endYear) {
+      // Cùng năm
+      if (start.getMonth() === end.getMonth()) {
+        // Cùng tháng & năm: 6 - 12 tháng 3 2025
+        return `${startDay} - ${endDay} ${startMonthText} ${startYear}`;
+      } else {
+        // Khác tháng nhưng cùng năm: 6 tháng 3 - 12 tháng 4, 2025
+        return `${startDay} ${startMonthText} - ${endDay} ${endMonthText}, ${startYear}`;
+      }
+    } else {
+      // Khác năm: 6 tháng 12, 2025 - 12 tháng 1, 2026
+      return `${startDay} ${startMonthText}, ${startYear} - ${endDay} ${endMonthText}, ${endYear}`;
+    }
+  }
+
+
+
+  formatToMonthYear(date: Date): string {
+    // Định dạng ngày theo "MMMM D, YYYY" (ví dụ: "March 1, 2025") với timezone Asia/Ho_Chi_Minh
+    return moment(date)
+      .tz("Asia/Ho_Chi_Minh")
+      .format("MMMM, YYYY");
+  }
+
+  formatToFullDate(date: Date): string {
+    // Định dạng ngày theo "MMMM D, YYYY" (ví dụ: "March 1, 2025") với timezone Asia/Ho_Chi_Minh
+    return moment(date)
+      .tz("Asia/Ho_Chi_Minh")
+      .format("MMMM D, YYYY");
+  }
+
+  formatToDateMonth(date: Date): string {
+    // Chỉ lấy ngày và tháng với timezone Asia/Ho_Chi_Minh
+    return moment(date).tz("Asia/Ho_Chi_Minh").format("DD/MM");
+  }
+
+  getDayOfWeek(date: string): string {
+    const daysOfWeek = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+    // Tạo đối tượng Date từ chuỗi định dạng 'MM/DD/YYYY, h:mm:ss A'
+    const formattedDate = new Date(date);
+
+    if (formattedDate.toString() === "Invalid Date") {
+      return "Ngày không hợp lệ";
+    }
+
+    return daysOfWeek[formattedDate.getDay()];
+  }
+
+  formatPriceToVND(price: number): string {
+    return price.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+  }
+
+  convertDateToTimestamp(date: string): number {
+    return new Date(date).getTime() / 1000;
+  }
+
+  formatTime(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
+
+  compareDate(date1: Date, date2: Date): boolean {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
   }
 }

@@ -144,6 +144,125 @@ export class BusScheduleDetailComponent
     return this.busScheduleDetailForm.get('busRoute.breakPoints') as FormArray;
   }
 
+  breakPointTimeChange(idx: number) {
+    // Lấy control hiện tại tại vị trí idx
+    const currentControl = this.breakPoints.at(idx);
+    const currentTimeValue = currentControl.value.timeSchedule;
+
+    if (!currentTimeValue) {
+      return; // Nếu không có giá trị thì không xử lý
+    }
+
+    // Chuyển đổi giá trị thành đối tượng Date
+    let baselineTime = new Date(currentTimeValue);
+
+    // Duyệt qua các item picker sau idx
+    for (let i = idx + 1; i < this.breakPoints.length; i++) {
+      const control = this.breakPoints.at(i);
+      const nextTimeValue = control.value.timeSchedule;
+      const nextTime = nextTimeValue ? new Date(nextTimeValue) : null;
+
+      // Tính thời gian mong muốn cho picker tiếp theo = baselineTime + 10 phút
+      const expectedTime = new Date(baselineTime.getTime() + 10 * 60 * 1000);
+
+      // Nếu picker kế tiếp chưa có giá trị hoặc có giá trị nhỏ hơn expectedTime
+      if (!nextTime || nextTime.getTime() < expectedTime.getTime()) {
+        control.patchValue({ timeSchedule: expectedTime });
+        // Cập nhật baselineTime thành expectedTime để tính cho picker tiếp theo
+        baselineTime = expectedTime;
+      } else {
+        // Nếu picker kế tiếp đã có giá trị >= expectedTime, cho phép giữ nguyên và sử dụng giá trị đó làm baseline cho bước sau
+        baselineTime = nextTime;
+      }
+    }
+  }
+
+  // Hàm disable ngày (như bạn đã có)
+  checkDisableDateTime(idx: number): ((current: Date | null) => boolean) & {
+    nzDisabledTime: (current?: Date | Date[]) => {
+      nzDisabledHours: () => number[];
+      nzDisabledMinutes: (selectedHour: number) => number[];
+      nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => number[];
+    };
+  } {
+    // Xác định baseTime: nếu picker đầu tiên thì dùng thời gian hiện tại, ngược lại dùng giá trị của picker liền trước nếu có.
+    let baseTime: Date;
+    if (idx === 0) {
+      baseTime = new Date();
+    } else {
+      const previousDateValue = this.breakPoints.controls[idx - 1]?.value.timeSchedule;
+      baseTime = previousDateValue ? new Date(previousDateValue) : new Date();
+    }
+
+    // Hàm kiểm tra disable ngày: nếu ngày được chọn nhỏ hơn (theo ngày) baseTime thì trả về true.
+    const disabledDate = (current: Date | null): boolean => {
+      if (!current) return false;
+      // Lấy phần ngày của baseTime và current (đặt giờ = 0)
+      const baseDayStart = new Date(
+        baseTime.getFullYear(),
+        baseTime.getMonth(),
+        baseTime.getDate()
+      );
+      const currentDayStart = new Date(
+        current.getFullYear(),
+        current.getMonth(),
+        current.getDate()
+      );
+      return currentDayStart.getTime() < baseDayStart.getTime();
+    };
+
+    // Hàm disable time, đáp ứng kiểu DisabledTimeFn
+    const disabledTime = (current?: Date | Date[]) => {
+      if (idx === 0) {
+        const now = new Date();
+        return {
+          nzDisabledHours: () => Array.from({ length: now.getHours() }, (_, i) => i),
+          nzDisabledMinutes: (selectedHour: number) => {
+            if (selectedHour === now.getHours()) {
+              return Array.from({ length: now.getMinutes() }, (_, i) => i);
+            }
+            return [];
+          },
+          nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => {
+            if (selectedHour === now.getHours() && selectedMinute === now.getMinutes()) {
+              return Array.from({ length: now.getSeconds() }, (_, i) => i);
+            }
+            return [];
+          }
+        };
+      } else {
+        return {
+          nzDisabledHours: () => Array.from({ length: baseTime.getHours() }, (_, i) => i),
+          nzDisabledMinutes: (selectedHour: number) => {
+            if (selectedHour === baseTime.getHours()) {
+              return Array.from({ length: baseTime.getMinutes() }, (_, i) => i);
+            }
+            return [];
+          },
+          nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => {
+            if (selectedHour === baseTime.getHours() && selectedMinute === baseTime.getMinutes()) {
+              return Array.from({ length: baseTime.getSeconds() }, (_, i) => i);
+            }
+            return [];
+          }
+        };
+      }
+    };
+
+    // Gán thuộc tính nzDisabledTime vào function disabledDate (nhờ tính chất hàm-object của JavaScript)
+    (disabledDate as any).nzDisabledTime = disabledTime;
+
+    return disabledDate as ((current: Date | null) => boolean) & {
+      nzDisabledTime: (current?: Date | Date[]) => {
+        nzDisabledHours: () => number[];
+        nzDisabledMinutes: (selectedHour: number) => number[];
+        nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => number[];
+      };
+    };
+  }
+
+
+
   backPage() {
     this.location.back();
   }

@@ -138,7 +138,11 @@
           <nz-form-item class="!min-h-[98px] !w-full">
             <nz-form-label nzFor="busId" class="!flex !h-[36px] !items-center !justify-start">Buses</nz-form-label>
             <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusIdErrorTpl">
-              <nz-select formControlName="busId" nzPlaceHolder="Chọn Buses" (ngModelChange)="chooseBus($event)" [nzAllowClear]="true">
+              <nz-select
+                formControlName="busId"
+                nzPlaceHolder="Chọn Buses"
+                (ngModelChange)="chooseBus($event)"
+                [nzAllowClear]="true">
                 @for (bus of filterdBuses; track bus) {
                 <nz-option nzCustomContent [nzLabel]="bus.name" [nzValue]="bus._id">
                   <div class="flex items-center">
@@ -276,6 +280,10 @@
                   <nz-form-control [nzErrorTip]="busScheduleDetailTimeOffsetErrorTpl" class="!flex flex-col">
                     <nz-date-picker
                       nzShowTime
+                      [nzMode]="'date'"
+                      [nzDisabledDate]="checkDisableDateTime(i)"
+                      [nzDisabledTime]="checkDisableDateTime(i).nzDisabledTime"
+                      (ngModelChange)="breakPointTimeChange(i)"
                       nzFormat="yyyy-MM-dd HH:mm"
                       formControlName="timeSchedule"></nz-date-picker>
                     <ng-template #busScheduleDetailTimeOffsetErrorTpl let-control>
