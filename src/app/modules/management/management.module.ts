@@ -45,6 +45,7 @@ import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-temp
 import { BusScheduleAutoGeneratorsComponent } from './pages/bus-schedule-autogenerators/bus-schedule-autogenerator.component';
 import { BusScheduleAutoGeneratorDetailComponent } from './pages/bus-schedule-autogenerators/pages/bus-schedule-autogenerator-detail/bus-schedule-autogenerator-detail.component';
 import { CalendarEventsComponent } from './components/calendar-events/calendar-events.component';
+import { BusScheduleDetailDialogComponent } from './pages/bus-schedules/components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { CalendarEventsComponent } from './components/calendar-events/calendar-e
 
     BusSchedulesComponent,
     BusScheduleDetailComponent,
+    BusScheduleDetailDialogComponent,
 
     BusScheduleTemplatesComponent,
     BusScheduleTemplateDetailComponent,

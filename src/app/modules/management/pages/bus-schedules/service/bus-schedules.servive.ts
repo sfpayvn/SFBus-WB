@@ -22,8 +22,16 @@ export class BusSchedulesService {
     );
   }
 
-  searchBusSchedule(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search-paging?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
+  searchBusSchedule(searchParams: {
+    pageIdx: number;
+    startDate: Date | null;
+    endDate: Date | null;
+    pageSize: number;
+    keyword: string;
+    sortBy: string;
+  }) {
+    const url = `${this.url}/search-paging?pageIdx=${searchParams.pageIdx}&pageSize=${searchParams.pageSize}&keyword=${searchParams.keyword}&sortBy=${searchParams.sortBy}
+    &startDate=${searchParams.startDate}&endDate=${searchParams.endDate}`;
     return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
 

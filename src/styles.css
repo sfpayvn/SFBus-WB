@@ -9,9 +9,10 @@ layer(base);
 @import '../node_modules/ng-zorro-antd/skeleton/style/index.min.css';
 @import '../node_modules/ng-zorro-antd/date-picker/style/index.min.css';
 @import '../node_modules/ng-zorro-antd/time-picker/style/index.min.css';
+@import '../node_modules/ng-zorro-antd/spin/style/index.min.css';
 
 @import 'tailwindcss';
-@import "tailwindcss-animated";
+@import 'tailwindcss-animated';
 
 /** Plugins **/
 @import './styles/apexchart.scss';
@@ -22,7 +23,6 @@ layer(base);
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/aspect-ratio";
 @plugin "tailwind-scrollbar";
-
 
 @custom-variant dark (&:where(.dark, .dark *));
 

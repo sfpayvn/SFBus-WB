@@ -6,6 +6,8 @@ import { BusSchedulesService } from './service/bus-schedules.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
 import { BusSchedule, SearchBusSchedule } from './model/bus-schedule.model';
+import { UtilsModal } from 'src/app/shared/utils/utils-modal';
+import { BusScheduleDetailDialogComponent } from './components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
 
 @Component({
   selector: 'app-bus-schedules',
@@ -17,12 +19,20 @@ export class BusSchedulesComponent implements OnInit {
   searchBusSchedule: SearchBusSchedule = new SearchBusSchedule();
   selectAll: boolean = false;
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
+  searchParams = {
+    pageIdx: 1,
+    startDate: null as Date | null,
+    endDate: null as Date | null,
+    pageSize: 5,
+    keyword: '',
+    sortBy: ''
+  };
+
+
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
+
+  viewMode: string = 'calendar'
 
   isLoadingBusSchedule: boolean = false;
 
@@ -30,16 +40,18 @@ export class BusSchedulesComponent implements OnInit {
     private busSchedulesService: BusSchedulesService,
     private dialog: MatDialog,
     private utils: Utils,
+    private utilsModal: UtilsModal,
     private router: Router,
   ) { }
 
   ngOnInit(): void {
+    this.setDateToSearch();
     this.loadData();
   }
 
   loadData(): void {
     this.isLoadingBusSchedule = true;
-    this.busSchedulesService.searchBusSchedule(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.busSchedulesService.searchBusSchedule(this.searchParams).subscribe({
       next: (res: SearchBusSchedule) => {
         if (res) {
           this.searchBusSchedule = res;
@@ -54,6 +66,27 @@ export class BusSchedulesComponent implements OnInit {
         this.isLoadingBusSchedule = false;
       },
     });
+  }
+
+  setDateToSearch() {
+    if (this.viewMode === 'calendar') {
+      this.searchParams.pageSize = 999999999;
+      const currentDate = new Date(); // Lấy ngày hiện tại
+      const dayOfWeek = currentDate.getDay(); // 0 = Chủ nhật, 1 = Thứ hai, ...
+
+      // Tính ngày đầu tuần (Thứ hai)
+      const startOfWeek = new Date(currentDate);
+      startOfWeek.setDate(currentDate.getDate() - dayOfWeek + 1); // Điều chỉnh nếu tuần bắt đầu từ Thứ hai
+
+      // Tính ngày cuối tuần (Chủ nhật)
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 5);
+      endOfWeek.setHours(23, 59, 59, 999);
+
+      // Gán giá trị cho searchParams
+      this.searchParams.startDate = startOfWeek;
+      this.searchParams.endDate = endOfWeek;
+    }
   }
 
   toggleBusSchedule(event: Event): void {
@@ -105,63 +138,84 @@ export class BusSchedulesComponent implements OnInit {
     });
   }
 
-  editBusSchedule(busSchedule: BusSchedule): void {
+  editBusSchedule(busSchedule: any): void {
+    if (this.viewMode == 'calendar') {
+      const busSchedule2Edit = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
+      this.utilsModal.openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large').subscribe((busSchedule: BusSchedule) => {
+        if (!busSchedule) return;
+        this.loadData();
+      });
+      return
+    }
     const params = { busSchedule: JSON.stringify(busSchedule) };
     this.router.navigateByUrl('/management/bus-schedules/bus-schedule-detail', { state: params });
   }
 
-  addBusSchedule(): void {
+  addBusSchedule(startDate?: Date): void {
+    if (this.viewMode == 'calendar') {
+      this.utilsModal.openModal(BusScheduleDetailDialogComponent, { startDate }, 'large').subscribe((busSchedule: BusSchedule) => {
+        if (!busSchedule) return;
+        this.loadData();
+      });
+      return
+    }
     this.router.navigate(['/management/bus-schedules/bus-schedule-detail']);
   }
 
   reloadBusSchedulePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+    this.searchParams = {
+      ...this.searchParams,
+      ...data
+    }
     this.loadData();
   }
 
   searchBusSchedulePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword
+    }
     this.loadData();
   }
 
   sortBusSchedulePage(sortBy: string) {
-    this.sortBy = sortBy;
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy
+    }
     this.loadData();
   }
 
-  convertToCalendarEventData(busSchedules: BusSchedule[]): { name: string; startDate: Date }[] {
+  reLoadDataEvent(params: { startDate: Date; endDate: Date }): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...params
+    }
+    // Xử lý logic theo khoảng thời gian startDate và endDate
+    this.loadData();
+  }
+
+  convertToCalendarEventData(busSchedules: BusSchedule[]): { _id: string, name: string; startDate: Date, status: string }[] {
     // Kiểm tra xem busSchedules có dữ liệu hay không
     if (!busSchedules || busSchedules.length === 0) {
       return [];
     }
 
-    // // Lặp qua danh sách busSchedules và tạo dữ liệu sự kiện lịch
-    // return busSchedules.map((schedule: any) => {
-    //   const breakpoints = schedule.busRoute?.breakPoints;
-    //   const startDate = breakpoints?.[0].timeSchedule ? new Date(breakpoints?.[0].timeSchedule) : new Date();
-
-    //   return {
-    //     name: schedule.name || "Unnamed Event",
-    //     startDate: startDate,
-    //   };
-    // });
     const events = busSchedules.map((schedule: any) => {
-      const breakpoints = schedule.busRoute?.breakPoints;
-      const startDate = breakpoints?.[0]?.timeSchedule
-        ? new Date(breakpoints[0].timeSchedule)
-        : new Date();
-
       return {
+        _id: schedule._id,
         name: schedule.name || "Unnamed Event",
-        startDate,
+        startDate: new Date(schedule.startDate),
+        status: schedule.status
       };
     });
-
-    return [...events, ...events, ...events];
+    return events;
   }
 
+  changeViewMode(viewMode: string) {
+    this.viewMode = viewMode;
+  }
 
   private handleRequestError(error: any): void {
     const msg = 'An error occurred while processing your request';

@@ -1,4 +1,4 @@
-<div class="mb-4 flex justify-end">
+<div class="mb-4 flex justify-end" *ngIf="!isDialog">
   <div class="inline-block space-x-4">
     <button
       class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
@@ -162,6 +162,33 @@
           </nz-form-item>
         </div>
       </div>
+      <div class="flex w-6/12">
+        <nz-form-item class="!min-h-[98px] !w-full">
+          <nz-form-label nzFor="busRouteId" class="!flex !h-[36px] !items-center !justify-start"
+            >Bus Route</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusRouteIdErrorTpl">
+            <nz-select formControlName="busRouteId" nzPlaceHolder="Chọn Route" (ngModelChange)="chooseRoute($event)">
+              @for (busRoute of busRoutes; track busRoute) {
+              <nz-option nzCustomContent [nzLabel]="busRoute.name" [nzValue]="busRoute._id">
+                <div class="flex items-center">
+                  <span class="!font-medium">
+                    {{ busRoute.name }}
+                  </span>
+                </div>
+              </nz-option>
+              }
+            </nz-select>
+            <ng-template #busLayoutTemplateDetailBusRouteIdErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busScheduleDetailForm.controls['busRouteId'].errors?.['required']) { Vui lòng chọn Route}
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex gap-4">
       <div class="flex w-6/12 flex-col">
         <ng-container *ngIf="busTemplateReview">
           <label class="flex h-[36px] items-center">Bus Review</label>
@@ -212,40 +239,13 @@
           </div>
         </ng-container>
       </div>
-    </div>
-    <div class="flex gap-4">
-      <div class="flex w-6/12">
-        <nz-form-item class="!min-h-[98px] !w-full">
-          <nz-form-label nzFor="busRouteId" class="!flex !h-[36px] !items-center !justify-start"
-            >Bus Route</nz-form-label
-          >
-          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusRouteIdErrorTpl">
-            <nz-select formControlName="busRouteId" nzPlaceHolder="Chọn Route" (ngModelChange)="chooseRoute($event)">
-              @for (busRoute of busRoutes; track busRoute) {
-              <nz-option nzCustomContent [nzLabel]="busRoute.name" [nzValue]="busRoute._id">
-                <div class="flex items-center">
-                  <span class="!font-medium">
-                    {{ busRoute.name }}
-                  </span>
-                </div>
-              </nz-option>
-              }
-            </nz-select>
-            <ng-template #busLayoutTemplateDetailBusRouteIdErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busScheduleDetailForm.controls['busRouteId'].errors?.['required']) { Vui lòng chọn Route}
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
       <div class="flex w-6/12 flex-col">
         <ng-container *ngIf="this.busScheduleDetailForm.get('busRouteId')?.value">
           <div>
             <label class="!flex !h-[36px] !items-center !justify-start">Bus Rote Setup</label>
           </div>
           <div formGroupName="busRoute">
-            <div formArrayName="breakPoints" class="drag-drop-list flex flex-col gap-4">
+            <div formArrayName="breakPoints" class="flex w-full flex-col">
               <nz-form-item
                 *ngFor="let breakPoint of breakPoints.controls; let i = index"
                 [formGroupName]="i"
@@ -277,8 +277,9 @@
                   </ng-template>
                 </div>
                 <div class="flex !w-5/12">
-                  <nz-form-control [nzErrorTip]="busScheduleDetailTimeOffsetErrorTpl" class="!flex flex-col">
+                  <nz-form-control [nzErrorTip]="busScheduleDetailTimeOffsetErrorTpl" class="!flex w-full flex-col">
                     <nz-date-picker
+                      class="w-full"
                       nzShowTime
                       [nzMode]="'date'"
                       [nzDisabledDate]="checkDisableDateTime(i)"

@@ -1,19 +1,20 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { RouteConfigLoadEnd, RouteConfigLoadStart, Router } from '@angular/router';
 import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-loadding-screen',
   templateUrl: './loadding-screen.component.html',
-  styleUrl: './loadding-screen.component.scss'
+  styleUrl: './loadding-screen.component.scss',
+  imports: [CommonModule]
 })
-export class LoaddingScreenComponent {
+export class LoaddingScreenComponent implements OnInit {
   @Input()
   detectRouteTransitions = false;
 
-  loading$: boolean = false;
+  loading$ = this.loadingService.loading$;
 
   constructor(public loadingService: LoadingService, private router: Router) {
     this.loadingService.loading$.subscribe((res: any) => {

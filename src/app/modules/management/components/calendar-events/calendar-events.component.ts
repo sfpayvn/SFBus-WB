@@ -1,16 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { BusSchedule, SearchBusSchedule } from '../../pages/bus-schedules/model/bus-schedule.model';
-import { BusSchedulesService } from '../../pages/bus-schedules/service/bus-schedules.servive';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 
 export interface Event {
+  _id: string;
   name: string;
   startDate: Date;
   endDate?: Date;
+  status: string;
 }
-
 @Component({
   selector: 'app-calendar-events',
   templateUrl: './calendar-events.component.html',
@@ -27,7 +25,22 @@ export class CalendarEventsComponent implements OnInit {
 
   isViewAllEvent: boolean = false
   activePopover: Event[] | null = null;
+
+  statusClasses: { [key: string]: string } = {
+    scheduled: 'border-blue-500 bg-blue-200 text-blue-800',
+    cancelled: 'border-red-500 bg-red-200 text-red-800',
+    in_progress: 'border-indigo-500 bg-indigo-200 text-indigo-800',
+    completed: 'border-green-500 bg-green-200 text-green-800',
+    overdue: 'border-orange-500 bg-orange-200 text-orange-800'
+  };
+
   @Input() events: Event[] = [];
+
+  @Input() isLoadedEvent = false;
+
+  @Output() viewDetailEventEmit = new EventEmitter<Event>();
+  @Output() reLoadEventEmit = new EventEmitter<{ startDate: Date, endDate: Date }>();
+  @Output() createEventEmit = new EventEmitter<Date>();
 
   constructor(
     public utils: Utils,
@@ -73,7 +86,11 @@ export class CalendarEventsComponent implements OnInit {
         isCurrentMonth: date.getMonth() === this.currentMonthWiew.getMonth(),
         events: this.events.filter(event =>
           this.utils.compareDate(event.startDate, date) // So sánh ngày đúng cách
-        )
+        ).sort((a, b) => {
+          const timeA = new Date(a.startDate).getTime();
+          const timeB = new Date(b.startDate).getTime();
+          return timeA - timeB;
+        })
       });
     }
     return dates;
@@ -84,7 +101,8 @@ export class CalendarEventsComponent implements OnInit {
     const current = new Date(this.currentWeekWiew);
     const dayOfWeek = current.getDay(); // 0 = Chủ Nhật, điều chỉnh nếu cần
     const startDate = new Date(current);
-    startDate.setDate(current.getDate() - dayOfWeek);
+    startDate.setDate(current.getDate() - dayOfWeek + 1); // điều chỉnh đầu tuần là thứ 2
+
     const dates: Date[] = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(startDate);
@@ -114,27 +132,29 @@ export class CalendarEventsComponent implements OnInit {
   // Lọc các sự kiện phù hợp với ngày và giờ (slot) hiện tại.
   // Lưu ý: Giả sử utils.formatTime trả về thời gian theo định dạng "HH:mm"
   getEventsForDayAndSlot(day: Date, slot: string): any[] {
-    // Tách giờ và phút của slot
+    // Tách giờ và phút từ slot
     const [slotHour, slotMinute] = slot.split(':').map(Number);
 
     // Xây dựng thời gian bắt đầu của khung slot cho ngày được truyền vào
     const slotStart = new Date(day);
     slotStart.setHours(slotHour, slotMinute, 0, 0);
 
-    // Tính thời gian kết thúc của slot (slotStart + 30 phút)
+    // Thời gian kết thúc của slot (slotStart + 30 phút)
     const slotEnd = new Date(slotStart.getTime());
-    slotEnd.setMinutes(slotEnd.getMinutes() + 30);
+    slotEnd.setMinutes(slotEnd.getMinutes() + 60);
 
-    // Lọc các event có thời gian bắt đầu nằm trong khoảng của slot
+    // Lọc các sự kiện có thời gian bắt đầu nằm trong khoảng slot
     return this.events.filter(event => {
       const eventStart = new Date(event.startDate);
-      return eventStart >= slotStart && eventStart < slotEnd;
+      return eventStart >= slotStart && eventStart < slotEnd; // Kiểm tra khoảng thời gian
     }).sort((a, b) => {
       const timeA = new Date(a.startDate).getTime();
       const timeB = new Date(b.startDate).getTime();
       return timeA - timeB;
     });
   }
+
+
 
   getEventsForDay(day: Date): Event[] {
     const target = day.toDateString();
@@ -144,13 +164,23 @@ export class CalendarEventsComponent implements OnInit {
   }
 
   // Hàm kiểm tra nếu cho slot cụ thể có event nào của bất kỳ ngày nào trong week không
-  hasEventInSlot(slot: string): boolean {
-    // weekDates là mảng các ngày trong tuần đã tính toán trước đó
-    if (this.viewMode == 'day') {
-      return this.getEventsForDayAndSlot(this.currentDayView, slot).length > 0;
+  eventInSlot(slot: string): any[] {
+    if (this.viewMode === 'day') {
+      // Return all events in the slot for the current day
+      return this.getEventsForDayAndSlot(this.currentDayView, slot);
     }
-    return this.weekDates.some(day => this.getEventsForDayAndSlot(day, slot).length > 0);
+
+    // Find the day with the most events in the slot
+    const dayWithMostEvents = this.weekDates.reduce((maxDay, currentDay) => {
+      const currentDayEvents = this.getEventsForDayAndSlot(currentDay, slot).length;
+      const maxDayEvents = this.getEventsForDayAndSlot(maxDay, slot).length;
+      return currentDayEvents > maxDayEvents ? currentDay : maxDay;
+    });
+
+    // Return the list of events for the day with the most events
+    return this.getEventsForDayAndSlot(dayWithMostEvents, slot);
   }
+
 
   // Mảng các khung giờ (ví dụ từ 07:00 đến 12:00)
   get timeSlots(): string[] {
@@ -168,9 +198,35 @@ export class CalendarEventsComponent implements OnInit {
 
   // Chuyển đổi giữa các chế độ view
   changeView(mode: 'list' | 'day' | 'week' | 'month'): void {
-    this.backToday();
+    this.backToday(); // Đặt lại ngày hiện tại
     this.viewMode = mode;
+
+    this.emitReloadEvent();
   }
+
+  emitReloadEvent() {
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
+    // Tùy chỉnh startDate và endDate dựa trên viewMode
+    if (this.viewMode === 'day') {
+      startDate = new Date(this.currentDayView);
+      endDate = new Date(this.currentDayView);
+    } else if (this.viewMode === 'week' || this.viewMode === 'list') {
+      startDate = this.weekRange.start;
+      endDate = this.weekRange.end;
+    } else if (this.viewMode === 'month') {
+      startDate = new Date(this.monthDates[0].date); // Ngày đầu tháng
+      endDate = new Date(this.monthDates[this.monthDates.length - 1].date); // Ngày cuối tháng
+    }
+
+    // Gửi startDate và endDate thông qua một event hoặc cập nhật logic
+    if (startDate && endDate) {
+      endDate.setHours(23, 59, 59, 999);
+      this.reLoadEventEmit.emit({ startDate, endDate });
+      this.isLoadedEvent = false;
+    }
+  }
+
 
   // Chức năng chuyển tuần: delta = -1 (tuần trước), delta = 1 (tuần sau)
   navigatePeriod(delta: number): void {
@@ -190,6 +246,7 @@ export class CalendarEventsComponent implements OnInit {
       newMonthDate.setMonth(newMonthDate.getMonth() + delta);
       this.currentMonthWiew = newMonthDate;
     }
+    this.emitReloadEvent();
   }
 
   // Kiểm tra xem ngày có phải hôm nay không (để hiển thị bằng màu đặc biệt)
@@ -258,4 +315,34 @@ export class CalendarEventsComponent implements OnInit {
   visibleChange(visible: boolean, events: Event[]) {
     this.activePopover = visible ? events : [];
   }
+
+  viewDetailEvent(event: Event) {
+    this.viewDetailEventEmit.emit(event)
+  }
+
+  createEvent(slot: string | null, day?: Date) {
+    // If slot is null, generate the current slot from the current time
+    if (!slot) {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0'); // Ensure 2-digit format
+      const minutes = String(now.getMinutes()).padStart(2, '0'); // Ensure 2-digit format
+      slot = `${hours}:${minutes}`; // Current time in "HH:mm" format
+    }
+
+    // Use the day if provided; otherwise, use the current date
+    const baseDate = day || new Date();
+    const startDate = this.convertSlotToDate(slot, baseDate);
+
+    // Emit the startDate
+    this.createEventEmit.emit(startDate);
+  }
+
+
+  convertSlotToDate(slot: string, baseDate: Date) {
+    const [hours, minutes] = slot.split(':').map(Number);
+    const date = new Date(baseDate); // Clone the base date
+    date.setHours(hours, minutes, 0, 0); // Set time to match the slot
+    return date;
+  }
+
 }

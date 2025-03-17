@@ -28,6 +28,7 @@ export class BusSchedule {
   _id: string = '';
   name: string = '';
   busId: string = '';
+  driverIds: string[] = [];
   bus: Bus | undefined;
   busTemplateId: string = '';
   busTemplate: BusTemplate | undefined;
@@ -38,6 +39,8 @@ export class BusSchedule {
   busScheduleLayoutId: string = '';
   price: number = 0;
   status: string = '';
+  startDate: Date | undefined;
+  endDate: Date | undefined;
   selected: boolean = false;
 }
 

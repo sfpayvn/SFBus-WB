@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
@@ -42,7 +42,7 @@ export class BusScheduleDetailComponent
 
   busScheduleDetailForm!: FormGroup;
 
-  busSchedule!: BusSchedule;
+  @Input() busSchedule!: BusSchedule;
 
   busRoutes: BusRoute[] = [];
   busScheduleTemplates: BusScheduleTemplate[] = [];
@@ -58,6 +58,10 @@ export class BusScheduleDetailComponent
 
   busReview!: Bus;
   busTemplateReview!: BusTemplateReview;
+
+  @Input() isDialog: boolean = false;
+  @Input() startDate!: Date;
+  @Output() saveScheduleEvent = new EventEmitter<BusSchedule>();
 
   constructor(
     private fb: FormBuilder,
@@ -82,7 +86,7 @@ export class BusScheduleDetailComponent
 
   async getQueryParams() {
     const params = history.state;
-    if (params) {
+    if (params && params["busSchedule"] && !this.isDialog) {
       this.busSchedule = params["busSchedule"] ? JSON.parse(params["busSchedule"]) : null;
     }
   }
@@ -101,6 +105,7 @@ export class BusScheduleDetailComponent
       this.busStations = busStations;
       this.busRoutes = busRoutes;
       this.buses = buses;
+      this.filterdBuses = buses;
       this.busScheduleTemplates = busScheduleTemplates;
       this.busTemplates = busTemplates;
       this.initForm();
@@ -115,7 +120,7 @@ export class BusScheduleDetailComponent
       name: [name, [Validators.required]],
       busId: [busId],
       bus: [bus],
-      busTemplateId: [busTemplateId],
+      busTemplateId: [busTemplateId, [Validators.required]],
       busTemplate: [busTemplate],
       busRouteId: [busRouteId, [Validators.required]],
       busRoute: this.fb.group({
@@ -273,7 +278,6 @@ export class BusScheduleDetailComponent
 
   async chooseBus(busId: string) {
     const bus = await this.buses.find((bus: Bus) => bus._id == busId) as Bus;
-
     this.busScheduleDetailForm.get('bus')?.patchValue(bus);
     this.busReview = bus;
   }
@@ -367,7 +371,7 @@ export class BusScheduleDetailComponent
 
     return this.fb.group({
       busStationId: [breakPoint.busStationId],
-      timeSchedule: [timeSchedule],
+      timeSchedule: [timeSchedule, [Validators.required]],
       name: [name],
       detailAddress: [detailAddress],
       location: [location],
@@ -377,7 +381,10 @@ export class BusScheduleDetailComponent
   }
 
   calculateTimeSchedule(offsetTime: string): string {
-    const currentDate = new Date(); // Thời gian hiện tại
+    let currentDate = new Date(); // Thời gian hiện tại
+    if (this.startDate) {
+      currentDate = this.startDate
+    }
 
     // Tách phần số và đơn vị (nếu không có đơn vị thì mặc định là h - giờ)
     const match = offsetTime && offsetTime.match(/^(\d+)(h|m)?$/);
@@ -421,7 +428,9 @@ export class BusScheduleDetailComponent
 
     const data = this.busScheduleDetailForm.getRawValue();
     const busSchedule2Create: BusSchedule2Create = {
-      ...data
+      ...data,
+      startDate: data.busRoute.breakPoints[0].timeSchedule,
+      endDate: data.busRoute.breakPoints.at(-1).timeSchedule
     };
     if (this.busSchedule) {
       const busSchedule2Update = {
@@ -442,6 +451,7 @@ export class BusScheduleDetailComponent
         if (res) {
           const updatedState = { ...history.state, busSchedule: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
+          this.saveScheduleEvent.emit(res);
           toast.success('Bus Route update successfully');
         }
       },
@@ -453,6 +463,7 @@ export class BusScheduleDetailComponent
     this.busSchedulesService.createBusSchedule(busSchedule2Create).subscribe({
       next: (res: BusSchedule) => {
         if (res) {
+          this.saveScheduleEvent.emit(res);
           toast.success('Bus Route added successfully');
         }
       },
