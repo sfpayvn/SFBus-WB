@@ -10,6 +10,7 @@ layer(base);
 @import '../node_modules/ng-zorro-antd/date-picker/style/index.min.css';
 @import '../node_modules/ng-zorro-antd/time-picker/style/index.min.css';
 @import '../node_modules/ng-zorro-antd/spin/style/index.min.css';
+@import '../node_modules/ng-zorro-antd/avatar/style/index.min.css';
 
 @import 'tailwindcss';
 @import 'tailwindcss-animated';

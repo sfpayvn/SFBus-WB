@@ -19,6 +19,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 @NgModule({
     imports: [NzIconModule],
@@ -42,7 +43,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
         NzSkeletonModule,
         NzDatePickerModule,
         NzTimePickerModule,
-        NzSpinModule
+        NzSpinModule,
+        NzAvatarModule
     ]
 })
 export class NZModule { }

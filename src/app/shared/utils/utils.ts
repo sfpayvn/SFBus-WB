@@ -234,4 +234,29 @@ export class Utils {
       date1.getDate() === date2.getDate()
     );
   }
+
+  generateColorsFromId(identifier: string): { bg: string; text: string } {
+    let hash = 0;
+    for (let i = 0; i < identifier.length; i++) {
+      hash = identifier.charCodeAt(i) + ((hash << 5) - hash);
+      hash = hash & hash; // Đảm bảo hash nằm trong phạm vi số nguyên
+    }
+
+    let bgColor = "#";
+    for (let i = 0; i < 3; i++) {
+      const value = (hash >> (i * 8)) & 0xFF;
+      bgColor += ("00" + value.toString(16)).slice(-2);
+    }
+
+    // Tính độ sáng của màu nền (Relative Luminance)
+    const r = parseInt(bgColor.slice(1, 3), 16) / 255;
+    const g = parseInt(bgColor.slice(3, 5), 16) / 255;
+    const b = parseInt(bgColor.slice(5, 7), 16) / 255;
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+    // Chọn màu chữ dựa trên độ sáng
+    const textColor = luminance > 0.8 ? "#000000" : "#FFFFFF"; // Sáng → chữ đen, tối → chữ trắng
+
+    return { bg: bgColor, text: textColor };
+  }
 }

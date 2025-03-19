@@ -24,6 +24,8 @@ import { BusProvincesService } from '../../../bus-provices/service/bus-provinces
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
 import { BusTemplate } from '../../../bus-templates/model/bus-template.model';
 import { BusTemplatesService } from '../../../bus-templates/service/bus-templates.servive';
+import { Driver } from '../../../drivers/model/driver.model';
+import { DriversService } from '../../../drivers/service/driver.servive';
 
 interface BusTemplateReview extends BusTemplate {
   busServices: BusService[],
@@ -53,6 +55,11 @@ export class BusScheduleDetailComponent
 
   busTemplates: BusTemplate[] = [];
 
+  busServices: BusService[] = [];
+  busTypes: BusType[] = [];
+
+  drivers: Driver[] = [];
+
   buses: Bus[] = [];
   filterdBuses: Bus[] = [];
 
@@ -65,7 +72,7 @@ export class BusScheduleDetailComponent
 
   constructor(
     private fb: FormBuilder,
-    private utils: Utils,
+    public utils: Utils,
     private location: Location,
     private busSchedulesService: BusSchedulesService,
     private busStationsService: BusStationsService,
@@ -75,8 +82,8 @@ export class BusScheduleDetailComponent
     private busTypesService: BusTypesService,
     private busScheduleTemplatesService: BusScheduleTemplatesService,
     private busProvincesService: BusProvincesService,
-    private busTemplatesService: BusTemplatesService
-
+    private busTemplatesService: BusTemplatesService,
+    private driversService: DriversService
   ) { }
 
   ngOnInit(): void {
@@ -99,22 +106,32 @@ export class BusScheduleDetailComponent
     let findAllBusScheduleTemplates = this.busScheduleTemplatesService.findAll();
     let findAllBusTemplates = this.busTemplatesService.findAll();
 
-    let request = [findAllBusProvinces, findAllBusStations, findAllBusRoutes, findAllBuses, findAllBusScheduleTemplates, findAllBusTemplates];
-    combineLatest(request).subscribe(async ([busProvinces, busStations, busRoutes, buses, busScheduleTemplates, busTemplates]) => {
+    let findAllBusServices = this.busServicesService.findAll();
+    let findBusTypes = this.busTypesService.findAll();
+
+    let findDrivers = this.driversService.findAll();
+
+    let request = [findAllBusProvinces, findAllBusStations, findAllBusRoutes, findAllBuses,
+      findAllBusScheduleTemplates, findAllBusTemplates, findAllBusServices, findBusTypes, findDrivers];
+    combineLatest(request).subscribe(async ([busProvinces, busStations, busRoutes, buses,
+      busScheduleTemplates, busTemplates, busServices, busTypes, drivers]) => {
       this.busProvinces = busProvinces;
       this.busStations = busStations;
       this.busRoutes = busRoutes;
       this.buses = buses;
-      this.filterdBuses = buses;
       this.busScheduleTemplates = busScheduleTemplates;
       this.busTemplates = busTemplates;
+      this.busServices = busServices;
+      this.busTypes = busTypes;
+      this.drivers = drivers;
+      console.log("🚀 ~ initData ~ this.drivers:", this.drivers)
       this.initForm();
     });
   }
 
   async initForm() {
     const { name = '', busId = '', bus = null, busTemplateId = '', busTemplate = null, busRouteId = '',
-      busRoute = null, price = '', busScheduleTemplateId = '', busLayoutTemplateId = '' } = this.busSchedule || {};
+      busRoute = null, price = '', busScheduleTemplateId = '', busLayoutTemplateId = '', busDriverIds = [] } = this.busSchedule || {};
 
     this.busScheduleDetailForm = this.fb.group({
       name: [name, [Validators.required]],
@@ -131,6 +148,7 @@ export class BusScheduleDetailComponent
       }),
       busScheduleTemplateId: [busScheduleTemplateId],
       busLayoutTemplateId: [busLayoutTemplateId, [Validators.required]],
+      busDriverIds: [busDriverIds, [Validators.required]],
       price: [price, [Validators.required]],
     });
 
@@ -141,8 +159,10 @@ export class BusScheduleDetailComponent
     }
 
     if (busTemplateId) {
-      this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplateId);
+      this.setBusTemplateReview(busTemplate as BusTemplate);
     }
+
+    this.busReview = bus as Bus;
   }
 
   get breakPoints(): FormArray {
@@ -276,6 +296,21 @@ export class BusScheduleDetailComponent
     moveItemInArray(this.busStations, event.previousIndex, event.currentIndex);
   }
 
+  async setBusTemplateReview(busTemplate: BusTemplate) {
+    this.busTemplateReview = busTemplate as BusTemplateReview;
+    this.busTemplateReview.isLoading = true;
+    this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplate._id);
+    const serviceOfBus = this.busServices.filter((service: BusService) =>
+      this.busTemplateReview.busServiceIds.includes(service._id)
+    );
+    const typeOfBus = this.busTypes.find((type: BusType) =>
+      this.busTemplateReview.busTypeId.includes(type._id)
+    ) as BusType;
+    this.busTemplateReview.busServices = serviceOfBus;
+    this.busTemplateReview.busType = typeOfBus;
+    this.busTemplateReview.isLoading = false;
+  }
+
   async chooseBus(busId: string) {
     const bus = await this.buses.find((bus: Bus) => bus._id == busId) as Bus;
     this.busScheduleDetailForm.get('bus')?.patchValue(bus);
@@ -285,28 +320,10 @@ export class BusScheduleDetailComponent
   async chooseBusTemplate(busTemplateId: string) {
     const busTemplate = await this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busTemplateId) as BusTemplate;
     this.busTemplateReview = busTemplate as BusTemplateReview;
-
-    this.busTemplateReview.isLoading = true;
-
-    this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplateId);
-
     this.busScheduleDetailForm.get('busId')?.patchValue('');
-
     this.busScheduleDetailForm.get('busLayoutTemplateId')?.patchValue(busTemplate.busLayoutTemplateId);
     this.busScheduleDetailForm.get('busTemplate')?.patchValue(busTemplate);
-
-    let findAllBusServices = this.busServicesService.findAll(true);
-    let findBusTypeById = this.busTypesService.findOne(this.busTemplateReview.busTypeId, true);
-
-    const request = [findAllBusServices, findBusTypeById];
-    combineLatest(request).subscribe(async ([busServices, busType]) => {
-      const serviceOfBus = busServices.filter((service: BusService) =>
-        this.busTemplateReview.busServiceIds.includes(service._id)
-      );
-      this.busTemplateReview.busServices = serviceOfBus;
-      this.busTemplateReview.busType = busType;
-      this.busTemplateReview.isLoading = false;
-    })
+    this.setBusTemplateReview(busTemplate)
   }
 
   async chooseRoute(busRouteId: string, busScheduleTemplateRoute?: BusScheduleTemplateRoute) {
@@ -321,7 +338,6 @@ export class BusScheduleDetailComponent
     busRouteForm.get('name')?.patchValue(busRoute.name);
     busRouteForm.get('distance')?.patchValue(busRoute.distance);
     busRouteForm.get('distanceTime')?.patchValue(busRoute.distanceTime);
-
 
     if (busRoute) {
       this.breakPoints.clear();
@@ -416,7 +432,6 @@ export class BusScheduleDetailComponent
     const busStationId = this.breakPoints.controls[idx].get('busStationId')?.value;
     const busStation = this.busStations.find((busStation: BusStation) => busStation._id === busStationId) as BusStation;
     return busStation;
-
   }
 
   onSubmit() {

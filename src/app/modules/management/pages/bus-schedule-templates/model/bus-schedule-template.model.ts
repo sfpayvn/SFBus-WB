@@ -20,6 +20,7 @@ export class BusScheduleTemplate {
   _id: string = '';
   name: string = '';
   busId: string = '';
+  busDriverIds: string[] = [];
   busTemplateId: string = '';
   busRouteId: string = '';
   busRoute: BusScheduleTemplateRoute | undefined;

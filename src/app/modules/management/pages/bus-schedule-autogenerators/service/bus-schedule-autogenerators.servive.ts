@@ -22,8 +22,13 @@ export class BusScheduleAutoGeneratorsService {
     );
   }
 
-  searchBusScheduleAutoGenerator(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
+  searchBusScheduleAutoGenerator(searchParams: {
+    pageIdx: number;
+    pageSize: number;
+    keyword: string;
+    sortBy: string;
+  }) {
+    const url = `${this.url}/search?pageIdx=${searchParams.pageIdx}&pageSize=${searchParams.pageSize}&keyword=${searchParams.keyword}&sortBy=${searchParams.sortBy}`;
     return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
 

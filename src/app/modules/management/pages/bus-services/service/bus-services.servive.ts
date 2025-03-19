@@ -15,9 +15,9 @@ export class BusServicesService {
     private filesService: FilesService
   ) { }
 
-  findAll(skipLoading?: boolean) {
+  findAll() {
     const url = `${this.url}/find-all`;
-    return this.apiGatewayService.get(url, skipLoading).pipe(
+    return this.apiGatewayService.get(url, true).pipe(
       tap((res: any) => { }),
 
     );

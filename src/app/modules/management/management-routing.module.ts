@@ -23,6 +23,8 @@ import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.compo
 import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
 import { BusScheduleAutoGeneratorsComponent } from './pages/bus-schedule-autogenerators/bus-schedule-autogenerator.component';
 import { BusScheduleAutoGeneratorDetailComponent } from './pages/bus-schedule-autogenerators/pages/bus-schedule-autogenerator-detail/bus-schedule-autogenerator-detail.component';
+import { UsersComponent } from './pages/user/users.component';
+import { DriversComponent } from './pages/drivers/drivers.component';
 
 const routes: Routes = [
   {
@@ -30,6 +32,14 @@ const routes: Routes = [
     component: ManagementComponent,
     children: [
       { path: '', redirectTo: 'options', pathMatch: 'full' },
+      {
+        path: 'users',
+        component: UsersComponent,
+      },
+      {
+        path: 'drivers',
+        component: DriversComponent,
+      },
       {
         path: 'buses',
         component: BusesComponent,

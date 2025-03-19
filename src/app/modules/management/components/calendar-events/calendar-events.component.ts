@@ -110,7 +110,7 @@ export class CalendarEventsComponent implements OnInit {
       dates.push(d);
     }
     // Giữ lại 6 ngày phù hợp với header (ô đầu tiên dành cho nhãn giờ)
-    return dates.slice(0, 6);
+    return dates.slice(0, 7);
   }
 
   // Lấy khoảng thời gian của tuần để hiển thị tiêu đề (header)
@@ -221,6 +221,7 @@ export class CalendarEventsComponent implements OnInit {
 
     // Gửi startDate và endDate thông qua một event hoặc cập nhật logic
     if (startDate && endDate) {
+      startDate.setHours(0, 0, 0, 0);
       endDate.setHours(23, 59, 59, 999);
       this.reLoadEventEmit.emit({ startDate, endDate });
       this.isLoadedEvent = false;
@@ -316,11 +317,13 @@ export class CalendarEventsComponent implements OnInit {
     this.activePopover = visible ? events : [];
   }
 
-  viewDetailEvent(event: Event) {
+  viewDetailEvent($event: any, event: Event) {
+    $event.stopPropagation();
     this.viewDetailEventEmit.emit(event)
   }
 
-  createEvent(slot: string | null, day?: Date) {
+  createEvent($event: any, slot: string | null, day?: Date) {
+    $event.stopPropagation();
     // If slot is null, generate the current slot from the current time
     if (!slot) {
       const now = new Date();

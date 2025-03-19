@@ -5,10 +5,11 @@ import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { BusScheduleAutoGeneratorsService } from '../../service/bus-schedule-autogenerators.servive';
-import { BusScheduleAutoGenerator, BusScheduleAutoGenerator2Create, BusScheduleAutoGenerator2Update } from '../../model/bus-schedule-autogenerator.model';
+import { BusScheduleAutoGenerator, BusScheduleAutoGenerator2Create, BusScheduleAutoGenerator2Update, SpecificTimeSlot, SpecificTimeSlot2Create } from '../../model/bus-schedule-autogenerator.model';
 import { combineLatest } from 'rxjs';
 import { BusScheduleTemplatesService } from '../../../bus-schedule-templates/service/bus-schedule-templates.servive';
 import { BusScheduleTemplate } from '../../../bus-schedule-templates/model/bus-schedule-template.model';
+import moment from 'moment';
 
 
 @Component({
@@ -63,6 +64,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     const currentDate = new Date().toISOString(); // Format as 'YYYY-MM-DD'
 
     const { name = '', busScheduleTemplateId = '', startDate = currentDate, endDate = '', repeatType = 'days', specificTimeSlots = [], repeatInterval = 1, repeatDaysPerWeek = [], preGenerateDays = 0 } = this.busScheduleAutoGenerator || {};
+    console.log("🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ specificTimeSlots:", specificTimeSlots)
 
     this.busScheduleAutoGeneratorDetailForm = this.fb.group({
       name: [name, [Validators.required]],
@@ -133,23 +135,24 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   createSpecificTimeSlot(timeSlot?: string): FormGroup {
     // Lấy FormArray chứa các specific time slots
     const specificTimeSlots = this.busScheduleAutoGeneratorDetailForm.get('specificTimeSlots') as FormArray;
-    let defaultTime: string = timeSlot = '';
+    let defaultTime: Date = new Date();
+    const [hours, minutes, seconds] = (timeSlot ?? '00:00:00').split(':').map(Number);
 
-    if (specificTimeSlots && specificTimeSlots.length > 0) {
+    defaultTime.setHours(hours);
+    defaultTime.setMinutes(minutes);
+    defaultTime.setSeconds(seconds);
+
+    console.log("🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ createSpecificTimeSlot ~ defaultTime:", defaultTime)
+
+    if (!timeSlot && specificTimeSlots && specificTimeSlots.length > 0) {
       // Lấy phần tử cuối cùng trong FormArray
       const previousTimeValue = specificTimeSlots.at(specificTimeSlots.length - 1).get('timeSlot')?.value;
       if (previousTimeValue) {
         const previousDate = new Date(previousTimeValue);
         // Tăng thêm 5 phút cho ngày/thời gian của phần tử trước đó
         previousDate.setMinutes(previousDate.getMinutes() + 5);
-        defaultTime = previousDate.toISOString();
-      } else {
-        // Nếu phần tử cuối không có giá trị, lấy thời gian hiện tại
-        defaultTime = new Date().toISOString();
+        defaultTime = previousDate;
       }
-    } else {
-      // Nếu FormArray rỗng, mặc định là thời gian hiện tại
-      defaultTime = new Date().toISOString();
     }
 
     return this.fb.group({
@@ -309,16 +312,30 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
       return;
     }
 
-    const data = this.busScheduleAutoGeneratorDetailForm.getRawValue();
+    const data = this.busScheduleAutoGeneratorDetailForm.getRawValue() as BusScheduleAutoGenerator2Create;
+    data.endDate = this.isNonEndDate ? new Date() : data.endDate
 
-    data.endDate = this.isNonEndDate ? '' : data.endDate
     const busScheduleAutoGenerator2Create: BusScheduleAutoGenerator2Create = {
-      ...data
+      ...data,
+      specificTimeSlots: data.specificTimeSlots.map((specificTimeSlot: SpecificTimeSlot2Create) => {
+
+        const timeSlotDate = new Date(specificTimeSlot.timeSlot);
+
+        const hour = timeSlotDate.getHours().toString().padStart(2, '0');
+        const minutes = timeSlotDate.getMinutes().toString().padStart(2, '0');
+        const seconds = timeSlotDate.getSeconds().toString().padStart(2, '0');
+
+        const timeSlot = `${hour}:${minutes}:${seconds}`
+
+        return {
+          timeSlot: timeSlot
+        };
+      }) as SpecificTimeSlot2Create[],
     };
     if (this.busScheduleAutoGenerator) {
       const busScheduleAutoGenerator2Update = {
         ...busScheduleAutoGenerator2Create,
-        _id: this.busScheduleAutoGenerator._id, // Thêm thuộc tính _id
+        _id: this.busScheduleAutoGenerator._id,
       };
 
       this.updateBus(busScheduleAutoGenerator2Update);

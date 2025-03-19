@@ -17,34 +17,36 @@
             >Bus Schedule Template</nz-form-label
           >
           <nz-form-control>
-            <nz-select
-              formControlName="busScheduleTemplateId"
-              nzPlaceHolder="Chọn Bus Schedule Template"
-              (ngModelChange)="chooseBusScheduleTemplate($event)">
-              @for (busScheduleTemplate of busScheduleTemplates; track busScheduleTemplate) {
-              <nz-option nzCustomContent [nzLabel]="busScheduleTemplate.name" [nzValue]="busScheduleTemplate._id">
-                <div class="flex items-center">
-                  <span class="!font-medium">
-                    {{ busScheduleTemplate.name }}
-                  </span>
+            <nz-form-control>
+              <nz-input-group class="!flex !items-center gap-4">
+                <nz-select
+                  formControlName="busScheduleTemplateId"
+                  nzPlaceHolder="Chọn Bus Schedule Template"
+                  (ngModelChange)="chooseBusScheduleTemplate($event)">
+                  @for (busScheduleTemplate of busScheduleTemplates; track busScheduleTemplate) {
+                  <nz-option nzCustomContent [nzLabel]="busScheduleTemplate.name" [nzValue]="busScheduleTemplate._id">
+                    <div class="flex items-center">
+                      <span class="!font-medium">
+                        {{ busScheduleTemplate.name }}
+                      </span>
+                    </div>
+                  </nz-option>
+                  }
+                </nz-select>
+                <div class="flex">
+                  <button
+                    class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+                    nz-button
+                    nzType="default"
+                    (click)="resetBusScheduleTemplate()">
+                    Reset
+                  </button>
                 </div>
-              </nz-option>
-              }
-            </nz-select>
+              </nz-input-group>
+            </nz-form-control>
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div class="flex w-6/12">
-        <button
-          class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
-          nz-button
-          nzType="default"
-          (click)="resetBusScheduleTemplate()">
-          Reset
-        </button>
-      </div>
-    </div>
-    <div class="flex gap-4">
       <div class="flex w-6/12">
         <nz-form-item class="!min-h-[96px] !w-full">
           <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
@@ -70,42 +72,10 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div class="flex w-6/12">
-        <nz-form-item class="!min-h-[96px] !w-full">
-          <nz-form-label nzFor="price" class="!flex !h-[36px] !items-center !justify-start">Price</nz-form-label>
-          <nz-form-control [nzErrorTip]="busScheduleDetailPriceErrorTpl" class="!flex flex-col">
-            <nz-input-group
-              [nzSuffix]="busScheduleDetailPriceClearTpl"
-              class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-              <input
-                type="text"
-                nz-input
-                formControlName="price"
-                placeholder="Nhập Price"
-                mask="separator.0"
-                prefix="₫ "
-                thousandSeparator="," />
-            </nz-input-group>
-            <ng-template #busScheduleDetailPriceClearTpl>
-              <span
-                nz-icon
-                class="ant-input-clear-icon"
-                nzTheme="fill"
-                nzType="close-circle"
-                (click)="busScheduleDetailForm.controls['price'].patchValue('')"></span>
-            </ng-template>
-            <ng-template #busScheduleDetailPriceErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busScheduleDetailForm.controls['price'].errors?.['required']) { Vui lòng nhập trường này }
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
     </div>
     <div class="flex gap-4">
       <div class="flex w-6/12 gap-4">
-        <div class="flex w-6/12">
+        <div class="flex w-4/12">
           <nz-form-item class="!min-h-[98px] !w-full">
             <nz-form-label nzFor="busTemplateId" class="!flex !h-[36px] !items-center !justify-start"
               >Bus Templates</nz-form-label
@@ -134,7 +104,7 @@
             </nz-form-control>
           </nz-form-item>
         </div>
-        <div class="flex w-6/12">
+        <div class="flex w-4/12">
           <nz-form-item class="!min-h-[98px] !w-full">
             <nz-form-label nzFor="busId" class="!flex !h-[36px] !items-center !justify-start">Buses</nz-form-label>
             <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusIdErrorTpl">
@@ -161,27 +131,78 @@
             </nz-form-control>
           </nz-form-item>
         </div>
+        <div class="flex w-4/12">
+          <nz-form-item class="!min-h-[96px] !w-full">
+            <nz-form-label nzFor="price" class="!flex !h-[36px] !items-center !justify-start">Price</nz-form-label>
+            <nz-form-control [nzErrorTip]="busScheduleDetailPriceErrorTpl" class="!flex flex-col">
+              <nz-input-group
+                [nzSuffix]="busScheduleDetailPriceClearTpl"
+                class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+                <input
+                  type="text"
+                  nz-input
+                  formControlName="price"
+                  placeholder="Nhập Price"
+                  mask="separator.0"
+                  prefix="₫ "
+                  thousandSeparator="," />
+              </nz-input-group>
+              <ng-template #busScheduleDetailPriceClearTpl>
+                <span
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  (click)="busScheduleDetailForm.controls['price'].patchValue('')"></span>
+              </ng-template>
+              <ng-template #busScheduleDetailPriceErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busScheduleDetailForm.controls['price'].errors?.['required']) { Vui lòng nhập trường này }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
-      <div class="flex w-6/12">
-        <nz-form-item class="!min-h-[98px] !w-full">
-          <nz-form-label nzFor="busRouteId" class="!flex !h-[36px] !items-center !justify-start"
-            >Bus Route</nz-form-label
+      <div class="flex w-6/12 flex-col">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="busServiceIds" class="!flex !h-[36px] !items-center !justify-start"
+            >Bus Drivers</nz-form-label
           >
-          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusRouteIdErrorTpl">
-            <nz-select formControlName="busRouteId" nzPlaceHolder="Chọn Route" (ngModelChange)="chooseRoute($event)">
-              @for (busRoute of busRoutes; track busRoute) {
-              <nz-option nzCustomContent [nzLabel]="busRoute.name" [nzValue]="busRoute._id">
+          <nz-form-control [nzErrorTip]="busTemplateDetailBusDriverIdsErrorTpl">
+            <nz-select
+              formControlName="busDriverIds"
+              nzMode="multiple"
+              nzPlaceHolder="Chọn Bus Services"
+              nzSize="large"
+              [nzOptionHeightPx]="80">
+              @for (driver of drivers; track driver) {
+              <nz-option nzCustomContent [nzLabel]="driver.name" [nzValue]="driver._id">
                 <div class="flex items-center">
-                  <span class="!font-medium">
-                    {{ busRoute.name }}
+                  <div class="h-8 w-8 overflow-hidden rounded-full">
+                    @if(driver.avatar){
+                    <img alt="driver avarta" [src]="driver.avatar" />
+                    }@else {
+                    <div
+                      class="flex h-full w-full items-center justify-center"
+                      [style]="{
+                        'background-color': utils.generateColorsFromId(driver._id).bg,
+                        color: utils.generateColorsFromId(driver._id).text
+                      }">
+                      {{ driver.name.charAt(0) }}
+                    </div>
+                    }
+                  </div>
+                  <span class="pl-4 !font-medium">
+                    {{ driver.name }}
                   </span>
                 </div>
               </nz-option>
               }
             </nz-select>
-            <ng-template #busLayoutTemplateDetailBusRouteIdErrorTpl let-control>
+            <ng-template #busTemplateDetailBusDriverIdsErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
-                @if (busScheduleDetailForm.controls['busRouteId'].errors?.['required']) { Vui lòng chọn Route}
+                @if (busScheduleDetailForm.controls['busDriverIds'].errors?.['required']) { Vui lòng chọn Bus Services}
               </span>
             </ng-template>
           </nz-form-control>
@@ -189,7 +210,7 @@
       </div>
     </div>
     <div class="flex gap-4">
-      <div class="flex w-6/12 flex-col">
+      <div class="flex w-6/12">
         <ng-container *ngIf="busTemplateReview">
           <label class="flex h-[36px] items-center">Bus Review</label>
           <div class="flex flex-row flex-wrap gap-4">
@@ -239,6 +260,34 @@
           </div>
         </ng-container>
       </div>
+      <div class="flex w-6/12 flex-col">
+        <nz-form-item class="!min-h-[98px] !w-full">
+          <nz-form-label nzFor="busRouteId" class="!flex !h-[36px] !items-center !justify-start"
+            >Bus Route</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusRouteIdErrorTpl">
+            <nz-select formControlName="busRouteId" nzPlaceHolder="Chọn Route" (ngModelChange)="chooseRoute($event)">
+              @for (busRoute of busRoutes; track busRoute) {
+              <nz-option nzCustomContent [nzLabel]="busRoute.name" [nzValue]="busRoute._id">
+                <div class="flex items-center">
+                  <span class="!font-medium">
+                    {{ busRoute.name }}
+                  </span>
+                </div>
+              </nz-option>
+              }
+            </nz-select>
+            <ng-template #busLayoutTemplateDetailBusRouteIdErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busScheduleDetailForm.controls['busRouteId'].errors?.['required']) { Vui lòng chọn Route}
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-6/12 flex-col"></div>
       <div class="flex w-6/12 flex-col">
         <ng-container *ngIf="this.busScheduleDetailForm.get('busRouteId')?.value">
           <div>

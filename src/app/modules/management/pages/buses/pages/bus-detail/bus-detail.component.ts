@@ -100,7 +100,6 @@ export class BusDetailComponent implements OnInit {
   }
 
   private async initForm() {
-
     const { name = '', licensePlate = '', busTemplateId = '' } = this.bus || {};
 
     this.busDetailForm = this.fb.group({
@@ -108,7 +107,6 @@ export class BusDetailComponent implements OnInit {
       licensePlate: [licensePlate, [Validators.required]],
       busTemplateId: [busTemplateId, [Validators.required]],
     });
-
 
     if (busTemplateId) {
       this.chooseBusTemplate(busTemplateId);
@@ -130,7 +128,7 @@ export class BusDetailComponent implements OnInit {
     });
 
     //setup service and type for bus review
-    let findAllBusServices = this.busServicesService.findAll(true);
+    let findAllBusServices = this.busServicesService.findAll();
     let findBusTypeById = this.busTypesService.findOne(this.busTemplateReview.busTypeId, true);
     const request = [findAllBusServices, findBusTypeById];
     combineLatest(request).subscribe(async ([busServices, busType]) => {

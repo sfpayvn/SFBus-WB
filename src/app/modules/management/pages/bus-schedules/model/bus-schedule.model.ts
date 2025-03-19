@@ -37,6 +37,7 @@ export class BusSchedule {
   busScheduleTemplateId: string = '';
   busLayoutTemplateId: string = '';
   busScheduleLayoutId: string = '';
+  busDriverIds: string[] = [];
   price: number = 0;
   status: string = '';
   startDate: Date | undefined;

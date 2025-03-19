@@ -24,8 +24,8 @@ export class BusSchedulesService {
 
   searchBusSchedule(searchParams: {
     pageIdx: number;
-    startDate: Date | null;
-    endDate: Date | null;
+    startDate: Date | '';
+    endDate: Date | '';
     pageSize: number;
     keyword: string;
     sortBy: string;

@@ -6,7 +6,8 @@ export class SearchBusScheduleAutoGenerator {
 }
 
 
-export class specificTimeSlot {
+export class SpecificTimeSlot {
+  _id: string = '';
   timeSlot: string = '';
 }
 
@@ -15,18 +16,23 @@ export class BusScheduleAutoGenerator {
   _id: string = '';
   name: string = '';
   busScheduleTemplateId: string = '';
-  repeatType: string = '';
+  repeatType: 'days' | 'weeks' = 'days';
   repeatInterval: number = 0;
-  specificTimeSlots: specificTimeSlot[] = [];
+  specificTimeSlots: SpecificTimeSlot[] = [];
   repeatDaysPerWeek: string[] = [];
   preGenerateDays: number = 0;
-  startDate: number[] = [];
-  endDate: number[] = [];
+  startDate: Date = new Date();
+  endDate: Date = new Date();
   selected: boolean = false;
 }
 
-export interface BusScheduleAutoGenerator2Create extends Omit<BusScheduleAutoGenerator, '_id' | 'selected'> { }
+export interface SpecificTimeSlot2Create extends Omit<SpecificTimeSlot, '_id'> { }
+export class SpecificTimeSlot2Create {
+}
+
+export interface BusScheduleAutoGenerator2Create extends Omit<BusScheduleAutoGenerator, '_id' | 'selected' | 'specificTimeSlots'> { }
 export class BusScheduleAutoGenerator2Create {
+  specificTimeSlots: SpecificTimeSlot2Create[] = [];
 }
 
 export class BusScheduleAutoGenerator2Update extends BusScheduleAutoGenerator2Create {

@@ -129,6 +129,53 @@
         </div>
       </div>
       <div class="flex w-6/12 flex-col">
+        <nz-form-item class="!w-full">
+          <nz-form-label nzFor="busServiceIds" class="!flex !h-[36px] !items-center !justify-start"
+            >Bus Drivers</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="busTemplateDetailBusDriverIdsErrorTpl">
+            <nz-select
+              formControlName="busDriverIds"
+              nzMode="multiple"
+              nzPlaceHolder="Chọn Bus Services"
+              nzSize="large"
+              [nzOptionHeightPx]="80">
+              @for (driver of drivers; track driver) {
+              <nz-option nzCustomContent [nzLabel]="driver.name" [nzValue]="driver._id">
+                <div class="flex items-center">
+                  <div class="h-8 w-8 overflow-hidden rounded-full">
+                    @if(driver.avatar){
+                    <img alt="driver avarta" [src]="driver.avatar" />
+                    }@else {
+                    <div
+                      class="flex h-full w-full items-center justify-center"
+                      [style]="{
+                        'background-color': utils.generateColorsFromId(driver._id).bg,
+                        color: utils.generateColorsFromId(driver._id).text
+                      }">
+                      {{ driver.name.charAt(0) }}
+                    </div>
+                    }
+                  </div>
+                  <span class="pl-4 !font-medium">
+                    {{ driver.name }}
+                  </span>
+                </div>
+              </nz-option>
+              }
+            </nz-select>
+            <ng-template #busTemplateDetailBusDriverIdsErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (busScheduleTemplateDetailForm.controls['busDriverIds'].errors?.['required']) { Vui lòng chọn Bus
+                Services}
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-6/12 flex-col">
         <ng-container *ngIf="busTemplateReview">
           <label class="flex h-[36px] items-center">Bus Review</label>
           <div class="flex flex-row flex-wrap gap-4">
@@ -178,8 +225,6 @@
           </div>
         </ng-container>
       </div>
-    </div>
-    <div class="flex gap-4">
       <div class="flex w-6/12">
         <nz-form-item class="!min-h-[98px] !w-full">
           <nz-form-label nzFor="busRouteId" class="!flex !h-[36px] !items-center !justify-start"
@@ -205,6 +250,9 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-6/12"></div>
       <div class="flex w-6/12 flex-col" *ngIf="this.busScheduleTemplateDetailForm.get('busRouteId')?.value">
         <div>
           <label class="!flex !h-[36px] !items-center !justify-start">Bus Rote Setup</label>

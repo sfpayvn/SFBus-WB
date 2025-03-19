@@ -21,8 +21,8 @@ export class BusSchedulesComponent implements OnInit {
 
   searchParams = {
     pageIdx: 1,
-    startDate: null as Date | null,
-    endDate: null as Date | null,
+    startDate: '' as Date | '',
+    endDate: '' as Date | '',
     pageSize: 5,
     keyword: '',
     sortBy: ''
@@ -45,7 +45,7 @@ export class BusSchedulesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.setDateToSearch();
+    this.setParamsToSearch();
     this.loadData();
   }
 
@@ -68,7 +68,7 @@ export class BusSchedulesComponent implements OnInit {
     });
   }
 
-  setDateToSearch() {
+  setParamsToSearch() {
     if (this.viewMode === 'calendar') {
       this.searchParams.pageSize = 999999999;
       const currentDate = new Date(); // Lấy ngày hiện tại
@@ -86,6 +86,15 @@ export class BusSchedulesComponent implements OnInit {
       // Gán giá trị cho searchParams
       this.searchParams.startDate = startOfWeek;
       this.searchParams.endDate = endOfWeek;
+    } else {
+      this.searchParams = {
+        pageIdx: 1,
+        startDate: '',
+        endDate: '',
+        pageSize: 5,
+        keyword: '',
+        sortBy: ''
+      };
     }
   }
 
@@ -215,18 +224,7 @@ export class BusSchedulesComponent implements OnInit {
 
   changeViewMode(viewMode: string) {
     this.viewMode = viewMode;
-  }
-
-  private handleRequestError(error: any): void {
-    const msg = 'An error occurred while processing your request';
-    toast.error(msg, {
-      position: 'bottom-right',
-      description: error.message || 'Please try again later',
-      action: {
-        label: 'Dismiss',
-        onClick: () => { },
-      },
-      actionButtonStyle: 'background-color:#DC2626; color:white;',
-    });
+    this.setParamsToSearch();
+    this.loadData();
   }
 }
