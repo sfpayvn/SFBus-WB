@@ -1,3 +1,4 @@
+import { BusLayoutTemplate } from "../../bus-layout-templates/model/bus-layout-templates.model";
 import { BusProvince } from "../../bus-provices/model/bus-province.model";
 import { BusRoute, BusRouteBreakPoints } from "../../bus-routes/model/bus-route.model";
 
@@ -24,6 +25,7 @@ export class BusScheduleTemplate {
   busTemplateId: string = '';
   busRouteId: string = '';
   busRoute: BusScheduleTemplateRoute | undefined;
+  busSeatLayoutTemplateBlockIds: string[] = [];
   price: number = 0;
   selected: boolean = false;
 }

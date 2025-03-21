@@ -38,7 +38,9 @@ export class UtilsModal {
 
     let height = '';
     let width = ''
-    if (size == 'medium') {
+    if (size == 'small') {
+      height = width = '40%'
+    } else if (size == 'medium') {
       height = width = '60%'
     } else if (size == 'large') {
       height = width = '80%'

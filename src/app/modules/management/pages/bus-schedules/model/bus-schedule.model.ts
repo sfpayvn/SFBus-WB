@@ -1,3 +1,4 @@
+import { BusLayoutTemplate } from "../../bus-layout-templates/model/bus-layout-templates.model";
 import { BusProvince } from "../../bus-provices/model/bus-province.model";
 import { BusRoute, BusRouteBreakPoints } from "../../bus-routes/model/bus-route.model";
 import { BusRouteScheduleTemplateBreakPoints, BusScheduleTemplateRoute } from "../../bus-schedule-templates/model/bus-schedule-template.model";
@@ -36,7 +37,9 @@ export class BusSchedule {
   busRoute: BusScheduleRoute | undefined;
   busScheduleTemplateId: string = '';
   busLayoutTemplateId: string = '';
+  busLayoutTemplate: BusLayoutTemplate | undefined;
   busScheduleLayoutId: string = '';
+  busSeatLayoutTemplateBlockIds: string[] = [];
   busDriverIds: string[] = [];
   price: number = 0;
   status: string = '';

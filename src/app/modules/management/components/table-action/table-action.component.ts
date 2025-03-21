@@ -25,7 +25,7 @@ export class TableActionComponent {
 
   changeSortBy($event: any) {
     const sortBy = $event.target.value;
-    this.sortDataEvent.emit(sortBy);
+    this.sortDataEvent.emit({ key: 'createdAt', value: sortBy });
   }
 
   //use for auto complate input

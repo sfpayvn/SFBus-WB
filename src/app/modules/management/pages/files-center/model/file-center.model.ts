@@ -1,11 +1,11 @@
 export class SearchFile {
-  files: File[] = [];
+  files: FileDto[] = [];
   pageIdx: number = 0;
   totalItem: number = 0;
   totalPage: number = 0;
 }
 
-export class File {
+export class FileDto {
   _id: string = '';
   filename: string = '';
   link: string = '';

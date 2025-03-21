@@ -31,29 +31,37 @@ export class BusServicesService {
     );
   }
 
-  createBusService(busServiceIconFile: FileList, busService2Create: BusService2Create) {
-    const url = this.url;
-
-    return this.filesService.uploadFiles(busServiceIconFile).pipe(
-      switchMap((res: any) => {
-        busService2Create.icon = res[0].link;
-        return this.apiGatewayService.post(url, busService2Create).pipe(
-          tap((res: any) => {
-          }),
-          catchError((error) => {
-            //write log
-            return of([]);
-          }),
-        );
-      })
-    )
-  }
-
-  processUpdateBusService(BusServiceIconFile: FileList, busService2Update: BusService2Update) {
+  processCreateBusService(busServiceIconFile: FileList, busService2Create: BusService2Create) {
     const url = this.url;
     // Kiểm tra nếu có file trong FileList
-    if (BusServiceIconFile.length > 0) {
-      return this.filesService.uploadFiles(BusServiceIconFile).pipe(
+    if (busServiceIconFile.length > 0) {
+      return this.filesService.uploadFiles(busServiceIconFile).pipe(
+        switchMap((res: any) => {
+          // Gắn các liên kết trả về từ uploadFiles
+          busService2Create.icon = res[0].link;
+          return this.createBusService(busService2Create);
+        })
+      );
+    } else {
+      // Nếu không có file, chỉ gọi post trực tiếp
+      return this.createBusService(busService2Create);
+    }
+  }
+
+  createBusService(busService2Create: BusService2Create) {
+    const url = this.url;
+    return this.apiGatewayService.post(url, busService2Create).pipe(
+      tap((res: any) => {
+      }),
+
+    );
+  }
+
+  processUpdateBusService(busServiceIconFile: FileList, busService2Update: BusService2Update) {
+    const url = this.url;
+    // Kiểm tra nếu có file trong FileList
+    if (busServiceIconFile.length > 0) {
+      return this.filesService.uploadFiles(busServiceIconFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
           busService2Update.icon = res[0].link;

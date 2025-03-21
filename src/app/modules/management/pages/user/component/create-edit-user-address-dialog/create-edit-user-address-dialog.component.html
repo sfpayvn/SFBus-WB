@@ -1,0 +1,69 @@
+<mat-dialog-title class="px-6 pt-6 text-center">
+  <span class="text-xl font-medium">{{ this.data.title }}</span>
+  <button class="absolute right-3" [matDialogClose]="">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+      <path
+        fill-rule="evenodd"
+        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd" />
+    </svg>
+  </button>
+</mat-dialog-title>
+<mat-dialog-content class="pb-5 pt-3">
+  <form [formGroup]="userAddressForm" nz-form *ngIf="userAddressForm" (ngSubmit)="onSubmit()">
+    <div>
+      <nz-form-item class="!min-h-[96px] !w-full">
+        <nz-form-label nzFor="addressType" class="!flex !h-[36px] !items-center !justify-start"
+          >Address Type
+        </nz-form-label>
+        <nz-form-control class="!flex flex-col">
+          <nz-input-group
+            [nzSuffix]="userAddressFormAddressTypeClearTpl"
+            class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+            <input type="text" nz-input formControlName="addressType" placeholder="Nhập Address Type" />
+          </nz-input-group>
+          <ng-template #userAddressFormAddressTypeClearTpl>
+            <span
+              nz-icon
+              class="ant-input-clear-icon"
+              nzTheme="fill"
+              nzType="close-circle"
+              (click)="userAddressForm.controls['addressType'].patchValue('')"></span>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div>
+      <nz-form-item class="!min-h-[96px] !w-full">
+        <nz-form-label nzFor="address" class="!flex !h-[36px] !items-center !justify-start">Address </nz-form-label>
+        <nz-form-control class="!flex flex-col" [nzErrorTip]="userAddressFormAddressErrorTpl">
+          <nz-input-group
+            [nzSuffix]="userAddressFormAddressClearTpl"
+            class="ant-input-affix-wrapper-textarea-with-clear-btn !rounded border-gray-200">
+            <textarea rows="4" formControlName="address" nz-input></textarea>
+          </nz-input-group>
+          <ng-template #userAddressFormAddressClearTpl>
+            <span
+              nz-icon
+              class="ant-input-clear-icon"
+              nzTheme="fill"
+              nzType="close-circle"
+              (click)="userAddressForm.controls['address'].patchValue('')"></span>
+          </ng-template>
+          <ng-template #userAddressFormAddressErrorTpl let-control>
+            <span class="mt-1 !text-xs text-red-500">
+              @if (userAddressForm.controls['address'].errors?.['required']) { Vui lòng nhập trường này }
+            </span>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="line-block space-x-4 text-center">
+  <button
+    (click)="onSubmit()"
+    class="bg-primary text-primary-foreground flex-none rounded-md px-4 py-2.5 text-xs font-semibold">
+    SAVE
+  </button>
+</mat-dialog-actions>

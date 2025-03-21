@@ -145,7 +145,7 @@ export class BusServicesComponent implements OnInit {
         const busService2Create = new BusService2Create();
         busService2Create.name = result.name;
 
-        this.busServicesService.createBusService(result.files, busService2Create).subscribe({
+        this.busServicesService.processCreateBusService(result.files, busService2Create).subscribe({
           next: (res: BusService) => {
             if (res) {
               this.loadData();

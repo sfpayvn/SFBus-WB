@@ -11,8 +11,8 @@ export class DriversService {
 
   constructor(private apiGatewayService: ApiGatewayService) { }
 
-  findAll() {
-    const url = `${this.url}/find-all`;
+  findAllUserDriver() {
+    const url = `${this.url}/find-all-user-driver`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
 
@@ -21,6 +21,14 @@ export class DriversService {
 
   findOne(_id: string, skipLoading?: boolean) {
     const url = `${this.url}/${_id}`;
+    return this.apiGatewayService.get(url, skipLoading).pipe(
+      tap((res: any) => { }),
+
+    );
+  }
+
+  findOneByUser(userId: string, skipLoading?: boolean) {
+    const url = `${this.url}/find-one-by-user/${userId}`;
     return this.apiGatewayService.get(url, skipLoading).pipe(
       tap((res: any) => { }),
 

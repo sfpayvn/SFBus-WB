@@ -20,9 +20,11 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { EyeInvisibleOutline } from '@ant-design/icons-angular/icons';
 
 @NgModule({
-    imports: [NzIconModule],
+    imports: [NzIconModule.forRoot([EyeInvisibleOutline])],
     exports: [
         NzSelectModule,
         NzSwitchModule,
@@ -44,7 +46,8 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
         NzDatePickerModule,
         NzTimePickerModule,
         NzSpinModule,
-        NzAvatarModule
+        NzAvatarModule,
+        NzTableModule
     ]
 })
 export class NZModule { }

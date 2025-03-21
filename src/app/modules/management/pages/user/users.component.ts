@@ -5,6 +5,7 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { Utils } from 'src/app/shared/utils/utils';
 import { SearchUser, User } from './model/user.model';
 import { UsersService } from './service/user.servive';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users',
@@ -14,20 +15,41 @@ import { UsersService } from './service/user.servive';
 })
 export class UsersComponent implements OnInit {
   searchUser: SearchUser = new SearchUser();
-  selectAll: boolean = false;
-  pageIdx: number = 1;
-  pageSize: number = 5;
+
+  searchParams = {
+    pageIdx: 1,
+    startDate: '' as Date | '',
+    endDate: '' as Date | '',
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend'
+    },
+    filters: {
+      key: '',
+      value: []
+    },
+  };
+
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
   isLoadingUser: boolean = false;
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
+
+  filterRoles = [
+    { text: 'User', value: 'user' },
+    { text: 'Driver', value: 'driver' }
+  ]
 
   constructor(
     private usersService: UsersService,
     private dialog: MatDialog,
-    private utils: Utils
+    public utils: Utils,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -36,7 +58,7 @@ export class UsersComponent implements OnInit {
 
   loadData(): void {
     this.isLoadingUser = true;
-    this.usersService.searchUser(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.usersService.searchUser(this.searchParams).subscribe({
       next: (res: SearchUser) => {
         if (res) {
           this.searchUser = res;
@@ -52,6 +74,19 @@ export class UsersComponent implements OnInit {
     });
   }
 
+
+  sortRoleFn(sortValue: any) {
+    this.searchParams.sortBy.key = 'role';
+    this.searchParams.sortBy.value = sortValue;
+    this.loadData();
+  }
+
+  filterRolesFn(filterArr: any) {
+    this.searchParams.filters.key = 'role';
+    this.searchParams.filters.value = filterArr;
+    this.loadData();
+  }
+
   toggleUser(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.searchUser.users = this.searchUser.users.map((user: User) => ({
@@ -60,9 +95,6 @@ export class UsersComponent implements OnInit {
     }));
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchUser.users.some((user) => !user.selected);
-  }
 
   deleteUser(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
@@ -102,40 +134,65 @@ export class UsersComponent implements OnInit {
   }
 
   editUser(user: User): void {
-
+    const params = { user: JSON.stringify(user) };
+    this.router.navigateByUrl('/management/users/user-detail', { state: params });
   }
 
   addUser(): void {
-
+    this.router.navigate(['/management/users/user-detail']);
   }
 
   reloadUserPage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+    this.searchParams = {
+      ...this.searchParams,
+      ...data
+    }
     this.loadData();
   }
 
   searchUserPage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword
+    }
     this.loadData();
   }
 
-  sortUserPage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortUserPage(sortBy: { key: string, value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy
+    }
     this.loadData();
   }
 
-  private handleRequestError(error: any): void {
-    const msg = 'An error occurred while processing your request';
-    toast.error(msg, {
-      position: 'bottom-right',
-      description: error.message || 'Please try again later',
-      action: {
-        label: 'Dismiss',
-        onClick: () => { },
-      },
-      actionButtonStyle: 'background-color:#DC2626; color:white;',
-    });
+  onCurrentPageDataChange(users: readonly User[]): void {
+    this.searchUser.users = users;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchUser.users;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchUser.users.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 }

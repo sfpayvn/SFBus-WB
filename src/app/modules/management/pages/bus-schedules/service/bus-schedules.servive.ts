@@ -20,7 +20,17 @@ export class BusSchedulesService {
       tap((res: any) => { }),
 
     );
+
   }
+  findScheduleLayoutById(id: string) {
+    const url = `/bus-schedule-layouts/find-one/${id}`;
+    return this.apiGatewayService.get(url).pipe(
+      tap((res: any) => { }),
+    );
+  }
+
+
+
 
   searchBusSchedule(searchParams: {
     pageIdx: number;

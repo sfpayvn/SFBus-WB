@@ -4,7 +4,7 @@ import { BusService, BusService2Create } from '../../model/bus-service.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { FilesCenterDialogComponent } from '../../../files-center/components/files-center-dialog/files-center-dialog.component';
-import { File as FileDto } from '../../../files-center/model/file-center.model';
+import { FileDto } from '../../../files-center/model/file-center.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 
 export interface DialogData {

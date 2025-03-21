@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import _, { remove } from 'lodash';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { FileFolder, SearchFile, File, FileFolder2Create, FileFolder2Update, File2Update } from './model/file-center.model';
+import { FileFolder, SearchFile, FileDto, FileFolder2Create, FileFolder2Update } from './model/file-center.model';
 import { FilesService } from './service/files-center.servive';
 import { CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDragStart, } from '@angular/cdk/drag-drop';
 import { Utils } from 'src/app/shared/utils/utils';
@@ -42,7 +42,7 @@ export class FilesComponent implements OnInit {
 
   selectAll: boolean = false;
 
-  selectedFiles: File[] = [];
+  selectedFiles: FileDto[] = [];
 
   pageIdx: number = 1;
   pageSize: number = 30;
@@ -117,7 +117,7 @@ export class FilesComponent implements OnInit {
     this.loadFiles();
   }
 
-  toggleFile(file: File): void {
+  toggleFile(file: FileDto): void {
     if (!this.isChooseMultiple && this.selectedFiles.length > 0 && !this.isSelected(file)) {
       this.selectedFiles = [];
       this.selectedFiles.push(file);
@@ -132,11 +132,11 @@ export class FilesComponent implements OnInit {
 
   }
 
-  isSelected(file: File): boolean {
+  isSelected(file: FileDto): boolean {
     return this.selectedFiles.some(f => f._id === file._id);
   }
 
-  getIndexSelectedFile(file: File): string {
+  getIndexSelectedFile(file: FileDto): string {
     const index = this.selectedFiles.findIndex(f => f._id === file._id);
     return index !== -1 ? (index + 1).toString() : '';
   }
@@ -169,13 +169,13 @@ export class FilesComponent implements OnInit {
       });
   }
 
-  setFavoriteFile($event: any, file: File): void {
+  setFavoriteFile($event: any, file: FileDto): void {
     $event.stopPropagation();
     file.isFavorite = !file.isFavorite;
     this.updateFile(file);
   }
 
-  deleteFile($event: any, file: File): void {
+  deleteFile($event: any, file: FileDto): void {
     $event.stopPropagation();
     const dialogRef = this.utilsModal.openModalConfirm('Xóa file',
       `Are you sure you want to delete this file "${file.filename}? All of your data will be permanently removed. This action cannot be undone.`, 'dangerous');
@@ -194,7 +194,7 @@ export class FilesComponent implements OnInit {
     });
   }
 
-  zoomFile($event: any, file: File): void {
+  zoomFile($event: any, file: FileDto): void {
     $event.stopPropagation();
     const dialogRef = this.dialog.open(ViewImageDialogComponent, {
       height: 'max-content',
@@ -203,7 +203,7 @@ export class FilesComponent implements OnInit {
       panelClass: 'custom-dialog-view-image',
       backdropClass: 'custom-back-drop-view-image',
       data: {
-        file: file
+        file: FileDto
       }
     });
   }
@@ -222,7 +222,7 @@ export class FilesComponent implements OnInit {
     });
   }
 
-  updateFile(item: File) {
+  updateFile(item: FileDto) {
     this.fileService.updateFile(item).subscribe((res: any) => {
       if (!res) {
         toast.error("Cập nhập thư mục không thành công");
@@ -233,7 +233,7 @@ export class FilesComponent implements OnInit {
   }
 
 
-  updateFiles2Folder(files: File[], fileFolderId: string) {
+  updateFiles2Folder(files: FileDto[], fileFolderId: string) {
     this.fileService.updateFiles2Folder(files, fileFolderId).subscribe((res: any) => {
       if (!res) {
         toast.error("Cập nhập thư mục không thành công");
@@ -247,7 +247,7 @@ export class FilesComponent implements OnInit {
     })
   }
 
-  setEditFile(item: File) {
+  setEditFile(item: FileDto) {
     item.oldValue = item.filename;
   }
 
@@ -256,13 +256,13 @@ export class FilesComponent implements OnInit {
     inputElement.blur();
   }
 
-  onEscFile(item: File, $event?: any) {
+  onEscFile(item: FileDto, $event?: any) {
     item.filename = item.oldValue;
     const inputElement = $event.target as HTMLInputElement;
     inputElement.blur();
   }
 
-  handleUpdateFile(item: File, $event?: any) {
+  handleUpdateFile(item: FileDto, $event?: any) {
     const trimmedName = item.filename.trim();
     if (trimmedName != '' && item.filename !== item.oldValue) {
       this.updateFile(item);
@@ -461,21 +461,21 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
-  onDragStarted(file: File) {
+  onDragStarted(file: FileDto) {
     console.log("🚀 ~ FilesComponent ~ onDragStarted ~ onDragStarted:")
-    const itemIdx = this.searchFile.files.findIndex((f: File) => f._id == file._id);
+    const itemIdx = this.searchFile.files.findIndex((f: FileDto) => f._id == file._id);
     this.searchFile.files.splice(itemIdx + 1, 0, { ...file, temp: true });
   }
 
-  onDragEnded(file: File) {
+  onDragEnded(file: FileDto) {
     console.log("🚀 ~ FilesComponent ~ onDragEnded ~ onDragEnded:")
     _.remove(this.searchFile.files, { temp: true });
   }
 
   onSourceListExited(event: CdkDragExit<any>) {
     console.log("🚀 ~ FilesComponent ~ onSourceListExited ~ onSourceListExited:")
-    const itemIdx = this.searchFile.files.findIndex((file: File) => file._id == event.item.data._id);
-    const fileWithTemp = this.searchFile.files.find((file: File) => file.temp === true);
+    const itemIdx = this.searchFile.files.findIndex((file: FileDto) => file._id == event.item.data._id);
+    const fileWithTemp = this.searchFile.files.find((file: FileDto) => file.temp === true);
     if (fileWithTemp) {
       return;
     }
@@ -496,7 +496,7 @@ export class FilesComponent implements OnInit {
     return element && element.nodeName === 'LI' ? element : null;
   }
 
-  onDbClickFile($event: any, file: File): void {
+  onDbClickFile($event: any, file: FileDto): void {
     $event.stopPropagation();
     if (!this.isDialog) {
       return;

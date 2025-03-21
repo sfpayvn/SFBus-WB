@@ -1,5 +1,5 @@
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
@@ -17,22 +17,30 @@ import { BusTypesService } from '../../../bus-types/service/bus-types.servive';
 import { BusService } from '../../../bus-services/model/bus-service.model';
 import { BusType } from '../../../bus-types/model/bus-type.model';
 import { BusSchedulesService } from '../../service/bus-schedules.servive';
-import { BusRouteScheduleBreakPoints, BusSchedule, BusSchedule2Create, BusSchedule2Update, BusScheduleRoute } from '../../model/bus-schedule.model';
+import { BusRouteScheduleBreakPoints, BusSchedule, BusSchedule2Create, BusSchedule2Update } from '../../model/bus-schedule.model';
 import { BusScheduleTemplatesService } from '../../../bus-schedule-templates/service/bus-schedule-templates.servive';
-import { BusRouteScheduleTemplateBreakPoints, BusScheduleTemplate, BusScheduleTemplateRoute } from '../../../bus-schedule-templates/model/bus-schedule-template.model';
+import { BusScheduleTemplate, BusScheduleTemplateRoute } from '../../../bus-schedule-templates/model/bus-schedule-template.model';
 import { BusProvincesService } from '../../../bus-provices/service/bus-provinces.servive';
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
 import { BusTemplate } from '../../../bus-templates/model/bus-template.model';
 import { BusTemplatesService } from '../../../bus-templates/service/bus-templates.servive';
-import { Driver } from '../../../drivers/model/driver.model';
-import { DriversService } from '../../../drivers/service/driver.servive';
+import { UsersService } from '../../../user/service/user.servive';
+import { Driver, UserDriver } from '../../../user/model/driver.model';
+import { DriversService } from '../../../user/service/driver.servive';
+import { BusLayoutTemplate } from '../../../bus-layout-templates/model/bus-layout-templates.model';
+import { SeatType } from '../../../seat-types/model/seat-type.model';
+import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service/bus-layout-templates.servive';
+import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
+import { Router } from '@angular/router';
 
 interface BusTemplateReview extends BusTemplate {
   busServices: BusService[],
   busType: BusType,
   isLoading: boolean
 }
-
+interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
+  layoutsForMatrix: any;
+}
 @Component({
   selector: 'app-bus-schedule-detail',
   templateUrl: './bus-schedule-detail.component.html',
@@ -58,13 +66,18 @@ export class BusScheduleDetailComponent
   busServices: BusService[] = [];
   busTypes: BusType[] = [];
 
-  drivers: Driver[] = [];
+  drivers: UserDriver[] = [];
 
   buses: Bus[] = [];
   filterdBuses: Bus[] = [];
 
   busReview!: Bus;
   busTemplateReview!: BusTemplateReview;
+
+  rows: number = 11; // Number of rows in the matrix
+  cols: number = 7; // Number of columns in the matrix
+  busLayoutTemplateReview!: BusTemplateWithLayoutsMatrix | null;
+  seatTypes: SeatType[] = [];
 
   @Input() isDialog: boolean = false;
   @Input() startDate!: Date;
@@ -83,7 +96,12 @@ export class BusScheduleDetailComponent
     private busScheduleTemplatesService: BusScheduleTemplatesService,
     private busProvincesService: BusProvincesService,
     private busTemplatesService: BusTemplatesService,
-    private driversService: DriversService
+    private driversService: DriversService,
+    private busLayoutTemplatesService: BusLayoutTemplatesService,
+    private seatTypesService: SeatTypesService,
+    private router: Router,
+    private el: ElementRef,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit(): void {
@@ -109,7 +127,7 @@ export class BusScheduleDetailComponent
     let findAllBusServices = this.busServicesService.findAll();
     let findBusTypes = this.busTypesService.findAll();
 
-    let findDrivers = this.driversService.findAll();
+    let findDrivers = this.driversService.findAllUserDriver();
 
     let request = [findAllBusProvinces, findAllBusStations, findAllBusRoutes, findAllBuses,
       findAllBusScheduleTemplates, findAllBusTemplates, findAllBusServices, findBusTypes, findDrivers];
@@ -124,13 +142,12 @@ export class BusScheduleDetailComponent
       this.busServices = busServices;
       this.busTypes = busTypes;
       this.drivers = drivers;
-      console.log("🚀 ~ initData ~ this.drivers:", this.drivers)
       this.initForm();
     });
   }
 
   async initForm() {
-    const { name = '', busId = '', bus = null, busTemplateId = '', busTemplate = null, busRouteId = '',
+    const { name = '', busId = '', bus = null, busTemplateId = '', busTemplate = null, busRouteId = '', busScheduleLayoutId = '',
       busRoute = null, price = '', busScheduleTemplateId = '', busLayoutTemplateId = '', busDriverIds = [] } = this.busSchedule || {};
 
     this.busScheduleDetailForm = this.fb.group({
@@ -158,11 +175,66 @@ export class BusScheduleDetailComponent
       }
     }
 
+
     if (busTemplateId) {
-      this.setBusTemplateReview(busTemplate as BusTemplate);
+      const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id = busTemplateId);
+      if (!busTemplate) return;
+
+      if (busScheduleLayoutId) {
+        this.setupBusScheduleLayout(busScheduleLayoutId);
+      } else {
+        const busScheduleTemplate = this.busScheduleTemplates.find((busScheduleTemplate: BusScheduleTemplate) => busScheduleTemplate._id === busScheduleTemplateId) as BusScheduleTemplate;
+        const busSeatLayoutTemplateBlockIds = busScheduleTemplate.busSeatLayoutTemplateBlockIds;
+        this.setupBusLayoutTemplateReview(busTemplate as BusTemplate, busSeatLayoutTemplateBlockIds);
+        this.setBusTemplateReview(busTemplate as BusTemplate);
+      }
     }
 
     this.busReview = bus as Bus;
+  }
+
+  setupBusScheduleLayout(busScheduleLayoutId: string) {
+    const findBusLayoutTemplate = this.busSchedulesService.findScheduleLayoutById(busScheduleLayoutId);
+    const findSeatTypes = this.seatTypesService.findAll();
+    let request = [findBusLayoutTemplate, findSeatTypes];
+
+    combineLatest(request).subscribe(async ([busLayoutTemplate, seatTypes]) => {
+      console.log("🚀 ~ combineLatest ~ busLayoutTemplate:", busLayoutTemplate)
+      this.busLayoutTemplateReview = busLayoutTemplate as BusTemplateWithLayoutsMatrix;
+      this.seatTypes = seatTypes;
+      this.busLayoutTemplateReview.layoutsForMatrix = [];
+      this.busLayoutTemplateReview.layoutsForMatrix = await this.initializeMatrix(this.busLayoutTemplateReview.seatLayouts, this.busLayoutTemplateReview.layoutsForMatrix)
+    })
+  }
+
+  setupBusLayoutTemplateReview(busTemplate: BusTemplate, busSeatLayoutTemplateBlockIds: string[]) {
+    const findBusLayoutTemplate = this.busLayoutTemplatesService.findOne(busTemplate.busLayoutTemplateId);
+    const findSeatTypes = this.seatTypesService.findAll();
+    let request = [findBusLayoutTemplate, findSeatTypes];
+
+    combineLatest(request).subscribe(async ([busLayoutTemplate, seatTypes]) => {
+      this.busLayoutTemplateReview = busLayoutTemplate as BusTemplateWithLayoutsMatrix;
+      this.seatTypes = seatTypes;
+      this.busLayoutTemplateReview.layoutsForMatrix = [];
+
+      this.busLayoutTemplateReview.layoutsForMatrix = await this.initializeMatrix(this.busLayoutTemplateReview.seatLayouts,
+        this.busLayoutTemplateReview.layoutsForMatrix, busSeatLayoutTemplateBlockIds)
+    })
+  }
+
+  async setBusTemplateReview(busTemplate: BusTemplate) {
+    this.busTemplateReview = busTemplate as BusTemplateReview;
+    this.busTemplateReview.isLoading = true;
+    this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplate._id);
+    const serviceOfBus = this.busServices.filter((service: BusService) =>
+      this.busTemplateReview.busServiceIds.includes(service._id)
+    );
+    const typeOfBus = this.busTypes.find((type: BusType) =>
+      this.busTemplateReview.busTypeId.includes(type._id)
+    ) as BusType;
+    this.busTemplateReview.busServices = serviceOfBus;
+    this.busTemplateReview.busType = typeOfBus;
+    this.busTemplateReview.isLoading = false;
   }
 
   get breakPoints(): FormArray {
@@ -292,23 +364,168 @@ export class BusScheduleDetailComponent
     this.location.back();
   }
 
-  drop(event: CdkDragDrop<BusStation[]>) {
-    moveItemInArray(this.busStations, event.previousIndex, event.currentIndex);
+  async initializeMatrix(
+    seatLayouts: any,
+    layoutsForMatrix: any,
+    busSeatLayoutTemplateBlockIds?: string[]
+  ): Promise<void> {
+    for (const seatLayout of seatLayouts) {
+      const layoutForMatrix = {
+        name: seatLayout.name,
+        seatDisplayRows: [],
+        seatVisibleColumns: [],
+        seatsLayoutForMatrix: Array.from({ length: this.rows }, (_, i) =>
+          Array.from({ length: this.cols }, (_, j) => ({
+            _id: "",
+            index: i * this.cols + j + 1,
+            typeId: "",
+            name: "",
+            status: "available", // Default status
+            statusChanged: false,
+            statusDeselected: false,
+          }))
+        ),
+      };
+
+      // Map seat data onto the matrix
+      for (const cell of seatLayout.seats) {
+        const row = Math.floor((cell.index - 1) / this.cols);
+        const col = (cell.index - 1) % this.cols;
+
+        layoutForMatrix.seatsLayoutForMatrix[row][col] = {
+          ...cell,
+          statusChanged: false,
+          statusDeselected: false,
+          status: busSeatLayoutTemplateBlockIds && busSeatLayoutTemplateBlockIds.includes(cell._id)
+            ? "block" // Mark as blocked if present in the IDs list
+            : cell.status, // Default to available
+        };
+      }
+
+      // Update the display matrix
+      await this.updateDisplayMatrix(
+        layoutForMatrix.seatsLayoutForMatrix,
+        layoutForMatrix.seatDisplayRows,
+        layoutForMatrix.seatVisibleColumns,
+        (matrix, displayRows, visibleColumns) => {
+          layoutForMatrix.seatsLayoutForMatrix = matrix;
+          layoutForMatrix.seatDisplayRows = displayRows;
+          layoutForMatrix.seatVisibleColumns = visibleColumns;
+        }
+      );
+
+      // Add the completed layout to the layouts array
+      layoutsForMatrix.push(layoutForMatrix);
+    }
+
+    // Output the updated layouts
+    return layoutsForMatrix;
   }
 
-  async setBusTemplateReview(busTemplate: BusTemplate) {
-    this.busTemplateReview = busTemplate as BusTemplateReview;
-    this.busTemplateReview.isLoading = true;
-    this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplate._id);
-    const serviceOfBus = this.busServices.filter((service: BusService) =>
-      this.busTemplateReview.busServiceIds.includes(service._id)
-    );
-    const typeOfBus = this.busTypes.find((type: BusType) =>
-      this.busTemplateReview.busTypeId.includes(type._id)
-    ) as BusType;
-    this.busTemplateReview.busServices = serviceOfBus;
-    this.busTemplateReview.busType = typeOfBus;
-    this.busTemplateReview.isLoading = false;
+
+  async updateDisplayMatrix(
+    matrix: any,
+    displayRows: any,
+    visibleColumns: any,
+    out: (matrixOut: any, displayRowsOut: any, visibleColumnsOut: any) => void,
+  ): Promise<void> {
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+
+    displayRows = Array(rows).fill(false);
+    visibleColumns = Array(cols).fill(false);
+    const selectedColumns: number[] = [];
+    const selectedRows = new Set<number>();
+
+    matrix.forEach((row: any, i: number) => {
+      row.forEach((cell: any, j: number) => {
+        if (cell.typeId) {
+          displayRows[i] = true;
+          selectedColumns.push(j);
+          selectedRows.add(i);
+        }
+      });
+    });
+
+    const selectedRowsArray = Array.from(selectedRows).sort((a, b) => a - b);
+    selectedRowsArray.forEach((row, index, array) => {
+      for (let i = row; i <= array[array.length - 1]; i++) {
+        displayRows[i] = true;
+      }
+    });
+
+    if (selectedColumns.length > 0) {
+      selectedColumns.sort((a, b) => a - b);
+      const [firstCol, lastCol] = [selectedColumns[0], selectedColumns[selectedColumns.length - 1]];
+      for (let j = firstCol; j <= lastCol; j++) {
+        visibleColumns[j] = true;
+      }
+    }
+
+    out(matrix, displayRows, visibleColumns);
+  }
+
+  onClickToggleStatus(row: number, col: number, layoutForMatrix: any, event: MouseEvent): void {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    this.toggleStatus(row, col, layoutForMatrix, event);
+  }
+
+  toggleStatus(row: number, col: number, layoutForMatrix: any, event: MouseEvent): void {
+    event.preventDefault(); // Ngăn chặn menu chuột phải mặc định
+    const currentMatrix = layoutForMatrix.seatsLayoutForMatrix;
+    const cell = currentMatrix[row][col];
+
+    const currentCellSeatType = this.seatTypes.find(item => item._id == cell.typeId);
+
+    if (currentCellSeatType?.isEnv) {
+      return
+    }
+
+    // Remove the current status class
+    const cellElement = this.el.nativeElement.querySelector(`#cell-${layoutForMatrix.name.replace(' ', '')}-${cell.index}`);
+    this.renderer.removeClass(cellElement, `status-${cell.status}`);
+
+    //use for animation
+    setTimeout(() => {
+      if (cell.status === 'available') {
+        cell.status = 'block';
+        cell.icon = currentCellSeatType?.blockIcon;
+      } else if (cell.status === 'block') {
+        cell.status = 'available';
+        cell.icon = currentCellSeatType?.icon;
+      }
+
+      // Add the new status class
+      this.renderer.addClass(cellElement, `status-${cell.status}`);
+    }, 100); // Ensure the revert animation completes before applying the new status
+  }
+
+  getIconByType(cell: any) {
+    // Tìm loại ghế tương ứng dựa trên type
+    const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
+    if (!selectedType) return "";
+
+    // Trả về icon tương ứng dựa trên trạng thái của ghế
+    if (cell.status === "selected") {
+      return selectedType.selectedIcon
+    } else if (cell.status === "block" || cell.status === "booked") {
+      return selectedType.blockIcon
+    }
+    return selectedType.icon
+  }
+
+  editBusTempate() {
+    const allowedKeys = ["_id", "name", "seatLayouts"]; // Danh sách các thuộc tính trong BusTemplate
+    const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
+      this.busLayoutTemplateReview ? Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key)) : []
+    ) as unknown as BusLayoutTemplate;
+
+    // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
+    const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
+
+    // Điều hướng đến trang chi tiết của bus template
+    this.router.navigateByUrl('/management/bus-layout-templates/bus-layout-template-detail', { state: params });
   }
 
   async chooseBus(busId: string) {
@@ -361,7 +578,7 @@ export class BusScheduleDetailComponent
 
     busScheduleDetailForm.get('busRouteId')?.patchValue(busScheduleTemplate.busRouteId);
     busScheduleDetailForm.get('busTemplateId')?.patchValue(busScheduleTemplate.busTemplateId);
-
+    busScheduleDetailForm.get('busDriverIds')?.patchValue(busScheduleTemplate.busDriverIds);
 
     await this.chooseBus(busScheduleTemplate.busId);
     await this.chooseRoute(busScheduleTemplate.busRouteId, busScheduleTemplate.busRoute);
@@ -369,10 +586,15 @@ export class BusScheduleDetailComponent
 
     busScheduleDetailForm.get('busId')?.patchValue(busScheduleTemplate.busId);
 
+    const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busScheduleTemplate.busTemplateId) as BusTemplate;
+    const busSeatLayoutTemplateBlockIds = busScheduleTemplate.busSeatLayoutTemplateBlockIds;
+
+    this.setupBusLayoutTemplateReview(busTemplate as BusTemplate, busSeatLayoutTemplateBlockIds);
   }
 
   resetBusScheduleTemplate() {
     const busScheduleDetailForm = this.busScheduleDetailForm as FormGroup;
+    this.busLayoutTemplateReview = null;
     busScheduleDetailForm.reset();
   }
 
@@ -434,22 +656,26 @@ export class BusScheduleDetailComponent
     return busStation;
   }
 
-  onSubmit() {
+  async onSubmit() {
     console.log("🚀 ~ onSubmit ~ this.busScheduleDetailForm:", this.busScheduleDetailForm)
     if (!this.busScheduleDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busScheduleDetailForm);
       return;
     }
 
+    const busSeatLayoutTemplateBlockIds = await this.getBusSeatLayoutTemplateBlock();
+
     const data = this.busScheduleDetailForm.getRawValue();
     const busSchedule2Create: BusSchedule2Create = {
       ...data,
+      busSeatLayoutTemplateBlockIds,
       startDate: data.busRoute.breakPoints[0].timeSchedule,
       endDate: data.busRoute.breakPoints.at(-1).timeSchedule
     };
     if (this.busSchedule) {
       const busSchedule2Update = {
         ...busSchedule2Create,
+        busScheduleLayoutId: this.busSchedule.busScheduleLayoutId,
         _id: this.busSchedule._id, // Thêm thuộc tính _id
       };
 
@@ -458,6 +684,22 @@ export class BusScheduleDetailComponent
     }
 
     this.createBus(busSchedule2Create);
+  }
+
+  async getBusSeatLayoutTemplateBlock(): Promise<string[]> {
+    const blockIds: string[] = []; // Collect block IDs in this array
+    // Iterate through layouts to retrieve block IDs
+    this.busLayoutTemplateReview?.layoutsForMatrix?.forEach((layout: any) => {
+      layout.seatsLayoutForMatrix.forEach((row: any) => {
+        row.forEach((cell: any) => {
+          if (cell.status === 'block') {
+            blockIds.push(cell._id); // Add the block ID to the array
+          }
+        });
+      });
+    });
+
+    return blockIds; // Return the array of block IDs
   }
 
   updateBus(busSchedule2Update: BusSchedule2Update) {

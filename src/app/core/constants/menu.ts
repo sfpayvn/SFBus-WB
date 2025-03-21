@@ -43,11 +43,6 @@ export class Menu {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Drivers',
-          route: '/management/drivers'
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Bus',
           route: '/management',
           children: [

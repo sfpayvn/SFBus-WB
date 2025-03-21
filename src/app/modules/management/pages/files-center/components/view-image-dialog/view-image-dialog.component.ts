@@ -5,11 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { File } from '../../model/file-center.model';
+import { FileDto } from '../../model/file-center.model';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
 export interface DialogData {
-  file: File;
+  file: FileDto;
 }
 
 @Component({

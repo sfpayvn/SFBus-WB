@@ -27,7 +27,7 @@ export class SignInComponent implements OnInit {
   ngOnInit(): void {
     this.form = this._formBuilder.group({
       phoneNumber: ['0961090433', [Validators.required, Validators.pattern(/(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/g)]],
-      password: ['password123', Validators.required],
+      password: ['@Qa0939631640', Validators.required],
     });
   }
 

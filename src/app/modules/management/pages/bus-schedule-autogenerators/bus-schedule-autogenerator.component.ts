@@ -256,6 +256,10 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
 
     const generateEventsForDay = (date: Date) => {
       busScheduleAutoGenerators.forEach((schedule) => {
+        const endDate = new Date(schedule.endDate ?? '');
+        if (endDate && endDate < date) {
+          return;
+        }
         processSpecificTimeSlots(schedule, date, events);
       });
     };

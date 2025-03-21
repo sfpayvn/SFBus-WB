@@ -21,36 +21,64 @@
     (sortDataEvent)="sortUserPage($event)"
     (searchDataEvent)="searchUserPage($event)"></app-table-action>
   <div class="overflow-x-auto">
-    <table class="text-muted-foreground w-full table-auto border-collapse text-left align-middle leading-5">
-      <thead class="border-muted/20 text-muted-foreground border text-xs">
+    <nz-table
+      #rowSelectionTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="searchUser.users"
+      class="!w-full"
+      (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
+      <thead>
         <tr>
-          <th class="w-[50px]">
-            <input
-              (change)="toggleUser($event)"
-              [(ngModel)]="selectAll"
-              class="checkbox checkbox-sm"
-              type="checkbox"
-              aria-label="Select all user" />
-          </th>
+          <th
+            [nzChecked]="checked"
+            [nzIndeterminate]="indeterminate"
+            nzLabel="Select all"
+            (nzCheckedChange)="onAllChecked($event)"></th>
+          <th class="min-w-[40px]">Avarta</th>
           <th class="min-w-[200px]">Name</th>
-          <th class="w-[100px] text-center">Actions</th>
+          <th class="min-w-[200px]">Phone Number</th>
+          <th
+            class="min-w-[200px]"
+            [nzFilterFn]="true"
+            [nzSortFn]="true"
+            [nzFilterMultiple]="true"
+            [nzFilters]="filterRoles"
+            (nzSortOrderChange)="sortRoleFn($event)"
+            (nzFilterChange)="filterRolesFn($event)">
+            Role
+          </th>
+          <th class="min-w-[80px] !text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (busType of searchUser.users; track busType._id) {
-        <tr class="hover:bg-card/50">
-          <td class="text-center">
+        @for (user of rowSelectionTable.data; track user) {
+        <tr>
+          <td
+            [nzChecked]="setOfCheckedId.has(user._id)"
+            [nzLabel]="user.name"
+            (nzCheckedChange)="onItemChecked(user._id, $event)"></td>
+          <td>
             <nz-skeleton
               [nzLoading]="isLoadingUser"
               [nzParagraph]="false"
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
-              <input
-                [(ngModel)]="busType.selected"
-                (change)="checkSelectAll()"
-                class="checkbox checkbox-sm"
-                type="checkbox"
-                [attr.aria-label]="'Select ' + busType.name" />
+              <div class="h-8 w-8 overflow-hidden rounded-full">
+                @if(user.avatar){
+                <img alt="driver avarta" [src]="user.avatar" />
+                }@else {
+                <div
+                  class="flex h-full w-full items-center justify-center"
+                  [style]="{
+                    'background-color': utils.generateColorsFromId(user._id).bg,
+                    color: utils.generateColorsFromId(user._id).text
+                  }">
+                  {{ user.name.charAt(0) }}
+                </div>
+                }
+              </div>
             </nz-skeleton>
           </td>
           <td>
@@ -59,7 +87,25 @@
               [nzParagraph]="false"
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
-              {{ busType.name }}
+              {{ user.name }}
+            </nz-skeleton>
+          </td>
+          <td>
+            <nz-skeleton
+              [nzLoading]="isLoadingUser"
+              [nzParagraph]="false"
+              [nzTitle]="{ width: '100%' }"
+              [nzActive]="true">
+              {{ user.phoneNumber }}
+            </nz-skeleton>
+          </td>
+          <td>
+            <nz-skeleton
+              [nzLoading]="isLoadingUser"
+              [nzParagraph]="false"
+              [nzTitle]="{ width: '100%' }"
+              [nzActive]="true">
+              {{ user.role }}
             </nz-skeleton>
           </td>
           <td class="text-center">
@@ -69,18 +115,18 @@
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
               <button
-                (click)="editUser(busType)"
+                (click)="editUser(user)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Edit busType">
+                aria-label="Edit user">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
                 </svg>
               </button>
               <button
-                (click)="deleteUser(busType._id)"
+                (click)="deleteUser(user._id)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Delete busType">
+                aria-label="Delete user">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     fill-rule="evenodd"
@@ -91,17 +137,13 @@
             </nz-skeleton>
           </td>
         </tr>
-        } @empty {
-        <tr>
-          <td class="py-4 text-center text-sm" colspan="4">No user found</td>
-        </tr>
         }
       </tbody>
-    </table>
+    </nz-table>
   </div>
   <app-table-footer
-    [pageIdx]="pageIdx"
-    [pageSize]="pageSize"
+    [pageIdx]="searchParams.pageIdx"
+    [pageSize]="searchParams.pageSize"
     [totalItem]="totalItem"
     [isLoading]="isLoadingUser"
     [totalPage]="totalPage"

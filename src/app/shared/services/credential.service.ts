@@ -16,8 +16,8 @@ export class CredentialService {
         await this.cookieService.set('token', token, this.expires); // Sử dụng biến expires
     }
 
-    getToken(): string | null {
-        return this.cookieService.get('token');
+    async getToken(): Promise<string | null> {
+        return await this.cookieService.get('token');
     }
 
     async removeToken(): Promise<void> {

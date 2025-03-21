@@ -10,14 +10,14 @@ import { CredentialService } from '../shared/services/credential.service';
 export class AuthGuard implements CanActivate {
     constructor(private credentialService: CredentialService, private router: Router) { }
 
-    canActivate(): Observable<boolean> {
-        const token = this.credentialService.getToken();
-        const user = this.credentialService.getCurrentUser();
+    async canActivate(): Promise<boolean> {
+        const token = await this.credentialService.getToken();
+        const user = await this.credentialService.getCurrentUser();
         if (token && user) {
-            return of(true);
+            return Promise.resolve(true);
         } else {
             this.router.navigate(['/auth/sign-in']);
-            return of(false);
+            return Promise.resolve(false);
         }
     }
 }

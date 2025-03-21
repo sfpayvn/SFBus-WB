@@ -20,6 +20,14 @@ export class BusLayoutTemplatesService {
 
     );
   }
+  
+  findOne(_id:string) {
+    const url = `${this.url}/find-one/${_id}`;
+    return this.apiGatewayService.get(url).pipe(
+      tap((res: any) => { }),
+
+    );
+  }
 
   searchBusLayoutTemplate(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
     const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;

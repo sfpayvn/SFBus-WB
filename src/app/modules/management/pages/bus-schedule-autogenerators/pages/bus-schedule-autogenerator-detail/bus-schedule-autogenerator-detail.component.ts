@@ -313,7 +313,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     }
 
     const data = this.busScheduleAutoGeneratorDetailForm.getRawValue() as BusScheduleAutoGenerator2Create;
-    data.endDate = this.isNonEndDate ? new Date() : data.endDate
+    data.endDate = this.isNonEndDate ? '' : data.endDate
 
     const busScheduleAutoGenerator2Create: BusScheduleAutoGenerator2Create = {
       ...data,

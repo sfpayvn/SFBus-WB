@@ -1,9 +1,9 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, model, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { File } from '../../model/file-center.model';
+import { FileDto } from '../../model/file-center.model';
 
 export interface DialogData {
-  file: File;
+  file: FileDto;
 }
 
 @Component({

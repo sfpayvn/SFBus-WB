@@ -22,7 +22,7 @@ export class BusScheduleAutoGenerator {
   repeatDaysPerWeek: string[] = [];
   preGenerateDays: number = 0;
   startDate: Date = new Date();
-  endDate: Date = new Date();
+  endDate: Date | any;
   selected: boolean = false;
 }
 

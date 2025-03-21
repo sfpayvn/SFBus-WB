@@ -24,7 +24,7 @@ import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-temp
 import { BusScheduleAutoGeneratorsComponent } from './pages/bus-schedule-autogenerators/bus-schedule-autogenerator.component';
 import { BusScheduleAutoGeneratorDetailComponent } from './pages/bus-schedule-autogenerators/pages/bus-schedule-autogenerator-detail/bus-schedule-autogenerator-detail.component';
 import { UsersComponent } from './pages/user/users.component';
-import { DriversComponent } from './pages/drivers/drivers.component';
+import { UserDetailComponent } from './pages/user/pages/user-detail/user-detail.component';
 
 const routes: Routes = [
   {
@@ -37,8 +37,8 @@ const routes: Routes = [
         component: UsersComponent,
       },
       {
-        path: 'drivers',
-        component: DriversComponent,
+        path: 'users/user-detail',
+        component: UserDetailComponent,
       },
       {
         path: 'buses',
