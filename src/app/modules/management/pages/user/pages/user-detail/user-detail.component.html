@@ -18,7 +18,7 @@
             class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border border-dashed border-blue-500">
             <img
               alt="user avatar"
-              [src]="(user && user.avatar) || userAvarta || defaultAvatar"
+              [src]="userAvarta || defaultAvatar"
               [class]="'w-full cursor-pointer'"
               [style]="
                 user && user.avatar

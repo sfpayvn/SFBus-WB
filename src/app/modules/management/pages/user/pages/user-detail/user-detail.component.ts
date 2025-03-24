@@ -99,6 +99,7 @@ export class UserDetailComponent
     const twelveYearsAgo = new Date(today.getFullYear() - 12, today.getMonth(), today.getDate());
 
     const { avatar = '', name = '', email = '', phoneNumber = '', gender = '', role = '', birthdate = twelveYearsAgo, addresses = [] } = this.user || {};
+    this.userAvarta = avatar ? avatar : this.defaultAvatar;
     this.mainForm = this.fb.group({
       userForm:
         this.fb.group({
@@ -320,8 +321,11 @@ export class UserDetailComponent
 
     combineLatest(request).subscribe({
       next: (res: any) => {
-        if (actionName == 'create') {
-          const updatedState = { ...history.state, user: JSON.stringify(res) };
+        if (!res) {
+          return;
+        }
+        if (actionName == 'update') {
+          const updatedState = { ...history.state, user: JSON.stringify(res[0]) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('User update successfully');
           return;

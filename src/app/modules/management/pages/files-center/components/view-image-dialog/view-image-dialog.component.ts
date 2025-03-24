@@ -26,7 +26,9 @@ export class ViewImageDialogComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+    console.log("🚀 ~ ViewImageDialogComponent ~ ngOnInit ~ this.data:", this.data)
+  }
 
   onButtonClick() { }
 

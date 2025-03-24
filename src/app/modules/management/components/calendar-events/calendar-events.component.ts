@@ -48,19 +48,7 @@ export class CalendarEventsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Tính ngày bắt đầu của tuần hiện tại:
-    const today = this.utils.getCurrentDate();
-    const dayOfWeek = today.getDay(); // 0 = Chủ Nhật
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - dayOfWeek);
 
-    // Hàm tiện ích tạo Date dựa trên ngày đầu của tuần, thêm số ngày offset và thời gian
-    const createEventDate = (dayOffset: number, hours: number, minutes: number = 0) => {
-      const d = new Date(startOfWeek);
-      d.setDate(startOfWeek.getDate() + dayOffset);
-      d.setHours(hours, minutes, 0, 0);
-      return d;
-    };
   }
 
   get weekDays(): string[] {
@@ -99,9 +87,11 @@ export class CalendarEventsComponent implements OnInit {
   // Giả sử biến this.currentWeekWiew (có thể là string hoặc Date) được dùng để xác định tuần hiện tại
   get weekDates(): Date[] {
     const current = new Date(this.currentWeekWiew);
-    const dayOfWeek = current.getDay(); // 0 = Chủ Nhật, điều chỉnh nếu cần
+    const dayOfWeek = current.getDay(); // 0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy
     const startDate = new Date(current);
-    startDate.setDate(current.getDate() - dayOfWeek + 1); // điều chỉnh đầu tuần là thứ 2
+
+    // Điều chỉnh để nếu hôm nay là Chủ Nhật (dayOfWeek = 0), tuần bắt đầu từ Thứ Hai trước đó
+    startDate.setDate(current.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
     const dates: Date[] = [];
     for (let i = 0; i < 7; i++) {
@@ -109,9 +99,10 @@ export class CalendarEventsComponent implements OnInit {
       d.setDate(startDate.getDate() + i);
       dates.push(d);
     }
-    // Giữ lại 6 ngày phù hợp với header (ô đầu tiên dành cho nhãn giờ)
-    return dates.slice(0, 7);
+
+    return dates; // Trả về 7 ngày trong tuần (Thứ Hai -> Chủ Nhật)
   }
+
 
   // Lấy khoảng thời gian của tuần để hiển thị tiêu đề (header)
   get weekRange(): { start: Date; end: Date } {

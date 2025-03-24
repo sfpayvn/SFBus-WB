@@ -28,23 +28,11 @@ export class CredentialService {
         await this.cookieService.set('user', user, this.expires); // Sử dụng biến expires
     }
 
-    getCurrentUser(): Observable<any> {
-        return this.cookieService.get('user');
+    async getCurrentUser() {
+        return await this.cookieService.get('user');
     }
 
     async removeCurrentUser() {
         await this.cookieService.remove('user');
-    }
-
-    async setUserResidual(user: any) {
-        await this.cookieService.set('userResidual', user, this.expires); // Sử dụng biến expires
-    }
-
-    getUserResidual(): Observable<any> {
-        return this.cookieService.get('userResidual');
-    }
-
-    async removeUserResidual() {
-        await this.cookieService.remove('userResidual');
     }
 }

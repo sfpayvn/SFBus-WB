@@ -217,7 +217,7 @@
             <div class="flex flex-row flex-wrap gap-4">
               <div class="flex w-5/12 justify-between">
                 <nz-skeleton
-                  [nzLoading]="busTemplateReview.isLoading"
+                  [nzLoading]="isLoaddingBusTemplateReview"
                   [nzParagraph]="false"
                   [nzTitle]="{ width: '100%' }"
                   [nzActive]="true"
@@ -236,7 +236,7 @@
               </div>
               <div class="flex w-5/12 justify-between">
                 <nz-skeleton
-                  [nzLoading]="busTemplateReview.isLoading"
+                  [nzLoading]="isLoaddingBusTemplateReview"
                   [nzParagraph]="false"
                   [nzTitle]="{ width: '100%' }"
                   [nzActive]="true"
@@ -251,7 +251,7 @@
               </div>
               <div class="flex w-5/12 justify-between" *ngIf="busTemplateReview.busType">
                 <nz-skeleton
-                  [nzLoading]="busTemplateReview.isLoading"
+                  [nzLoading]="isLoaddingBusTemplateReview"
                   [nzParagraph]="false"
                   [nzTitle]="{ width: '100%' }"
                   [nzActive]="true"

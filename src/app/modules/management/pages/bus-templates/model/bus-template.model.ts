@@ -1,3 +1,6 @@
+import { BusService } from "../../bus-services/model/bus-service.model";
+import { BusType } from "../../bus-types/model/bus-type.model";
+
 export class SearchBusTemplate {
   busTemplates: BusTemplate[] = [];
   pageIdx: number = 0;
@@ -9,7 +12,9 @@ export class BusTemplate {
   _id: string = '';
   name: string = '';
   busServiceIds: string[] = [];
+  busServices: BusService[] = [];
   busTypeId: string = '';
+  busType: BusType | undefined;
   busLayoutTemplateId: string = '';
   selected: boolean = false;
 }

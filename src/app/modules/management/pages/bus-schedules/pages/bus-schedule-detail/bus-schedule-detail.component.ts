@@ -33,11 +33,6 @@ import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
 import { Router } from '@angular/router';
 
-interface BusTemplateReview extends BusTemplate {
-  busServices: BusService[],
-  busType: BusType,
-  isLoading: boolean
-}
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
 }
@@ -72,7 +67,8 @@ export class BusScheduleDetailComponent
   filterdBuses: Bus[] = [];
 
   busReview!: Bus;
-  busTemplateReview!: BusTemplateReview;
+  busTemplateReview!: BusTemplate;
+  isLoaddingBusTemplateReview = false;
 
   rows: number = 11; // Number of rows in the matrix
   cols: number = 7; // Number of columns in the matrix
@@ -152,10 +148,8 @@ export class BusScheduleDetailComponent
 
     this.busScheduleDetailForm = this.fb.group({
       name: [name, [Validators.required]],
-      busId: [busId],
-      bus: [bus],
       busTemplateId: [busTemplateId, [Validators.required]],
-      busTemplate: [busTemplate],
+      busId: [busId],
       busRouteId: [busRouteId, [Validators.required]],
       busRoute: this.fb.group({
         name: [busRoute?.name || ''],
@@ -186,10 +180,9 @@ export class BusScheduleDetailComponent
         const busScheduleTemplate = this.busScheduleTemplates.find((busScheduleTemplate: BusScheduleTemplate) => busScheduleTemplate._id === busScheduleTemplateId) as BusScheduleTemplate;
         const busSeatLayoutTemplateBlockIds = busScheduleTemplate.busSeatLayoutTemplateBlockIds;
         this.setupBusLayoutTemplateReview(busTemplate as BusTemplate, busSeatLayoutTemplateBlockIds);
-        this.setBusTemplateReview(busTemplate as BusTemplate);
       }
+      this.setBusTemplateReview(busTemplate as BusTemplate);
     }
-
     this.busReview = bus as Bus;
   }
 
@@ -223,8 +216,8 @@ export class BusScheduleDetailComponent
   }
 
   async setBusTemplateReview(busTemplate: BusTemplate) {
-    this.busTemplateReview = busTemplate as BusTemplateReview;
-    this.busTemplateReview.isLoading = true;
+    this.busTemplateReview = busTemplate as BusTemplate;
+    this.isLoaddingBusTemplateReview = true;
     this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplate._id);
     const serviceOfBus = this.busServices.filter((service: BusService) =>
       this.busTemplateReview.busServiceIds.includes(service._id)
@@ -234,7 +227,7 @@ export class BusScheduleDetailComponent
     ) as BusType;
     this.busTemplateReview.busServices = serviceOfBus;
     this.busTemplateReview.busType = typeOfBus;
-    this.busTemplateReview.isLoading = false;
+    this.isLoaddingBusTemplateReview = false;
   }
 
   get breakPoints(): FormArray {
@@ -274,7 +267,6 @@ export class BusScheduleDetailComponent
     }
   }
 
-  // Hàm disable ngày (như bạn đã có)
   checkDisableDateTime(idx: number): ((current: Date | null) => boolean) & {
     nzDisabledTime: (current?: Date | Date[]) => {
       nzDisabledHours: () => number[];
@@ -282,7 +274,7 @@ export class BusScheduleDetailComponent
       nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => number[];
     };
   } {
-    // Xác định baseTime: nếu picker đầu tiên thì dùng thời gian hiện tại, ngược lại dùng giá trị của picker liền trước nếu có.
+    // Determine the base time: use current time for the first picker, or the previous picker's value otherwise.
     let baseTime: Date;
     if (idx === 0) {
       baseTime = new Date();
@@ -291,62 +283,45 @@ export class BusScheduleDetailComponent
       baseTime = previousDateValue ? new Date(previousDateValue) : new Date();
     }
 
-    // Hàm kiểm tra disable ngày: nếu ngày được chọn nhỏ hơn (theo ngày) baseTime thì trả về true.
+    // Disable date logic: prevent selecting dates earlier than `baseTime`.
     const disabledDate = (current: Date | null): boolean => {
       if (!current) return false;
-      // Lấy phần ngày của baseTime và current (đặt giờ = 0)
-      const baseDayStart = new Date(
-        baseTime.getFullYear(),
-        baseTime.getMonth(),
-        baseTime.getDate()
-      );
-      const currentDayStart = new Date(
-        current.getFullYear(),
-        current.getMonth(),
-        current.getDate()
-      );
+      const baseDayStart = new Date(baseTime.getFullYear(), baseTime.getMonth(), baseTime.getDate());
+      const currentDayStart = new Date(current.getFullYear(), current.getMonth(), current.getDate());
       return currentDayStart.getTime() < baseDayStart.getTime();
     };
 
-    // Hàm disable time, đáp ứng kiểu DisabledTimeFn
+    // Disable time logic: adjusts based on the selected date (`current`) dynamically.
     const disabledTime = (current?: Date | Date[]) => {
-      if (idx === 0) {
-        const now = new Date();
-        return {
-          nzDisabledHours: () => Array.from({ length: now.getHours() }, (_, i) => i),
-          nzDisabledMinutes: (selectedHour: number) => {
-            if (selectedHour === now.getHours()) {
-              return Array.from({ length: now.getMinutes() }, (_, i) => i);
-            }
-            return [];
-          },
-          nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => {
-            if (selectedHour === now.getHours() && selectedMinute === now.getMinutes()) {
-              return Array.from({ length: now.getSeconds() }, (_, i) => i);
-            }
-            return [];
+      // Fallback to `baseTime` if no `current` is provided
+      const referenceTime = current ? new Date(current as Date) : baseTime;
+
+      // If the selected date (`current`) is the same day as `baseTime`, disable past times.
+      const isSameDay = referenceTime.toDateString() === baseTime.toDateString();
+
+      return {
+        nzDisabledHours: () => {
+          if (isSameDay) {
+            return Array.from({ length: baseTime.getHours() }, (_, i) => i); // Disable hours earlier than baseTime
           }
-        };
-      } else {
-        return {
-          nzDisabledHours: () => Array.from({ length: baseTime.getHours() }, (_, i) => i),
-          nzDisabledMinutes: (selectedHour: number) => {
-            if (selectedHour === baseTime.getHours()) {
-              return Array.from({ length: baseTime.getMinutes() }, (_, i) => i);
-            }
-            return [];
-          },
-          nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => {
-            if (selectedHour === baseTime.getHours() && selectedMinute === baseTime.getMinutes()) {
-              return Array.from({ length: baseTime.getSeconds() }, (_, i) => i);
-            }
-            return [];
+          return []; // No hours are disabled for other days
+        },
+        nzDisabledMinutes: (selectedHour: number) => {
+          if (isSameDay && selectedHour === baseTime.getHours()) {
+            return Array.from({ length: baseTime.getMinutes() }, (_, i) => i); // Disable minutes earlier than baseTime
           }
-        };
-      }
+          return [];
+        },
+        nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => {
+          if (isSameDay && selectedHour === baseTime.getHours() && selectedMinute === baseTime.getMinutes()) {
+            return Array.from({ length: baseTime.getSeconds() }, (_, i) => i); // Disable seconds earlier than baseTime
+          }
+          return [];
+        }
+      };
     };
 
-    // Gán thuộc tính nzDisabledTime vào function disabledDate (nhờ tính chất hàm-object của JavaScript)
+    // Attach `nzDisabledTime` property to `disabledDate` function.
     (disabledDate as any).nzDisabledTime = disabledTime;
 
     return disabledDate as ((current: Date | null) => boolean) & {
@@ -357,6 +332,7 @@ export class BusScheduleDetailComponent
       };
     };
   }
+
 
 
 
@@ -536,7 +512,7 @@ export class BusScheduleDetailComponent
 
   async chooseBusTemplate(busTemplateId: string) {
     const busTemplate = await this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busTemplateId) as BusTemplate;
-    this.busTemplateReview = busTemplate as BusTemplateReview;
+    this.busTemplateReview = busTemplate as BusTemplate;
     this.busScheduleDetailForm.get('busId')?.patchValue('');
     this.busScheduleDetailForm.get('busLayoutTemplateId')?.patchValue(busTemplate.busLayoutTemplateId);
     this.busScheduleDetailForm.get('busTemplate')?.patchValue(busTemplate);
@@ -666,8 +642,11 @@ export class BusScheduleDetailComponent
     const busSeatLayoutTemplateBlockIds = await this.getBusSeatLayoutTemplateBlock();
 
     const data = this.busScheduleDetailForm.getRawValue();
+
     const busSchedule2Create: BusSchedule2Create = {
       ...data,
+      busTemplate: this.busTemplateReview,
+      bus: this.busReview,
       busSeatLayoutTemplateBlockIds,
       startDate: data.busRoute.breakPoints[0].timeSchedule,
       endDate: data.busRoute.breakPoints.at(-1).timeSchedule

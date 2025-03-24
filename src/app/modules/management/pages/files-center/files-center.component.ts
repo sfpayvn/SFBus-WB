@@ -203,7 +203,7 @@ export class FilesComponent implements OnInit {
       panelClass: 'custom-dialog-view-image',
       backdropClass: 'custom-back-drop-view-image',
       data: {
-        file: FileDto
+        file: file
       }
     });
   }

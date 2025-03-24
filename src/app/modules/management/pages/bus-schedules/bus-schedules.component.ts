@@ -76,13 +76,12 @@ export class BusSchedulesComponent implements OnInit {
 
       // Tính ngày đầu tuần (Thứ hai)
       const startOfWeek = new Date(currentDate);
-      startOfWeek.setDate(currentDate.getDate() - dayOfWeek + 1); // Điều chỉnh nếu tuần bắt đầu từ Thứ hai
-
+      startOfWeek.setDate(currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Điều chỉnh Chủ nhật về Thứ hai trước đó
       // Tính ngày cuối tuần (Chủ nhật)
       const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 5);
-      endOfWeek.setHours(23, 59, 59, 999);
-
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Thêm 6 ngày để đến Chủ nhật cuối tuần
+      endOfWeek.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
+      startOfWeek.setHours(0, 0, 0, 0);
       // Gán giá trị cho searchParams
       this.searchParams.startDate = startOfWeek;
       this.searchParams.endDate = endOfWeek;

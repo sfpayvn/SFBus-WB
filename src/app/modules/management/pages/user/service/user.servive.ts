@@ -113,7 +113,7 @@ export class UsersService {
   }
 
   updateUser(user2Update: User2Update) {
-    const url = this.url;
+    const url = `${this.url}/profile`;
     return this.apiGatewayService.put(url, user2Update).pipe(
       tap((res: any) => {
       }),
