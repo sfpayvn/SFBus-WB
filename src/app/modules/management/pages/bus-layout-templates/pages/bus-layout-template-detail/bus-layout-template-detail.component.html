@@ -91,12 +91,12 @@
             <div class="flex gap-4">
               <button
                 class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!bg-blue-200"
-                [ngClass]="{ '!border !border-blue-500 !bg-blue-200': currentSeatTypeId == seatType._id }"
+                [ngClass]="{ '!border !border-blue-300 !bg-blue-100': currentSeatTypeId == seatType._id }"
                 nz-button
                 nzType="default"
                 *ngFor="let seatType of seatTypes"
                 (click)="selectSeatType(seatType._id)">
-                <svg-icon [src]="seatType.icon" [svgClass]="'h-8 w-8'"> </svg-icon>
+                <svg-icon [src]="seatType.iconLink" [svgClass]="'h-8 w-8 seat-icon'"> </svg-icon>
               </button>
             </div>
           </div>
@@ -119,7 +119,7 @@
                   <ng-container *ngIf="cell.typeId !== ''">
                     <svg-icon
                       [src]="cell.icon"
-                      [svgClass]="'h-16 w-16'"
+                      [svgClass]="'h-16 w-16 ' + 'icon-' + cell.status"
                       [ngClass]="{
                         'show-icon': cell.isSelected,
                       }"></svg-icon>

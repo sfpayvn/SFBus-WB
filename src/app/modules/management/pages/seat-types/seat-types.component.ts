@@ -117,6 +117,7 @@ export class SeatTypesComponent implements OnInit {
           ...seatType,
           name: result.name,
           isEnv: result.isEnv,
+          iconId: result.icon,
         };
         this.seatTypesService.processUpdateSeatType(result.files, seatType2Update).subscribe({
           next: (res: SeatType) => {

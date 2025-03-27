@@ -26,12 +26,11 @@ export class FilesCenterDialogComponent implements OnInit {
 
   }
 
-  chooseFiles(file: File) {
-    console.log("🚀 ~ FilesCenterDialogComponent ~ chooseFiles ~ File:", file)
+  chooseFiles(file: FileDto) {
     this.closeDialog(file)
   }
 
-  closeDialog(file?: File): void {
+  closeDialog(file?: FileDto): void {
     this.dialogRef.close(file);
   }
 }

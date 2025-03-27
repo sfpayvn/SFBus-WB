@@ -28,12 +28,6 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
   seatTypeIcon!: string;
   seatTypeIconFile!: File;
 
-  seatTypeBlockIcon!: string;
-  seatTypeBlockIconFile!: File;
-
-  seatTypeSelectedIcon!: string;
-  seatTypeSelectedIconFile!: File;
-
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
@@ -42,9 +36,7 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data) {
-      this.seatTypeIcon = this.seatType.icon;
-      this.seatTypeBlockIcon = this.seatType.blockIcon;
-      this.seatTypeSelectedIcon = this.seatType.selectedIcon;
+      this.seatTypeIcon = this.seatType.iconLink;
     }
     this.initForm();
   }
@@ -53,21 +45,8 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
   private async initForm() {
     this.seatTypeForm = this.fb.group({
       name: [this.seatType.name, [Validators.required]],
-      icon: [this.seatType.icon, Validators.required],
-      blockIcon: [this.seatType.blockIcon],
-      selectedIcon: [this.seatType.selectedIcon],
+      iconId: [this.seatType.iconId, Validators.required],
     });
-    this.processIsEnv(this.seatType.isEnv);
-  }
-
-  processIsEnv(isEnv: any) {
-    if (!isEnv) {
-      this.updateValidators('blockIcon', true);
-      this.updateValidators('selectedIcon', true);
-    } else {
-      this.updateValidators('blockIcon', false);
-      this.updateValidators('selectedIcon', false);
-    }
   }
 
   updateValidators = (controlName: string, shouldSet: boolean) => {
@@ -84,85 +63,43 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  onFileChange(event: any, type: string) {
+  onFileChange(event: any) {
     const files: FileList = event.target.files;
 
     if (!files || files.length === 0) return;
     const file = files[0];
+    this.seatTypeIconFile = file;
 
-    switch (type) {
-      case 'icon':
-        this.seatTypeIconFile = file;
-        break;
-      case 'blockIcon':
-        this.seatTypeBlockIconFile = file;
-        break;
-      case 'selectedIcon':
-        this.seatTypeSelectedIconFile = file;
-        break;
-
-      default:
-        break;
-    }
 
     if (file) {
-      this.readAndSetImage(file, type);
+      this.readAndSetImage(file);
     }
   }
 
-  private readAndSetImage(file: File, type: string): void {
+  private readAndSetImage(file: File): void {
     const reader = new FileReader();
     reader.onload = (event: any) => {
       // Tạo một Blob từ ArrayBuffer
       const arrayBuffer = event.target.result as ArrayBuffer;
       const blob = new Blob([arrayBuffer], { type: file.type });
       const blobUrl = URL.createObjectURL(blob);
+      this.seatTypeIcon = blobUrl;
 
-      switch (type) {
-        case 'icon':
-          this.seatTypeIcon = blobUrl;
-          break;
-        case 'blockIcon':
-          this.seatTypeBlockIcon = blobUrl;
-          break;
-        case 'selectedIcon':
-          this.seatTypeSelectedIcon = blobUrl;
-          break;
-
-        default:
-          break;
-      }
     };
     reader.readAsArrayBuffer(file);  // Đọc file dưới dạng ArrayBuffer
   }
 
 
-  removeFileImage(type: string) {
-
-    switch (type) {
-      case 'icon':
-        this.seatTypeIcon = '';
-        this.seatTypeForm.patchValue({ icon: '' });
-        break;
-      case 'blockIcon':
-        this.seatTypeBlockIcon = '';
-        this.seatTypeForm.patchValue({ blockIcon: '' });
-        break;
-      case 'selectedIcon':
-        this.seatTypeSelectedIcon = '';
-        this.seatTypeForm.patchValue({ selectedIcon: '' });
-        break;
-
-      default:
-        break;
-    }
+  removeFileImage() {
+    this.seatTypeIcon = '';
+    this.seatTypeForm.patchValue({ iconId: '' });
   };
 
-  openFilesCenterDialog(type: string) {
+  openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
       this.seatTypeIcon = files[0].link;
-      this.seatTypeForm.patchValue({ icon: files[0]._id });
+      this.seatTypeForm.patchValue({ iconId: files[0]._id });
     });
   }
 
@@ -172,7 +109,7 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
       return;
     }
 
-    const { name } = this.seatTypeForm.getRawValue();
+    const { name, iconId } = this.seatTypeForm.getRawValue();
 
     let dataTransfer = new DataTransfer();
 
@@ -180,23 +117,11 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
     if (this.seatTypeIconFile) {
       dataTransfer.items.add(this.seatTypeIconFile);
     }
-
-    if (!this.seatType.isEnv) {
-      // Validate and add seatTypeBlockIconFile
-      if (this.seatTypeBlockIconFile) {
-        dataTransfer.items.add(this.seatTypeBlockIconFile);
-      }
-
-      // Validate and add seatTypeSelectedIconFile
-      if (this.seatTypeSelectedIconFile) {
-        dataTransfer.items.add(this.seatTypeSelectedIconFile);
-      }
-    }
-
     const files: FileList = dataTransfer.files;
 
     const data = {
       name,
+      iconId,
       isEnv: this.seatType.isEnv,
       files: files,
     };

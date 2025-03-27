@@ -71,11 +71,26 @@
     border: 2px solid red;
 }
 
+.seat-icon {
+    color: #7dd4fc;
+    --border: #d7edf7;
+}
+
 /* Icon styling */
 .icon {
     width: 20px;
     height: 20px;
     margin-right: 5px;
+}
+
+.icon-block {
+    color: #969696;
+    --border: #cfcfcf;
+}
+
+.icon-available {
+    color: #7dd4fc;
+    --border: #d7edf7;
 }
 
 /* Animation cho xuất hiện icon */

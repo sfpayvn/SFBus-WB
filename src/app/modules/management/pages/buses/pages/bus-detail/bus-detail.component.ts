@@ -154,8 +154,6 @@ export class BusDetailComponent implements OnInit {
             typeId: "",
             name: "",
             status: "available",
-            statusChanged: false,
-            statusDeselected: false,
           })),
         ),
       };
@@ -165,8 +163,7 @@ export class BusDetailComponent implements OnInit {
         const col = (cell.index - 1) % this.cols;
         layoutForMatrix.seatsLayoutForMatrix[row][col] = {
           ...cell,
-          statusChanged: false,
-          statusDeselected: false,
+          icon: this.getIconByType(cell)
         };
       }
 
@@ -232,14 +229,7 @@ export class BusDetailComponent implements OnInit {
     // Tìm loại ghế tương ứng dựa trên type
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
     if (!selectedType) return "";
-
-    // Trả về icon tương ứng dựa trên trạng thái của ghế
-    if (cell.status === "selected") {
-      return selectedType.selectedIcon
-    } else if (cell.status === "block" || cell.status === "booked") {
-      return selectedType.blockIcon
-    }
-    return selectedType.icon
+    return selectedType.iconLink
   }
 
   backPage() {

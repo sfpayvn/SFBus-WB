@@ -1,0 +1,37 @@
+<ng-container *ngIf="busLayoutsMatrix?.layoutsForMatrix">
+  <div class="flex w-full justify-center gap-10">
+    <div *ngFor="let layoutForMatrix of busLayoutsMatrix.layoutsForMatrix">
+      <div class="p-2">
+        <div class="text-center">
+          <label class="text-base">{{ layoutForMatrix.name }}</label>
+        </div>
+      </div>
+      <div class="px-2 py-3">
+        <div>
+          <div>
+            <div class="matrix">
+              <div
+                *ngFor="let row of layoutForMatrix.seatsLayoutForMatrix; let i = index"
+                class="row"
+                [style.display]="layoutForMatrix.seatDisplayRows[i] ? 'flex' : 'none'">
+                <div
+                  *ngFor="let cell of row; let j = index"
+                  id="cell-{{ layoutForMatrix.name.replace(' ', '') }}-{{ cell.index }}"
+                  class="cell status-{{ cell.status }}"
+                  [style.display]="layoutForMatrix.seatVisibleColumns[j] ? 'flex' : 'none'"
+                  (click)="onClickToggleStatus(i, j, layoutForMatrix, $event)"
+                  [style.visibility]="cell.typeId ? 'visible' : 'hidden'">
+                  <!-- Hiển thị icon và tên nếu type > 0 -->
+                  <svg-icon
+                    [svgClass]="'icon !h-[40px] !w-[40px] ' + 'icon-' + cell.status"
+                    [src]="cell.icon"></svg-icon>
+                  <div class="cell-name !text-xs">{{ cell.name }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

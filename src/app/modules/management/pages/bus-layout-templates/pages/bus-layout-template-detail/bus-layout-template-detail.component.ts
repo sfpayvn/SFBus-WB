@@ -142,7 +142,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
         const currentCellSeatType = this.seatTypes.find(item => item._id == cell.typeId);
 
-        const icon = cell.status === 'available' ? currentCellSeatType?.icon : currentCellSeatType?.blockIcon
+        const icon = currentCellSeatType?.iconLink
 
         if (cell.name) {
           this.usedNames.add(cell.name);
@@ -223,10 +223,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     setTimeout(() => {
       if (cell.status === 'available') {
         cell.status = 'block';
-        cell.icon = currentCellSeatType?.blockIcon;
       } else if (cell.status === 'block') {
         cell.status = 'available';
-        cell.icon = currentCellSeatType?.icon;
       }
 
       // Add the new status class
@@ -278,7 +276,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
       this.usedNames.delete(cell.name);
       cell.name = '';
 
-    } else if (cell?.allowAutoNameEdit) {
+    } else {
       const maxNames = this.rows * this.cols;
       for (let i = 1; i <= maxNames; i++) {
         const firstCharacter = String.fromCharCode(65 + this.selectedIndex);
@@ -290,9 +288,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
         }
       }
     }
-    console.log("🚀 ~ BusLayoutTemplateDetailComponent ~ updateCellType ~ this.usedNames:", this.usedNames)
 
-    cell.icon = selectedType.icon; // Cập nhật icon cho ô
+    cell.icon = selectedType.iconLink; // Cập nhật icon cho ô
   }
 
   // Hàm focus vào ô đang chỉnh sửa
@@ -346,10 +343,11 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   getIconByType(seatTypeId: string, status: string = 'available'): string {
     const selectedType = this.seatTypes.find((seatType) => seatType._id === seatTypeId);
-    if (!selectedType?.isEnv && status === 'block') {
-      return selectedType?.blockIcon || '';
-    }
-    return selectedType?.icon || '';
+    // if (!selectedType?.isEnv && status === 'block') {
+    //   return selectedType?.blockIcon || '';
+    // }
+    // return selectedType?.icon || '';
+    return '';
   }
 
   // Kiểm tra xem ô có đang ở chế độ chỉnh sửa

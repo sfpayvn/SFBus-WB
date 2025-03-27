@@ -94,7 +94,7 @@
       <div class="flex w-6/12 flex-col">
         <ng-container *ngIf="busTemplateReview">
           <label class="flex h-[36px] items-center">Bus Tempate Review</label>
-          <div class="flex flex-row flex-wrap gap-4 justify-between">
+          <div class="flex flex-row flex-wrap justify-between gap-4">
             <div class="flex w-5/12 justify-between">
               <nz-skeleton
                 [nzLoading]="busTemplateReview.isLoading"
@@ -175,12 +175,12 @@
                       <div
                         *ngFor="let cell of row; let j = index"
                         class="cell"
-                        [class.status-changed]="cell.statusChanged"
-                        [class.status-deselected]="cell.statusDeselected"
                         [style.display]="layoutForMatrix.seatVisibleColumns[j] ? 'flex' : 'none'"
                         [style.visibility]="cell.typeId ? 'visible' : 'hidden'">
                         <!-- Hiển thị icon và tên nếu type > 0 -->
-                        <svg-icon [svgClass]="'icon !h-[40px] !w-[40px]'" [src]="getIconByType(cell)"></svg-icon>
+                        <svg-icon
+                          [svgClass]="'icon !h-[40px] !w-[40px] ' + 'icon-' + cell.status"
+                          [src]="cell.icon"></svg-icon>
                         <div class="cell-name !text-xs">{{ cell.name }}</div>
                       </div>
                     </div>

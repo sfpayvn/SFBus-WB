@@ -364,42 +364,14 @@
           Edit BusTempate
         </button>
       </div>
-      <ng-container *ngIf="busLayoutTemplateReview?.layoutsForMatrix">
-        <div class="flex w-full justify-center gap-10">
-          <div *ngFor="let layoutForMatrix of busLayoutTemplateReview.layoutsForMatrix">
-            <div class="p-2">
-              <div class="text-center">
-                <label class="text-base">{{ layoutForMatrix.name }}</label>
-              </div>
-            </div>
-            <div class="px-2 py-3">
-              <div>
-                <div>
-                  <div class="matrix">
-                    <div
-                      *ngFor="let row of layoutForMatrix.seatsLayoutForMatrix; let i = index"
-                      class="row"
-                      [style.display]="layoutForMatrix.seatDisplayRows[i] ? 'flex' : 'none'">
-                      <div
-                        *ngFor="let cell of row; let j = index"
-                        id="cell-{{ layoutForMatrix.name.replace(' ', '') }}-{{ cell.index }}"
-                        class="cell status-{{ cell.status }}"
-                        (click)="onClickToggleStatus(i, j, layoutForMatrix, $event)"
-                        [class.status-changed]="cell.statusChanged"
-                        [class.status-deselected]="cell.statusDeselected"
-                        [style.display]="layoutForMatrix.seatVisibleColumns[j] ? 'flex' : 'none'"
-                        [style.visibility]="cell.typeId ? 'visible' : 'hidden'">
-                        <!-- Hiển thị icon và tên nếu type > 0 -->
-                        <svg-icon [svgClass]="'icon !h-[40px] !w-[40px]'" [src]="getIconByType(cell)"></svg-icon>
-                        <div class="cell-name !text-xs">{{ cell.name }}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <ng-container *ngIf="busLayoutTemplateReview">
+        <ng-container *ngIf="busLayoutTemplateReview">
+          <app-layout-matrix
+            [busLayoutsMatrix]="busLayoutTemplateReview"
+            [seatTypes]="seatTypes"
+            [busSeatLayoutTemplateBlockIds]="busSeatLayoutTemplateBlockIds"
+            [isEditStatus]="true"></app-layout-matrix>
+        </ng-container>
       </ng-container>
     </div>
     <div class="my-5 flex w-full justify-end">

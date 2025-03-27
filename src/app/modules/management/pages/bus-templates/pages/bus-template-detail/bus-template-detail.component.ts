@@ -102,112 +102,6 @@ export class BusTemplateDetailComponent implements OnInit {
 
   async chooseBusTemplate(busLayoutTemplateId: string) {
     this.busLayoutTemplateReview = this.busLayoutTemplates.find((busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === busLayoutTemplateId) as BusTemplateWithLayoutsMatrix;
-    this.busLayoutTemplateReview.layoutsForMatrix = [];
-
-    await this.initializeMatrix(this.busLayoutTemplateReview.seatLayouts, this.busLayoutTemplateReview.layoutsForMatrix, (layouts) => {
-      this.busLayoutTemplateReview.layoutsForMatrix = layouts;
-    });
-  }
-
-  async initializeMatrix(seatLayouts: any, layoutsForMatrix: any, out: (layoutsForMatrix: any) => void): Promise<void> {
-    for (const seatLayout of seatLayouts) {
-      const layoutForMatrix = {
-        name: seatLayout.name,
-        seatDisplayRows: [],
-        seatVisibleColumns: [],
-        seatsLayoutForMatrix: Array.from({ length: this.rows }, (_, i) =>
-          Array.from({ length: this.cols }, (_, j) => ({
-            _id: "",
-            index: i * this.cols + j + 1,
-            typeId: "",
-            name: "",
-            status: "available",
-            statusChanged: false,
-            statusDeselected: false,
-          })),
-        ),
-      };
-
-      for (const cell of seatLayout.seats) {
-        const row = Math.floor((cell.index - 1) / this.cols);
-        const col = (cell.index - 1) % this.cols;
-        layoutForMatrix.seatsLayoutForMatrix[row][col] = {
-          ...cell,
-          statusChanged: false,
-          statusDeselected: false,
-        };
-      }
-
-      await this.updateDisplayMatrix(
-        layoutForMatrix.seatsLayoutForMatrix,
-        layoutForMatrix.seatDisplayRows,
-        layoutForMatrix.seatVisibleColumns,
-        (matrix, displayRows, visibleColumns) => {
-          layoutForMatrix.seatsLayoutForMatrix = matrix;
-          layoutForMatrix.seatDisplayRows = displayRows;
-          layoutForMatrix.seatVisibleColumns = visibleColumns;
-        },
-      );
-
-      layoutsForMatrix.push(layoutForMatrix);
-    }
-    await out(layoutsForMatrix);
-  }
-
-  async updateDisplayMatrix(
-    matrix: any,
-    displayRows: any,
-    visibleColumns: any,
-    out: (matrixOut: any, displayRowsOut: any, visibleColumnsOut: any) => void,
-  ): Promise<void> {
-    const rows = matrix.length;
-    const cols = matrix[0].length;
-
-    displayRows = Array(rows).fill(false);
-    visibleColumns = Array(cols).fill(false);
-    const selectedColumns: number[] = [];
-    const selectedRows = new Set<number>();
-
-    matrix.forEach((row: any, i: number) => {
-      row.forEach((cell: any, j: number) => {
-        if (cell.typeId) {
-          displayRows[i] = true;
-          selectedColumns.push(j);
-          selectedRows.add(i);
-        }
-      });
-    });
-
-    const selectedRowsArray = Array.from(selectedRows).sort((a, b) => a - b);
-    selectedRowsArray.forEach((row, index, array) => {
-      for (let i = row; i <= array[array.length - 1]; i++) {
-        displayRows[i] = true;
-      }
-    });
-
-    if (selectedColumns.length > 0) {
-      selectedColumns.sort((a, b) => a - b);
-      const [firstCol, lastCol] = [selectedColumns[0], selectedColumns[selectedColumns.length - 1]];
-      for (let j = firstCol; j <= lastCol; j++) {
-        visibleColumns[j] = true;
-      }
-    }
-
-    out(matrix, displayRows, visibleColumns);
-  }
-
-  getIconByType(cell: any) {
-    // Tìm loại ghế tương ứng dựa trên type
-    const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
-    if (!selectedType) return "";
-
-    // Trả về icon tương ứng dựa trên trạng thái của ghế
-    if (cell.status === "selected") {
-      return selectedType.selectedIcon
-    } else if (cell.status === "block" || cell.status === "booked") {
-      return selectedType.blockIcon
-    }
-    return selectedType.icon
   }
 
   backPage() {
@@ -215,7 +109,6 @@ export class BusTemplateDetailComponent implements OnInit {
   }
 
   editBusTempate() {
-
     const allowedKeys = ["_id", "name", "seatLayouts"]; // Danh sách các thuộc tính trong BusTemplate
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
       Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key))

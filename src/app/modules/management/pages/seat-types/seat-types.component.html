@@ -38,7 +38,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (busService of searchSeatType.seatTypes; track busService._id) {
+        @for (seatType of searchSeatType.seatTypes; track seatType._id) {
         <tr class="hover:bg-card/50">
           <td class="text-center">
             <nz-skeleton
@@ -47,11 +47,11 @@
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
               <input
-                [(ngModel)]="busService.selected"
+                [(ngModel)]="seatType.selected"
                 (change)="checkSelectAll()"
                 class="checkbox checkbox-sm"
                 type="checkbox"
-                [attr.aria-label]="'Select ' + busService.name" />
+                [attr.aria-label]="'Select ' + seatType.name" />
             </nz-skeleton>
           </td>
           <td>
@@ -60,7 +60,7 @@
               [nzParagraph]="false"
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
-              <svg-icon svgClass="w-6 h-6" src="{{ busService.icon }}"></svg-icon>
+              <svg-icon svgClass="w-6 h-6" src="{{ seatType.iconLink }}"></svg-icon>
             </nz-skeleton>
           </td>
           <td>
@@ -69,7 +69,7 @@
               [nzParagraph]="false"
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
-              {{ busService.name }}
+              {{ seatType.name }}
             </nz-skeleton>
           </td>
           <td class="text-center">
@@ -79,18 +79,18 @@
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
               <button
-                (click)="editSeatType(busService)"
+                (click)="editSeatType(seatType)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Edit busService">
+                aria-label="Edit seatType">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
                 </svg>
               </button>
               <button
-                (click)="deleteSeatType(busService._id)"
+                (click)="deleteSeatType(seatType._id)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Delete busService">
+                aria-label="Delete seatType">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     fill-rule="evenodd"

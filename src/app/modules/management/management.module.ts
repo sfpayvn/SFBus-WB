@@ -49,6 +49,7 @@ import { BusScheduleDetailDialogComponent } from './pages/bus-schedules/componen
 import { UsersComponent } from './pages/user/users.component';
 import { UserDetailComponent } from './pages/user/pages/user-detail/user-detail.component';
 import { CreateEditUserAddressDialogComponent } from './pages/user/component/create-edit-user-address-dialog/create-edit-user-address-dialog.component';
+import { LayoutMatrixComponent } from './components/layout-matrix/layout-matrixs.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { CreateEditUserAddressDialogComponent } from './pages/user/component/cre
     TriggerModalComponent,
     TriggerMaskComponent,
     CalendarEventsComponent,
+    LayoutMatrixComponent,
 
     OptionsComponent,
     OptionsValueComponent,

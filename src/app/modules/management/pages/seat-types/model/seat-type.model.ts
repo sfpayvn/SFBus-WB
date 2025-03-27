@@ -8,18 +8,15 @@ export class SearchSeatType {
 export class SeatType {
   _id: string = '';
   name: string = '';
-  icon: string = '';
-  blockIcon: string = '';
-  selectedIcon: string = '';
+  iconId: string = '';
+  iconLink: string = '';
   selected: boolean = false;
   isEnv: boolean = false;
 }
 
 export class SeatType2Create {
-  icon!: string;
+  iconId!: string;
   isEnv: boolean = false;
-  blockIcon!: string;
-  selectedIcon!: string;
   name: string = '';
 }
 

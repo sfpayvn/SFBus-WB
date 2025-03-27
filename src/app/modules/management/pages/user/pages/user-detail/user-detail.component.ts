@@ -272,7 +272,7 @@ export class UserDetailComponent
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
       const file = files[0];
-      this.userAvarta = file.link;
+      this.userAvarta = file._id;
       this.mainForm.patchValue({ avatar: file._id });
     });
   }

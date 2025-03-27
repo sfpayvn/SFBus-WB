@@ -36,11 +36,7 @@ export class SeatTypesService {
 
     return this.filesService.uploadFiles(seatTypeIconFile).pipe(
       switchMap((res: any) => {
-        seatType2Create.icon = res[0].link;
-        if (!seatType2Create.isEnv) {
-          seatType2Create.blockIcon = res[1].link;
-          seatType2Create.selectedIcon = res[2].link;
-        }
+        seatType2Create.iconId = res[0]._id;
         return this.apiGatewayService.post(url, seatType2Create).pipe(
           tap((res: any) => {
           }),
@@ -54,17 +50,12 @@ export class SeatTypesService {
   }
 
   processUpdateSeatType(seatTypeIconFile: FileList, seatType2Update: SeatType2Update) {
-    const url = this.url;
     // Kiểm tra nếu có file trong FileList
     if (seatTypeIconFile.length > 0) {
       return this.filesService.uploadFiles(seatTypeIconFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          seatType2Update.icon = res[0].link;
-          if (!seatType2Update.isEnv) {
-            seatType2Update.blockIcon = res[1].link;
-            seatType2Update.selectedIcon = res[2].link;
-          }
+          seatType2Update.iconId = res[0]._id;
           return this.updateSeatType(seatType2Update);
         })
       );
