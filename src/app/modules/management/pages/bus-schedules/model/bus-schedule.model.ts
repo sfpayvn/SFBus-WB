@@ -38,7 +38,7 @@ export class BusSchedule {
   busLayoutTemplateId: string = '';
   busLayoutTemplate: BusLayoutTemplate | undefined;
   busScheduleLayoutId: string = '';
-  busSeatLayoutTemplateBlockIds: string[] = [];
+  busSeatLayoutBlockIds: string[] = [];
   busDriverIds: string[] = [];
   price: number = 0;
   status: string = '';

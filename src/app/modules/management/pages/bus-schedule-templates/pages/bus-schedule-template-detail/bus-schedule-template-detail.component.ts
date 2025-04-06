@@ -301,7 +301,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     this.busLayoutTemplateReview.layoutsForMatrix.forEach((layout: any) => {
       layout.seatsLayoutForMatrix.forEach((row: any) => {
         row.forEach((cell: any) => {
-          if (cell.status === 'block') {
+          if (cell.status === 'blocked') {
             blockIds.push(cell._id); // Add the block ID to the array
           }
         });

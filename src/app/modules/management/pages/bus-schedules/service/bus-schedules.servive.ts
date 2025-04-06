@@ -22,8 +22,8 @@ export class BusSchedulesService {
     );
 
   }
-  findScheduleLayoutById(id: string) {
-    const url = `/bus-schedule-layouts/find-one/${id}`;
+  findScheduleLayoutById(busScheduleId: string) {
+    const url = `/bus-schedule-layouts/find-one/${busScheduleId}`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => { }),
     );

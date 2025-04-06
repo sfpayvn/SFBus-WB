@@ -145,7 +145,7 @@ export class BusScheduleDetailComponent
   }
 
   async initForm() {
-    const { name = '', busId = '', bus = null, busTemplateId = '', busTemplate = null, busRouteId = '', busScheduleLayoutId = '',
+    const { name = '', busId = '', bus = null, busTemplateId = '', busRouteId = '',
       busRoute = null, price = '', busScheduleTemplateId = '', busLayoutTemplateId = '', busDriverIds = [] } = this.busSchedule || {};
 
     this.busScheduleDetailForm = this.fb.group({
@@ -175,17 +175,17 @@ export class BusScheduleDetailComponent
     if (busTemplateId) {
       const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id = busTemplateId);
       if (!busTemplate) return;
-      this.setupBusScheduleLayout(busScheduleLayoutId, busTemplate);
+      this.setupBusScheduleLayout(busTemplate);
       this.setBusTemplateReview(busTemplate as BusTemplate);
     }
     this.busReview = bus as Bus;
   }
 
-  async setupBusScheduleLayout(busScheduleLayoutId: string, busTemplate: BusTemplate) {
+  async setupBusScheduleLayout(busTemplate: BusTemplate) {
     try {
       const seatTypesPromise = this.seatTypesService.findAll();
-      const busLayoutTemplatePromise = busScheduleLayoutId
-        ? this.busSchedulesService.findScheduleLayoutById(busScheduleLayoutId)
+      const busLayoutTemplatePromise = this.busSchedule
+        ? this.busSchedulesService.findScheduleLayoutById(this.busSchedule._id)
         : this.busLayoutTemplatesService.findOne(busTemplate.busLayoutTemplateId);
 
       const [seatTypes, busLayoutTemplateReview] = await Promise.all([seatTypesPromise, busLayoutTemplatePromise]);
@@ -398,7 +398,7 @@ export class BusScheduleDetailComponent
     const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busScheduleTemplate.busTemplateId) as BusTemplate;
     this.busSeatLayoutTemplateBlockIds = busScheduleTemplate.busSeatLayoutTemplateBlockIds;
 
-    this.setupBusScheduleLayout('', busTemplate as BusTemplate);
+    this.setupBusScheduleLayout(busTemplate as BusTemplate);
   }
 
   resetBusScheduleTemplate() {
@@ -472,7 +472,7 @@ export class BusScheduleDetailComponent
       return;
     }
 
-    const busSeatLayoutTemplateBlockIds = await this.getBusSeatLayoutTemplateBlock();
+    const busSeatLayoutBlockIds = await this.getBusSeatLayoutTemplateBlock();
 
     const data = this.busScheduleDetailForm.getRawValue();
 
@@ -480,7 +480,7 @@ export class BusScheduleDetailComponent
       ...data,
       busTemplate: this.busTemplateReview,
       bus: this.busReview,
-      busSeatLayoutTemplateBlockIds,
+      busSeatLayoutBlockIds,
       startDate: data.busRoute.breakPoints[0].timeSchedule,
       endDate: data.busRoute.breakPoints.at(-1).timeSchedule
     };
@@ -504,7 +504,7 @@ export class BusScheduleDetailComponent
     this.busLayoutTemplateReview?.layoutsForMatrix?.forEach((layout: any) => {
       layout.seatsLayoutForMatrix.forEach((row: any) => {
         row.forEach((cell: any) => {
-          if (cell.status === 'block') {
+          if (cell.status === 'blocked') {
             blockIds.push(cell._id); // Add the block ID to the array
           }
         });
