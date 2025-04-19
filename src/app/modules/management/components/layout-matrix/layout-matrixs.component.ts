@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, SimpleChanges } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { BusLayoutTemplate, BusSeatLayoutTemplate } from '../../pages/bus-layout-templates/model/bus-layout-templates.model';
@@ -34,6 +34,12 @@ export class LayoutMatrixComponent implements OnInit {
     this.initData();
   }
 
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
+    if (changes['busLayoutsMatrix'] && !changes['busLayoutsMatrix'].firstChange) {
+      await this.initData();
+    }
+  }
+
   async initData() {
     this.busLayoutsMatrix.layoutsForMatrix = await this.initializeMatrix(this.busLayoutsMatrix.seatLayouts, this.busSeatLayoutTemplateBlockIds)
   }
@@ -62,7 +68,7 @@ export class LayoutMatrixComponent implements OnInit {
           layoutForMatrix.seatsLayoutForMatrix[row][col] = {
             ...cell,
             status: busSeatLayoutTemplateBlockIds && busSeatLayoutTemplateBlockIds.includes(cell._id)
-              ? "block" // Mark as blocked if present in the IDs list
+              ? "blocked" // Mark as blocked if present in the IDs list
               : cell.status, // Default to available
             icon: this.getIconByType(cell),
           };

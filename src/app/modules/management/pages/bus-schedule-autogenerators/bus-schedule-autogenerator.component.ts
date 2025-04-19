@@ -336,6 +336,42 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     }
   }
 
+  triggerRunCreateBusSchedule(busScheduleAutoGenerator: any){
+    console.log("🚀 ~ BusScheduleAutoGeneratorsComponent ~ triggerRunCreateBusSchedule ~ busScheduleAutoGenerator:", busScheduleAutoGenerator)
+    const dialogRef = this.dialog.open(MaterialDialogComponent, {
+      data: {
+        icon: {
+          type: 'warning'
+        },
+        title: 'Run Bus Schedule',
+        content:
+          'Are you sure you want to run this bus schedule?',
+        btn: [
+          {
+            label: 'NO',
+            type: 'cancel'
+          },
+          {
+            label: 'YES',
+            type: 'submit'
+          },
+        ]
+      },
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.busScheduleAutoGeneratorsService.runCreateBusSchedule(busScheduleAutoGenerator).subscribe({
+          next: (res: any) => {
+            if (res) {
+              toast.success('Run bus schedule successfully');
+              this.loadData();
+            }
+          },
+          error: (error: any) => this.utils.handleRequestError(error),
+        });
+      }
+    });
+  }
 
 }

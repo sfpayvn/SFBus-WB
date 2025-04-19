@@ -47,7 +47,7 @@
                   aria-label="Select all busScheduleAutoGenerators" />
               </th>
               <th class="min-w-[200px]">Name</th>
-              <th class="w-[100px] text-center">Actions</th>
+              <th class="w-[150px] text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -83,6 +83,12 @@
                   [nzParagraph]="false"
                   [nzTitle]="{ width: '100%' }"
                   [nzActive]="true">
+                  <button
+                    (click)="triggerRunCreateBusSchedule(busScheduleAutoGenerator)"
+                    class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
+                    aria-label="Delete busScheduleAutoGenerator">
+                    <svg-icon src="assets/icons/run-task.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+                  </button>
                   <button
                     (click)="editBusScheduleAutoGenerator(busScheduleAutoGenerator)"
                     class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"

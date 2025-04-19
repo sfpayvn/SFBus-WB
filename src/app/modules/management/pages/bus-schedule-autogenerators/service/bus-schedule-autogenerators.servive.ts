@@ -62,4 +62,12 @@ export class BusScheduleAutoGeneratorsService {
 
     );
   }
+
+  runCreateBusSchedule(busScheduleAutoGenerator: any) {
+    const url = `${this.url}/run-create-bus-schedule`;
+    return this.apiGatewayService.post(url, busScheduleAutoGenerator).pipe(
+      tap((res: any) => {
+      }),
+    );
+  }
 }
