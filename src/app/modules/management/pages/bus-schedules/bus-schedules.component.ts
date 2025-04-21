@@ -32,7 +32,8 @@ export class BusSchedulesComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  viewMode: string = 'calendar'
+  viewDisplayMode: string = 'calendar'
+  viewMode: 'list' | 'day' | 'week' | 'month' = 'month';
 
   isLoadingBusSchedule: boolean = false;
 
@@ -69,22 +70,9 @@ export class BusSchedulesComponent implements OnInit {
   }
 
   setParamsToSearch() {
-    if (this.viewMode === 'calendar') {
+    if (this.viewDisplayMode === 'calendar') {
       this.searchParams.pageSize = 999999999;
-      const currentDate = new Date(); // Lấy ngày hiện tại
-      const dayOfWeek = currentDate.getDay(); // 0 = Chủ nhật, 1 = Thứ hai, ...
-
-      // Tính ngày đầu tuần (Thứ hai)
-      const startOfWeek = new Date(currentDate);
-      startOfWeek.setDate(currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Điều chỉnh Chủ nhật về Thứ hai trước đó
-      // Tính ngày cuối tuần (Chủ nhật)
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6); // Thêm 6 ngày để đến Chủ nhật cuối tuần
-      endOfWeek.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
-      startOfWeek.setHours(0, 0, 0, 0);
-      // Gán giá trị cho searchParams
-      this.searchParams.startDate = startOfWeek;
-      this.searchParams.endDate = endOfWeek;
+      this.calcStartEndDate();
     } else {
       this.searchParams = {
         pageIdx: 1,
@@ -94,6 +82,43 @@ export class BusSchedulesComponent implements OnInit {
         keyword: '',
         sortBy: ''
       };
+    }
+  }
+
+  calcStartEndDate() {
+    const currentDate = new Date(); // Lấy ngày hiện tại
+
+    if (this.viewMode === 'week') {
+      const dayOfWeek = currentDate.getDay(); // 0 = Chủ nhật, 1 = Thứ hai, ...
+      // Tính ngày đầu tuần (Thứ hai)
+      const startOfWeek = new Date(currentDate);
+      startOfWeek.setDate(currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Điều chỉnh Chủ nhật về Thứ hai trước đó
+      // Tính ngày cuối tuần (Chủ nhật)
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Thêm 6 ngày để đến Chủ nhật cuối tuần
+      endOfWeek.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
+      startOfWeek.setHours(0, 0, 0, 0);
+      this.searchParams.startDate = startOfWeek;
+      this.searchParams.endDate = endOfWeek;
+
+    } else if (this.viewMode === 'month') {
+      // Tính ngày đầu tháng
+      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      // Tính ngày cuối tháng
+      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
+      startOfMonth.setHours(0, 0, 0, 0);
+      this.searchParams.startDate = startOfMonth;
+      this.searchParams.endDate = endOfMonth;
+
+    } else if (this.viewMode === 'day') {
+      // Tính toán cho chế độ ngày
+      const startOfDay = new Date(currentDate);
+      const endOfDay = new Date(currentDate);
+      startOfDay.setHours(0, 0, 0, 0); // Thời gian đầu ngày
+      endOfDay.setHours(23, 59, 59, 999); // Thời gian cuối ngày
+      this.searchParams.startDate = startOfDay;
+      this.searchParams.endDate = endOfDay;
     }
   }
 
@@ -147,7 +172,7 @@ export class BusSchedulesComponent implements OnInit {
   }
 
   editBusSchedule(busSchedule: any): void {
-    if (this.viewMode == 'calendar') {
+    if (this.viewDisplayMode == 'calendar') {
       const busSchedule2Edit = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
       this.utilsModal.openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large').subscribe((busSchedule: BusSchedule) => {
         if (!busSchedule) return;
@@ -160,7 +185,7 @@ export class BusSchedulesComponent implements OnInit {
   }
 
   addBusSchedule(startDate?: Date): void {
-    if (this.viewMode == 'calendar') {
+    if (this.viewDisplayMode == 'calendar') {
       this.utilsModal.openModal(BusScheduleDetailDialogComponent, { startDate }, 'large').subscribe((busSchedule: BusSchedule) => {
         if (!busSchedule) return;
         this.loadData();
@@ -221,8 +246,8 @@ export class BusSchedulesComponent implements OnInit {
     return events;
   }
 
-  changeViewMode(viewMode: string) {
-    this.viewMode = viewMode;
+  changeViewDisplayMode(viewDisplayMode: string) {
+    this.viewDisplayMode = viewDisplayMode;
     this.setParamsToSearch();
     this.loadData();
   }

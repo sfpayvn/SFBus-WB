@@ -263,9 +263,6 @@
                 class="!flex !w-full flex-col">
                 <div class="flex items-center">
                   <nz-time-picker
-                    [nzDisabledHours]="checkTimeDisableTime(i).nzDisabledHours"
-                    [nzDisabledMinutes]="checkTimeDisableTime(i).nzDisabledMinutes"
-                    [nzDisabledSeconds]="checkTimeDisableTime(i).nzDisabledSeconds"
                     (ngModelChange)="specificTimeSlotChange(i)"
                     class="!flex h-[36px] !w-full !rounded border-gray-200"
                     formControlName="timeSlot"></nz-time-picker>

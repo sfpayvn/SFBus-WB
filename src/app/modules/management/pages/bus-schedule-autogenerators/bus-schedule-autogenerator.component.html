@@ -1,14 +1,14 @@
 <div class="mb-4 flex justify-end">
   <div class="inline-block space-x-4">
     <button
-      (click)="changeViewMode('calendar')"
-      [ngClass]="{ 'bg-white !text-indigo-600': viewMode == 'calendar' }"
+      (click)="changeviewDisplayMode('calendar')"
+      [ngClass]="{ 'bg-white !text-indigo-600': viewDisplayMode == 'calendar' }"
       class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
       Calendar
     </button>
     <button
-      (click)="changeViewMode('table')"
-      [ngClass]="{ 'bg-white !text-indigo-600': viewMode == 'table' }"
+      (click)="changeviewDisplayMode('table')"
+      [ngClass]="{ 'bg-white !text-indigo-600': viewDisplayMode == 'table' }"
       class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
       Table
     </button>
@@ -27,7 +27,7 @@
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
-  <ng-container [ngSwitch]="viewMode">
+  <ng-container [ngSwitch]="viewDisplayMode">
     <ng-container *ngSwitchCase="'table'">
       <app-table-action
         [title]="'Bus Schedule Auto Generator'"
