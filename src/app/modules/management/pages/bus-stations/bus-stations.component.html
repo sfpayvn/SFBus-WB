@@ -8,7 +8,7 @@
     <button
       (click)="addBusStation()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
-      aria-label="Add BusStation">
+      aria-label="Add Bus Station">
       Add BusStation
     </button>
   </div>
@@ -16,7 +16,7 @@
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'BusStation'"
+    [title]="'Bus Station'"
     [totalItem]="totalItem"
     (sortDataEvent)="sortBusStationPage($event)"
     (searchDataEvent)="searchBusStationPage($event)"></app-table-action>

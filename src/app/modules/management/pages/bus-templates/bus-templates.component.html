@@ -8,15 +8,15 @@
     <button
       (click)="addBusTemplate()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
-      aria-label="Add Bus">
-      Add Bus
+      aria-label="Add Bus Template">
+      Add Bus Template
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'Bus'"
+    [title]="'Bus Template'"
     [totalItem]="totalItem"
     (sortDataEvent)="sortBusTemplatePage($event)"
     (searchDataEvent)="searchBusTemplatePage($event)"></app-table-action>

@@ -106,11 +106,11 @@ export class BusLayoutTemplatesComponent implements OnInit {
 
   editBusLayoutTemplate(busLayoutTemplate: BusLayoutTemplate): void {
     const params = { busLayoutTemplate: JSON.stringify(busLayoutTemplate) };
-    this.router.navigateByUrl('/management/bus-layout-templates/bus-layout-template-detail', { state: params });
+    this.router.navigateByUrl('/bus-management/bus-layout-templates/bus-layout-template-detail', { state: params });
   }
 
   addBusLayoutTemplate(): void {
-    this.router.navigate(['/management/bus-layout-templates/bus-layout-template-detail']);
+    this.router.navigate(['/bus-management/bus-layout-templates/bus-layout-template-detail']);
   }
 
   reloadBusLayoutTemplatePage(data: any): void {

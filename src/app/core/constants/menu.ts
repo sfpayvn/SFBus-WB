@@ -43,21 +43,35 @@ export class Menu {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Bus',
-          route: '/management',
+          label: 'Bus Schedule',
+          route: '/bus-schedule',
           children: [
-            { label: 'Bus Schedule Autogenerators', route: '/management/bus-schedule-autogenerators' },
-            { label: 'Buses', route: '/management/buses' },
-            { label: 'Bus Templates', route: '/management/bus-templates' },
-            { label: 'Bus Routes', route: '/management/bus-routes' },
-            { label: 'Bus Schedules', route: '/management/bus-schedules' },
-            { label: 'Bus Schedule Templates', route: '/management/bus-schedule-templates' },
-            { label: 'Bus Provices', route: '/management/bus-provinves' },
-            { label: 'Bus Stations', route: '/management/bus-stations' },
-            { label: 'Bus Types', route: '/management/bus-types' },
-            { label: 'Bus Services', route: '/management/bus-services' },
-            { label: 'Bus Layout Templates', route: '/management/bus-layout-templates' },
-            { label: 'Seat Types', route: '/management/seat-type' },
+            { label: 'Schedule Calendar', route: '/bus-management/bus-schedules' },
+            { label: 'Bus Scheduler', route: '/bus-management/bus-schedule-templates' },
+            { label: 'Bus Scheduler Auto', route: '/bus-management/bus-schedule-autogenerators' },
+          ],
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Bus Design',
+          route: '/bus-design',
+          children: [            
+            { label: 'Bus Templates', route: '/bus-management/bus-templates' },
+            { label: 'Bus Routes', route: '/bus-management/bus-routes' },           
+          
+            { label: 'Bus Layout', route: '/bus-management/bus-layout-templates' },
+     
+          ],
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Bus Settings',
+          route: '/bus-setting',
+          children: [           
+            { label: 'Bus Provices', route: '/bus-management/bus-provinves' },         
+            { label: 'Bus Types', route: '/bus-management/bus-types' },
+            { label: 'Bus Services', route: '/bus-management/bus-services' },         
+            { label: 'Seat Types', route: '/bus-management/seat-type' },
           ],
         },
         {

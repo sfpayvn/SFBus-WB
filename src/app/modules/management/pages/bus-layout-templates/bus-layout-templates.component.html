@@ -8,15 +8,15 @@
     <button
       (click)="addBusLayoutTemplate()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
-      aria-label="Add BusLayoutTemplate">
-      Add BusLayoutTemplate
+      aria-label="Add Bus Layout">
+      Add Bus Layout
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'BusLayoutTemplate'"
+    [title]="'Bus Layout'"
     [totalItem]="totalItem"
     (sortDataEvent)="sortBusLayoutTemplatePage($event)"
     (searchDataEvent)="searchBusLayoutTemplatePage($event)"></app-table-action>
@@ -30,7 +30,7 @@
               [(ngModel)]="selectAll"
               class="checkbox checkbox-sm"
               type="checkbox"
-              aria-label="Select all busTemplates" />
+              aria-label="Select all Bus Template" />
           </th>
           <th class="min-w-[200px]">Name</th>
           <th class="w-[100px] text-center">Actions</th>
@@ -71,7 +71,7 @@
               <button
                 (click)="editBusLayoutTemplate(busLayoutTemplate)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Edit busLayoutTemplate">
+                aria-label="Edit Bus Layout">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
@@ -80,7 +80,7 @@
               <button
                 (click)="deleteBusLayoutTemplate(busLayoutTemplate._id)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Delete busLayoutTemplate">
+                aria-label="Delete Bus Template">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     fill-rule="evenodd"
