@@ -21,7 +21,7 @@
       (click)="addBusScheduleAutoGenerator()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
       aria-label="Add Bus">
-      Add Bus Schedule Auto Generator
+      Add Bus Scheduler Auto
     </button>
   </div>
 </div>
@@ -30,7 +30,7 @@
   <ng-container [ngSwitch]="viewMode">
     <ng-container *ngSwitchCase="'table'">
       <app-table-action
-        [title]="'Bus Schedule Auto Generator'"
+        [title]="'Bus Scheduler Auto'"
         [totalItem]="totalItem"
         (sortDataEvent)="sortBusScheduleAutoGeneratorPage($event)"
         (searchDataEvent)="searchBusScheduleAutoGeneratorPage($event)"></app-table-action>
@@ -44,7 +44,7 @@
                   [(ngModel)]="selectAll"
                   class="checkbox checkbox-sm"
                   type="checkbox"
-                  aria-label="Select all busScheduleAutoGenerators" />
+                  aria-label="Select all Bus Scheduler Auto" />
               </th>
               <th class="min-w-[200px]">Name</th>
               <th class="w-[100px] text-center">Actions</th>

@@ -163,7 +163,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       // return
     }
     const params = { busScheduleAutoGenerator: JSON.stringify(busScheduleAutoGenerator) };
-    this.router.navigateByUrl('/management/bus-schedule-autogenerators/bus-schedule-autogenerator-detail', { state: params });
+    this.router.navigateByUrl('/bus-management/bus-schedule-autogenerators/bus-schedule-autogenerator-detail', { state: params });
   }
 
   addBusScheduleAutoGenerator(startDate?: Date): void {
@@ -174,7 +174,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     //   });
     //   return
     // }
-    this.router.navigate(['/management/bus-schedule-autogenerators/bus-schedule-autogenerator-detail']);
+    this.router.navigate(['/bus-management/bus-schedule-autogenerators/bus-schedule-autogenerator-detail']);
   }
 
   reloadBusScheduleAutoGeneratorPage(data: any): void {

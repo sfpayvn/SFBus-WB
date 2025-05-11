@@ -8,15 +8,15 @@
     <button
       (click)="addSeatType()"
       class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
-      aria-label="Add SeatType">
-      Add SeatType
+      aria-label="Add Seat Type">
+      Add Seat Type
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'SeatType'"
+    [title]="'Seat Type'"
     [totalItem]="totalItem"
     (sortDataEvent)="sortSeatTypePage($event)"
     (searchDataEvent)="searchSeatTypePage($event)"></app-table-action>
