@@ -6,14 +6,14 @@ import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { User, User2Create, User2Update, UserAddress } from '../../model/user.model';
 import { UsersService } from '../../service/user.servive';
-import { FilesCenterDialogComponent } from '../../../files-center/components/files-center-dialog/files-center-dialog.component';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { FileDto } from '../../../files-center/model/file-center.model';
 import { CreateEditUserAddressDialogComponent } from '../../component/create-edit-user-address-dialog/create-edit-user-address-dialog.component';
 import _ from 'lodash';
 import { Driver, Driver2Create, Driver2Update, UserDriver } from '../../model/driver.model';
 import { DriversService } from '../../service/driver.servive';
 import { combineLatest, tap } from 'rxjs';
+import { FilesCenterDialogComponent } from 'src/app/modules/management/pages/files-center/components/files-center-dialog/files-center-dialog.component';
+import { FileDto } from 'src/app/modules/management/pages/files-center/model/file-center.model';
 @Component({
   selector: 'app-user-detail',
   templateUrl: './user-detail.component.html',
