@@ -1,8 +1,8 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { BusLayoutTemplate, BusSeatLayoutTemplate } from '../../pages/bus-layout-templates/model/bus-layout-templates.model';
-import { SeatType } from '../../pages/seat-types/model/seat-type.model';
+import { BusLayoutTemplate } from '../../modules/bus-management/pages/bus-layout-templates/model/bus-layout-templates.model';
+import { SeatType } from '../../modules/bus-management/pages/seat-types/model/seat-type.model';
 
 interface BusLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
