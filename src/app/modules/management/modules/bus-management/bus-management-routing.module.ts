@@ -98,7 +98,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'bus-design',
+    path: 'bus-setting',
     component: BusManagementComponent,
     children: [
       {

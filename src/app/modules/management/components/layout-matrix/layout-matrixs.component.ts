@@ -42,6 +42,7 @@ export class LayoutMatrixComponent implements OnInit {
 
   async initData() {
     this.busLayoutsMatrix.layoutsForMatrix = await this.initializeMatrix(this.busLayoutsMatrix.seatLayouts, this.busSeatLayoutTemplateBlockIds)
+    console.log("🚀 ~ LayoutMatrixComponent ~ initData ~ this.busLayoutsMatrix.layoutsForMatrix:", this.busLayoutsMatrix.layoutsForMatrix)
   }
 
   async initializeMatrix(seatLayouts: any, busSeatLayoutTemplateBlockIds?: string[]) {
@@ -178,7 +179,7 @@ export class LayoutMatrixComponent implements OnInit {
     // Tìm loại ghế tương ứng dựa trên type
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
     if (!selectedType) return "";
-    return selectedType.iconLink;
+    return selectedType.icon;
   }
 
 }

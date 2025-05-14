@@ -31,22 +31,34 @@ export class SeatTypesService {
     );
   }
 
-  createSeatType(seatTypeIconFile: FileList, seatType2Create: SeatType2Create) {
-    const url = this.url;
 
-    return this.filesService.uploadFiles(seatTypeIconFile).pipe(
-      switchMap((res: any) => {
-        seatType2Create.iconId = res[0]._id;
-        return this.apiGatewayService.post(url, seatType2Create).pipe(
-          tap((res: any) => {
-          }),
-          catchError((error) => {
-            //write log
-            return of([]);
-          }),
-        );
-      })
-    )
+  processCreateBusService(seatTypeIconFile: FileList, seatType2Create: SeatType2Create) {
+    const url = this.url;
+    // Kiểm tra nếu có file trong FileList
+    if (seatTypeIconFile.length > 0) {
+      return this.filesService.uploadFiles(seatTypeIconFile).pipe(
+        switchMap((res: any) => {
+          // Gắn các liên kết trả về từ uploadFiles
+          seatType2Create.icon = res[0].link;
+          return this.createSeatType(seatType2Create);
+        })
+      );
+    } else {
+      // Nếu không có file, chỉ gọi post trực tiếp
+      return this.createSeatType(seatType2Create);
+    }
+  }
+
+  createSeatType(seatType2Create: SeatType2Create) {
+    const url = this.url;
+    return this.apiGatewayService.post(url, seatType2Create).pipe(
+      tap((res: any) => {
+      }),
+      catchError((error) => {
+        //write log
+        return of([]);
+      }),
+    );
   }
 
   processUpdateSeatType(seatTypeIconFile: FileList, seatType2Update: SeatType2Update) {
@@ -55,7 +67,7 @@ export class SeatTypesService {
       return this.filesService.uploadFiles(seatTypeIconFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          seatType2Update.iconId = res[0]._id;
+          seatType2Update.icon = res[0].link;
           return this.updateSeatType(seatType2Update);
         })
       );

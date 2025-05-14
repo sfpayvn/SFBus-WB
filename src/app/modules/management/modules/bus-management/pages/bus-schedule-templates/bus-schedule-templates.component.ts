@@ -107,11 +107,11 @@ export class BusScheduleTemplatesComponent implements OnInit {
 
   editBusScheduleTemplate(busScheduleTemplate: BusScheduleTemplate): void {
     const params = { busScheduleTemplate: JSON.stringify(busScheduleTemplate) };
-    this.router.navigateByUrl('/bus-management/bus-schedule-templates/bus-schedule-template-detail', { state: params });
+    this.router.navigateByUrl('/bus-management/bus-schedule/bus-schedule-templates/bus-schedule-template-detail', { state: params });
   }
 
   addBusScheduleTemplate(): void {
-    this.router.navigate(['/bus-management/bus-schedule/bus-schedule-templates/bus-schedule-template-detail']);
+    this.router.navigate(['/bus-management/bus-schedule/bus-schedule/bus-schedule-templates/bus-schedule-template-detail']);
   }
 
   reloadBusScheduleTemplatePage(data: any): void {

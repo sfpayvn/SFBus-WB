@@ -229,7 +229,7 @@ export class BusDetailComponent implements OnInit {
     // Tìm loại ghế tương ứng dựa trên type
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
     if (!selectedType) return "";
-    return selectedType.iconLink
+    return selectedType.icon
   }
 
   backPage() {

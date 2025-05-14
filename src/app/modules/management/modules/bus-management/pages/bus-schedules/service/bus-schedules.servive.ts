@@ -59,7 +59,7 @@ export class BusSchedulesService {
   }
 
   updateBusSchedule(busSchedule2Update: BusSchedule2Update) {
-    const url = this.url;
+    const url = `${this.url}/update`;
     return this.apiGatewayService.put(url, busSchedule2Update).pipe(
       tap((res: any) => {
       }),

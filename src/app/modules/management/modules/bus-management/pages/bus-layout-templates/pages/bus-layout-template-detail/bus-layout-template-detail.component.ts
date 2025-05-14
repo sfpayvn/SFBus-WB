@@ -142,7 +142,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
         const currentCellSeatType = this.seatTypes.find(item => item._id == cell.typeId);
 
-        const icon = currentCellSeatType?.iconLink
+        const icon = currentCellSeatType?.icon
 
         if (cell.name) {
           this.usedNames.add(cell.name);

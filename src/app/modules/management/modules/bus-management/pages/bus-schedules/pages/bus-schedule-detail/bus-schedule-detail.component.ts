@@ -389,7 +389,7 @@ export class BusScheduleDetailComponent
     busScheduleDetailForm.get('busDriverIds')?.patchValue(busScheduleTemplate.busDriverIds);
 
     // await this.chooseBus(busScheduleTemplate.busId);
-    // await this.chooseRoute(busScheduleTemplate.busRouteId, busScheduleTemplate.busRoute);
+    await this.chooseRoute(busScheduleTemplate.busRouteId, busScheduleTemplate.busRoute);
     // await this.chooseBusTemplate(busScheduleTemplate.busTemplateId);
 
     busScheduleDetailForm.get('busId')?.patchValue(busScheduleTemplate.busId);

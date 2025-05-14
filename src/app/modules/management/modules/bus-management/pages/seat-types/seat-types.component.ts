@@ -117,7 +117,7 @@ export class SeatTypesComponent implements OnInit {
           ...seatType,
           name: result.name,
           isEnv: result.isEnv,
-          iconId: result.icon,
+          icon: result.icon,
         };
         this.seatTypesService.processUpdateSeatType(result.files, seatType2Update).subscribe({
           next: (res: SeatType) => {
@@ -148,7 +148,7 @@ export class SeatTypesComponent implements OnInit {
         seatType2Create.name = result.name;
         seatType2Create.isEnv = result.isEnv;
 
-        this.seatTypesService.createSeatType(result.files, seatType2Create).subscribe({
+        this.seatTypesService.processCreateBusService(result.files, seatType2Create).subscribe({
           next: (res: SeatType) => {
             if (res) {
               this.loadData();

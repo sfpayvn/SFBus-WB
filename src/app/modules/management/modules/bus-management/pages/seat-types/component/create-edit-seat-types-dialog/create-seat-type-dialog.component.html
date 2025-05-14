@@ -53,8 +53,8 @@
           nz-popover
           [nzPopoverContent]="contentIconTemplate"
           class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500"
-          [ngClass]="{'border-red-500' : seatTypeForm.controls['iconId'].errors?.['required']
-            && seatTypeForm.controls['iconId'].touched}">
+          [ngClass]="{'border-red-500' : seatTypeForm.controls['icon'].errors?.['required']
+            && seatTypeForm.controls['icon'].touched}">
           <div class="mx-auto-8 left-0 m-auto flex h-full w-full flex-wrap content-center items-center px-4">
             <div class="flex w-full flex-wrap justify-center pb-5 text-center">
               <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
@@ -66,7 +66,7 @@
           <div class="grap-2 grid w-96 cursor-pointer grid-cols-2">
             <div class="relative flex h-12 cursor-pointer flex-wrap items-center justify-center px-2">
               <input
-                formControlName="iconId"
+                formControlName="icon"
                 type="file"
                 accept=".svg"
                 class="z-50 block h-full w-full cursor-pointer opacity-0"
@@ -87,7 +87,7 @@
         </ng-template>
         <p
           class="animate-fade-in-down mt-1 text-xs text-red-500"
-          *ngIf="seatTypeForm.controls['iconId'].errors?.['required'] && seatTypeForm.controls['iconId'].touched">
+          *ngIf="seatTypeForm.controls['icon'].errors?.['required'] && seatTypeForm.controls['icon'].touched">
           Vui lòng upload ảnh cho trường này
         </p>
         }@else {

@@ -36,7 +36,7 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data) {
-      this.seatTypeIcon = this.seatType.iconLink;
+      this.seatTypeIcon = this.seatType.icon;
     }
     this.initForm();
   }
@@ -45,7 +45,7 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
   private async initForm() {
     this.seatTypeForm = this.fb.group({
       name: [this.seatType.name, [Validators.required]],
-      iconId: [this.seatType.iconId, Validators.required],
+      icon: [this.seatType.icon, Validators.required],
     });
   }
 
@@ -92,14 +92,14 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
 
   removeFileImage() {
     this.seatTypeIcon = '';
-    this.seatTypeForm.patchValue({ iconId: '' });
+    this.seatTypeForm.patchValue({ icon: '' });
   };
 
   openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
       this.seatTypeIcon = files[0].link;
-      this.seatTypeForm.patchValue({ iconId: files[0]._id });
+      this.seatTypeForm.patchValue({ icon: files[0].link });
     });
   }
 
@@ -109,7 +109,7 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
       return;
     }
 
-    const { name, iconId } = this.seatTypeForm.getRawValue();
+    const { name, icon } = this.seatTypeForm.getRawValue();
 
     let dataTransfer = new DataTransfer();
 
@@ -121,7 +121,7 @@ export class CreateEditSeatTypeDialogComponent implements OnInit {
 
     const data = {
       name,
-      iconId,
+      icon,
       isEnv: this.seatType.isEnv,
       files: files,
     };
