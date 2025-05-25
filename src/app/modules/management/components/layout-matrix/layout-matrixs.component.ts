@@ -158,8 +158,8 @@ export class LayoutMatrixComponent implements OnInit {
     //use for animation
     setTimeout(() => {
       if (cell.status === 'available') {
-        cell.status = 'block';
-      } else if (cell.status === 'block') {
+        cell.status = 'blocked';
+      } else if (cell.status === 'blocked') {
         cell.status = 'available';
       }
 

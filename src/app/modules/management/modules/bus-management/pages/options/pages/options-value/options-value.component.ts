@@ -203,7 +203,7 @@ export class OptionsValueComponent implements OnInit {
 
   getIconByType(type: number, status: string = 'available'): string {
     const selectedType = this.types.find((t) => t.value === type);
-    if (type === 1 && status === 'block' && selectedType?.blockIcon) {
+    if (type === 1 && status === 'blocked' && selectedType?.blockIcon) {
       return `assets/icons/${selectedType.blockIcon}`; // Đường dẫn đến icon đặc biệt
     }
     return selectedType?.icon ? `assets/icons/${selectedType.icon}` : '';
@@ -305,8 +305,8 @@ export class OptionsValueComponent implements OnInit {
 
     setTimeout(() => {
       if (cell.status === 'available') {
-        cell.status = 'block';
-      } else if (cell.status === 'block') {
+        cell.status = 'blocked';
+      } else if (cell.status === 'blocked') {
         cell.status = 'available';
       }
 

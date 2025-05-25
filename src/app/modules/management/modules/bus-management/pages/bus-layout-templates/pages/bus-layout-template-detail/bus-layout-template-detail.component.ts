@@ -222,8 +222,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     //use for animation
     setTimeout(() => {
       if (cell.status === 'available') {
-        cell.status = 'block';
-      } else if (cell.status === 'block') {
+        cell.status = 'blocked';
+      } else if (cell.status === 'blocked') {
         cell.status = 'available';
       }
 
@@ -343,7 +343,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   getIconByType(seatTypeId: string, status: string = 'available'): string {
     const selectedType = this.seatTypes.find((seatType) => seatType._id === seatTypeId);
-    // if (!selectedType?.isEnv && status === 'block') {
+    // if (!selectedType?.isEnv && status === 'blocked') {
     //   return selectedType?.blockIcon || '';
     // }
     // return selectedType?.icon || '';
