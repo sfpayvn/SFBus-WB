@@ -338,6 +338,7 @@
                         (ngModelChange)="breakPointTimeChange(i)"
                         nzFormat="yyyy-MM-dd HH:mm"
                         formControlName="timeSchedule"></nz-date-picker>
+                      {{ breakPoints.at(i).get('timeSchedule')?.value | date: 'yyyy-MM-dd HH:mm' }}
                       <ng-template #busScheduleDetailTimeOffsetErrorTpl let-control>
                         <span class="mt-1 !text-xs text-red-500">
                           @if (breakPoints.at(i).get('timeSchedule')?.errors?.['required']) { Vui lòng nhập vào trường
