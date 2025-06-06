@@ -31,7 +31,7 @@ export class ApiGatewayService {
 
     switch (method) {
       case 'GET':
-        return this.http.get(url, { headers, context });
+        return this.http.get(url, { headers, context,params:body });
       case 'POST':
         return this.http.post(url, body, { headers, context });
       case 'PUT':
@@ -43,8 +43,8 @@ export class ApiGatewayService {
     }
   }
 
-  get(url: string, skipLoading: boolean = false): Observable<any> {
-    return this.request('GET', url, null, skipLoading);
+  get(url: string,params:any=null, skipLoading: boolean = false): Observable<any> {
+    return this.request('GET', url, params, skipLoading);
   }
 
   post(url: string, body: any, skipLoading: boolean = false): Observable<any> {
