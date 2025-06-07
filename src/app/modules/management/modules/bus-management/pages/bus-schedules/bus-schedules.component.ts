@@ -21,8 +21,8 @@ export class BusSchedulesComponent implements OnInit {
 
   searchParams = {
     pageIdx: 1,
-    startDate: '' as Date | '',
-    endDate: '' as Date | '',
+    startDate:  new Date(), 
+    endDate:  new Date(), 
     pageSize: 5,
     keyword: '',
     sortBy: ''
@@ -76,8 +76,8 @@ export class BusSchedulesComponent implements OnInit {
     } else {
       this.searchParams = {
         pageIdx: 1,
-        startDate: '',
-        endDate: '',
+        startDate: new Date(),
+        endDate: new Date(),
         pageSize: 5,
         keyword: '',
         sortBy: ''
