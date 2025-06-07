@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ManagementComponent } from './management.component';
-import { FilesComponent } from './pages/files-center/files-center.component';
-import { UsersComponent } from './pages/user/users.component';
-import { UserDetailComponent } from './pages/user/pages/user-detail/user-detail.component';
 
 const routes: Routes = [
   {
@@ -11,16 +8,20 @@ const routes: Routes = [
     component: ManagementComponent,
     children: [
       {
-        path: 'users',
-        component: UsersComponent,
+        path: 'users-management',
+        loadChildren: () => import('./modules/user-management/users-management.module').then((m) => m.UsersManagementModule),
       },
       {
-        path: 'users/user-detail',
-        component: UserDetailComponent,
+        path: 'files-center-management',
+        loadChildren: () => import('./modules/files-center-management/files-center-management.module').then((m) => m.FilesCenterManagementModule),
       },
       {
-        path: 'media-center',
-        component: FilesComponent,
+        path: 'goods-management',
+        loadChildren: () => import('./modules/goods-management/goods-management.module').then((m) => m.GoodsManagementModule),
+      },
+      {
+        path: 'bus-management',
+        loadChildren: () => import('./modules/bus-management/bus-management.module').then((m) => m.BusMangementModule),
       },
       { path: '**', redirectTo: 'errors/404' },
     ]

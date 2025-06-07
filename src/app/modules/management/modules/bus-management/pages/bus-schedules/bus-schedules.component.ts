@@ -181,7 +181,7 @@ export class BusSchedulesComponent implements OnInit {
       return
     }
     const params = { busSchedule: JSON.stringify(busSchedule) };
-    this.router.navigateByUrl('/bus-management/bus-schedule/bus-schedules/bus-schedule-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail', { state: params });
   }
 
   addBusSchedule(startDate?: Date): void {
@@ -192,7 +192,7 @@ export class BusSchedulesComponent implements OnInit {
       });
       return
     }
-    this.router.navigate(['/bus-management/bus-schedule/bus-schedules/bus-schedule-detail']);
+    this.router.navigate(['/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail']);
   }
 
   reloadBusSchedulePage(data: any): void {

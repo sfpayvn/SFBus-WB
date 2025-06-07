@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { SeatType, SeatType2Create, SearchSeatType } from './model/seat-type.model';
-import { CreateEditSeatTypeDialogComponent } from './component/create-edit-seat-types-dialog/create-seat-type-dialog.component';
+import { SeatTypesDetailDialogComponent } from './component/seat-types-detail-dialog/seat-types-detail-dialog.component';
 import { SeatTypesService } from './service/seat-types.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 
@@ -104,7 +104,7 @@ export class SeatTypesComponent implements OnInit {
   }
 
   editSeatType(seatType: SeatType): void {
-    const dialogRef = this.dialog.open(CreateEditSeatTypeDialogComponent, {
+    const dialogRef = this.dialog.open(SeatTypesDetailDialogComponent, {
       data: {
         title: 'Edit SeatType',
         seatType: { ...seatType },
@@ -135,7 +135,7 @@ export class SeatTypesComponent implements OnInit {
   }
 
   addSeatType(): void {
-    const dialogRef = this.dialog.open(CreateEditSeatTypeDialogComponent, {
+    const dialogRef = this.dialog.open(SeatTypesDetailDialogComponent, {
       data: {
         title: 'Add New SeatType',
       },

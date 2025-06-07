@@ -107,11 +107,11 @@ export class BusTemplatesComponent implements OnInit {
 
   editBusTemplate(busTemplate: BusTemplate): void {
     const params = { busTemplate: JSON.stringify(busTemplate) };
-    this.router.navigateByUrl('/bus-management/bus-design/bus-templates/bus-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-templates/bus-template-detail', { state: params });
   }
 
   addBusTemplate(): void {
-    this.router.navigate(['/bus-management/bus-design/bus-templates/bus-template-detail']);
+    this.router.navigate(['/management/bus-management/bus-design/bus-templates/bus-template-detail']);
   }
 
   reloadBusTemplatePage(data: any): void {

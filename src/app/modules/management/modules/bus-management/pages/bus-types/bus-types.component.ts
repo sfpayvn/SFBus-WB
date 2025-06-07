@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusType, SearchBusType } from './model/bus-type.model';
-import { CreateEditBusTypeDialogComponent } from './component/create-edit-bus-type-dialog/create-bus-type-dialog.component';
+import { BusTypeDetailDialogComponent } from './component/bus-type-detail-dialog/bus-type-detail-dialog.component';
 import { BusTypesService } from './service/bus-types.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 
@@ -103,7 +103,7 @@ export class BusTypesComponent implements OnInit {
   }
 
   editBusType(busType: BusType): void {
-    const dialogRef = this.dialog.open(CreateEditBusTypeDialogComponent, {
+    const dialogRef = this.dialog.open(BusTypeDetailDialogComponent, {
       data: {
         title: 'Edit BusType',
         busType: { ...busType },
@@ -128,7 +128,7 @@ export class BusTypesComponent implements OnInit {
   }
 
   addBusType(): void {
-    const dialogRef = this.dialog.open(CreateEditBusTypeDialogComponent, {
+    const dialogRef = this.dialog.open(BusTypeDetailDialogComponent, {
       data: {
         title: 'Add New BusType',
       },

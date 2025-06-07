@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusService, BusService2Create, SearchBusService } from './model/bus-service.model';
-import { CreateEditBusServiceDialogComponent } from './component/create-edit-bus-service-dialog/create-bus-service-dialog.component';
+import { BusServiceDetailDialogComponent } from './component/bus-service-detail-dialog/bus-service-detail-dialog.component';
 import { BusServicesService } from './service/bus-services.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 
@@ -104,7 +104,7 @@ export class BusServicesComponent implements OnInit {
   }
 
   editBusService(busService: BusService): void {
-    const dialogRef = this.dialog.open(CreateEditBusServiceDialogComponent, {
+    const dialogRef = this.dialog.open(BusServiceDetailDialogComponent, {
       data: {
         title: 'Edit BusService',
         busService: { ...busService },
@@ -133,7 +133,7 @@ export class BusServicesComponent implements OnInit {
   }
 
   addBusService(): void {
-    const dialogRef = this.dialog.open(CreateEditBusServiceDialogComponent, {
+    const dialogRef = this.dialog.open(BusServiceDetailDialogComponent, {
       data: {
         title: 'Add New BusService',
       },

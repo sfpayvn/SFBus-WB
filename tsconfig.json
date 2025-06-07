@@ -22,7 +22,8 @@
     "lib": ["es2020", "dom"],
     "typeRoots": ["node_modules/@types"],
     "paths": {
-      "@app/env": ["./src/environments/environment"]
+      "@app/env": ["./src/environments/environment"],
+      "@rsApp/*": ["src/app/*"]
     },
     "useDefineForClassFields": false
   },

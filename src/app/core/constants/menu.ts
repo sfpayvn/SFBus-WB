@@ -39,51 +39,67 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Users',
-          route: '/management/users'
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Buses',
-          route: '/bus-management/buses',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Bus Schedule',
-          route: '/bus-management/bus-schedule',
-          children: [
-            { label: 'Schedule Calendar', route: '/bus-management/bus-schedule/bus-schedules' },
-            { label: 'Bus Scheduler', route: '/bus-management/bus-schedule/bus-schedule-templates' },
-            { label: 'Bus Scheduler Auto', route: '/bus-management/bus-schedule/bus-schedule-autogenerators' },
-          ],
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Bus Design',
-          route: '/bus-management/bus-design',
-          children: [
-            { label: 'Bus Templates', route: '/bus-management/bus-design/bus-templates' },
-            { label: 'Bus Routes', route: '/bus-management/bus-design/bus-routes' },
-
-            { label: 'Bus Layout', route: '/bus-management/bus-design/bus-layout-templates' },
-
-          ],
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Bus Settings',
-          route: '/bus-management/bus-setting',
-          children: [
-            { label: 'Bus Provices', route: '/bus-management/bus-setting/bus-provinves' },
-            { label: 'Bus Stations', route: '/bus-management/bus-setting/bus-stations' },
-            { label: 'Bus Types', route: '/bus-management/bus-setting/bus-types' },
-            { label: 'Bus Services', route: '/bus-management/bus-setting/bus-services' },
-            { label: 'Seat Types', route: '/bus-management/bus-setting/seat-type' },
-          ],
+          route: '/management/users-management'
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Media Center',
-          route: '/management/media-center',
+          route: '/management/files-center-management',
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Goods Management',
+          route: '/management/goods-management',
+          children: [
+            { label: 'Goods', route: '/management/goods-management/goods' },
+            { label: 'Goods Category', route: '/management/goods-management/goods-categories' },
+          ],
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Bus Management',
+          route: '/management/bus-management',
+          children: [
+            {
+              icon: 'assets/icons/heroicons/outline/cube.svg',
+              label: 'Buses',
+              route: '/management/bus-management/buses',
+            },
+            {
+              icon: 'assets/icons/heroicons/outline/cube.svg',
+              label: 'Bus Schedule',
+              route: '/management/bus-management/bus-schedule',
+              children: [
+                { label: 'Schedule Calendar', route: '/management/bus-management/bus-schedule/bus-schedules' },
+                { label: 'Bus Scheduler', route: '/management/bus-management/bus-schedule/bus-schedule-templates' },
+                { label: 'Bus Scheduler Auto', route: '/management/bus-management/bus-schedule/bus-schedule-autogenerators' },
+              ],
+            },
+            {
+              icon: 'assets/icons/heroicons/outline/cube.svg',
+              label: 'Bus Design',
+              route: '/management/bus-management/bus-design',
+              children: [
+                { label: 'Bus Templates', route: '/management/bus-management/bus-design/bus-templates' },
+                { label: 'Bus Routes', route: '/management/bus-management/bus-design/bus-routes' },
+
+                { label: 'Bus Layout', route: '/management/bus-management/bus-design/bus-layout-templates' },
+
+              ],
+            },
+            {
+              icon: 'assets/icons/heroicons/outline/cube.svg',
+              label: 'Bus Settings',
+              route: '/management/bus-management/bus-setting',
+              children: [
+                { label: 'Bus Provices', route: '/management/bus-management/bus-setting/bus-provinves' },
+                { label: 'Bus Stations', route: '/management/bus-management/bus-setting/bus-stations' },
+                { label: 'Bus Types', route: '/management/ bus-management/bus-setting/bus-types' },
+                { label: 'Bus Services', route: '/management/bus-management/bus-setting/bus-services' },
+                { label: 'Seat Types', route: '/management/bus-management/bus-setting/seat-type' },
+              ],
+            },
+          ],
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
@@ -110,7 +126,7 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/users.svg',
           label: 'Users',
-          route: '/users',
+          route: '/users/list',
         },
       ],
     },

@@ -252,7 +252,7 @@ export class BusDetailComponent implements OnInit {
     const params = { busLayoutTemplate: JSON.stringify(busLayoutTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
   }
 
 

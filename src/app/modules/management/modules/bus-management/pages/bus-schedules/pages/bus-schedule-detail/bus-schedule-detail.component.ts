@@ -29,8 +29,8 @@ import { SeatType } from '../../../seat-types/model/seat-type.model';
 import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service/bus-layout-templates.servive';
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
 import { Router } from '@angular/router';
-import { UserDriver } from 'src/app/modules/management/pages/user/model/driver.model';
-import { DriversService } from 'src/app/modules/management/pages/user/service/driver.servive';
+import { UserDriver } from 'src/app/modules/management/modules/user-management/model/driver.model';
+import { DriversService } from 'src/app/modules/management/modules/user-management/service/driver.servive';
 
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -333,7 +333,7 @@ export class BusScheduleDetailComponent
     const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
   }
 
   async chooseBus(busId: string) {

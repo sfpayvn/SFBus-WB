@@ -9,11 +9,6 @@ const routes: Routes = [
     loadChildren: () => import('../dashboard/dashboard.module').then((m) => m.DashboardModule),
   },
   {
-    path: 'bus-management',
-    component: LayoutComponent,
-    loadChildren: () => import('../management/modules/bus-management/bus-management.module').then((m) => m.BusMangementModule),
-  },
-  {
     path: 'management',
     component: LayoutComponent,
     loadChildren: () => import('../management/management.module').then((m) => m.MangementModule),

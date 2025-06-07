@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { BusService2Create, BusService2Update } from '../model/bus-service.model';
-import { FilesService } from 'src/app/modules/management/pages/files-center/service/files-center.servive';
+import { FilesService } from 'src/app/modules/management/modules/files-center-management/service/files-center.servive';
 
 @Injectable({
   providedIn: 'root',

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusStation, BusStation2Create, SearchBusStation } from './model/bus-station.model';
-import { CreateEditBusStationDialogComponent } from './component/create-edit-bus-station-dialog/create-bus-station-dialog.component';
+import { BusStationDetailDialogComponent } from './component/bus-station-detail-dialog/bus-station-detail-dialog.component';
 import { BusStationsService } from './service/bus-stations.servive';
 import { BusProvince } from '../bus-provices/model/bus-province.model';
 import { BusProvincesService } from '../bus-provices/service/bus-provinces.servive';
@@ -119,7 +119,7 @@ export class BusStationsComponent implements OnInit {
   }
 
   editBusStation(busStation: BusStation): void {
-    const dialogRef = this.dialog.open(CreateEditBusStationDialogComponent, {
+    const dialogRef = this.dialog.open(BusStationDetailDialogComponent, {
       data: {
         title: 'Edit BusStation',
         busStation: { ...busStation },
@@ -145,7 +145,7 @@ export class BusStationsComponent implements OnInit {
   }
 
   addBusStation(): void {
-    const dialogRef = this.dialog.open(CreateEditBusStationDialogComponent, {
+    const dialogRef = this.dialog.open(BusStationDetailDialogComponent, {
       data: {
         title: 'Add New BusStation',
         busProvices: this.busProvices

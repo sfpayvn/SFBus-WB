@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusProvince, BusProvince2Create, SearchBusProvince } from './model/bus-province.model';
-import { CreateEditBusProvinceDialogComponent } from './component/create-edit-bus-province-dialog/create-bus-province-dialog.component';
+import { BusProvinceDetailDialogComponent } from './component/bus-province-detail-dialog/bus-province-detail-dialog.component';
 import { BusProvincesService } from './service/bus-provinces.servive';
 import { BusStationsService } from '../bus-stations/service/bus-stations.servive';
 import { combineLatest } from 'rxjs';
@@ -174,7 +174,7 @@ export class BusProvincesComponent implements OnInit {
       busProvince: { ...busProvince },
       busStations: this.busStations
     };
-    this.utilsModal.openModal(CreateEditBusProvinceDialogComponent, data, 'medium').subscribe((result) => {
+    this.utilsModal.openModal(BusProvinceDetailDialogComponent, data, 'medium').subscribe((result) => {
       if (result) {
         console.log("🚀 ~ BusProvincesComponent ~ this.utilsModal.openModal ~ result:", result)
         const updateBusProvince$ = this.busProvincesService.updateBusProvince(result.busProvince);

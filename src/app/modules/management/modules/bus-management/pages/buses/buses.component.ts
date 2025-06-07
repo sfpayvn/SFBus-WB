@@ -107,11 +107,11 @@ export class BusesComponent implements OnInit {
 
   editBus(bus: Bus): void {
     const params = { bus: JSON.stringify(bus) };
-    this.router.navigateByUrl('/bus-management/buses/bus-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/buses/bus-detail', { state: params });
   }
 
   addBus(): void {
-    this.router.navigate(['/bus-management/buses/bus-detail']);
+    this.router.navigate(['/management/bus-management/buses/bus-detail']);
   }
 
   reloadBusPage(data: any): void {
