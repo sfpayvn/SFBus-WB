@@ -8,6 +8,7 @@ import { GoodsComponent } from './pages/goods/goods.component';
 import { GoodsManagementRoutingModule } from './goods-management-routing.module';
 import { GoodsCategoriesComponent } from './pages/goods-categories/goods-categories.component';
 import { GoodsCategoryDetailDialogComponent } from './component/goods-category-detail-dialog/goods-category-detail-dialog.component';
+import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
 
 @NgModule({
   declarations: [
@@ -22,10 +23,9 @@ import { GoodsCategoryDetailDialogComponent } from './component/goods-category-d
     ReactiveFormsModule,
     GoodsManagementRoutingModule,
     MangementModule,
+    FilesCenterManagementModule
   ],
-  exports: [
 
-  ],
   providers: [
     provideNgxMask()
   ],

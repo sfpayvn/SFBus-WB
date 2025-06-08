@@ -20,7 +20,8 @@ import { FilesCenterManagementRoutingModule } from './files-center-management-ro
     MangementModule,
   ],
   exports: [
-
+    FilesComponent,
+    FilesCenterDialogComponent
   ],
   providers: [
     provideNgxMask()

@@ -25,7 +25,7 @@
           <tr>
             <th [nzChecked]="checked" [nzIndeterminate]="indeterminate" nzLabel="Select all"
               (nzCheckedChange)="onAllChecked($event)"></th>
-            <th class="min-w-[60px]">#</th>
+            <th class="min-w-[40px]">Icon</th>
             <th class="min-w-[150px]">Name</th>
             <th class="min-w-[80px]">Status</th>
             <th class="min-w-[80px] !text-right">Actions</th>
@@ -36,6 +36,14 @@
           <tr>
             <td [nzChecked]="setOfCheckedId.has(goodsCategory._id)" [nzLabel]="goodsCategory.name"
               (nzCheckedChange)="onItemChecked(goodsCategory._id, $event)"></td>
+            <td>
+              <nz-skeleton [nzLoading]="isLoadingGoods" [nzParagraph]="false" [nzTitle]="{ width: '100%' }"
+                [nzActive]="true">
+                <div class="h-8 w-8 overflow-hidden">
+                  <img alt="driver avarta" [src]="goodsCategory.icon" />
+                </div>
+              </nz-skeleton>
+            </td>
             <td>
               <nz-skeleton [nzLoading]="isLoadingGoods" [nzParagraph]="false" [nzTitle]="{ width: '100%' }"
                 [nzActive]="true">

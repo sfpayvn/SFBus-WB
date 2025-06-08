@@ -135,8 +135,9 @@ nz-input-group.custom-nz-textarea-group.ant-input-affix-wrapper-focused {
 
 .custom-nz-select.bus-goods-detail {
   nz-select-top-control {
-    height: 80px !important;
+    height: 60px !important;
     align-items: start !important;
     display: flex !important;
+    padding: 4px 16px !important;
   }
 }

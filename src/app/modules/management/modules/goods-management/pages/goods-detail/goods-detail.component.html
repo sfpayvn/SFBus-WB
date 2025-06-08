@@ -144,7 +144,7 @@
                 <nz-form-control [nzErrorTip]="goodsFormQuantityErrorTpl" class="!flex flex-col">
                   <nz-input-group [nzSuffix]="goodsFormQuantityClearTpl"
                     class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
-                    <input type="text" nz-input formControlName="quantity" placeholder="Nhập Quantity" />
+                    <input type="number" nz-input formControlName="quantity" placeholder="Nhập Quantity" />
                   </nz-input-group>
                   <ng-template #goodsFormQuantityClearTpl>
                     <span nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
@@ -161,67 +161,150 @@
                 <nz-form-label [nzNoColon]="true" nzFor="quantity"
                   class="!flex !items-center !justify-start !font-medium">Phân loại</nz-form-label>
                 <nz-form-control>
-                  <nz-select class="custom-nz-select height-large !mt-0 !mb-0 " formControlName="busScheduleId"
-                    nzPlaceHolder="Chọn Bus Schedule" nzSize="large" [nzOptionHeightPx]="80" multiple
-                    [nzCustomTemplate]="defaultTemplateSelectBusSchedule">
+                  <nz-select class="custom-nz-select height-large !mt-0 !mb-0 " formControlName="categories"
+                    nzPlaceHolder="Chọn Phân loại" nzSize="large" [nzOptionHeightPx]="80" nzMode="multiple"
+                    [nzCustomTemplate]="defaultTemplateSelectGoodsCategory">
                     @for (goodsCategory of goodsCategories; track goodsCategory) {
                     <nz-option nzCustomContent [nzLabel]="goodsCategory.name" [nzValue]="goodsCategory._id">
                       <div class="flex items-center gap-2">
-                        <ion-icon [src]="goodsCategory.icon"></ion-icon>
+                        <svg-icon [src]="goodsCategory.icon" [svgClass]="'w-6 h-6'"></svg-icon>
                         <span>{{ goodsCategory.name }}</span>
                       </div>
                     </nz-option>
                     }
                   </nz-select>
-
+                  <ng-template #defaultTemplateSelectGoodsCategory let-selected>
+                    <div class="flex items-center gap-2" *ngIf="goodsCategory">
+                      <svg-icon [src]="goodsCategory.icon" [svgClass]="'w-6 h-6'" ></svg-icon>
+                      <span>{{ goodsCategory.name }}</span>
+                    </div>
+                  </ng-template>
+                </nz-form-control>
+              </div>
+            </div>
+            <div class="flex w-full gap-4 p-2">
+              <div class="block w-4/12">
+                <nz-form-label [nzNoColon]="true" nzFor="shoppingCost"
+                  class="!flex !items-center !justify-start !font-medium">Phí vận chuyển</nz-form-label>
+                <nz-form-control [nzErrorTip]="goodsFormShoppingCostErrorTpl" class="!flex flex-col">
+                  <nz-input-group [nzSuffix]="goodsFormShoppingCostClearTpl"
+                    class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                    <input type="text" nz-input formControlName="shoppingCost" placeholder="Nhập số tiền"
+                      mask="separator.0" prefix="₫ " thousandSeparator="," />
+                  </nz-input-group>
+                  <ng-template #goodsFormShoppingCostClearTpl>
+                    <span nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                      (click)="mainForm.controls['shoppingCost'].patchValue('')"></span>
+                  </ng-template>
+                  <ng-template #goodsFormShoppingCostErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.controls['shoppingCost'].errors?.['required']) { Vui lòng nhập trường này }
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </div>
+              <div class="block w-4/12">
+                <nz-form-label [nzNoColon]="true" nzFor="cod"
+                  class="!flex !items-center !justify-start !font-medium">COD</nz-form-label>
+                <nz-form-control [nzErrorTip]="goodsFormCodErrorTpl" class="!flex flex-col">
+                  <nz-input-group [nzSuffix]="goodsFormCodClearTpl"
+                    class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                    <input type="text" nz-input formControlName="cod" placeholder="Nhập số tiền" mask="separator.0"
+                      prefix="₫ " thousandSeparator="," />
+                  </nz-input-group>
+                  <ng-template #goodsFormCodClearTpl>
+                    <span nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                      (click)="mainForm.controls['cod'].patchValue('')"></span>
+                  </ng-template>
+                  <ng-template #goodsFormCodErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.controls['cod'].errors?.['required']) { Vui lòng nhập trường này }
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </div>
+              <div class="block w-4/12">
+                <nz-form-label [nzNoColon]="true" nzFor="goodsValue"
+                  class="!flex !items-center !justify-start !font-medium">Giá trị hàng hóa</nz-form-label>
+                <nz-form-control [nzErrorTip]="goodsFormGoodsValueErrorTpl" class="!flex flex-col">
+                  <nz-input-group [nzSuffix]="goodsFormGoodsValueClearTpl"
+                    class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                    <input type="text" nz-input formControlName="goodsValue" placeholder="Nhập số tiền"
+                      mask="separator.0" prefix="₫ " thousandSeparator="," />
+                  </nz-input-group>
+                  <ng-template #goodsFormGoodsValueClearTpl>
+                    <span nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                      (click)="mainForm.controls['goodsValue'].patchValue('')"></span>
+                  </ng-template>
+                  <ng-template #goodsFormGoodsValueErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.controls['goodsValue'].errors?.['required']) { Vui lòng nhập trường này }
+                    </span>
+                  </ng-template>
                 </nz-form-control>
               </div>
             </div>
             <div class="flex w-full gap-4 p-2">
               <div class="block w-6/12">
                 <nz-form-label nzFor="busScheduleId" class="!flex !items-center !justify-start !font-medium">Bus
+                  Route</nz-form-label>
+                <nz-form-control [nzErrorTip]="goodsFormBusRouteIdErrorTpl">
+                  <nz-select class="custom-nz-select height-large !mt-0 !mb-0 !h-[42px]" formControlName="busRouteId"
+                    nzPlaceHolder="Chọn Bus Route" nzSize="large" [nzOptionHeightPx]="80"
+                    (ngModelChange)="filterBusSchedulesByRoute($event)">
+                    @for (busRoute of busRoutes; track busRoute) {
+                    <nz-option nzCustomContent [nzLabel]="busRoute.name" [nzValue]="busRoute._id">
+                      <div class="flex flex-col">
+                        <span>{{ busRoute.name }}</span>
+                      </div>
+                    </nz-option>
+                    }
+                  </nz-select>
+                  <ng-template #goodsFormBusRouteIdErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.controls['busRouteId'].errors?.['required']) { Vui lòng nhập trường này }
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </div>
+              <div class="block w-6/12">
+                <nz-form-label nzFor="busScheduleId" class="!flex !items-center !justify-start !font-medium">Bus
                   Schedule</nz-form-label>
                 <nz-form-control>
                   <nz-select class="custom-nz-select bus-goods-detail height-large !mt-0 !mb-0 !h-[42px]"
                     formControlName="busScheduleId" nzPlaceHolder="Chọn Bus Schedule" nzSize="large"
-                    [nzOptionHeightPx]="80" [nzCustomTemplate]="defaultTemplateSelectBusSchedule">
-                    @for (busScheduleGroup of busSchedulesGroupByRoute; track busScheduleGroup) {
-                    <nz-option-group nzLabel="{{busScheduleGroup.route}}">
-                      @for (busSchedule of busScheduleGroup.busSchedules; track busSchedule) {
-                      <nz-option nzCustomContent [nzLabel]="busSchedule.name" [nzValue]="busSchedule._id">
-                        <div class="flex flex-col">
-                          <span class="flex justify-between w-full">
-                            <span>
-                              {{ busSchedule.bus?.name || 'Chưa có xe' }}
-                            </span>
-                            <span>
-                              {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }}
-                            </span>
+                    [nzOptionHeightPx]="80" [nzCustomTemplate]="defaultTemplateSelectBusSchedule"
+                    [nzDisabled]="!mainForm.get('busRouteId')?.value">
+                    @for (busSchedule of busSchedulesFiltered; track busSchedule) {
+                    <nz-option nzCustomContent [nzLabel]="busSchedule.name" [nzValue]="busSchedule._id">
+                      <div class="flex flex-col">
+                        <span class="flex justify-between w-full">
+                          <span>
+                            {{ busSchedule.bus?.name || 'Chưa có xe' }}
                           </span>
-                          <span class="flex justify-end w-full">
-                            <span>
-                              {{ formatTime(busSchedule.endDate) }} - {{ formatDate(busSchedule.endDate) }}
-                            </span>
+                          <span>
+                            {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }}
                           </span>
-                        </div>
-                      </nz-option>
-                      }
-                    </nz-option-group>
+                        </span>
+                        <span class="flex justify-end w-full">
+                          <span>
+                            {{ formatTime(busSchedule.endDate) }} - {{ formatDate(busSchedule.endDate) }}
+                          </span>
+                        </span>
+                      </div>
+                    </nz-option>
                     }
                   </nz-select>
                   <ng-template #defaultTemplateSelectBusSchedule let-selected>
                     <div class="flex flex-col" *ngIf="busSchedule">
-                      <span class="flex justify-between w-full">
-                        <span>
-                          {{ busSchedule.name }}
-                        </span>
-                        <span>
-                          {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }}
-                        </span>
-                      </span>
-                      <span class="flex justify-between w-full">
+                      <span class="flex justify-between w-full leading-[26px]">
                         <span>
                           {{ busSchedule.bus?.name || 'Chưa có xe' }}
+                        </span>
+                      </span>
+                      <span class="flex justify-between w-full leading-[26px]">
+                        <span>
+                          {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }}
                         </span>
                         <span>
                           {{ formatTime(busSchedule.endDate) }} - {{ formatDate(busSchedule.endDate) }}

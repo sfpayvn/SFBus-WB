@@ -34,17 +34,17 @@ export class BusSchedulesService {
 
   searchBusSchedule(searchParams: {
     pageIdx: number;
-    startDate: Date ;
-    endDate: Date ;
+    startDate: Date;
+    endDate: Date;
     pageSize: number;
     keyword: string;
     sortBy: string;
   }) {
-     var s_startDate =  searchParams.startDate;//.toISOString();
+    var s_startDate = searchParams.startDate;//.toISOString();
     var s_endDate = searchParams.endDate;//.toISOString();;
 
     const url = `${this.url}/search-paging`;
-    return this.apiGatewayService.get(url,searchParams, true).pipe(
+    return this.apiGatewayService.post(url, searchParams, true).pipe(
       tap((res: any) => { }),
 
     );

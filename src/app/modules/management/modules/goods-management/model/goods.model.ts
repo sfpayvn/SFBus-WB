@@ -20,7 +20,7 @@ export class Goods {
   quantity: number = 0;
   busRouteId: string = "";
   shoppingCost: number = 0;
-  cost: number = 0;
+  cod: number = 0;
   goodsValue: number = 0;
   categories: string[] = [];
   note: string = "";

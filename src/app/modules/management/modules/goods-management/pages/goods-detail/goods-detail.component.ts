@@ -7,14 +7,13 @@ import { UtilsModal } from "src/app/shared/utils/utils-modal";
 import { async, combineLatest, tap } from "rxjs";
 import { Goods, Goods2Create, Goods2Update } from "../../model/goods.model";
 import { GoodsCategory } from "../../model/goods-category.model";
-import { BusSchedule } from "@rsApp/modules/management/modules/bus-management/pages/bus-schedules/model/bus-schedule.model";
 import { GoodsService } from "../../service/goods.servive";
-import { BusSchedulesService } from "@rsApp/modules/management/modules/bus-management/pages/bus-schedules/service/bus-schedules.servive";
+import { GoodsCategoriesService } from "../../service/goods-categories.servive";
+import { BusSchedulesService } from "../../../bus-management/pages/bus-schedules/service/bus-schedules.servive";
+import { BusRoute } from "../../../bus-management/pages/bus-routes/model/bus-route.model";
+import { BusRoutesService } from "../../../bus-management/pages/bus-routes/service/bus-routes.servive";
+import { BusSchedule } from "../../../bus-management/pages/bus-schedules/model/bus-schedule.model";
 
-interface BusScheduleGroupByRoute {
-  route: string;
-  busSchedules: BusSchedule[];
-}
 
 @Component({
   selector: "app-goods-detail",
@@ -29,7 +28,9 @@ export class GoodsDetailComponent implements OnInit {
   goodsCategories: GoodsCategory[] = [];
 
   busSchedules: BusSchedule[] = [];
-  busSchedulesGroupByRoute: BusScheduleGroupByRoute[] = [];
+  busSchedulesFiltered: BusSchedule[] = [];
+
+  busRoutes: BusRoute[] = [];
 
   passwordConditions: { [key: string]: boolean } = {
     minLength: false,
@@ -43,7 +44,7 @@ export class GoodsDetailComponent implements OnInit {
   goodsImageFile!: File;
   goodsImage!: string;
 
-  defaultImage = "assets/imgs/goods-deail.png";
+  defaultImage = "assets/images/goods-deail.png";
 
   mode: "create" | "update" = "create";
 
@@ -77,6 +78,8 @@ export class GoodsDetailComponent implements OnInit {
     private goodsService: GoodsService,
     private utilsModal: UtilsModal,
     private busSchedulesService: BusSchedulesService,
+    private goodsCategoriesService: GoodsCategoriesService,
+    private busRoutesService: BusRoutesService,
   ) { }
 
   ngOnInit(): void {
@@ -96,31 +99,22 @@ export class GoodsDetailComponent implements OnInit {
   async initData() {
     // const getBusSchedules = this.busSchedulesService.findAllAvailable(); // lấy tất cả các chuyến xe có thể chọn
     const getBusSchedules = this.busSchedulesService.findAll(); // lấy data to test
-    combineLatest([getBusSchedules]).subscribe({
-      next: ([busSchedules]) => {
+    const getGoodsCategories = this.goodsCategoriesService.findAll();
+    const getBusRoutes = this.busRoutesService.findAll();
+    combineLatest([getBusSchedules, getGoodsCategories, getBusRoutes]).subscribe({
+      next: ([busSchedules, goodsCategories, busRoutes]) => {
         this.busSchedules = busSchedules;
-        this.busSchedulesGroupByRoute = this.groupBusSchedulesByRoute(busSchedules);
-        console.log("🚀 ~ GoodsDetailComponent ~ combineLatest ~ this.busSchedulesGroupByRoute:", this.busSchedulesGroupByRoute)
+        this.goodsCategories = goodsCategories;
+        this.busRoutes = busRoutes;
       },
       error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 
-  groupBusSchedulesByRoute(busSchedules: BusSchedule[]): BusScheduleGroupByRoute[] {
-    const groupedSchedules = busSchedules.reduce((acc: Record<string, BusScheduleGroupByRoute>, busSchedule: BusSchedule) => {
-      const route = busSchedule.busRoute?.name ?? "Unknown Route";
-
-      if (!acc[route]) {
-        acc[route] = { route, busSchedules: [] };
-      }
-
-      acc[route].busSchedules.push(busSchedule);
-      return acc;
-    }, {} as Record<string, BusScheduleGroupByRoute>);
-
-    return Object.values(groupedSchedules);
+  filterBusSchedulesByRoute(busRouteId: string) {
+    this.busSchedulesFiltered = this.busSchedules.filter(busSchedule => busSchedule.busRouteId == busRouteId);
+    console.log("🚀 ~ GoodsDetailComponent ~ filterBusSchedulesByRoute ~ this.busSchedulesFiltered:", this.busSchedulesFiltered)
   }
-
 
   async initForm() {
     const {
@@ -134,7 +128,7 @@ export class GoodsDetailComponent implements OnInit {
       busScheduleId = "",
       busRouteId = "",
       shoppingCost = 0,
-      cost = 0,
+      cod = 0,
       goodsValue = 0,
       categories = [],
       note = "",
@@ -144,7 +138,9 @@ export class GoodsDetailComponent implements OnInit {
     this.mainForm = this.fb.group({
       image: [image],
       name: [name, [Validators.required]],
+      categories: [categories, []],
       busScheduleId: [busScheduleId, []],
+      busRouteId: [busRouteId, [Validators.required]],
       goodsNumber: [goodsNumber, []],
       customerName: [customerName, [Validators.required]],
       customerPhoneNumber: [
@@ -153,6 +149,9 @@ export class GoodsDetailComponent implements OnInit {
       ],
       customerAddress: [customerAddress, []],
       quantity: [quantity, [Validators.required]],
+      shoppingCost: [shoppingCost, [Validators.required]],
+      cod: [cod, [Validators.required]],
+      goodsValue: [goodsValue, [Validators.required]],
       status: [status],
     });
   }
@@ -168,6 +167,10 @@ export class GoodsDetailComponent implements OnInit {
 
   get busSchedule() {
     return this.busSchedules.find(busSchedule => busSchedule._id == this.mainForm.get("busScheduleId")?.value);
+  }
+
+  get goodsCategory() {
+    return this.goodsCategories.find(goodsCategory => this.mainForm.get("categories")?.value.includes(goodsCategory._id));
   }
 
   backPage() {
@@ -231,7 +234,6 @@ export class GoodsDetailComponent implements OnInit {
 
     let request = [];
     let actionName = "create";
-
     if (this.mode == "update") {
       const Goods2Update = {
         ...Goods2Create,

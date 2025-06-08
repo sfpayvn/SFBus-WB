@@ -51,17 +51,13 @@ export class GoodsCategoriesComponent implements OnInit {
   totalItem: number = 0;
 
   statusClasses: { [key: string]: string } = {
-    pending: "border-blue-500 bg-blue-200 text-blue-800",
-    on_board: "border-indigo-500 bg-indigo-200 text-indigo-800",
-    completed: "border-green-500 bg-green-200 text-green-800",
-    cancelled: "border-red-500 bg-red-200 text-red-800",
+    active: "border-green-500 bg-green-200 text-green-800",
+    inactive: "border-red-500 bg-red-200 text-red-800",
   };
 
   goodsStatuses: { [key: string]: string } = {
-    pending: "Nhập hàng",
-    on_board: "Đang trên đường",
-    completed: "Hoàn thành",
-    cancelled: "Đã hủy",
+    active: "Hoạt động",
+    inactive: "Không hoạt động",
   }
 
   constructor(
