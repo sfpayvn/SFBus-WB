@@ -7,7 +7,7 @@ import { toast } from 'ngx-sonner';
 import { User, User2Create, User2Update, UserAddress } from '../../model/user.model';
 import { UsersService } from '../../service/user.servive';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { CreateEditUserAddressDialogComponent } from '../../component/create-edit-user-address-dialog/create-edit-user-address-dialog.component';
+import { UserAddressDetailDialogComponent } from '../../component/user-address-detail-dialog/user-address-detail-dialog.component';
 import _ from 'lodash';
 import { Driver, Driver2Create, Driver2Update, UserDriver } from '../../model/driver.model';
 import { DriversService } from '../../service/driver.servive';
@@ -203,7 +203,7 @@ export class UserDetailComponent
     const data = {
       title: 'Create Address'
     }
-    this.utilsModal.openModal(CreateEditUserAddressDialogComponent, data, 'small').subscribe((result: any) => {
+    this.utilsModal.openModal(UserAddressDetailDialogComponent, data, 'small').subscribe((result: any) => {
       this.addresses = [...this.addresses, result];
     })
   }
@@ -214,7 +214,7 @@ export class UserDetailComponent
       address: address
     };
 
-    this.utilsModal.openModal(CreateEditUserAddressDialogComponent, data, 'small').subscribe((result: any) => {
+    this.utilsModal.openModal(UserAddressDetailDialogComponent, data, 'small').subscribe((result: any) => {
       if (result) {
         // Update the specific address in the array
         this.addresses = this.addresses.map(item =>

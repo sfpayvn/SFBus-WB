@@ -5,7 +5,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { MangementModule } from '../../management.module';
 import { UsersComponent } from './pages/users/users.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
-import { CreateEditUserAddressDialogComponent } from './component/create-edit-user-address-dialog/create-edit-user-address-dialog.component';
+import { UserAddressDetailDialogComponent } from './component/user-address-detail-dialog/user-address-detail-dialog.component';
 import { UsersManagementRoutingModule } from './users-management-routing.module';
 
 @NgModule({
@@ -13,7 +13,7 @@ import { UsersManagementRoutingModule } from './users-management-routing.module'
     UsersComponent,
 
     UserDetailComponent,
-    CreateEditUserAddressDialogComponent,
+    UserAddressDetailDialogComponent,
   ],
   imports: [
     CommonModule,

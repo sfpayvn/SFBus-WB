@@ -10,13 +10,13 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-create-edit-user-address-dialog',
-  templateUrl: './create-edit-user-address-dialog.component.html',
-  styleUrl: './create-edit-user-address-dialog.component.scss',
+  selector: 'app-user-address-detail-dialog',
+  templateUrl: './user-address-detail-dialog.component.html',
+  styleUrl: './user-address-detail-dialog.component.scss',
   standalone: false
 })
-export class CreateEditUserAddressDialogComponent implements OnInit {
-  dialogRef = inject(MatDialogRef<CreateEditUserAddressDialogComponent>);
+export class UserAddressDetailDialogComponent implements OnInit {
+  dialogRef = inject(MatDialogRef<UserAddressDetailDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
   address: UserAddress = this.data.address ?? new UserAddress();
 

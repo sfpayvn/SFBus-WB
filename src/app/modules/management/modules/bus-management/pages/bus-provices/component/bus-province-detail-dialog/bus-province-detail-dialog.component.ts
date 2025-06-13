@@ -115,21 +115,43 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   toggleRotationBusStation() {
     this.isRotated = !this.isRotated;
 
-    // Lọc các phần tử được chọn từ busProvince.busStations và busStations
-    let busStationsOfProvince = this.filteredBusProvinceStations?.filter(b => b.selected) || [];
-    let busStations = this.filteredBusStations?.filter(bt => bt.selected) || [];
+    // Tách riêng các phần tử được chọn và không được chọn từ mỗi mảng
+    const selectedProvince = this.filteredBusProvinceStations?.filter(b => b.selected) || [];
+    const unselectedProvince = this.filteredBusProvinceStations?.filter(b => !b.selected) || [];
 
-    // Chuyển các phần tử đã chọn đến đầu mảng
-    this.filteredBusStations = [...busStationsOfProvince, ...(this.filteredBusStations?.filter(bt => !bt.selected) || [])];
-    this.filteredBusProvinceStations = [...busStations, ...(this.filteredBusProvinceStations?.filter(b => !b.selected) || [])];
+    const selectedStations = this.filteredBusStations?.filter(b => b.selected) || [];
+    const unselectedStations = this.filteredBusStations?.filter(b => !b.selected) || [];
 
-    // Đặt tất cả selected về false
-    this.filteredBusStations = this.filteredBusStations.map(bt => ({ ...bt, selected: false }));
-    this.filteredBusProvinceStations = this.filteredBusProvinceStations.map(b => ({
-      ...b, selected: false
-    }));
+    // Đổi chỗ các phần được chọn giữa hai mảng:
+    // - Mảng filteredBusStations nhận phần được chọn từ mảng busProvinceStations, sau đó là phần chưa chọn của chính nó.
+    // - Mảng filteredBusProvinceStations nhận phần được chọn từ mảng busStations, sau đó là phần chưa chọn của chính nó.
+    this.filteredBusStations = [...selectedProvince, ...unselectedStations];
+    this.filteredBusProvinceStations = [...selectedStations, ...unselectedProvince];
+
+    // Reset trạng thái selected cho tất cả các phần tử
+    this.filteredBusStations = this.filteredBusStations.map(b => ({ ...b, selected: false }));
+    this.filteredBusProvinceStations = this.filteredBusProvinceStations.map(b => ({ ...b, selected: false }));
   }
 
+
+  // toggleRotationBusStation() {
+  //   // Đảo trạng thái lật của bus station
+  //   this.isRotated = !this.isRotated;
+
+  //   // Sắp xếp lại filteredBusStations: Các phần tử selected đặt lên đầu, phần còn lại giữ nguyên thứ tự
+  //   const selectedBusStations = this.filteredBusStations?.filter(bt => bt.selected) || [];
+  //   const unselectedBusStations = this.filteredBusStations?.filter(bt => !bt.selected) || [];
+  //   this.filteredBusStations = [...selectedBusStations, ...unselectedBusStations];
+
+  //   // Sắp xếp lại filteredBusProvinceStations theo cùng cách
+  //   const selectedBusProvinceStations = this.filteredBusProvinceStations?.filter(b => b.selected) || [];
+  //   const unselectedBusProvinceStations = this.filteredBusProvinceStations?.filter(b => !b.selected) || [];
+  //   this.filteredBusProvinceStations = [...selectedBusProvinceStations, ...unselectedBusProvinceStations];
+
+  //   // Nếu cần, reset lại flag selected cho tất cả các phần tử
+  //   this.filteredBusStations = this.filteredBusStations.map(bt => ({ ...bt, selected: false }));
+  //   this.filteredBusProvinceStations = this.filteredBusProvinceStations.map(b => ({ ...b, selected: false }));
+  // }
 
   toggleBusStation(busStation: any) {
     busStation.selected = !busStation.selected;
