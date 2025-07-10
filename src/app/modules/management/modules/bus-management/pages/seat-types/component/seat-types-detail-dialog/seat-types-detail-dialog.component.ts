@@ -16,7 +16,7 @@ export interface DialogData {
   selector: 'app-seat-types-detail-dialog',
   templateUrl: './seat-types-detail-dialog.component.html',
   styleUrl: './seat-types-detail-dialog.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class SeatTypesDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<SeatTypesDetailDialogComponent>);
@@ -28,11 +28,7 @@ export class SeatTypesDetailDialogComponent implements OnInit {
   seatTypeIcon!: string;
   seatTypeIconFile!: File;
 
-  constructor(
-    private fb: FormBuilder,
-    private utils: Utils,
-    private utilsModal: UtilsModal,
-  ) { }
+  constructor(private fb: FormBuilder, private utils: Utils, private utilsModal: UtilsModal) {}
 
   ngOnInit(): void {
     if (this.data) {
@@ -41,11 +37,10 @@ export class SeatTypesDetailDialogComponent implements OnInit {
     this.initForm();
   }
 
-
   private async initForm() {
     this.seatTypeForm = this.fb.group({
       name: [this.seatType.name, [Validators.required]],
-      icon: [this.seatType.icon, Validators.required],
+      iconId: [this.seatType.iconId, Validators.required],
     });
   }
 
@@ -55,9 +50,9 @@ export class SeatTypesDetailDialogComponent implements OnInit {
       shouldSet ? control.setValidators(Validators.required) : control.clearValidators();
       control.updateValueAndValidity(); // Cập nhật giá trị và trạng thái của validator
     }
-  }
+  };
 
-  onButtonClick() { }
+  onButtonClick() {}
 
   closeDialog(): void {
     this.dialogRef.close();
@@ -69,7 +64,6 @@ export class SeatTypesDetailDialogComponent implements OnInit {
     if (!files || files.length === 0) return;
     const file = files[0];
     this.seatTypeIconFile = file;
-
 
     if (file) {
       this.readAndSetImage(file);
@@ -84,22 +78,21 @@ export class SeatTypesDetailDialogComponent implements OnInit {
       const blob = new Blob([arrayBuffer], { type: file.type });
       const blobUrl = URL.createObjectURL(blob);
       this.seatTypeIcon = blobUrl;
-
     };
-    reader.readAsArrayBuffer(file);  // Đọc file dưới dạng ArrayBuffer
+    reader.readAsArrayBuffer(file); // Đọc file dưới dạng ArrayBuffer
   }
-
 
   removeFileImage() {
     this.seatTypeIcon = '';
     this.seatTypeForm.patchValue({ icon: '' });
-  };
+  }
 
   openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
+      console.log('🚀 ~ SeatTypesDetailDialogComponent ~ this.utilsModal.openModal ~ files:', files);
       this.seatTypeIcon = files[0].link;
-      this.seatTypeForm.patchValue({ icon: files[0].link });
+      this.seatTypeForm.patchValue({ iconId: files[0]._id });
     });
   }
 
@@ -109,7 +102,7 @@ export class SeatTypesDetailDialogComponent implements OnInit {
       return;
     }
 
-    const { name, icon } = this.seatTypeForm.getRawValue();
+    const { name, iconId } = this.seatTypeForm.getRawValue();
 
     let dataTransfer = new DataTransfer();
 
@@ -121,7 +114,7 @@ export class SeatTypesDetailDialogComponent implements OnInit {
 
     const data = {
       name,
-      icon,
+      iconId,
       isEnv: this.seatType.isEnv,
       files: files,
     };

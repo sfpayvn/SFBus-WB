@@ -30,6 +30,7 @@ import { BusScheduleDetailDialogComponent } from './pages/bus-schedules/componen
 import { BusManagementRoutingModule } from './bus-management-routing.module';
 import { MangementModule } from '../../management.module';
 import { BusStationDetailDialogComponent } from './pages/bus-stations/component/bus-station-detail-dialog/bus-station-detail-dialog.component';
+import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
 
 @NgModule({
   declarations: [
@@ -76,14 +77,10 @@ import { BusStationDetailDialogComponent } from './pages/bus-stations/component/
     ReactiveFormsModule,
     BusManagementRoutingModule,
     MangementModule,
+    FilesCenterManagementModule,
   ],
-  exports: [
-  ],
-  providers: [
-    provideNgxMask()
-  ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  exports: [],
+  providers: [provideNgxMask()],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class BusMangementModule { }
+export class BusMangementModule {}

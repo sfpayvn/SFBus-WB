@@ -7,29 +7,20 @@ import { UsersComponent } from './pages/users/users.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { UserAddressDetailDialogComponent } from './component/user-address-detail-dialog/user-address-detail-dialog.component';
 import { UsersManagementRoutingModule } from './users-management-routing.module';
+import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
 
 @NgModule({
-  declarations: [
-    UsersComponent,
-
-    UserDetailComponent,
-    UserAddressDetailDialogComponent,
-  ],
+  declarations: [UsersComponent, UserDetailComponent, UserAddressDetailDialogComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     UsersManagementRoutingModule,
     MangementModule,
+    FilesCenterManagementModule,
   ],
-  exports: [
-
-  ],
-  providers: [
-    provideNgxMask()
-  ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  exports: [],
+  providers: [provideNgxMask()],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class UsersManagementModule { }
+export class UsersManagementModule {}

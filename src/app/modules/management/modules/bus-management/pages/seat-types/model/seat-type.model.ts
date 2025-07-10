@@ -9,12 +9,13 @@ export class SeatType {
   _id: string = '';
   name: string = '';
   icon: string = '';
+  iconId: string = '';
   selected: boolean = false;
   isEnv: boolean = false;
 }
 
 export class SeatType2Create {
-  icon!: string;
+  iconId!: string;
   isEnv: boolean = false;
   name: string = '';
 }

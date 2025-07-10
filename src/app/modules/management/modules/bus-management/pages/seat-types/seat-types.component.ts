@@ -11,7 +11,7 @@ import { Utils } from 'src/app/shared/utils/utils';
   selector: 'app-seat-types',
   templateUrl: './seat-types.component.html',
   styleUrls: ['./seat-types.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class SeatTypesComponent implements OnInit {
   searchSeatType: SearchSeatType = new SearchSeatType();
@@ -26,11 +26,7 @@ export class SeatTypesComponent implements OnInit {
 
   isLoadingSeatType: boolean = false;
 
-  constructor(
-    private seatTypesService: SeatTypesService,
-    private dialog: MatDialog,
-    private utils: Utils
-  ) { }
+  constructor(private seatTypesService: SeatTypesService, private dialog: MatDialog, private utils: Utils) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -70,7 +66,7 @@ export class SeatTypesComponent implements OnInit {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete SeatType',
         content:
@@ -78,13 +74,13 @@ export class SeatTypesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -117,7 +113,7 @@ export class SeatTypesComponent implements OnInit {
           ...seatType,
           name: result.name,
           isEnv: result.isEnv,
-          icon: result.icon,
+          iconId: result.iconId,
         };
         this.seatTypesService.processUpdateSeatType(result.files, seatType2Update).subscribe({
           next: (res: SeatType) => {
@@ -143,10 +139,10 @@ export class SeatTypesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-
         const seatType2Create = new SeatType2Create();
         seatType2Create.name = result.name;
         seatType2Create.isEnv = result.isEnv;
+        seatType2Create.iconId = result.iconId;
 
         this.seatTypesService.processCreateBusService(result.files, seatType2Create).subscribe({
           next: (res: SeatType) => {

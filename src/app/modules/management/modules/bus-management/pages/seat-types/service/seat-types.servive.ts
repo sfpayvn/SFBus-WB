@@ -39,7 +39,7 @@ export class SeatTypesService {
       return this.filesService.uploadFiles(seatTypeIconFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          seatType2Create.icon = res[0].link;
+          seatType2Create.iconId = res[0]._id;
           return this.createSeatType(seatType2Create);
         })
       );
@@ -67,7 +67,7 @@ export class SeatTypesService {
       return this.filesService.uploadFiles(seatTypeIconFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          seatType2Update.icon = res[0].link;
+          seatType2Update.iconId = res[0]._id;
           return this.updateSeatType(seatType2Update);
         })
       );
