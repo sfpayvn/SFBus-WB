@@ -1,6 +1,13 @@
-
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
@@ -18,11 +25,9 @@ import { FileDto } from 'src/app/modules/management/modules/files-center-managem
   selector: 'app-user-detail',
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss',
-  standalone: false
+  standalone: false,
 })
-export class UserDetailComponent
-  implements OnInit {
-
+export class UserDetailComponent implements OnInit {
   mainForm!: FormGroup;
 
   user!: User;
@@ -37,8 +42,8 @@ export class UserDetailComponent
     {
       label: 'Driver',
       value: 'driver',
-    }
-  ]
+    },
+  ];
 
   genders = [
     {
@@ -52,17 +57,15 @@ export class UserDetailComponent
     {
       label: 'Other',
       value: 'other',
-    }
-  ]
-
-
+    },
+  ];
 
   passwordConditions: { [key: string]: boolean } = {
     minLength: false,
     hasUpperCase: false,
     hasLowerCase: false,
-    hasNumber: false
-  }
+    hasNumber: false,
+  };
 
   passwordVisible: boolean = false;
 
@@ -80,7 +83,7 @@ export class UserDetailComponent
     private usersService: UsersService,
     private driversService: DriversService,
     private utilsModal: UtilsModal,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
@@ -89,8 +92,8 @@ export class UserDetailComponent
 
   async getQueryParams() {
     const params = history.state;
-    if (params && params["user"]) {
-      this.user = params["user"] ? JSON.parse(params["user"]) : null;
+    if (params && params['user']) {
+      this.user = params['user'] ? JSON.parse(params['user']) : null;
     }
   }
 
@@ -98,35 +101,41 @@ export class UserDetailComponent
     const today = new Date();
     const twelveYearsAgo = new Date(today.getFullYear() - 12, today.getMonth(), today.getDate());
 
-    const { avatar = '', name = '', email = '', phoneNumber = '', gender = '', role = '', birthdate = twelveYearsAgo, addresses = [] } = this.user || {};
+    const {
+      avatar = '',
+      avatarId = '',
+      name = '',
+      email = '',
+      phoneNumber = '',
+      gender = '',
+      role = '',
+      birthdate = twelveYearsAgo,
+      addresses = [],
+    } = this.user || {};
     this.userAvarta = avatar ? avatar : this.defaultAvatar;
     this.mainForm = this.fb.group({
-      userForm:
-        this.fb.group({
-          avatar: [avatar],
-          name: [name, [Validators.required]],
-          email: [email, [Validators.required]],
-          phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(/(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}/)]],
-          password: [
-            '',
-            [
-              this.optionalValidator(
-                Validators.compose([
-                  Validators.minLength(8),
-                  this.passwordValidator.bind(this)
-                ]) || (() => null)
-              )
-            ]
+      userForm: this.fb.group({
+        avatarId: [avatarId],
+        name: [name, [Validators.required]],
+        email: [email, [Validators.required]],
+        phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(/(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}/)]],
+        password: [
+          '',
+          [
+            this.optionalValidator(
+              Validators.compose([Validators.minLength(8), this.passwordValidator.bind(this)]) || (() => null),
+            ),
           ],
-          gender: [gender],
-          role: [role, [Validators.required]],
-          birthdate: [birthdate],
-        }),
+        ],
+        gender: [gender],
+        role: [role, [Validators.required]],
+        birthdate: [birthdate],
+      }),
       driverForm: this.fb.group({
         licenseNumber: [],
         licenseExpirationDate: [],
         licenseType: [],
-      })
+      }),
     });
 
     this.addresses = addresses;
@@ -145,9 +154,8 @@ export class UserDetailComponent
       this.driverForm.controls['licenseNumber'].patchValue(this.driver.licenseNumber);
       this.driverForm.controls['licenseExpirationDate'].patchValue(this.driver.licenseExpirationDate);
       this.driverForm.controls['licenseType'].patchValue(this.driver.licenseType);
-    })
+    });
   }
-
 
   get driverForm(): FormGroup {
     return this.mainForm.get('driverForm') as FormGroup;
@@ -164,7 +172,6 @@ export class UserDetailComponent
       return validator(control); // Thực hiện validate khi có giá trị
     };
   }
-
 
   passwordValidator(control: any) {
     const value = control.value;
@@ -198,47 +205,39 @@ export class UserDetailComponent
     return current.getFullYear() > minYear;
   };
 
-
   async addAddress() {
     const data = {
-      title: 'Create Address'
-    }
+      title: 'Create Address',
+    };
     this.utilsModal.openModal(UserAddressDetailDialogComponent, data, 'small').subscribe((result: any) => {
       this.addresses = [...this.addresses, result];
-    })
+    });
   }
 
   async editAddress(address: any) {
     const data = {
       title: 'Edit Address',
-      address: address
+      address: address,
     };
 
     this.utilsModal.openModal(UserAddressDetailDialogComponent, data, 'small').subscribe((result: any) => {
       if (result) {
         // Update the specific address in the array
-        this.addresses = this.addresses.map(item =>
-          item === address ? { ...item, ...result } : item
-        );
+        this.addresses = this.addresses.map((item) => (item === address ? { ...item, ...result } : item));
       }
     });
   }
-
 
   async deleteAddress(address: any) {
-    this.utilsModal.openModalConfirm(
-      'Delete Address',
-      'Are you sure you want to delete this address?',
-      'dangerous'
-    ).subscribe((result) => {
-      if (result) {
-        // Correctly update the addresses array by removing the specified address
-        this.addresses = _.remove(this.addresses, (item) => item === address);
-      }
-    });
+    this.utilsModal
+      .openModalConfirm('Delete Address', 'Are you sure you want to delete this address?', 'dangerous')
+      .subscribe((result) => {
+        if (result) {
+          // Correctly update the addresses array by removing the specified address
+          this.addresses = _.remove(this.addresses, (item) => item === address);
+        }
+      });
   }
-
-
 
   onFileChange(event: any) {
     const files: FileList = event.target.files;
@@ -259,21 +258,22 @@ export class UserDetailComponent
       const blob = new Blob([arrayBuffer], { type: file.type });
       this.userAvarta = URL.createObjectURL(blob);
     };
-    reader.readAsArrayBuffer(file);  // Đọc file dưới dạng ArrayBuffer
+    reader.readAsArrayBuffer(file); // Đọc file dưới dạng ArrayBuffer
   }
-
 
   removeFileImage() {
     this.userAvarta = '';
-    this.mainForm.patchValue({ avatar: '' });
+    const userForm = this.mainForm.get('userForm') as FormGroup;
+    userForm.patchValue({ avatarId: '' });
   }
 
   openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
       const file = files[0];
-      this.userAvarta = file._id;
-      this.mainForm.patchValue({ avatar: file._id });
+      this.userAvarta = file.link;
+      const userForm = this.mainForm.get('userForm') as FormGroup;
+      userForm.patchValue({ avatarId: file._id });
     });
   }
 
@@ -288,9 +288,8 @@ export class UserDetailComponent
     const user2Create: User2Create = {
       ...userForm,
       addresses: this.addresses,
-      isTempPassWord: true
+      isTempPassWord: true,
     };
-
 
     let dataTransfer = new DataTransfer();
     if (this.userAvartaFile) {
@@ -332,9 +331,8 @@ export class UserDetailComponent
         }
         toast.success('User added successfully');
       },
-      error: (error: any) => this.utils.handleRequestError(error),  // Xử lý lỗi
+      error: (error: any) => this.utils.handleRequestError(error), // Xử lý lỗi
     });
-
   }
 
   processSubmitDriver() {
@@ -342,13 +340,13 @@ export class UserDetailComponent
 
     const driver2Create: Driver2Create = {
       ...driverForm,
-      userId: this.user._id
-    }
+      userId: this.user._id,
+    };
     if (this.driver) {
       const driver2Update = {
         ...driver2Create,
-        _id: this.driver._id
-      }
+        _id: this.driver._id,
+      };
       return this.updateDriver(driver2Update);
     }
     return this.createDriver(driver2Create);
@@ -378,4 +376,3 @@ export class UserDetailComponent
     );
   }
 }
-

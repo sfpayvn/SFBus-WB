@@ -15,6 +15,7 @@ export class UserAddress {
 export class User {
   _id: string = '';
   avatar: string = '';
+  avatarId: string = '';
   name: string = '';
   email: string = '';
   phoneNumber: string = '';
@@ -28,17 +29,15 @@ export class User {
   isDelete: boolean = false;
 }
 
-export interface User2Create extends Omit<User, '_id' | 'selected'> { }
-export class User2Create {
-}
+export interface User2Create extends Omit<User, '_id' | 'avatar' | 'selected'> {}
+export class User2Create {}
 
 export class User2Update extends User2Create {
   _id: string = '';
 }
 
-export interface UserAddress2Create extends Omit<UserAddress, '_id'> { }
-export class UserAddress2Create {
-}
+export interface UserAddress2Create extends Omit<UserAddress, '_id'> {}
+export class UserAddress2Create {}
 
 export class UserAddress2Update extends UserAddress2Create {
   _id: string = '';

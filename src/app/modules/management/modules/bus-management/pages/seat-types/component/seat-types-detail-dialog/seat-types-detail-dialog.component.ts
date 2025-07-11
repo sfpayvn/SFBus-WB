@@ -84,7 +84,7 @@ export class SeatTypesDetailDialogComponent implements OnInit {
 
   removeFileImage() {
     this.seatTypeIcon = '';
-    this.seatTypeForm.patchValue({ icon: '' });
+    this.seatTypeForm.patchValue({ iconId: '' });
   }
 
   openFilesCenterDialog() {
