@@ -1,11 +1,17 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { BusLayoutTemplatesService } from '../../service/bus-layout-templates.servive';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import { SeatType } from '../../../seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
-import { BusLayoutTemplate, BusLayoutTemplate2Create, BusLayoutTemplate2Update, Seat, BusSeatLayoutTemplate } from '../../model/bus-layout-templates.model';
+import {
+  BusLayoutTemplate,
+  BusLayoutTemplate2Create,
+  BusLayoutTemplate2Update,
+  Seat,
+  BusSeatLayoutTemplate,
+} from '../../model/bus-layout-templates.model';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
 
@@ -13,7 +19,7 @@ import { Router } from '@angular/router';
   selector: 'app-bus-layout-template-detail',
   templateUrl: './bus-layout-template-detail.component.html',
   styleUrls: ['./bus-layout-template-detail.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusLayoutTemplateDetailComponent implements OnInit {
   @ViewChild('cellInput', { static: false }) cellInput: ElementRef | undefined;
@@ -42,7 +48,6 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     allowAutoNameEdit: boolean;
   }[][] = []; // Ma trận lưu giá trị, kiểu, trạng thái chỉnh sửa, trạng thái chọn, tên
 
-
   holdTimeout: any;
 
   usedNames: Set<string> = new Set(); // Danh sách lưu trữ các giá trị đã được sử dụng
@@ -57,7 +62,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     private renderer: Renderer2,
     private utils: Utils,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
@@ -67,7 +72,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   async getQueryParams() {
     const params = history.state;
     if (params) {
-      this.busLayoutTemplate = params["busLayoutTemplate"] ? JSON.parse(params["busLayoutTemplate"]) : null;
+      this.busLayoutTemplate = params['busLayoutTemplate'] ? JSON.parse(params['busLayoutTemplate']) : null;
     }
   }
 
@@ -76,11 +81,10 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
       this.seatTypes = seatTypes;
       this.currentSeatTypeId = this.seatTypes ? this.seatTypes[0]._id : '';
       this.initForm();
-    })
+    });
   }
 
   private async initForm() {
-
     const { name = '' } = this.busLayoutTemplate || {};
 
     this.busTemplateDetailForm = this.fb.group({
@@ -90,12 +94,11 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
     let layoutsForMatrixForm = this.busTemplateDetailForm.get('layouts') as FormArray;
 
-
-    // nếu có busTemplate initializeLayout để edit 
+    // nếu có busTemplate initializeLayout để edit
     if (this.busLayoutTemplate) {
       for (const layout of this.busLayoutTemplate.seatLayouts) {
-        const temp = await this.initializeLayout(layout);
-        layoutsForMatrixForm.push(temp);
+        const layoutForm = await this.initializeLayout(layout);
+        layoutsForMatrixForm.push(layoutForm);
       }
 
       this.selectedIndex = 0;
@@ -107,13 +110,14 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     const layout = await this.initializeLayout();
     layoutsForMatrixForm.push(layout);
     this.selectedIndex = 0;
-
   }
 
   // Hàm để thêm layout vào layouts FormArray
   async addLayout() {
     const currentMatrix = this.getCurrentLayoutMatrix();
-    currentMatrix.forEach((matrixRow: any, i: any) => matrixRow.forEach((cell: any, j: any) => cell.isEditing && this.saveEdit(i, j)));
+    currentMatrix.forEach((matrixRow: any, i: any) =>
+      matrixRow.forEach((cell: any, j: any) => cell.isEditing && this.saveEdit(i, j)),
+    );
     // Kiểm tra nếu ô đang chỉnh sửa hoặc có lỗi thì không làm gì
     if (this.hasError()) return;
 
@@ -122,8 +126,6 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     layoutsForMatrixForm.push(layout);
     this.selectedIndex = layoutsForMatrixForm.controls.length - 1;
   }
-
-
 
   async initializeLayout(layout?: any) {
     const layoutForMatrix = this.fb.group({
@@ -140,9 +142,9 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
         const row = Math.floor((cell.index - 1) / this.cols);
         const col = (cell.index - 1) % this.cols;
 
-        const currentCellSeatType = this.seatTypes.find(item => item._id == cell.typeId);
+        const currentCellSeatType = this.seatTypes.find((item) => item._id == cell.typeId);
 
-        const icon = currentCellSeatType?.icon
+        const icon = currentCellSeatType?.icon;
 
         if (cell.name) {
           this.usedNames.add(cell.name);
@@ -153,7 +155,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
           name: cell.name,
           icon: icon,
           isSelected: currentCellSeatType,
-          allowAutoNameEdit: !currentCellSeatType?.isEnv
+          allowAutoNameEdit: !currentCellSeatType?.isEnv,
         };
       });
 
@@ -179,8 +181,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
         errorName: '',
         hasError: false,
         allowAutoNameEdit: false,
-      }))
-    )
+      })),
+    );
   }
 
   // Truy cập layouts để làm việc
@@ -209,10 +211,10 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     const currentMatrix = this.getCurrentLayoutMatrix();
     const cell = currentMatrix[row][col];
 
-    const currentCellSeatType = this.seatTypes.find(item => item._id == this.currentSeatTypeId);
+    const currentCellSeatType = this.seatTypes.find((item) => item._id == this.currentSeatTypeId);
 
     if (currentCellSeatType?.isEnv) {
-      return
+      return;
     }
 
     // Remove the current status class
@@ -239,14 +241,14 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   // Áp dụng kiểu vào ô được chọn, không cho phép bỏ chọn khi đang chỉnh sửa
   applyType(row: number, col: number): void {
-
     const currentMatrix = this.getCurrentLayoutMatrix();
     const cell = currentMatrix[row][col];
     const selectedType = this.seatTypes.find((seatType) => seatType._id === this.currentSeatTypeId);
 
-
     // Lưu trạng thái chỉnh sửa hiện tại trước khi áp dụng loại mới
-    currentMatrix.forEach((matrixRow: any, i: any) => matrixRow.forEach((cell: any, j: any) => cell.isEditing && this.saveEdit(i, j)));
+    currentMatrix.forEach((matrixRow: any, i: any) =>
+      matrixRow.forEach((cell: any, j: any) => cell.isEditing && this.saveEdit(i, j)),
+    );
 
     // Kiểm tra nếu ô đang chỉnh sửa hoặc có lỗi thì không làm gì
     if (cell.isEditing || this.hasError()) return;
@@ -261,10 +263,13 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     } else {
       this.updateCellType(cell, selectedType);
     }
-
   }
 
   updateCellType(cell: any, selectedType: any): void {
+    if (selectedType?.isEnv) {
+      cell.status = 'blocked'; // Đặt trạng thái là blocked nếu loại là env
+    }
+
     cell.typeId = this.currentSeatTypeId; // Cập nhật loại của ô
     cell.isSelected = true; // Đánh dấu ô đã được chọn
 
@@ -275,12 +280,11 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     if (selectedType.isEnv) {
       this.usedNames.delete(cell.name);
       cell.name = '';
-
     } else {
       const maxNames = this.rows * this.cols;
       for (let i = 1; i <= maxNames; i++) {
         const firstCharacter = String.fromCharCode(65 + this.selectedIndex);
-        const name = `${firstCharacter}${i.toString().padStart(2, '0')}`
+        const name = `${firstCharacter}${i.toString().padStart(2, '0')}`;
         if (!this.usedNames.has(name)) {
           cell.name = `${firstCharacter}${i.toString().padStart(2, '0')}`; // Tạo tên mới cho ô
           this.usedNames.add(cell.name);
@@ -289,7 +293,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
       }
     }
 
-    cell.icon = selectedType.iconLink; // Cập nhật icon cho ô
+    cell.icon = selectedType.icon; // Cập nhật icon cho ô
   }
 
   // Hàm focus vào ô đang chỉnh sửa
@@ -340,7 +344,6 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     }
   }
 
-
   getIconByType(seatTypeId: string, status: string = 'available'): string {
     const selectedType = this.seatTypes.find((seatType) => seatType._id === seatTypeId);
     // if (!selectedType?.isEnv && status === 'blocked') {
@@ -362,10 +365,10 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     const currentMatrix = this.getCurrentLayoutMatrix();
     const cell = currentMatrix[row][col];
 
-    const currentCellSeatType = this.seatTypes.find(item => item._id == cell.currentSeatTypeId);
+    const currentCellSeatType = this.seatTypes.find((item) => item._id == cell.currentSeatTypeId);
 
     if (currentCellSeatType?.isEnv || cell.typeId === '') {
-      return
+      return;
     }
 
     this.originalName = cell.name; // Lưu giá trị name hiện tại
@@ -411,6 +414,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     if (!validLayout) return;
 
     const data = this.busTemplateDetailForm.getRawValue();
+    console.log('🚀 ~ BusLayoutTemplateDetailComponent ~ onSubmit ~ data:', data);
 
     // Chuyển đổi sang cấu trúc class và lọc những seat có typeId
     const busTemplate2Create = new BusLayoutTemplate2Create();
@@ -470,18 +474,15 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   }
 
   async processValidLayout() {
-    let hasErrorMatrix = false
+    let hasErrorMatrix = false;
     let indexLayoutHasError = -1;
     await Promise.all(
       this.layouts.controls.map(async (layout: any, index: number) => {
-
-        const seats = layout
-          .get('seats').value;
+        const seats = layout.get('seats').value;
         if (!seats) {
           return;
         }
-        const hasErrorInLayout = seats
-          .some((row: any) => row.some((cell: any) => cell.hasError));
+        const hasErrorInLayout = seats.some((row: any) => row.some((cell: any) => cell.hasError));
 
         if (hasErrorInLayout) {
           hasErrorMatrix = true; // Đặt hasErrorMatrix thành true nếu có lỗi
@@ -489,7 +490,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
             indexLayoutHasError = index; // Gán index nếu chưa là 0
           }
         }
-      })
+      }),
     );
 
     if (hasErrorMatrix) {
@@ -503,5 +504,4 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     // this.usedNames.clear();
     this.layouts.controls[this.selectedIndex].get('seats')?.patchValue(await this.initializeMaTrix());
   }
-
 }
