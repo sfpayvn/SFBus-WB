@@ -13,7 +13,7 @@ import { BusScheduleDetailDialogComponent } from './components/bus-schedule-deta
   selector: 'app-bus-schedules',
   templateUrl: './bus-schedules.component.html',
   styleUrls: ['./bus-schedules.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusSchedulesComponent implements OnInit {
   searchBusSchedule: SearchBusSchedule = new SearchBusSchedule();
@@ -21,18 +21,17 @@ export class BusSchedulesComponent implements OnInit {
 
   searchParams = {
     pageIdx: 1,
-    startDate:  new Date(), 
-    endDate:  new Date(), 
+    startDate: new Date(),
+    endDate: new Date(),
     pageSize: 5,
     keyword: '',
-    sortBy: ''
+    sortBy: '',
   };
-
 
   totalPage: number = 0;
   totalItem: number = 0;
 
-  viewDisplayMode: string = 'calendar'
+  viewDisplayMode: string = 'calendar';
   viewMode: 'list' | 'day' | 'week' | 'month' = 'month';
 
   isLoadingBusSchedule: boolean = false;
@@ -43,7 +42,7 @@ export class BusSchedulesComponent implements OnInit {
     private utils: Utils,
     private utilsModal: UtilsModal,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.setParamsToSearch();
@@ -52,11 +51,10 @@ export class BusSchedulesComponent implements OnInit {
 
   loadData(): void {
     this.isLoadingBusSchedule = true;
-    this.busSchedulesService.searchBusSchedule(this.searchParams).subscribe({
+    this.busSchedulesService.searchBusSchedule(this.searchParams, this.viewDisplayMode).subscribe({
       next: (res: SearchBusSchedule) => {
         if (res) {
           this.searchBusSchedule = res;
-          console.log("🚀 ~ BusesComponent ~ this.busSchedulesService.searchBus ~ this.searchBusSchedule:", this.searchBusSchedule)
           this.totalItem = this.searchBusSchedule.totalItem;
           this.totalPage = this.searchBusSchedule.totalPage;
         }
@@ -80,7 +78,7 @@ export class BusSchedulesComponent implements OnInit {
         endDate: new Date(),
         pageSize: 5,
         keyword: '',
-        sortBy: ''
+        sortBy: '',
       };
     }
   }
@@ -100,7 +98,6 @@ export class BusSchedulesComponent implements OnInit {
       startOfWeek.setHours(0, 0, 0, 0);
       this.searchParams.startDate = startOfWeek;
       this.searchParams.endDate = endOfWeek;
-
     } else if (this.viewMode === 'month') {
       // Tính ngày đầu tháng
       const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -110,7 +107,6 @@ export class BusSchedulesComponent implements OnInit {
       startOfMonth.setHours(0, 0, 0, 0);
       this.searchParams.startDate = startOfMonth;
       this.searchParams.endDate = endOfMonth;
-
     } else if (this.viewMode === 'day') {
       // Tính toán cho chế độ ngày
       const startOfDay = new Date(currentDate);
@@ -138,7 +134,7 @@ export class BusSchedulesComponent implements OnInit {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete Bus',
         content:
@@ -146,13 +142,13 @@ export class BusSchedulesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -174,23 +170,29 @@ export class BusSchedulesComponent implements OnInit {
   editBusSchedule(busSchedule: any): void {
     if (this.viewDisplayMode == 'calendar') {
       const busSchedule2Edit = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
-      this.utilsModal.openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large').subscribe((busSchedule: BusSchedule) => {
-        if (!busSchedule) return;
-        this.loadData();
-      });
-      return
+      this.utilsModal
+        .openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large')
+        .subscribe((busSchedule: BusSchedule) => {
+          if (!busSchedule) return;
+          this.loadData();
+        });
+      return;
     }
     const params = { busSchedule: JSON.stringify(busSchedule) };
-    this.router.navigateByUrl('/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail', {
+      state: params,
+    });
   }
 
   addBusSchedule(startDate?: Date): void {
     if (this.viewDisplayMode == 'calendar') {
-      this.utilsModal.openModal(BusScheduleDetailDialogComponent, { startDate }, 'large').subscribe((busSchedule: BusSchedule) => {
-        if (!busSchedule) return;
-        this.loadData();
-      });
-      return
+      this.utilsModal
+        .openModal(BusScheduleDetailDialogComponent, { startDate }, 'large')
+        .subscribe((busSchedule: BusSchedule) => {
+          if (!busSchedule) return;
+          this.loadData();
+        });
+      return;
     }
     this.router.navigate(['/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail']);
   }
@@ -198,8 +200,8 @@ export class BusSchedulesComponent implements OnInit {
   reloadBusSchedulePage(data: any): void {
     this.searchParams = {
       ...this.searchParams,
-      ...data
-    }
+      ...data,
+    };
     this.loadData();
   }
 
@@ -207,29 +209,31 @@ export class BusSchedulesComponent implements OnInit {
     this.searchParams = {
       ...this.searchParams,
       pageIdx: 1,
-      keyword
-    }
+      keyword,
+    };
     this.loadData();
   }
 
   sortBusSchedulePage(sortBy: string) {
     this.searchParams = {
       ...this.searchParams,
-      sortBy
-    }
+      sortBy,
+    };
     this.loadData();
   }
 
   reLoadDataEvent(params: { startDate: Date; endDate: Date }): void {
     this.searchParams = {
       ...this.searchParams,
-      ...params
-    }
+      ...params,
+    };
     // Xử lý logic theo khoảng thời gian startDate và endDate
     this.loadData();
   }
 
-  convertToCalendarEventData(busSchedules: BusSchedule[]): { _id: string, name: string; startDate: Date, status: string }[] {
+  convertToCalendarEventData(
+    busSchedules: BusSchedule[],
+  ): { _id: string; name: string; startDate: Date; status: string }[] {
     // Kiểm tra xem busSchedules có dữ liệu hay không
     if (!busSchedules || busSchedules.length === 0) {
       return [];
@@ -238,9 +242,9 @@ export class BusSchedulesComponent implements OnInit {
     const events = busSchedules.map((schedule: any) => {
       return {
         _id: schedule._id,
-        name: schedule.name || "Unnamed Event",
+        name: schedule.name || 'Unnamed Event',
         startDate: new Date(schedule.startDate),
-        status: schedule.status
+        status: schedule.status,
       };
     });
     return events;
