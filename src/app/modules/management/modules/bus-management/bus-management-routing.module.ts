@@ -35,9 +35,9 @@ const routes: Routes = [
         path: 'buses/bus-detail',
         component: BusDetailComponent,
       },
-
-    ]
-  }, {
+    ],
+  },
+  {
     path: 'bus-schedule',
     component: BusManagementComponent,
     children: [
@@ -50,14 +50,6 @@ const routes: Routes = [
         component: BusScheduleDetailComponent,
       },
       {
-        path: 'bus-schedule-templates',
-        component: BusScheduleTemplatesComponent,
-      },
-      {
-        path: 'bus-schedule-templates/bus-schedule-template-detail',
-        component: BusScheduleTemplateDetailComponent,
-      },
-      {
         path: 'bus-schedule-autogenerators',
         component: BusScheduleAutoGeneratorsComponent,
       },
@@ -65,7 +57,7 @@ const routes: Routes = [
         path: 'bus-schedule-autogenerators/bus-schedule-autogenerator-detail',
         component: BusScheduleAutoGeneratorDetailComponent,
       },
-    ]
+    ],
   },
   {
     path: 'bus-design',
@@ -78,6 +70,14 @@ const routes: Routes = [
       {
         path: 'bus-templates/bus-template-detail',
         component: BusTemplateDetailComponent,
+      },
+      {
+        path: 'bus-schedule-templates',
+        component: BusScheduleTemplatesComponent,
+      },
+      {
+        path: 'bus-schedule-templates/bus-schedule-template-detail',
+        component: BusScheduleTemplateDetailComponent,
       },
       {
         path: 'bus-routes',
@@ -95,7 +95,7 @@ const routes: Routes = [
         path: 'bus-layout-templates/bus-layout-template-detail',
         component: BusLayoutTemplateDetailComponent,
       },
-    ]
+    ],
   },
   {
     path: 'bus-setting',
@@ -121,15 +121,13 @@ const routes: Routes = [
         path: 'seat-type',
         component: SeatTypesComponent,
       },
-
-    ]
+    ],
   },
   { path: '**', redirectTo: 'errors/404' },
-
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class BusManagementRoutingModule { }
+export class BusManagementRoutingModule {}

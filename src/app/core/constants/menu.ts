@@ -39,7 +39,7 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Users',
-          route: '/management/users-management'
+          route: '/management/users-management',
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
@@ -72,7 +72,10 @@ export class Menu {
               children: [
                 { label: 'Schedule Calendar', route: '/management/bus-management/bus-schedule/bus-schedules' },
                 { label: 'Bus Scheduler', route: '/management/bus-management/bus-schedule/bus-schedule-templates' },
-                { label: 'Bus Scheduler Auto', route: '/management/bus-management/bus-schedule/bus-schedule-autogenerators' },
+                {
+                  label: 'Bus Scheduler Auto',
+                  route: '/management/bus-management/bus-schedule/bus-schedule-autogenerators',
+                },
               ],
             },
             {
@@ -81,10 +84,13 @@ export class Menu {
               route: '/management/bus-management/bus-design',
               children: [
                 { label: 'Bus Templates', route: '/management/bus-management/bus-design/bus-templates' },
+                {
+                  label: 'Bus Schedule Templates',
+                  route: '/management/bus-management/bus-design/bus-schedule-templates',
+                },
                 { label: 'Bus Routes', route: '/management/bus-management/bus-design/bus-routes' },
 
-                { label: 'Bus Layout', route: '/management/bus-management/bus-design/bus-layout-templates' },
-
+                { label: 'Bus Layout Template', route: '/management/bus-management/bus-design/bus-layout-templates' },
               ],
             },
             {

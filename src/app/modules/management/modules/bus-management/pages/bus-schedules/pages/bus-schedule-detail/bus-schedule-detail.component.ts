@@ -1,4 +1,3 @@
-
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
@@ -17,9 +16,17 @@ import { BusTypesService } from '../../../bus-types/service/bus-types.servive';
 import { BusService } from '../../../bus-services/model/bus-service.model';
 import { BusType } from '../../../bus-types/model/bus-type.model';
 import { BusSchedulesService } from '../../service/bus-schedules.servive';
-import { BusRouteScheduleBreakPoints, BusSchedule, BusSchedule2Create, BusSchedule2Update } from '../../model/bus-schedule.model';
+import {
+  BusRouteScheduleBreakPoints,
+  BusSchedule,
+  BusSchedule2Create,
+  BusSchedule2Update,
+} from '../../model/bus-schedule.model';
 import { BusScheduleTemplatesService } from '../../../bus-schedule-templates/service/bus-schedule-templates.servive';
-import { BusScheduleTemplate, BusScheduleTemplateRoute } from '../../../bus-schedule-templates/model/bus-schedule-template.model';
+import {
+  BusScheduleTemplate,
+  BusScheduleTemplateRoute,
+} from '../../../bus-schedule-templates/model/bus-schedule-template.model';
 import { BusProvincesService } from '../../../bus-provices/service/bus-provinces.servive';
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
 import { BusTemplate } from '../../../bus-templates/model/bus-template.model';
@@ -39,17 +46,16 @@ interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   selector: 'app-bus-schedule-detail',
   templateUrl: './bus-schedule-detail.component.html',
   styleUrl: './bus-schedule-detail.component.scss',
-  standalone: false
+  standalone: false,
 })
-export class BusScheduleDetailComponent
-  implements OnInit {
-
+export class BusScheduleDetailComponent implements OnInit {
   busScheduleDetailForm!: FormGroup;
 
   @Input() busSchedule!: BusSchedule;
 
   busRoutes: BusRoute[] = [];
   busScheduleTemplates: BusScheduleTemplate[] = [];
+  busScheduleTemplate: BusScheduleTemplate = new BusScheduleTemplate();
 
   busProvinces: BusProvince[] = [];
 
@@ -99,7 +105,7 @@ export class BusScheduleDetailComponent
     private router: Router,
     private el: ElementRef,
     private renderer: Renderer2,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
@@ -108,8 +114,8 @@ export class BusScheduleDetailComponent
 
   async getQueryParams() {
     const params = history.state;
-    if (params && params["busSchedule"] && !this.isDialog) {
-      this.busSchedule = params["busSchedule"] ? JSON.parse(params["busSchedule"]) : null;
+    if (params && params['busSchedule'] && !this.isDialog) {
+      this.busSchedule = params['busSchedule'] ? JSON.parse(params['busSchedule']) : null;
     }
   }
 
@@ -126,26 +132,61 @@ export class BusScheduleDetailComponent
 
     let findDrivers = this.driversService.findAllUserDriver();
 
-    let request = [findAllBusProvinces, findAllBusStations, findAllBusRoutes, findAllBuses,
-      findAllBusScheduleTemplates, findAllBusTemplates, findAllBusServices, findBusTypes, findDrivers];
-    combineLatest(request).subscribe(async ([busProvinces, busStations, busRoutes, buses,
-      busScheduleTemplates, busTemplates, busServices, busTypes, drivers]) => {
-      this.busProvinces = busProvinces;
-      this.busStations = busStations;
-      this.busRoutes = busRoutes;
-      this.buses = buses;
-      this.busScheduleTemplates = busScheduleTemplates;
-      this.busTemplates = busTemplates;
-      this.busServices = busServices;
-      this.busTypes = busTypes;
-      this.drivers = drivers;
-      this.initForm();
-    });
+    const findSeatTypes = this.seatTypesService.findAll();
+
+    let request = [
+      findAllBusProvinces,
+      findAllBusStations,
+      findAllBusRoutes,
+      findAllBuses,
+      findAllBusScheduleTemplates,
+      findAllBusTemplates,
+      findAllBusServices,
+      findBusTypes,
+      findDrivers,
+      findSeatTypes,
+    ];
+    combineLatest(request).subscribe(
+      async ([
+        busProvinces,
+        busStations,
+        busRoutes,
+        buses,
+        busScheduleTemplates,
+        busTemplates,
+        busServices,
+        busTypes,
+        drivers,
+        seatTypes,
+      ]) => {
+        this.busProvinces = busProvinces;
+        this.busStations = busStations;
+        this.busRoutes = busRoutes;
+        this.buses = buses;
+        this.busScheduleTemplates = busScheduleTemplates;
+        this.busTemplates = busTemplates;
+        this.busServices = busServices;
+        this.busTypes = busTypes;
+        this.drivers = drivers;
+        this.seatTypes = seatTypes;
+        this.initForm();
+      },
+    );
   }
 
   async initForm() {
-    const { name = '', busId = '', bus = null, busTemplateId = '', busRouteId = '',
-      busRoute = null, price = '', busScheduleTemplateId = '', busLayoutTemplateId = '', busDriverIds = [] } = this.busSchedule || {};
+    const {
+      name = '',
+      busId = '',
+      bus = null,
+      busTemplateId = '',
+      busRouteId = '',
+      busRoute = null,
+      price = '',
+      busScheduleTemplateId = '',
+      busLayoutTemplateId = '',
+      busDriverIds = [],
+    } = this.busSchedule || {};
 
     this.busScheduleDetailForm = this.fb.group({
       name: [name, [Validators.required]],
@@ -156,12 +197,12 @@ export class BusScheduleDetailComponent
         name: [busRoute?.name || ''],
         breakPoints: this.fb.array([]),
         distance: [busRoute?.distance || ''],
-        distanceTime: [busRoute?.distanceTime || '']
+        distanceTime: [busRoute?.distanceTime || ''],
       }),
       busScheduleTemplateId: [busScheduleTemplateId],
       busLayoutTemplateId: [busLayoutTemplateId, [Validators.required]],
       busDriverIds: [busDriverIds, [Validators.required]],
-      price: [price, [Validators.required]],
+      busSeatPrices: this.fb.array([]),
     });
 
     if (busRoute) {
@@ -170,11 +211,9 @@ export class BusScheduleDetailComponent
       }
     }
 
-
     if (busTemplateId) {
-      const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id = busTemplateId);
+      const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => (busTemplate._id = busTemplateId));
       if (!busTemplate) return;
-      this.setupBusScheduleLayout(busTemplate);
       this.setBusTemplateReview(busTemplate as BusTemplate);
     }
     this.busReview = bus as Bus;
@@ -182,19 +221,59 @@ export class BusScheduleDetailComponent
 
   async setupBusScheduleLayout(busTemplate: BusTemplate) {
     try {
-      const seatTypesPromise = this.seatTypesService.findAll();
       const busLayoutTemplatePromise = this.busSchedule
         ? this.busSchedulesService.findScheduleLayoutById(this.busSchedule._id)
         : this.busLayoutTemplatesService.findOne(busTemplate.busLayoutTemplateId);
-
-      const [seatTypes, busLayoutTemplateReview] = await Promise.all([seatTypesPromise, busLayoutTemplatePromise]);
-
-      this.seatTypes = await seatTypes.toPromise();
-      this.busLayoutTemplateReview = await busLayoutTemplateReview.toPromise() as BusTemplateWithLayoutsMatrix | null;
-
+      const [busLayoutTemplateReview] = await Promise.all([busLayoutTemplatePromise]);
+      this.busLayoutTemplateReview = (await busLayoutTemplateReview.toPromise()) as BusTemplateWithLayoutsMatrix | null;
+      this.setupBusSeatPrices();
     } catch (error) {
-      console.error("Error setting up bus schedule layout:", error);
+      console.error('Error setting up bus schedule layout:', error);
     }
+  }
+
+  async setupBusSeatPrices() {
+    const allIds = this.busLayoutTemplateReview?.seatLayouts.flatMap((layout: any) =>
+      layout.seats.filter((s: any) => s.status === 'available').map((s: any) => s.typeId),
+    );
+
+    // Dùng Set để loại trùng và spread về lại mảng
+    const availableSeatIds = [...new Set(allIds)];
+
+    this.busSeatPricesForm.clear();
+
+    this.seatTypes.map(async (seatType: SeatType) => {
+      if (seatType.isEnv || !availableSeatIds.includes(seatType._id)) {
+        return;
+      }
+      this.busSeatPricesForm.push(await this.createSeatPriceForm(seatType));
+    });
+  }
+
+  async createSeatPriceForm(seatType: SeatType): Promise<FormGroup> {
+    let seatPrice = '';
+    const { busSeatPrices } = this.busSchedule || {};
+
+    if (busSeatPrices && busSeatPrices.length > 0) {
+      const foundPrice = busSeatPrices.find((price) => price.seatTypeId === seatType._id)?.price;
+      seatPrice = foundPrice !== undefined && foundPrice !== null ? String(foundPrice) : '';
+    } else if (this.busScheduleTemplate && this.busScheduleTemplate.busSeatPrices) {
+      const foundPrice = this.busScheduleTemplate.busSeatPrices.find(
+        (price) => price.seatTypeId === seatType._id,
+      )?.price;
+      seatPrice = foundPrice !== undefined && foundPrice !== null ? String(foundPrice) : '';
+    }
+
+    return this.fb.group({
+      seatTypeId: [seatType._id], // giữ giá trị tĩnh
+      seatTypeName: [seatType.name], // giữ giá trị tĩnh
+      seatTypeIcon: [seatType.icon], // giữ giá trị tĩnh
+      price: [seatPrice || '', [Validators.required]], // chỉ trường này được nhập
+    });
+  }
+
+  get busSeatPricesForm(): FormArray {
+    return this.busScheduleDetailForm.get('busSeatPrices') as FormArray;
   }
 
   async setBusTemplateReview(busTemplate: BusTemplate) {
@@ -202,14 +281,15 @@ export class BusScheduleDetailComponent
     this.isLoaddingBusTemplateReview = true;
     this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplate._id);
     const serviceOfBus = this.busServices.filter((service: BusService) =>
-      this.busTemplateReview.busServiceIds.includes(service._id)
+      this.busTemplateReview.busServiceIds.includes(service._id),
     );
     const typeOfBus = this.busTypes.find((type: BusType) =>
-      this.busTemplateReview.busTypeId.includes(type._id)
+      this.busTemplateReview.busTypeId.includes(type._id),
     ) as BusType;
     this.busTemplateReview.busServices = serviceOfBus;
     this.busTemplateReview.busType = typeOfBus;
     this.isLoaddingBusTemplateReview = false;
+    this.setupBusScheduleLayout(busTemplate as BusTemplate);
   }
 
   get breakPoints(): FormArray {
@@ -299,7 +379,7 @@ export class BusScheduleDetailComponent
             return Array.from({ length: baseTime.getSeconds() }, (_, i) => i); // Disable seconds earlier than baseTime
           }
           return [];
-        }
+        },
       };
     };
 
@@ -315,49 +395,53 @@ export class BusScheduleDetailComponent
     };
   }
 
-
-
-
   backPage() {
     this.location.back();
   }
 
-
   editBusTempate() {
-    const allowedKeys = ["_id", "name", "seatLayouts"]; // Danh sách các thuộc tính trong BusTemplate
+    const allowedKeys = ['_id', 'name', 'seatLayouts']; // Danh sách các thuộc tính trong BusTemplate
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
-      this.busLayoutTemplateReview ? Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key)) : []
+      this.busLayoutTemplateReview
+        ? Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key))
+        : [],
     ) as unknown as BusLayoutTemplate;
 
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
     const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
+      state: params,
+    });
   }
 
   async chooseBus(busId: string) {
-    const bus = await this.buses.find((bus: Bus) => bus._id == busId) as Bus;
+    const bus = (await this.buses.find((bus: Bus) => bus._id == busId)) as Bus;
     this.busScheduleDetailForm.get('bus')?.patchValue(bus);
     this.busReview = bus;
   }
 
   async chooseBusTemplate(busTemplateId: string) {
-    const busTemplate = await this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busTemplateId) as BusTemplate;
+    const busTemplate = (await this.busTemplates.find(
+      (busTemplate: BusTemplate) => busTemplate._id === busTemplateId,
+    )) as BusTemplate;
     this.busTemplateReview = busTemplate as BusTemplate;
     this.busScheduleDetailForm.get('busId')?.patchValue('');
     this.busScheduleDetailForm.get('busLayoutTemplateId')?.patchValue(busTemplate.busLayoutTemplateId);
     this.busScheduleDetailForm.get('busTemplate')?.patchValue(busTemplate);
-    this.setBusTemplateReview(busTemplate)
+    this.setBusTemplateReview(busTemplate);
   }
 
-  async chooseRoute(busRouteId: string, busScheduleTemplateRoute?: BusScheduleTemplateRoute) {
+  async chooseRoute(busRouteId: string) {
     const busRouteForm = this.busScheduleDetailForm.get('busRoute') as FormGroup;
 
     let busRoute: any;
-    busRoute = await this.busRoutes.find((busRoute: BusRoute) => busRoute._id === busRouteId) as BusScheduleTemplateRoute;
-    if (busScheduleTemplateRoute) {
-      busRoute = busScheduleTemplateRoute;
+    busRoute = (await this.busRoutes.find(
+      (busRoute: BusRoute) => busRoute._id === busRouteId,
+    )) as BusScheduleTemplateRoute;
+    if (this.busScheduleTemplate && this.busScheduleTemplate.busRoute) {
+      busRoute = this.busScheduleTemplate.busRoute;
     }
 
     busRouteForm.get('name')?.patchValue(busRoute.name);
@@ -373,31 +457,24 @@ export class BusScheduleDetailComponent
   }
 
   async chooseBusScheduleTemplate(busScheduleTemplateId: string) {
-    const busScheduleTemplate = await this.busScheduleTemplates.find((busScheduleTemplate: BusScheduleTemplate) => busScheduleTemplate._id === busScheduleTemplateId) as BusScheduleTemplate;
+    const busScheduleTemplate = (await this.busScheduleTemplates.find(
+      (busScheduleTemplate: BusScheduleTemplate) => busScheduleTemplate._id === busScheduleTemplateId,
+    )) as BusScheduleTemplate;
     if (!busScheduleTemplate) {
       return;
     }
 
+    this.busScheduleTemplate = busScheduleTemplate;
+
     const busScheduleDetailForm = this.busScheduleDetailForm as FormGroup;
-
     busScheduleDetailForm.get('name')?.patchValue(busScheduleTemplate.name);
-    busScheduleDetailForm.get('price')?.patchValue(busScheduleTemplate.price);
-
 
     busScheduleDetailForm.get('busRouteId')?.patchValue(busScheduleTemplate.busRouteId);
     busScheduleDetailForm.get('busTemplateId')?.patchValue(busScheduleTemplate.busTemplateId);
     busScheduleDetailForm.get('busDriverIds')?.patchValue(busScheduleTemplate.busDriverIds);
-
-    // await this.chooseBus(busScheduleTemplate.busId);
-    await this.chooseRoute(busScheduleTemplate.busRouteId, busScheduleTemplate.busRoute);
-    // await this.chooseBusTemplate(busScheduleTemplate.busTemplateId);
-
     busScheduleDetailForm.get('busId')?.patchValue(busScheduleTemplate.busId);
 
-    const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busScheduleTemplate.busTemplateId) as BusTemplate;
     this.busSeatLayoutTemplateBlockIds = busScheduleTemplate.busSeatLayoutTemplateBlockIds;
-
-    this.setupBusScheduleLayout(busTemplate as BusTemplate);
   }
 
   resetBusScheduleTemplate() {
@@ -407,12 +484,19 @@ export class BusScheduleDetailComponent
   }
 
   createBreakPoint(breakPoint: BusRouteScheduleBreakPoints): FormGroup {
-    const { name = '', detailAddress = '', location = '', provinceId = '' } = this.busStations.find((busStation: BusStation) => busStation._id === breakPoint.busStationId) as BusStation;
-    const province = this.busProvinces.find((busProvince: BusProvince) => busProvince._id === provinceId) as BusProvince;
+    const {
+      name = '',
+      detailAddress = '',
+      location = '',
+      provinceId = '',
+    } = this.busStations.find((busStation: BusStation) => busStation._id === breakPoint.busStationId) as BusStation;
+    const province = this.busProvinces.find(
+      (busProvince: BusProvince) => busProvince._id === provinceId,
+    ) as BusProvince;
 
     let timeSchedule = breakPoint.timeSchedule;
     if (!timeSchedule) {
-      timeSchedule = this.calculateTimeSchedule(breakPoint.timeOffset)
+      timeSchedule = this.calculateTimeSchedule(breakPoint.timeOffset);
     }
 
     return this.fb.group({
@@ -429,7 +513,7 @@ export class BusScheduleDetailComponent
   calculateTimeSchedule(offsetTime: string): string {
     let currentDate = new Date(); // Thời gian hiện tại
     if (this.startDate) {
-      currentDate = this.startDate
+      currentDate = this.startDate;
     }
 
     // Tách phần số và đơn vị (nếu không có đơn vị thì mặc định là h - giờ)
@@ -465,7 +549,7 @@ export class BusScheduleDetailComponent
   }
 
   async onSubmit() {
-    console.log("🚀 ~ onSubmit ~ this.busScheduleDetailForm:", this.busScheduleDetailForm)
+    console.log('🚀 ~ onSubmit ~ this.busScheduleDetailForm:', this.busScheduleDetailForm);
     if (!this.busScheduleDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busScheduleDetailForm);
       return;
@@ -481,8 +565,17 @@ export class BusScheduleDetailComponent
       bus: this.busReview,
       busSeatLayoutBlockIds,
       startDate: data.busRoute.breakPoints[0].timeSchedule,
-      endDate: data.busRoute.breakPoints.at(-1).timeSchedule
+      endDate: data.busRoute.breakPoints.at(-1).timeSchedule,
     };
+
+    const busSeatPricesData = this.busSeatPricesForm.getRawValue();
+
+    busSchedule2Create.busSeatPrices = busSeatPricesData.map((price: any) => ({
+      seatTypeId: price.seatTypeId,
+      price: Number(price.price), // Ensure price is a number
+      seatTypeName: price.seatTypeName, // Keep the seat type name
+    }));
+
     if (this.busSchedule) {
       const busSchedule2Update = {
         ...busSchedule2Create,
@@ -539,4 +632,3 @@ export class BusScheduleDetailComponent
     });
   }
 }
-

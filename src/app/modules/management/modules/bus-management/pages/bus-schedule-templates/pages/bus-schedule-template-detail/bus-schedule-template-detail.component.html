@@ -15,15 +15,15 @@
     *ngIf="busScheduleTemplateDetailForm"
     (ngSubmit)="onSubmit()">
     <div class="flex gap-4">
-      <div class="flex w-6/12 flex-col">
+      <div class="flex w-6/12 flex-col gap-4">
         <div class="flex w-full gap-4">
-          <div class="flex w-6/12">
-            <nz-form-item class="!min-h-[96px] !w-full">
-              <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
+          <div class="flex w-full">
+            <nz-form-item class="!w-full">
+              <nz-form-label nzFor="name" class="!flex !items-center !justify-start">Name</nz-form-label>
               <nz-form-control [nzErrorTip]="busScheduleTemplateDetailNameErrorTpl" class="!flex flex-col">
                 <nz-input-group
                   [nzSuffix]="busScheduleTemplateDetailNameClearTpl"
-                  class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+                  class="!mt-0 !mb-0 !rounded border-gray-200">
                   <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
                 </nz-input-group>
                 <ng-template #busScheduleTemplateDetailNameClearTpl>
@@ -43,45 +43,10 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div class="flex w-6/12">
-            <nz-form-item class="!min-h-[96px] !w-full">
-              <nz-form-label nzFor="price" class="!flex !h-[36px] !items-center !justify-start">Price</nz-form-label>
-              <nz-form-control [nzErrorTip]="busScheduleTemplateDetailPriceErrorTpl" class="!flex flex-col">
-                <nz-input-group
-                  [nzSuffix]="busScheduleTemplateDetailPriceClearTpl"
-                  class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-                  <input
-                    type="text"
-                    nz-input
-                    formControlName="price"
-                    placeholder="Nhập Price"
-                    mask="separator.0"
-                    prefix="₫ "
-                    thousandSeparator="," />
-                </nz-input-group>
-                <ng-template #busScheduleTemplateDetailPriceClearTpl>
-                  <span
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    (click)="busScheduleTemplateDetailForm.controls['price'].patchValue('')"></span>
-                </ng-template>
-                <ng-template #busScheduleTemplateDetailPriceErrorTpl let-control>
-                  <span class="mt-1 !text-xs text-red-500">
-                    @if (busScheduleTemplateDetailForm.controls['price'].errors?.['required']) { Vui lòng nhập trường
-                    này }
-                  </span>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
         </div>
         <div class="flex w-full gap-4">
           <nz-form-item class="!w-full">
-            <nz-form-label nzFor="busServiceIds" class="!flex !h-[36px] !items-center !justify-start"
-              >Bus Drivers</nz-form-label
-            >
+            <nz-form-label nzFor="busServiceIds" class="!flex !items-center !justify-start">Bus Drivers</nz-form-label>
             <nz-form-control>
               <nz-select
                 formControlName="busDriverIds"
@@ -118,8 +83,8 @@
         </div>
         <div class="flex w-full gap-4">
           <div class="flex w-6/12">
-            <nz-form-item class="!min-h-[98px] !w-full">
-              <nz-form-label nzFor="busTemplateId" class="!flex !h-[36px] !items-center !justify-start"
+            <nz-form-item class="!w-full">
+              <nz-form-label nzFor="busTemplateId" class="!flex !items-center !justify-start"
                 >Bus Templates</nz-form-label
               >
               <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusTemplateIdErrorTpl">
@@ -147,8 +112,8 @@
             </nz-form-item>
           </div>
           <div class="flex w-6/12">
-            <nz-form-item class="!min-h-[98px] !w-full" *ngIf="filterdBuses.length > 0">
-              <nz-form-label nzFor="busId" class="!flex !h-[36px] !items-center !justify-start">Buses</nz-form-label>
+            <nz-form-item class="!w-full" *ngIf="filterdBuses.length > 0">
+              <nz-form-label nzFor="busId" class="!flex !items-center !justify-start">Buses</nz-form-label>
               <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusIdErrorTpl">
                 <nz-select formControlName="busId" nzPlaceHolder="Chọn Bus" (ngModelChange)="chooseBus($event)">
                   @for (bus of filterdBuses; track bus) {
@@ -170,11 +135,11 @@
             </nz-form-item>
           </div>
         </div>
-        <div class="flex w-full gap-4">
+        <div class="flex w-full flex-col">
           <ng-container *ngIf="busTemplateReview">
-            <label class="flex h-[36px] items-center">Bus Review</label>
-            <div class="flex flex-row flex-wrap gap-4">
-              <div class="flex w-5/12 justify-between">
+            <label class="flex h-[32px] items-center font-medium">Bus Review</label>
+            <div class="grid grid-cols-2 gap-4 rounded-lg border border-dashed border-gray-200 p-4">
+              <div class="flex justify-between">
                 <nz-skeleton
                   [nzLoading]="busTemplateReview.isLoading"
                   [nzParagraph]="false"
@@ -185,7 +150,7 @@
                   <label class="text-xs">{{ busTemplateReview.name }}</label>
                 </nz-skeleton>
               </div>
-              <div class="flex w-5/12 justify-between">
+              <div class="flex justify-between">
                 <ng-container>
                   <label class="text-xs text-green-700">License Plate:</label>
                   <label class="text-xs" *ngIf="busReview && busReview.licensePlate">{{
@@ -193,7 +158,7 @@
                   }}</label>
                 </ng-container>
               </div>
-              <div class="flex w-5/12 justify-between">
+              <div class="flex justify-between">
                 <nz-skeleton
                   [nzLoading]="busTemplateReview.isLoading"
                   [nzParagraph]="false"
@@ -208,7 +173,7 @@
                   </div>
                 </nz-skeleton>
               </div>
-              <div class="flex w-5/12 justify-between" *ngIf="busTemplateReview.busType">
+              <div class="flex justify-between" *ngIf="busTemplateReview.busType">
                 <nz-skeleton
                   [nzLoading]="busTemplateReview.isLoading"
                   [nzParagraph]="false"
@@ -222,13 +187,58 @@
             </div>
           </ng-container>
         </div>
+        <div class="flex w-full flex-col" formArrayName="busSeatPrices" *ngIf="busSeatPricesForm.controls.length > 0">
+          <label class="flex h-[32px] items-center font-medium">Giá tiền theo từng loại ghế</label>
+          <div class="grid w-full grid-cols-2 flex-wrap gap-2 rounded-lg border border-dashed border-gray-200 p-4">
+            <div class="flex w-full" *ngFor="let grp of busSeatPricesForm.controls; let i = index" [formGroupName]="i">
+              <nz-form-item class="!flex">
+                <nz-form-control [nzErrorTip]="priceErrorTpl" class="!flex flex-col">
+                  <div class="not-last:w-full flex flex-row items-center gap-2">
+                    <svg-icon
+                      [svgClass]="'icon !h-[20px] !w-[20px] icon-available'"
+                      [src]="grp.get('seatTypeIcon')?.value"></svg-icon>
+                    <nz-input-group [nzSuffix]="priceClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
+                      <input
+                        type="text"
+                        nz-input
+                        formControlName="price"
+                        placeholder="Nhập giá"
+                        mask="separator.0"
+                        thousandSeparator="," />
+                    </nz-input-group>
+                  </div>
+
+                  <ng-template #priceClearTpl>
+                    <div class="flex min-w-[25px] flex-row">
+                      <span class="pr-2 text-sm">₫</span>
+                      <div class="flex w-[12px] items-center">
+                        <span
+                          *ngIf="busSeatPricesForm.at(i).get('price')?.value"
+                          nz-icon
+                          class="ant-input-clear-icon"
+                          nzTheme="fill"
+                          nzType="close-circle"
+                          (click)="busSeatPricesForm.at(i).get('price')?.patchValue(null)"></span>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <ng-template #priceErrorTpl let-control>
+                    <span class="mt-1 flex w-full justify-end !text-xs text-red-500">
+                      <ng-container *ngIf="control.hasError('required')"> Vui lòng nhập giá </ng-container>
+                      <ng-container *ngIf="control.hasError('min')"> Giá phải lớn hơn 0 </ng-container>
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="flex w-6/12 flex-col">
+      <div class="flex w-6/12 flex-col gap-4">
         <div class="flex w-full gap-4">
-          <nz-form-item class="!min-h-[96px] !w-full">
-            <nz-form-label nzFor="busRouteId" class="!flex !h-[36px] !items-center !justify-start"
-              >Bus Route</nz-form-label
-            >
+          <nz-form-item class="!w-full">
+            <nz-form-label nzFor="busRouteId" class="!flex !items-center !justify-start">Bus Route</nz-form-label>
             <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusRouteIdErrorTpl">
               <nz-select formControlName="busRouteId" nzPlaceHolder="Chọn Route" (ngModelChange)="chooseRoute($event)">
                 @for (busRoute of busRoutes; track busRoute) {
@@ -252,23 +262,23 @@
         <div class="flex w-full flex-col">
           <ng-container *ngIf="this.busScheduleTemplateDetailForm.get('busRouteId')?.value">
             <div>
-              <label class="!flex !h-[36px] !items-center !justify-start">Bus Rote Setup</label>
+              <label class="!flex min-h-[32px] !items-center !justify-start !font-medium">Bus Route Setup</label>
             </div>
             <div formGroupName="busRoute">
-              <div formArrayName="breakPoints" class="flex flex-col gap-4">
+              <div formArrayName="breakPoints" class="flex w-full flex-col gap-4">
                 <nz-form-item
                   *ngFor="let breakPoint of breakPoints.controls; let i = index"
                   [formGroupName]="i"
-                  class="flex !min-h-[60px] gap-4">
+                  class="flex gap-4">
                   <div class="!flex !w-7/12">
                     <nz-form-control
                       nz-popover
                       [nzPopoverContent]="contentTemplate"
                       nzPopoverPlacement="topLeft"
                       class="!w-full">
-                      <nz-input-group class="!mt-0 !mb-0 !h-[36px] !w-full !rounded !border-gray-200">
+                      <nz-input-group class="!mt-0 !mb-0 !w-full !rounded !border-gray-200">
                         <input
-                          class="h-full !w-full cursor-pointer !rounded !bg-gray-200"
+                          class="!h-[38px] !w-full cursor-pointer !rounded !bg-gray-200"
                           type="text"
                           nz-input
                           [value]="getBusStationByIdInform(i).name"
@@ -290,7 +300,7 @@
                     <nz-form-control [nzErrorTip]="busScheduleTemplateDetailTimeOffsetErrorTpl" class="!flex flex-col">
                       <nz-input-group
                         [nzSuffix]="busScheduleTemplateDetailTimeOffsetClearTpl"
-                        class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+                        class="!mt-0 !mb-0 !rounded border-gray-200">
                         <input
                           class="h-full"
                           type="text"

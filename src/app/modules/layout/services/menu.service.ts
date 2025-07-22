@@ -24,8 +24,6 @@ export class MenuService implements OnDestroy {
           let activeGroup = false;
           menu.items.forEach((subMenu) => {
             const active = this.isActive(subMenu.route);
-            console.log("🚀 ~ MenuService ~ menu.items.forEach ~ subMenu.route:", subMenu.route)
-            console.log("🚀 ~ MenuService ~ menu.items.forEach ~ active:", active)
             subMenu.expanded = active;
             subMenu.active = active;
             if (active) activeGroup = true;

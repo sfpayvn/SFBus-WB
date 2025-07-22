@@ -11,7 +11,7 @@ import { BusScheduleTemplate, SearchBusScheduleTemplate } from './model/bus-sche
   selector: 'app-bus-schedule-templates',
   templateUrl: './bus-schedule-templates.component.html',
   styleUrls: ['./bus-schedule-templates.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusScheduleTemplatesComponent implements OnInit {
   searchBusScheduleTemplate: SearchBusScheduleTemplate = new SearchBusScheduleTemplate();
@@ -31,7 +31,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -39,40 +39,49 @@ export class BusScheduleTemplatesComponent implements OnInit {
 
   loadData(): void {
     this.isLoadingBus = true;
-    this.busScheduleTemplatesService.searchBusScheduleTemplate(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
-      next: (res: SearchBusScheduleTemplate) => {
-        if (res) {
-          this.searchBusScheduleTemplate = res;
-          console.log("🚀 ~ BusesComponent ~ this.busScheduleTemplatesService.searchBus ~ this.searchBusScheduleTemplate:", this.searchBusScheduleTemplate)
-          this.totalItem = this.searchBusScheduleTemplate.totalItem;
-          this.totalPage = this.searchBusScheduleTemplate.totalPage;
-        }
-        this.isLoadingBus = false;
-      },
-      error: (error: any) => {
-        this.utils.handleRequestError(error);
-        this.isLoadingBus = false;
-      },
-    });
+    this.busScheduleTemplatesService
+      .searchBusScheduleTemplate(this.pageIdx, this.pageSize, this.keyword, this.sortBy)
+      .subscribe({
+        next: (res: SearchBusScheduleTemplate) => {
+          if (res) {
+            this.searchBusScheduleTemplate = res;
+            console.log(
+              '🚀 ~ BusesComponent ~ this.busScheduleTemplatesService.searchBus ~ this.searchBusScheduleTemplate:',
+              this.searchBusScheduleTemplate,
+            );
+            this.totalItem = this.searchBusScheduleTemplate.totalItem;
+            this.totalPage = this.searchBusScheduleTemplate.totalPage;
+          }
+          this.isLoadingBus = false;
+        },
+        error: (error: any) => {
+          this.utils.handleRequestError(error);
+          this.isLoadingBus = false;
+        },
+      });
   }
 
   toggleBus(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusScheduleTemplate.busScheduleTemplates = this.searchBusScheduleTemplate.busScheduleTemplates.map((busScheduleTemplate: BusScheduleTemplate) => ({
-      ...busScheduleTemplate,
-      selected: checked,
-    }));
+    this.searchBusScheduleTemplate.busScheduleTemplates = this.searchBusScheduleTemplate.busScheduleTemplates.map(
+      (busScheduleTemplate: BusScheduleTemplate) => ({
+        ...busScheduleTemplate,
+        selected: checked,
+      }),
+    );
   }
 
   checkSelectAll(): void {
-    this.selectAll = !this.searchBusScheduleTemplate.busScheduleTemplates.some((busScheduleTemplate) => !busScheduleTemplate.selected);
+    this.selectAll = !this.searchBusScheduleTemplate.busScheduleTemplates.some(
+      (busScheduleTemplate) => !busScheduleTemplate.selected,
+    );
   }
 
   deleteBusScheduleTemplate(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete Bus Schedule Template',
         content:
@@ -80,13 +89,13 @@ export class BusScheduleTemplatesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -95,7 +104,8 @@ export class BusScheduleTemplatesComponent implements OnInit {
         this.busScheduleTemplatesService.deleteBusScheduleTemplate(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusScheduleTemplate.busScheduleTemplates = this.searchBusScheduleTemplate.busScheduleTemplates.filter((bus) => bus._id !== id);
+              this.searchBusScheduleTemplate.busScheduleTemplates =
+                this.searchBusScheduleTemplate.busScheduleTemplates.filter((bus) => bus._id !== id);
               toast.success('Bus deleted successfully');
             }
           },
@@ -107,11 +117,16 @@ export class BusScheduleTemplatesComponent implements OnInit {
 
   editBusScheduleTemplate(busScheduleTemplate: BusScheduleTemplate): void {
     const params = { busScheduleTemplate: JSON.stringify(busScheduleTemplate) };
-    this.router.navigateByUrl('/management/bus-management/bus-schedule/bus-schedule-templates/bus-schedule-template-detail', { state: params });
+    this.router.navigateByUrl(
+      '/management/bus-management/bus-design/bus-schedule-templates/bus-schedule-template-detail',
+      { state: params },
+    );
   }
 
   addBusScheduleTemplate(): void {
-    this.router.navigate(['/management/bus-management/bus-schedule/bus-schedule/bus-schedule-templates/bus-schedule-template-detail']);
+    this.router.navigate([
+      '/management/bus-management/bus-design/bus-schedule-templates/bus-schedule-template-detail',
+    ]);
   }
 
   reloadBusScheduleTemplatePage(data: any): void {
@@ -138,7 +153,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });
