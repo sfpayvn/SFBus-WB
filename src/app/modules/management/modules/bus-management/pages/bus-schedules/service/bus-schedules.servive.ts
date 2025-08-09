@@ -21,21 +21,26 @@ export class BusSchedulesService {
   }
 
   searchBusSchedule(
-    searchParams: {
-      pageIdx: number;
-      startDate: Date | null;
-      endDate: Date | null;
-      pageSize: number;
-      keyword: string;
-      sortBy: string;
+    searchParams = {
+      pageIdx: 1,
+      pageSize: 5,
+      keyword: '',
+      sortBy: {
+        key: 'createdAt',
+        value: 'descend',
+      },
+      filters: [] as any[],
     },
     viewDisplayMode: string,
   ) {
     const url = `${this.url}/search-paging`;
 
     if (viewDisplayMode === 'table') {
-      searchParams.startDate = null;
-      searchParams.endDate = null;
+      for (const filter of searchParams.filters) {
+        if (filter.key === 'startDate' || filter.key === 'endDate') {
+          filter.value = '';
+        }
+      }
     }
 
     return this.apiGatewayService.post(url, { ...searchParams, viewDisplayMode }, true).pipe(tap((res: any) => {}));

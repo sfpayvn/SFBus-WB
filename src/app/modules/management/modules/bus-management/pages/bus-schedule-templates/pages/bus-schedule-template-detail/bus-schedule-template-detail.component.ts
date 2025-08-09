@@ -359,7 +359,6 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
         seatTypeName: price.seatTypeName, // Keep the seat type name
       }));
 
-      console.log('🚀 ~ BusScheduleTemplateDetailComponent ~ onSubmit ~ busSeatPricesData:', busSeatPricesData);
 
       // Check if a template exists for updating; otherwise, create a new one
       if (this.busScheduleTemplate) {

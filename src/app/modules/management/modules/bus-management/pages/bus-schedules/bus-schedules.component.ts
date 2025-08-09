@@ -21,18 +21,20 @@ export class BusSchedulesComponent implements OnInit {
 
   searchParams = {
     pageIdx: 1,
-    startDate: new Date(),
-    endDate: new Date(),
     pageSize: 5,
     keyword: '',
-    sortBy: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
   };
 
   totalPage: number = 0;
   totalItem: number = 0;
 
   viewDisplayMode: string = 'calendar';
-  viewMode: 'list' | 'day' | 'week' | 'month' = 'month';
+  viewMode: 'list' | 'day' | 'week' | 'month' = 'week';
 
   isLoadingBusSchedule: boolean = false;
 
@@ -74,18 +76,19 @@ export class BusSchedulesComponent implements OnInit {
     } else {
       this.searchParams = {
         pageIdx: 1,
-        startDate: new Date(),
-        endDate: new Date(),
         pageSize: 5,
         keyword: '',
-        sortBy: '',
+        sortBy: {
+          key: 'createdAt',
+          value: 'descend',
+        },
+        filters: [] as any[],
       };
     }
   }
 
   calcStartEndDate() {
     const currentDate = new Date(); // Lấy ngày hiện tại
-
     if (this.viewMode === 'week') {
       const dayOfWeek = currentDate.getDay(); // 0 = Chủ nhật, 1 = Thứ hai, ...
       // Tính ngày đầu tuần (Thứ hai)
@@ -96,8 +99,9 @@ export class BusSchedulesComponent implements OnInit {
       endOfWeek.setDate(startOfWeek.getDate() + 6); // Thêm 6 ngày để đến Chủ nhật cuối tuần
       endOfWeek.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
       startOfWeek.setHours(0, 0, 0, 0);
-      this.searchParams.startDate = startOfWeek;
-      this.searchParams.endDate = endOfWeek;
+
+      this.addOrReplaceFilters({ key: 'startDate', value: startOfWeek });
+      this.addOrReplaceFilters({ key: 'endDate', value: endOfWeek });
     } else if (this.viewMode === 'month') {
       // Tính ngày đầu tháng
       const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -105,17 +109,29 @@ export class BusSchedulesComponent implements OnInit {
       const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
       endOfMonth.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
       startOfMonth.setHours(0, 0, 0, 0);
-      this.searchParams.startDate = startOfMonth;
-      this.searchParams.endDate = endOfMonth;
+
+      this.addOrReplaceFilters({ key: 'startDate', value: startOfMonth });
+      this.addOrReplaceFilters({ key: 'endDate', value: endOfMonth });
     } else if (this.viewMode === 'day') {
       // Tính toán cho chế độ ngày
-      const startOfDay = new Date(currentDate);
-      const endOfDay = new Date(currentDate);
-      startOfDay.setHours(0, 0, 0, 0); // Thời gian đầu ngày
-      endOfDay.setHours(23, 59, 59, 999); // Thời gian cuối ngày
-      this.searchParams.startDate = startOfDay;
-      this.searchParams.endDate = endOfDay;
+
+      const dayRange = this.getDayRange(currentDate);
+      this.addOrReplaceFilters({ key: 'startDate', value: dayRange.startOfDay });
+      this.addOrReplaceFilters({ key: 'endDate', value: dayRange.endOfDay });
     }
+  }
+
+  getDayRange(date: Date) {
+    const startOfDay = new Date(date);
+    const endOfDay = new Date(date);
+
+    startOfDay.setHours(0, 0, 0, 0); // Đặt thời gian đầu ngày
+    endOfDay.setHours(23, 59, 59, 999); // Đặt thời gian cuối ngày
+
+    return {
+      startOfDay,
+      endOfDay,
+    };
   }
 
   toggleBusSchedule(event: Event): void {
@@ -214,7 +230,7 @@ export class BusSchedulesComponent implements OnInit {
     this.loadData();
   }
 
-  sortBusSchedulePage(sortBy: string) {
+  sortBusSchedulePage(sortBy: { key: string; value: string }) {
     this.searchParams = {
       ...this.searchParams,
       sortBy,
@@ -223,10 +239,8 @@ export class BusSchedulesComponent implements OnInit {
   }
 
   reLoadDataEvent(params: { startDate: Date; endDate: Date }): void {
-    this.searchParams = {
-      ...this.searchParams,
-      ...params,
-    };
+    this.addOrReplaceFilters({ key: 'startDate', value: params.startDate });
+    this.addOrReplaceFilters({ key: 'endDate', value: params.endDate });
     // Xử lý logic theo khoảng thời gian startDate và endDate
     this.loadData();
   }
@@ -254,5 +268,17 @@ export class BusSchedulesComponent implements OnInit {
     this.viewDisplayMode = viewDisplayMode;
     this.setParamsToSearch();
     this.loadData();
+  }
+
+  addOrReplaceFilters(newItem: { key: string; value: any }): void {
+    const idx = this.searchParams.filters.findIndex((i) => i.key === newItem.key && i.value === newItem.value);
+
+    if (idx > -1) {
+      // Thay thế phần tử cũ
+      this.searchParams.filters[idx] = newItem;
+    } else {
+      // Thêm mới
+      this.searchParams.filters.push(newItem);
+    }
   }
 }
