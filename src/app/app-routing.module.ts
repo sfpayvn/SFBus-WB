@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth/auth-guard.service';
-import { NoAuthGuard } from './auth/no-auth.guard';
-import { SetupAccountGuard } from './auth/setup-account.guard';
 
 const routes: Routes = [
   {
@@ -13,12 +11,6 @@ const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./modules/auth/auth.module').then((m) => m.AuthModule),
-    canActivate: [NoAuthGuard],
-  },
-  {
-    path: 'setup-account',
-    loadChildren: () => import('./modules/setup-account/setup-account.module').then((m) => m.SetupAccountModule),
-    canActivate: [SetupAccountGuard],
   },
   {
     path: 'errors',

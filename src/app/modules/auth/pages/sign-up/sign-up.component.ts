@@ -186,7 +186,7 @@ export class SignUpComponent implements OnInit {
         toast.error(res.error.message);
         return;
       }
-      this._router.navigate(['/setup-account/verify-otp']);
+      this._router.navigate(['/auth/verify-otp']);
     });
   }
 }

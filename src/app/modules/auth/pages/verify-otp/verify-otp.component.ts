@@ -17,7 +17,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import { User } from '@rsApp/modules/management/modules/user-management/model/user.model';
-import { AuthService } from '../../../auth/service/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
 import { CredentialService } from '@rsApp/shared/services/credential.service';
 

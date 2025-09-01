@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
 
     if (token && user) {
       if (user.isPhoneNumberVerified == false) {
-        this.router.navigate(['/setup-account/verify-otp']);
+        this.router.navigate(['/auth/verify-otp']);
         return Promise.resolve(false);
       }
       return Promise.resolve(true);
