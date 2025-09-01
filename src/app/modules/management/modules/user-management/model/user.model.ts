@@ -25,8 +25,9 @@ export class User {
   addresses: UserAddress[] = [];
   selected: boolean = false;
   isEmailVerified: boolean = false;
-  isLoacked: boolean = false;
-  isDelete: boolean = false;
+  isPhoneNumberVerified: boolean = false;
+  isLocked: boolean = false;
+  isDeleted: boolean = false;
 }
 
 export interface User2Create extends Omit<User, '_id' | 'avatar' | 'selected'> {}

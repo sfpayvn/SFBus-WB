@@ -305,8 +305,8 @@ export class UserDetailComponent implements OnInit {
         ...user2Create,
         _id: this.user._id, // Thêm thuộc tính _id
         isEmailVerified: this.user.isEmailVerified,
-        isLoacked: this.user.isLoacked,
-        isDelete: this.user.isDelete,
+        isLocked: this.user.isLocked,
+        isDeleted: this.user.isDeleted,
       };
       actionName = 'update';
       request.push(this.updateUser(files, user2Update));

@@ -18,7 +18,11 @@ export class SignInComponent implements OnInit {
   submitted = false;
   passwordTextType!: boolean;
 
-  constructor(private readonly _formBuilder: FormBuilder, private readonly _router: Router, private authService: AuthService) { }
+  constructor(
+    private readonly _formBuilder: FormBuilder,
+    private readonly _router: Router,
+    private authService: AuthService,
+  ) {}
 
   onClick() {
     console.log('Button clicked');
@@ -26,8 +30,11 @@ export class SignInComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this._formBuilder.group({
-      phoneNumber: ['0961090433', [Validators.required, Validators.pattern(/(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/g)]],
-      password: ['@Qa0939631640', Validators.required],
+      phoneNumber: [
+        '0961090433',
+        [Validators.required, Validators.pattern(/(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/g)],
+      ],
+      password: ['@Solid2023', Validators.required],
     });
   }
 
@@ -48,13 +55,13 @@ export class SignInComponent implements OnInit {
       return;
     }
 
-    this.login(phoneNumber, password)
+    this.login(phoneNumber, password);
   }
 
   login(phoneNumber: string, password: string) {
     this.authService.login(phoneNumber, password).subscribe(async (res: any) => {
       if (res.error) {
-        toast.success('res.message');
+        toast.error(res.error.message);
         return;
       }
       this._router.navigate(['/']);

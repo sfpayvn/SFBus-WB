@@ -39,6 +39,11 @@
       --border: #d7edf7;
     }
 
+    .icon-booked {
+      color: var(--color-green-200) !important;
+      --border: var(--color-green-500) !important;
+    }
+
     /* Animation cho status chuyển đổi */
     &.status-changed {
       animation: statusChange 0.3s forwards;

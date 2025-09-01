@@ -16,7 +16,7 @@ export class NoAuthGuard implements CanActivate {
         if (!token || !user) {
             return Promise.resolve(true);
         } else {
-            this.router.navigate(['/auth/sign-in']);
+            this.router.navigate(['/']);
             return Promise.resolve(false);
         }
     }
