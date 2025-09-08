@@ -15,8 +15,7 @@ import { NZModule } from '@rsApp/library-modules/nz-module';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
-import { A11yModule } from '@angular/cdk/a11y';
-import { SignUp } from '../../model/sign-up.model';
+import { AuthRescue, SignUp } from '../../model/auth.model';
 import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
 import { CredentialService } from '@rsApp/shared/services/credential.service';
@@ -25,16 +24,7 @@ import { CredentialService } from '@rsApp/shared/services/credential.service';
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.css'],
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    RouterLink,
-    AngularSvgIconModule,
-    ButtonComponent,
-    NgClass,
-    NZModule,
-    A11yModule,
-  ],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, ButtonComponent, NgClass, NZModule],
 })
 export class SignUpComponent implements OnInit {
   form!: FormGroup;
@@ -67,7 +57,7 @@ export class SignUpComponent implements OnInit {
       {
         tenantName: ['SF', [Validators.required]],
         tenantCode: [{ disabled: true, value: 'SF' }, [Validators.required]],
-        phoneNumber: ['0961090433', [Validators.required, Validators.pattern(/(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}/)]],
+        phoneNumber: ['0961090433', [Validators.required, Validators.pattern(/^(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}$/)]],
         password: [
           '@Solid2023',
           [
@@ -84,6 +74,10 @@ export class SignUpComponent implements OnInit {
         validators: this.passwordMatchValidator, // Sử dụng form-level validator
       },
     );
+  }
+
+  get f() {
+    return this.form.controls;
   }
 
   // Form-level validator
@@ -107,20 +101,6 @@ export class SignUpComponent implements OnInit {
     return null;
   };
 
-  get f() {
-    return this.form.controls;
-  }
-
-  matchPassword(control: any) {
-    const password = this.f?.['password']?.value;
-    const confirmPassword = control.value;
-
-    if (password !== confirmPassword) {
-      return { passwordMismatch: true };
-    }
-    return null;
-  }
-
   optionalValidator(validator: ValidatorFn): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value || control.value.trim() === '') {
@@ -136,6 +116,7 @@ export class SignUpComponent implements OnInit {
     this.passwordConditions['hasWordCase'] = /[A-Z]/.test(value) && /[a-z]/.test(value);
     this.passwordConditions['hasNumber'] = /\d/.test(value);
     this.passwordConditions['hasSpecial'] = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    console.log('🚀 ~ SignUpComponent ~ passwordValidator ~ value:', value);
     this.passwordConditions['noneSpace'] = !/\s/.test(value);
 
     if (
@@ -176,17 +157,30 @@ export class SignUpComponent implements OnInit {
 
     const signUp: SignUp = {
       tenantName,
-      tenantCode,
+      tenantCode: this.removeDiacritics(tenantName.trim().toLowerCase().replace(/\s+/g, '')),
       phoneNumber,
       password,
     };
+    console.log('🚀 ~ SignUpComponent ~ onSubmit ~ signUp:', signUp);
 
     this.authService.signUp(signUp, false).subscribe(async (res: any) => {
       if (res.error) {
-        toast.error(res.error.message);
+          toast.error(res.error.message || res.message);
         return;
       }
-      this._router.navigate(['/auth/verify-otp']);
+
+      const authRescue: AuthRescue = {
+        identifier: phoneNumber,
+        purpose: '2fa',
+      };
+
+      this.authService.requestAuthRescue(authRescue).subscribe((res) => {
+        if (res.error) {
+            toast.error(res.error.message || res.message);
+          return;
+        }
+        this._router.navigate(['/auth/verify-otp']);
+      });
     });
   }
 }

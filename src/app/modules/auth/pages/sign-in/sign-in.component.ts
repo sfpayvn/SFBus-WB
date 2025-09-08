@@ -61,7 +61,7 @@ export class SignInComponent implements OnInit {
   login(phoneNumber: string, password: string) {
     this.authService.login(phoneNumber, password).subscribe(async (res: any) => {
       if (res.error) {
-        toast.error(res.error.message);
+          toast.error(res.error.message || res.message);
         return;
       }
       this._router.navigate(['/']);

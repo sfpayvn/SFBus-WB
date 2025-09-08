@@ -4,7 +4,7 @@ import { from, of } from 'rxjs';
 import { catchError, concatMap, delay, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { CredentialService } from 'src/app/shared/services/credential.service';
-import { SignUp } from '../model/sign-up.model';
+import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, VerifyAuthRescue } from '../model/auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -130,9 +130,51 @@ export class AuthService {
     );
   }
 
-  validateOtp(otp: string) {
-    const url = `/admin/auth/validate-otp/${otp}`;
-    return this.apiGatewayService.post(url, {}).pipe(
+  requestAuthRescue(authRescue: AuthRescue) {
+    const url = `/admin/auth/rescue/request`;
+    return this.apiGatewayService.post(url, authRescue).pipe(
+      tap((res: any) => {}),
+      map((res: any) => {
+        return res;
+      }),
+      catchError((error) => {
+        //write log
+        return of(error.error);
+      }),
+    );
+  }
+
+  validateOtp(verifyAuthRescue: VerifyAuthRescue) {
+    const url = `/admin/auth/rescue/verify`;
+    return this.apiGatewayService.post(url, verifyAuthRescue).pipe(
+      tap((res: any) => {}),
+      map((res: any) => {
+        return res;
+      }),
+      catchError((error) => {
+        //write log
+        return of(error.error);
+      }),
+    );
+  }
+
+  forgotPassword(requestForgotPassword: RequestForgotPassword) {
+    const url = `/admin/auth/forgot-password`;
+    return this.apiGatewayService.post(url, requestForgotPassword).pipe(
+      tap((res: any) => {}),
+      map((res: any) => {
+        return res;
+      }),
+      catchError((error) => {
+        //write log
+        return of(error.error);
+      }),
+    );
+  }
+
+  resetPassword(requestResetPassword: RequestResetPassword) {
+    const url = `/admin/auth/reset-password`;
+    return this.apiGatewayService.post(url, requestResetPassword).pipe(
       tap((res: any) => {}),
       map((res: any) => {
         return res;

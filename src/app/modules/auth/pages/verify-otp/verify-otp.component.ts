@@ -20,6 +20,7 @@ import { User } from '@rsApp/modules/management/modules/user-management/model/us
 import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
 import { CredentialService } from '@rsApp/shared/services/credential.service';
+import { AuthRescue, VerifyAuthRescue } from '../../model/auth.model';
 
 @Component({
   selector: 'app-verify-otp',
@@ -54,6 +55,21 @@ export class VerifyOtpComponent implements OnInit {
     });
   }
 
+  onResendOtp() {
+    const authRescue: AuthRescue = {
+      identifier: this.currentUser.phoneNumber,
+      purpose: '2fa',
+    };
+
+    this.authService.requestAuthRescue(authRescue).subscribe((res) => {
+      if (res.error) {
+          toast.error(res.error.message || res.message);
+        return;
+      }
+      toast.success('OTP has been resent successfully');
+    });
+  }
+
   onSubmit() {
     if (!this.form.valid) {
       this.utils.markFormGroupTouched(this.form);
@@ -62,9 +78,16 @@ export class VerifyOtpComponent implements OnInit {
 
     const { otp } = this.form.getRawValue();
 
-    this.authService.validateOtp(otp).subscribe(async (res: any) => {
+    const verifyAuthRescueDto: VerifyAuthRescue = {
+      identifier: this.currentUser.phoneNumber,
+      purpose: '2fa',
+      token: otp,
+    };
+
+    this.authService.validateOtp(verifyAuthRescueDto).subscribe(async (res: any) => {
+      console.log('🚀 ~ VerifyOtpComponent ~ onSubmit ~ res:', res);
       if (res.error) {
-        toast.error(res.error.message);
+        toast.error(res.error.message || res.message);
         return;
       }
       await this.credentialService.updateCurrentUserField('isPhoneNumberVerified', true);
