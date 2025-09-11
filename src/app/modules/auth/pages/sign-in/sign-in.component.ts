@@ -6,22 +6,24 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
+import { NZModule } from '@rsApp/library-modules/nz-module';
+import { Utils } from '@rsApp/shared/utils/utils';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.css'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, NgIf, ButtonComponent, NgClass],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, ButtonComponent, NZModule],
 })
 export class SignInComponent implements OnInit {
   form!: FormGroup;
-  submitted = false;
-  passwordTextType!: boolean;
+  passwordVisible: boolean = false;
 
   constructor(
     private readonly _formBuilder: FormBuilder,
     private readonly _router: Router,
     private authService: AuthService,
+    private utils: Utils,
   ) {}
 
   onClick() {
@@ -34,7 +36,9 @@ export class SignInComponent implements OnInit {
         '0961090433',
         [Validators.required, Validators.pattern(/(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/g)],
       ],
+      tenantCode: ['sf', [Validators.required]],
       password: ['@Solid2023', Validators.required],
+      rememberMe: [false],
     });
   }
 
@@ -42,26 +46,21 @@ export class SignInComponent implements OnInit {
     return this.form.controls;
   }
 
-  togglePasswordTextType() {
-    this.passwordTextType = !this.passwordTextType;
-  }
-
   onSubmit() {
-    this.submitted = true;
-    const { phoneNumber, password } = this.form.value;
-
-    // stop here if form is invalid
-    if (this.form.invalid) {
+    if (!this.form.valid) {
+      this.utils.markFormGroupTouched(this.form);
       return;
     }
+    const { phoneNumber, password, tenantCode } = this.form.value;
 
-    this.login(phoneNumber, password);
+
+    this.login(phoneNumber, password, tenantCode);
   }
 
-  login(phoneNumber: string, password: string) {
-    this.authService.login(phoneNumber, password).subscribe(async (res: any) => {
+  login(phoneNumber: string, password: string, tenantCode: string) {
+    this.authService.login(phoneNumber, password, tenantCode).subscribe(async (res: any) => {
       if (res.error) {
-          toast.error(res.error.message || res.message);
+        toast.error(res.error.message || res.message);
         return;
       }
       this._router.navigate(['/']);

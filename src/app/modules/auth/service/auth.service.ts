@@ -12,10 +12,11 @@ import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, Verify
 export class AuthService {
   constructor(private apiGatewayService: ApiGatewayService, private credentialService: CredentialService) {}
 
-  login(phoneNumber: string, password: string) {
+  login(phoneNumber: string, password: string, tenantCode: string) {
     const user = {
       phoneNumber,
       password,
+      tenantCode,
     };
     const url = `/auth/login?phoneNumber=${phoneNumber}`;
 

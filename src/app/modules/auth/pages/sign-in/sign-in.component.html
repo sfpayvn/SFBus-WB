@@ -18,66 +18,120 @@
   </div>
 
   <div class="space-y-3 text-left">
-    <div class="form__group">
-      <div class="relative">
-        <input
-          type="text"
-          id="email"
-          [ngClass]="{ 'is__invalid-input': submitted && f['phoneNumber'].errors }"
-          class="peer mt-12 block"
-          placeholder=" "
-          formControlName="phoneNumber" />
-        <label
-          for="phoneNumber"
-          [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['phoneNumber'].errors }"
-          class="text-muted-foreground peer-focus:text-primary absolute top-2 left-1 z-10 origin-[0] -translate-y-8 scale-95 transform bg-transparent px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-8 peer-focus:scale-95 peer-focus:px-2">
-          Phone number
-        </label>
+    <div class="form__group flex flex-col gap-3">
+      <div class="flex w-full gap-2">
+        <div class="flex w-3/4">
+          <nz-form-item class="!flex !w-full !flex-col">
+            <nz-form-label nzFor="phoneNumber" class="!flex !items-center !justify-start !text-sm"
+              >Phone Number</nz-form-label
+            >
+            <nz-form-control [nzErrorTip]="userFormPhoneNumberErrorTpl" class="!flex flex-col">
+              <nz-input-group [nzSuffix]="userFormPhoneNumberClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
+                <input
+                  type="text"
+                  nz-input
+                  formControlName="phoneNumber"
+                  mask="0000 000 000"
+                  placeholder="Nhập Phone Number" />
+              </nz-input-group>
+              <ng-template #userFormPhoneNumberClearTpl>
+                @if(f['phoneNumber'].value){
+                <span
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  (click)="f['phoneNumber'].patchValue('')"></span>
+                }
+              </ng-template>
+              <ng-template #userFormPhoneNumberErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (f['phoneNumber'].errors?.['required']) { Vui lòng nhập số điện thoại }
+                  @if(f['phoneNumber'].errors?.['pattern']) { Vui lòng nhập đúng số điện thoại }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="flex w-1/4">
+          <nz-form-item class="!flex !w-full !flex-col">
+            <nz-form-label nzFor="tenantCode" class="!flex !items-center !justify-start !text-sm"
+              >Tenant Code</nz-form-label
+            >
+            <nz-form-control [nzErrorTip]="userFormTenantCodeErrorTpl" class="!flex flex-col">
+              <nz-input-group [nzSuffix]="userFormTenantCodeClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
+                <input type="text" nz-input formControlName="tenantCode" placeholder="Nhập Tenant Code" />
+              </nz-input-group>
+              <ng-template #userFormTenantCodeClearTpl>
+                @if(f['tenantCode'].value){
+                <span
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  (click)="f['tenantCode'].patchValue('')"></span>
+                }
+              </ng-template>
+              <ng-template #userFormTenantCodeErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (f['tenantCode'].errors?.['required']) { Vui lòng nhập Tenant Code }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
-      <div *ngIf="submitted && f['phoneNumber'].errors" class="is__invalid-error">
-        <div *ngIf="f['phoneNumber'].errors['required']">Required field</div>
-        <div *ngIf="f['phoneNumber'].errors['pattern']">Phone must be an Phone valid</div>
-      </div>
-    </div>
-
-    <div class="form__group">
-      <div class="relative">
-        <input
-          [type]="passwordTextType ? 'text' : 'password'"
-          id="password"
-          [ngClass]="{ 'is__invalid-input': submitted && f['password'].errors }"
-          class="peer mt-10 block"
-          placeholder=" "
-          formControlName="password" />
-        <label
-          for="password"
-          [ngClass]="{ 
-            'peer-focus:text-destructive!': submitted && f['password'].errors,
-            }"
-          class="text-muted-foreground peer-focus:text-primary absolute top-2 left-1 z-10 origin-[0] -translate-y-8 scale-95 transform bg-transparent px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-8 peer-focus:scale-95 peer-focus:px-2">
-          Password
-        </label>
-        <span class="text-muted-foreground absolute top-2.5 right-5 cursor-pointer" (click)="togglePasswordTextType()">
-          <svg-icon
-            [src]="
-              !passwordTextType
-                ? 'assets/icons/heroicons/outline/eye-off.svg'
-                : 'assets/icons/heroicons/outline/eye.svg'
-            "
-            [svgClass]="'h-5 w-5'">
-          </svg-icon>
-        </span>
-      </div>
-      <div *ngIf="submitted && f['password'].errors" class="is__invalid-error">
-        <div *ngIf="f['password'].errors['required']">Required field</div>
+      <div class="flex w-full">
+        <nz-form-item class="!flex !w-full !flex-col">
+          <nz-form-label nzFor="password" class="!flex !items-start !justify-start !p-0 !text-sm"
+            >Password</nz-form-label
+          >
+          <nz-form-control [nzErrorTip]="passwordErrorTpl" class="!contents">
+            <nz-input-group [nzSuffix]="suffixTemplatePassword" class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+              <input
+                [type]="passwordVisible ? 'text' : 'password'"
+                nz-input
+                placeholder="Nhập mật khẩu"
+                formControlName="password" />
+            </nz-input-group>
+            <ng-template #suffixTemplatePassword>
+              <div class="flex items-center gap-2">
+                @if(f['password'].value){
+                <span
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  (click)="f['password'].patchValue('')"></span>
+                }
+                <svg-icon
+                  src="assets/icons/heroicons/outline/{{ passwordVisible ? 'eye-off' : 'eye' }}.svg"
+                  (click)="passwordVisible = !passwordVisible"
+                  [svgClass]="'h-5 w-5 cursor-pointer'">
+                </svg-icon>
+              </div>
+            </ng-template>
+            <ng-template #passwordErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (f['password'].errors?.['required'] && f['password'].touched) { Vui lòng nhập mật khẩu. } @if
+                (f['password'].errors?.['passwordInvalid'] && f['password'].touched) { Vui lòng nhập đúng format mật
+                khẩu. }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
       </div>
     </div>
   </div>
 
   <div class="mb-2 flex items-center justify-between space-x-3">
     <div class="flex items-center">
-      <input id="remember-me" name="remember-me" type="checkbox" />
-      <label for="remember-me" class="text-muted-foreground ml-2 block text-sm"> Remember me </label>
+      <label
+        nz-checkbox
+        formControlName="rememberMe"
+        class="text-muted-foreground !m-0 ml-2 flex items-center font-medium !p-0 !text-xs">
+        Tự động đăng nhập
+      </label>
     </div>
 
     <app-button routerLink="/auth/forgot-password" impact="none" tone="primary" shape="rounded" size="small">

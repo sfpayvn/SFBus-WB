@@ -47,8 +47,15 @@ export class BusSchedulesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.viewDisplayMode = this.pickModeFromUrl(this.router.url);
     this.setParamsToSearch();
     this.loadData();
+  }
+
+  private pickModeFromUrl(url: string): string {
+    const path = url.split('?')[0].split('#')[0]; // bỏ query/hash
+    const last = path.split('/').filter(Boolean).pop() ?? '';
+    return last === 'scheduler' || last === 'schedule' ? 'table' : 'calendar';
   }
 
   loadData(): void {

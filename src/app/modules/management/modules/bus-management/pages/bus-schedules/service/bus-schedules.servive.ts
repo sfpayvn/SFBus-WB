@@ -7,7 +7,7 @@ import { BusSchedule2Create, BusSchedule2Update } from '../model/bus-schedule.mo
   providedIn: 'root',
 })
 export class BusSchedulesService {
-  url = '/bus-schedules';
+  url = '/admin/bus-schedules';
 
   constructor(private apiGatewayService: ApiGatewayService) {}
 
@@ -15,8 +15,9 @@ export class BusSchedulesService {
     const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
+
   findScheduleLayoutById(busScheduleId: string) {
-    const url = `/bus-schedule-layouts/find-one/${busScheduleId}`;
+    const url = `/admin/bus-schedule-layouts/find-one/${busScheduleId}`;
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
 

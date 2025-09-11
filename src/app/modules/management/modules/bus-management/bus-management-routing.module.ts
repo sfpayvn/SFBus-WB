@@ -43,7 +43,11 @@ const routes: Routes = [
     children: [
       {
         path: 'bus-schedules',
-        component: BusSchedulesComponent,
+        children: [
+          { path: 'calendar', component: BusSchedulesComponent, data: { view: 'calendar' } },
+          { path: 'scheduler', component: BusSchedulesComponent, data: { view: 'scheduler' } },
+          { path: '', pathMatch: 'full', redirectTo: 'calendar' },
+        ],
       },
       {
         path: 'bus-schedules/bus-schedule-detail',

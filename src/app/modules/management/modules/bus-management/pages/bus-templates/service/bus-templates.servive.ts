@@ -7,7 +7,7 @@ import { BusTemplate2Create, BusTemplate2Update } from '../model/bus-template.mo
   providedIn: 'root',
 })
 export class BusTemplatesService {
-  url = '/bus-templates';
+  url = '/admin/bus-templates';
 
   constructor(
     private apiGatewayService: ApiGatewayService,
@@ -23,8 +23,8 @@ export class BusTemplatesService {
   }
 
   searchBusTemplate(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
-    return this.apiGatewayService.get(url, true).pipe(
+    const url = `${this.url}/search`;
+    return this.apiGatewayService.post(url, { pageIdx, pageSize, keyword, sortBy }, true).pipe(
       tap((res: any) => { }),
     );
   }

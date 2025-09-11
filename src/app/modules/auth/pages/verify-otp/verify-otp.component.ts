@@ -63,7 +63,7 @@ export class VerifyOtpComponent implements OnInit {
 
     this.authService.requestAuthRescue(authRescue).subscribe((res) => {
       if (res.error) {
-          toast.error(res.error.message || res.message);
+        toast.error(res.error.message || res.message);
         return;
       }
       toast.success('OTP has been resent successfully');
@@ -85,7 +85,6 @@ export class VerifyOtpComponent implements OnInit {
     };
 
     this.authService.validateOtp(verifyAuthRescueDto).subscribe(async (res: any) => {
-      console.log('🚀 ~ VerifyOtpComponent ~ onSubmit ~ res:', res);
       if (res.error) {
         toast.error(res.error.message || res.message);
         return;

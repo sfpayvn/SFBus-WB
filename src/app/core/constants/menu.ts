@@ -70,8 +70,14 @@ export class Menu {
               label: 'Bus Schedule',
               route: '/management/bus-management/bus-schedule',
               children: [
-                { label: 'Schedule Calendar', route: '/management/bus-management/bus-schedule/bus-schedules' },
-                { label: 'Bus Scheduler', route: '/management/bus-management/bus-schedule/bus-schedule-templates' },
+                {
+                  label: 'Schedule Calendar',
+                  route: '/management/bus-management/bus-schedule/bus-schedules/calendar',
+                },
+                {
+                  label: 'Bus Scheduler',
+                  route: '/management/bus-management/bus-schedule/bus-schedules/scheduler',
+                },
                 {
                   label: 'Bus Scheduler Auto',
                   route: '/management/bus-management/bus-schedule/bus-schedule-autogenerators',
