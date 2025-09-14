@@ -268,8 +268,8 @@
       @if(searchFile && searchFile.files.length > 0){
       <div>
         <app-table-footer
-          [pageIdx]="pageIdx"
-          [pageSize]="pageSize"
+          [pageIdx]="searchParams.pageIdx"
+          [pageSize]="searchParams.pageSize"
           [totalItem]="totalItem"
           [isLoading]="isLoadingFile"
           [totalPage]="totalPage"

@@ -5,7 +5,7 @@ import _, { remove } from 'lodash';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { FileFolder, SearchFile, FileDto, FileFolder2Create, FileFolder2Update } from '../../model/file-center.model';
 import { FilesService } from '../../service/files-center.servive';
-import { CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDragStart, } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Utils } from 'src/app/shared/utils/utils';
 import { ViewImageDialogComponent } from '../../components/view-image-dialog/view-image-dialog.component';
 
@@ -13,7 +13,7 @@ import { ViewImageDialogComponent } from '../../components/view-image-dialog/vie
   selector: 'app-files-center',
   templateUrl: './files-center.component.html',
   styleUrls: ['./files-center.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class FilesComponent implements OnInit {
   @ViewChild('inputFileFolder') inputFileFolder!: ElementRef;
@@ -24,7 +24,7 @@ export class FilesComponent implements OnInit {
 
   fileFolders: FileFolder[] = [
     {
-      _id: 'all-media',
+      _id: 'noFolder',
       name: 'Tất cả ảnh',
       icon: 'multi-folder.svg',
       selected: true,
@@ -34,7 +34,7 @@ export class FilesComponent implements OnInit {
       name: 'Yêu thích',
       icon: 'favorite.svg',
       selected: false,
-    }
+    },
   ];
   originalFileFolders: FileFolder[] = [];
 
@@ -44,13 +44,19 @@ export class FilesComponent implements OnInit {
 
   selectedFiles: FileDto[] = [];
 
-  pageIdx: number = 1;
-  pageSize: number = 30;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 24,
+    keyword: '',
+    sortBy: {
+      key: 'uploadedAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
-  filter: string = '';
 
   isLoadingFile: boolean = false;
   isLoadingFileFolder: boolean = false;
@@ -60,7 +66,7 @@ export class FilesComponent implements OnInit {
     private dialog: MatDialog,
     private utilsModal: UtilsModal,
     public utils: Utils,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -79,15 +85,17 @@ export class FilesComponent implements OnInit {
         this.originalFileFolders = [...this.fileFolders]; // Save original folders
         this.isLoadingFileFolder = false;
       }
-    })
+    });
   }
 
   loadFiles() {
     this.isLoadingFile = true;
     const fileFolderId = this.getActiveFolderId();
-    this.filter = this.getFilter()
+    this.searchFile.files = [];
 
-    this.fileService.searchFile(this.pageIdx, this.pageSize, this.keyword, this.sortBy, this.filter, fileFolderId).subscribe({
+    this.setFilters();
+    this.setDataLoadingFile();
+    this.fileService.searchFile(this.searchParams, fileFolderId, true).subscribe({
       next: (res: SearchFile) => {
         if (res) {
           this.searchFile = res;
@@ -103,15 +111,37 @@ export class FilesComponent implements OnInit {
     });
   }
 
+  setDataLoadingFile() {
+    const fileLoading: FileDto = {
+      _id: '',
+      filename: '',
+      link: '',
+      folderId: '',
+      isFavorite: false,
+      selected: false,
+      oldValue: '',
+      temp: false,
+    };
+    for (let i = 0; i < 24; i++) {
+      this.searchFile.files.push({ ...fileLoading });
+    }
+  }
+
   resetFileData(): void {
     this.searchFile = new SearchFile();
     this.selectedFiles = [];
-    this.pageIdx = 1;
-    this.pageSize = 30;
+    this.searchParams = {
+      pageIdx: 1,
+      pageSize: 5,
+      keyword: '',
+      sortBy: {
+        key: 'createdAt',
+        value: 'descend',
+      },
+      filters: [] as any[],
+    };
     this.totalPage = 0;
     this.totalItem = 0;
-    this.keyword = '';
-    this.sortBy = '';
     this.isLoadingFile = false;
     this.isLoadingFileFolder = false;
     this.loadFiles();
@@ -123,21 +153,20 @@ export class FilesComponent implements OnInit {
       this.selectedFiles.push(file);
       return;
     }
-    const index = this.selectedFiles.findIndex(f => f._id === file._id);
+    const index = this.selectedFiles.findIndex((f) => f._id === file._id);
     if (index >= 0) {
       this.selectedFiles.splice(index, 1);
     } else {
       this.selectedFiles.push(file);
     }
-
   }
 
   isSelected(file: FileDto): boolean {
-    return this.selectedFiles.some(f => f._id === file._id);
+    return this.selectedFiles.some((f) => f._id === file._id);
   }
 
   getIndexSelectedFile(file: FileDto): string {
-    const index = this.selectedFiles.findIndex(f => f._id === file._id);
+    const index = this.selectedFiles.findIndex((f) => f._id === file._id);
     return index !== -1 ? (index + 1).toString() : '';
   }
 
@@ -150,11 +179,15 @@ export class FilesComponent implements OnInit {
   }
 
   deleteFileSelected() {
-    this.utilsModal.openModalConfirm('Xóa file',
-      `Are you sure you want to delete this file? All of your data will be permanently removed. This action cannot be undone.`,
-      'dangerous').subscribe((result) => {
+    this.utilsModal
+      .openModalConfirm(
+        'Xóa file',
+        `Are you sure you want to delete this file? All of your data will be permanently removed. This action cannot be undone.`,
+        'dangerous',
+      )
+      .subscribe((result) => {
         if (result) {
-          const ids = this.selectedFiles.map(file => file._id);
+          const ids = this.selectedFiles.map((file) => file._id);
           this.fileService.deleteFiles(ids).subscribe({
             next: (res: any) => {
               if (res) {
@@ -177,8 +210,11 @@ export class FilesComponent implements OnInit {
 
   deleteFile($event: any, file: FileDto): void {
     $event.stopPropagation();
-    const dialogRef = this.utilsModal.openModalConfirm('Xóa file',
-      `Are you sure you want to delete this file "${file.filename}? All of your data will be permanently removed. This action cannot be undone.`, 'dangerous');
+    const dialogRef = this.utilsModal.openModalConfirm(
+      'Xóa file',
+      `Are you sure you want to delete this file "${file.filename}? All of your data will be permanently removed. This action cannot be undone.`,
+      'dangerous',
+    );
     dialogRef.subscribe((result) => {
       if (result) {
         this.fileService.deleteFile(file._id).subscribe({
@@ -203,13 +239,12 @@ export class FilesComponent implements OnInit {
       panelClass: 'custom-dialog-view-image',
       backdropClass: 'custom-back-drop-view-image',
       data: {
-        file: file
-      }
+        file: file,
+      },
     });
   }
 
   uploadFile(files2Upload: FileList): void {
-
     const folderId = this.getActiveFolderId();
     this.fileService.uploadFiles(files2Upload, folderId).subscribe({
       next: (res: File) => {
@@ -225,26 +260,25 @@ export class FilesComponent implements OnInit {
   updateFile(item: FileDto) {
     this.fileService.updateFile(item).subscribe((res: any) => {
       if (!res) {
-        toast.error("Cập nhập thư mục không thành công");
+        toast.error('Cập nhập thư mục không thành công');
         return;
       }
-      toast.success("Cập nhập thư mục thành công");
-    })
+      toast.success('Cập nhập thư mục thành công');
+    });
   }
-
 
   updateFiles2Folder(files: FileDto[], fileFolderId: string) {
     this.fileService.updateFiles2Folder(files, fileFolderId).subscribe((res: any) => {
       if (!res) {
-        toast.error("Cập nhập thư mục không thành công");
+        toast.error('Cập nhập thư mục không thành công');
         return;
       }
       const isNotFolder = this.getActiveFolderId() === '';
       if (!isNotFolder) {
         this.loadFiles();
       }
-      toast.success("Cập nhập thư mục thành công");
-    })
+      toast.success('Cập nhập thư mục thành công');
+    });
   }
 
   setEditFile(item: FileDto) {
@@ -272,19 +306,19 @@ export class FilesComponent implements OnInit {
   }
 
   reloadFilePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+    this.searchParams.pageIdx = data.pageIdx;
+    this.searchParams.pageSize = data.pageSize;
     this.loadFiles();
   }
 
   searchFileData($event: any) {
-    this.pageIdx = 1;
-    this.keyword = $event.target.value;;
+    this.searchParams.pageIdx = 1;
+    this.searchParams.keyword = $event.target.value;
     this.loadFiles();
   }
 
-  sortFilePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortFilePage(sortBy: { key: string; value: string }) {
+    this.searchParams.sortBy = sortBy;
     this.loadFiles();
   }
 
@@ -293,17 +327,23 @@ export class FilesComponent implements OnInit {
     return id;
   }
 
-  getFilter(): string {
-    return this.fileFolders.find((item) => item.selected && !this.utils.isValidObjectId(item._id))?._id ?? '';
+  setFilters(): any {
+    const isFavorite =
+      this.fileFolders.find((item) => item.selected && !this.utils.isValidObjectId(item._id))?._id === 'favorite';
+    if (isFavorite) {
+      this.searchParams.filters.push({ key: 'isFavorite', value: true });
+    } else {
+      this.searchParams.filters = this.searchParams.filters.filter((filter) => filter.key !== 'isFavorite');
+    }
   }
 
   selectFileFolder(item: any) {
     if (item.selected) {
-      return
+      return;
     }
-    this.fileFolders = this.fileFolders.map(folder => ({
+    this.fileFolders = this.fileFolders.map((folder) => ({
       ...folder,
-      selected: folder._id === item._id
+      selected: folder._id === item._id,
     }));
     this.selectedFiles = [];
     this.loadFiles();
@@ -311,9 +351,7 @@ export class FilesComponent implements OnInit {
 
   searchFolder($event: any) {
     const keyword = $event.target.value.toLowerCase();
-    this.fileFolders = this.originalFileFolders.filter(folder =>
-      folder.name.toLowerCase().includes(keyword)
-    );
+    this.fileFolders = this.originalFileFolders.filter((folder) => folder.name.toLowerCase().includes(keyword));
   }
 
   addFileFolderInput() {
@@ -322,8 +360,9 @@ export class FilesComponent implements OnInit {
       return;
     }
     const fileFolderInputCreate = {
-      _id: 'create-new', name: ''
-    }
+      _id: 'create-new',
+      name: '',
+    };
     this.fileFolders.push(fileFolderInputCreate);
     this.setIsEditFileFolder(fileFolderInputCreate);
     this.setAutoFocusFileInput();
@@ -339,10 +378,9 @@ export class FilesComponent implements OnInit {
     this.fileFolders = this.fileFolders.map((file: FileFolder) => ({
       ...file,
       isEditing: file === item,
-      oldValue: item.name
+      oldValue: item.name,
     }));
     this.setAutoFocusFileInput();
-
   }
 
   cancelEditFileFolder(item: FileFolder) {
@@ -356,7 +394,9 @@ export class FilesComponent implements OnInit {
 
   handleActoinFolderInput(item: FileFolder) {
     const trimmedName = item.name.trim();
-    item._id === 'create-new' ? this.handleCreateNewFileFolder(item, trimmedName) : this.handleUpdateFileFolder(item, trimmedName);
+    item._id === 'create-new'
+      ? this.handleCreateNewFileFolder(item, trimmedName)
+      : this.handleUpdateFileFolder(item, trimmedName);
   }
 
   handleCreateNewFileFolder(item: FileFolder, trimmedName: string) {
@@ -378,52 +418,57 @@ export class FilesComponent implements OnInit {
 
   createFileFolder(item: FileFolder) {
     const fileFolder2Create: FileFolder2Create = {
-      name: item.name
-    }
+      name: item.name,
+    };
     this.fileService.createFileFolder(fileFolder2Create).subscribe((res: any) => {
       if (!res) {
-        toast.error("Tạo thư mục không thành công");
-        _.remove(this.fileFolders, { _id: item._id })
+        toast.error('Tạo thư mục không thành công');
+        _.remove(this.fileFolders, { _id: item._id });
         return;
       }
       item._id = res._id;
-      toast.success("Tạo thư mục thành công");
+      toast.success('Tạo thư mục thành công');
       item.isEditing = false;
       this.originalFileFolders = this.fileFolders;
-    })
+    });
   }
 
   updateFileFolder(item: FileFolder2Update) {
     this.fileService.updateFileFolder(item).subscribe((res: any) => {
       if (!res) {
-        toast.error("Cập nhập thư mục không thành công");
+        toast.error('Cập nhập thư mục không thành công');
         return;
       }
       this.originalFileFolders = this.fileFolders;
-      toast.success("Cập nhập thư mục thành công");
-    })
+      toast.success('Cập nhập thư mục thành công');
+    });
   }
 
   deleteFileFolder(item: FileFolder) {
-    this.utilsModal.openModalConfirm(
-      'Xóa thư mục',
-      `Bạn có chắc chắn muốn xóa thư mục '${item.name}' này không? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn. Không thể hoàn tác hành động này`,
-      'dangerous',
-    ).subscribe((res: any) => {
-      if (res) {
-        this.fileService.deleteFileFolder(item._id).subscribe((res: any) => {
-          if (!res) {
-            toast.success("Xóa thư mực không thành công");
-            return;
-          }
-          _.remove(this.fileFolders, { _id: item._id })
-          this.originalFileFolders = this.fileFolders;
-          toast.success("Xóa thư mực thành công");
-        }, (error: any) => {
-          console.log("🚀 ~ FileComponent ~ ).subscribe ~ error:", error)
-        })
-      }
-    })
+    this.utilsModal
+      .openModalConfirm(
+        'Xóa thư mục',
+        `Bạn có chắc chắn muốn xóa thư mục '${item.name}' này không? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn. Không thể hoàn tác hành động này`,
+        'dangerous',
+      )
+      .subscribe((res: any) => {
+        if (res) {
+          this.fileService.deleteFileFolder(item._id).subscribe(
+            (res: any) => {
+              if (!res) {
+                toast.success('Xóa thư mực không thành công');
+                return;
+              }
+              _.remove(this.fileFolders, { _id: item._id });
+              this.originalFileFolders = this.fileFolders;
+              toast.success('Xóa thư mực thành công');
+            },
+            (error: any) => {
+              console.log('🚀 ~ FileComponent ~ ).subscribe ~ error:', error);
+            },
+          );
+        }
+      });
   }
 
   onFileChange($event: any) {
@@ -432,7 +477,7 @@ export class FilesComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<any[]>): void {
-    console.log("🚀 ~ FilesComponent ~ drop ~ drop:");
+    console.log('🚀 ~ FilesComponent ~ drop ~ drop:');
     remove(this.searchFile.files, { temp: true });
     const droppedElement = event.event.target as HTMLElement;
 
@@ -450,7 +495,7 @@ export class FilesComponent implements OnInit {
     // Thêm fileDrop vào danh sách
     listFile2MoveFolder.push(fileDrop);
     // Lọc các file đã chọn để loại bỏ fileDrop
-    const fileSelected = this.selectedFiles.filter(file => file !== fileDrop);
+    const fileSelected = this.selectedFiles.filter((file) => file !== fileDrop);
 
     // Thêm các file đã chọn (trừ fileDrop) vào danh sách
     listFile2MoveFolder.push(...fileSelected);
@@ -462,18 +507,18 @@ export class FilesComponent implements OnInit {
   }
 
   onDragStarted(file: FileDto) {
-    console.log("🚀 ~ FilesComponent ~ onDragStarted ~ onDragStarted:")
+    console.log('🚀 ~ FilesComponent ~ onDragStarted ~ onDragStarted:');
     const itemIdx = this.searchFile.files.findIndex((f: FileDto) => f._id == file._id);
     this.searchFile.files.splice(itemIdx + 1, 0, { ...file, temp: true });
   }
 
   onDragEnded(file: FileDto) {
-    console.log("🚀 ~ FilesComponent ~ onDragEnded ~ onDragEnded:")
+    console.log('🚀 ~ FilesComponent ~ onDragEnded ~ onDragEnded:');
     _.remove(this.searchFile.files, { temp: true });
   }
 
   onSourceListExited(event: CdkDragExit<any>) {
-    console.log("🚀 ~ FilesComponent ~ onSourceListExited ~ onSourceListExited:")
+    console.log('🚀 ~ FilesComponent ~ onSourceListExited ~ onSourceListExited:');
     const itemIdx = this.searchFile.files.findIndex((file: FileDto) => file._id == event.item.data._id);
     const fileWithTemp = this.searchFile.files.find((file: FileDto) => file.temp === true);
     if (fileWithTemp) {
@@ -510,5 +555,3 @@ export class FilesComponent implements OnInit {
     this.chooseFileEvent.emit(this.selectedFiles);
   }
 }
-
-

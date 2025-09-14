@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { from, of } from 'rxjs';
+import { from, of, throwError } from 'rxjs';
 import { catchError, concatMap, delay, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { CredentialService } from 'src/app/shared/services/credential.service';
 import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, VerifyAuthRescue } from '../model/auth.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -52,6 +53,13 @@ export class AuthService {
             }
             return of(null); // No user found
           }),
+          catchError((err: HttpErrorResponse) => {
+            console.error('handleAuthenticationSuccess error:', err);
+            // ví dụ: hiện toast có mã lỗi server 500
+            const msg = err?.error?.message || err.message || 'Unexpected error';
+            // toast.error(`Get current user failed (${err.status}): ${msg}`);
+            return throwError(() => err); // rất quan trọng: **rethrow** để bên ngoài bắt được
+          }),
         ),
       ),
     );
@@ -85,9 +93,9 @@ export class AuthService {
       map((res: any) => {
         return res;
       }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }
@@ -103,9 +111,9 @@ export class AuthService {
       map((res: any) => {
         return res;
       }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }
@@ -124,9 +132,9 @@ export class AuthService {
       map((res: any) => {
         return res;
       }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }
@@ -138,9 +146,9 @@ export class AuthService {
       map((res: any) => {
         return res;
       }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }
@@ -152,9 +160,9 @@ export class AuthService {
       map((res: any) => {
         return res;
       }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }
@@ -166,9 +174,9 @@ export class AuthService {
       map((res: any) => {
         return res;
       }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }
@@ -180,9 +188,9 @@ export class AuthService {
       map((res: any) => {
         return res;
       }),
-      catchError((error) => {
-        //write log
-        return of(error.error);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }

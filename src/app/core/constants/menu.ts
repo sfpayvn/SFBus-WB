@@ -106,7 +106,7 @@ export class Menu {
               children: [
                 { label: 'Bus Provices', route: '/management/bus-management/bus-setting/bus-provinves' },
                 { label: 'Bus Stations', route: '/management/bus-management/bus-setting/bus-stations' },
-                { label: 'Bus Types', route: '/management/ bus-management/bus-setting/bus-types' },
+                { label: 'Bus Types', route: '/management/bus-management/bus-setting/bus-types' },
                 { label: 'Bus Services', route: '/management/bus-management/bus-setting/bus-services' },
                 { label: 'Seat Types', route: '/management/bus-management/bus-setting/seat-type' },
               ],

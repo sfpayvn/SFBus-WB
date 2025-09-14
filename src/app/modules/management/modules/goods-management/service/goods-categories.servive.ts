@@ -9,7 +9,7 @@ import { GoodsCategory2Create, GoodsCategory2Update } from '../model/goods-categ
   providedIn: 'root',
 })
 export class GoodsCategoriesService {
-  url = '/goods-category';
+  url = '/admin/goods-category';
 
   constructor(
     private apiGatewayService: ApiGatewayService,

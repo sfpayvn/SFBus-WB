@@ -21,6 +21,7 @@ import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
 import { CredentialService } from '@rsApp/shared/services/credential.service';
 import { AuthRescue, VerifyAuthRescue } from '../../model/auth.model';
+import { UserService } from '@rsApp/shared/services/user.service';
 
 @Component({
   selector: 'app-verify-otp',
@@ -38,6 +39,7 @@ export class VerifyOtpComponent implements OnInit {
     private utils: Utils,
     private authService: AuthService,
     private readonly _router: Router,
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,7 @@ export class VerifyOtpComponent implements OnInit {
 
   async initData() {
     this.currentUser = await this.credentialService.getCurrentUser();
+    console.log("🚀 ~ VerifyOtpComponent ~ initData ~ this.currentUser:", this.currentUser)
   }
 
   initForm() {
@@ -70,7 +73,7 @@ export class VerifyOtpComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (!this.form.valid) {
       this.utils.markFormGroupTouched(this.form);
       return;
@@ -84,13 +87,30 @@ export class VerifyOtpComponent implements OnInit {
       token: otp,
     };
 
-    this.authService.validateOtp(verifyAuthRescueDto).subscribe(async (res: any) => {
-      if (res.error) {
-        toast.error(res.error.message || res.message);
+    try {
+      const otpResult = await this.authService.validateOtp(verifyAuthRescueDto).toPromise();
+
+      if (!otpResult || otpResult.error) {
+        toast.error(otpResult?.error?.message || otpResult?.message || 'Xác thực OTP không thành công');
         return;
       }
+
+      const updateResult = await this.userService
+        .updateUserField(this.currentUser._id, 'isPhoneNumberVerified', true)
+        .toPromise();
+
+      if (updateResult !== true && (updateResult == null || (updateResult as any).error)) {
+        toast.error(
+          (updateResult as any)?.error?.message || (updateResult as any)?.message || 'Cập nhật trạng thái thất bại',
+        );
+        return;
+      }
+
       await this.credentialService.updateCurrentUserField('isPhoneNumberVerified', true);
       this._router.navigate(['/']);
-    });
+    } catch (err) {
+      console.error('OTP verification error:', err);
+      toast.error('Đã xảy ra lỗi trong quá trình xác thực, vui lòng thử lại sau.');
+    }
   }
 }

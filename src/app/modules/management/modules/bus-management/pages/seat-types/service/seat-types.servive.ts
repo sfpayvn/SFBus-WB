@@ -1,36 +1,34 @@
 import { Injectable } from '@angular/core';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, of, switchMap, tap, throwError } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { SeatType2Create, SeatType2Update } from '../model/seat-type.model';
 import { FilesService } from '../../../../files-center-management/service/files-center.servive';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SeatTypesService {
-  url = '/seat-types';
+  url = '/admin/seat-types';
 
-  constructor(
-    private apiGatewayService: ApiGatewayService,
-    private filesService: FilesService
-  ) { }
+  constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
 
   findAll() {
     const url = `${this.url}`;
-    return this.apiGatewayService.get(url).pipe(
-      tap((res: any) => { }),
-
-    );
+    return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
 
-  searchSeatType(pageIdx: number = 0, pageSize: number = 999, keyword: string = "", sortBy: string = "") {
-    const url = `${this.url}/search?pageIdx=${pageIdx}&pageSize=${pageSize}&keyword=${keyword}&sortBy=${sortBy}`;
-    return this.apiGatewayService.get(url, true).pipe(
-      tap((res: any) => { }),
+  searchSeatType(pageIdx: number = 0, pageSize: number = 999, keyword: string = '', sortBy: string = '') {
+    const body = {
+      pageIdx,
+      pageSize,
+      keyword,
+      sortBy,
+    };
 
-    );
+    const url = `${this.url}/search`;
+    return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
   }
-
 
   processCreateBusService(seatTypeIconFile: FileList, seatType2Create: SeatType2Create) {
     const url = this.url;
@@ -41,7 +39,7 @@ export class SeatTypesService {
           // Gắn các liên kết trả về từ uploadFiles
           seatType2Create.iconId = res[0]._id;
           return this.createSeatType(seatType2Create);
-        })
+        }),
       );
     } else {
       // Nếu không có file, chỉ gọi post trực tiếp
@@ -52,8 +50,7 @@ export class SeatTypesService {
   createSeatType(seatType2Create: SeatType2Create) {
     const url = this.url;
     return this.apiGatewayService.post(url, seatType2Create).pipe(
-      tap((res: any) => {
-      }),
+      tap((res: any) => {}),
       catchError((error) => {
         //write log
         return of([]);
@@ -69,7 +66,7 @@ export class SeatTypesService {
           // Gắn các liên kết trả về từ uploadFiles
           seatType2Update.iconId = res[0]._id;
           return this.updateSeatType(seatType2Update);
-        })
+        }),
       );
     } else {
       // Nếu không có file, chỉ gọi post trực tiếp
@@ -84,20 +81,15 @@ export class SeatTypesService {
       tap((res: any) => {
         // Xử lý response nếu cần
       }),
-      catchError((error) => {
-        // Ghi log lỗi
-        console.error(error);
-        return of([]);
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
       }),
     );
   }
 
   deleteSeatType(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
-    return this.apiGatewayService.delete(deleteOptionUrl).pipe(
-      tap((res: any) => {
-      }),
-
-    );
+    return this.apiGatewayService.delete(deleteOptionUrl).pipe(tap((res: any) => {}));
   }
 }

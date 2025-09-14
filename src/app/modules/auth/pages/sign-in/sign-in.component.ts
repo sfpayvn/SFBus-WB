@@ -64,6 +64,8 @@ export class SignInComponent implements OnInit {
         return;
       }
       this._router.navigate(['/']);
+    }, (error) => {
+      toast.error('Login failed. Please try again.');
     });
   }
 }
