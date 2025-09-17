@@ -1,4 +1,4 @@
-<mat-dialog-title class="text-center pt-3">
+<mat-dialog-title class="pt-3 text-center">
   <span class="text-xl font-bold">{{ this.data.title }}</span>
   <button class="absolute right-3" [matDialogClose]="">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
@@ -10,23 +10,38 @@
   </button>
 </mat-dialog-title>
 <mat-dialog-content class="pb-5 pt-3">
-  <form class="sm:min-w-36 md:min-w-96 mx-auto" [formGroup]="busProvinceForm" (ngSubmit)="onSubmit()">
+  <form
+    class="sm:min-w-36 md:min-w-96 mx-auto"
+    [formGroup]="busProvinceForm"
+    *ngIf="busProvinceForm"
+    (ngSubmit)="onSubmit()">
     <div class="mb-5">
-      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Name</label>
-      <input
-        type="text"
-        id="busType-name"
-        formControlName="name"
-        [ngClass]="{'!border-red-500' : busProvinceForm.controls['name'].errors?.['required'] && busProvinceForm.controls['name'].touched}"
-        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" />
-      <p
-        class="mt-1 text-xs text-red-500"
-        *ngIf="busProvinceForm.controls['name'].errors?.['required'] && busProvinceForm.controls['name'].touched">
-        Vui lòng điền vào trường này
-      </p>
+      <nz-form-item class="!flex !w-full !flex-col">
+        <nz-form-label nzFor="name" class="!flex !items-center !justify-start !text-sm">Tỉnh/Thành Phố</nz-form-label>
+        <nz-form-control [nzErrorTip]="busProvinceNameErrorTpl" class="!flex flex-col">
+          <nz-input-group [nzSuffix]="busProvinceNameClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
+            <input type="text" nz-input formControlName="name" placeholder="Nhập Tên Tỉnh/Thành Phố" />
+          </nz-input-group>
+          <ng-template #busProvinceNameClearTpl>
+            @if(f['name'].value){
+            <span
+              nz-icon
+              class="ant-input-clear-icon"
+              nzTheme="fill"
+              nzType="close-circle"
+              (click)="f['name'].patchValue('')"></span>
+            }
+          </ng-template>
+          <ng-template #busProvinceNameErrorTpl let-control>
+            <span class="mt-1 !text-xs text-red-500">
+              @if(f['name'].errors?.['required']) { Vui lòng nhập tên tỉnh/thành phố }
+            </span>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
     </div>
     <div class="mb-5">
-      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Bus Stations</label>
+      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Các điểm dừng</label>
       <diV class="flex items-center justify-center gap-4">
         <div class="drag-drop-container">
           <!-- <div class="flex w-full pb-4">
@@ -104,7 +119,6 @@
 </mat-dialog-content>
 <mat-dialog-actions class="line-block space-x-4 text-center">
   <button
-    [matDialogClose]="this.busProvince"
     (click)="onSubmit()"
     class="bg-primary text-primary-foreground flex-none rounded-md px-4 py-2.5 text-xs font-semibold">
     SAVE

@@ -28,7 +28,7 @@ export class BusProvincesService {
     return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
   }
 
-  createBusProvince(busServiceIconFile: FileList, busService2Create: BusProvince2Create) {
+  createBusProvince(busService2Create: BusProvince2Create) {
     const url = this.url;
 
     return this.apiGatewayService.post(url, busService2Create).pipe(tap((res: any) => {}));

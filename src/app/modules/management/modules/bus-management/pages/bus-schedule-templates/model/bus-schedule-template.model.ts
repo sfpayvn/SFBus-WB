@@ -29,7 +29,7 @@ export class BusScheduleTemplate {
   busTemplateId: string = '';
   busRouteId: string = '';
   busRoute: BusScheduleTemplateRoute | undefined;
-  busSeatLayoutTemplateBlockIds: string[] = [];
+  busSeatLayoutBlockIds: string[] = [];
   busSeatPrices: BusScheduleTemplateSeatPrices[] = [];
   selected: boolean = false;
 }

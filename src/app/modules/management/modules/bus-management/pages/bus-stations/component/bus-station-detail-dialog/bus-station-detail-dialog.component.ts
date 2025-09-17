@@ -15,7 +15,7 @@ export interface DialogData {
   selector: 'app-bus-station-detail-dialog',
   templateUrl: './bus-station-detail-dialog.component.html',
   styleUrl: './bus-station-detail-dialog.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class BusStationDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusStationDetailDialogComponent>);
@@ -23,28 +23,24 @@ export class BusStationDetailDialogComponent implements OnInit {
   busStation: BusStation2Create = this.data.busStation ?? new BusStation2Create();
   busProvices: BusProvince[] = this.data.busProvices ?? [];
 
-
   busStationForm!: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private utils: Utils,
-  ) { }
+  constructor(private fb: FormBuilder, private utils: Utils) {}
 
   ngOnInit(): void {
     this.initForm();
   }
 
   private async initForm() {
-
-    const busProvice = this.busProvices.find(busProvice => busProvice._id === this.busStation.provinceId);
+    const busProvice = this.busProvices.find((busProvice) => busProvice._id === this.busStation.provinceId);
 
     this.busStationForm = this.fb.group({
       name: [this.busStation.name, [Validators.required]],
-      busProvice: [busProvice?._id],
+      detailAddress: [this.busStation.detailAddress],
+      location: [this.busStation.location],
+      busProviceId: [busProvice?._id],
     });
   }
-
 
   closeDialog(): void {
     this.dialogRef.close();
@@ -55,11 +51,12 @@ export class BusStationDetailDialogComponent implements OnInit {
       this.utils.markFormGroupTouched(this.busStationForm);
       return;
     }
-    const { name } = this.busStationForm.getRawValue();
+    const { name, busProviceId } = this.busStationForm.getRawValue();
     const data = {
       ...this.busStation,
-      name
-    }
+      name,
+      provinceId: busProviceId,
+    };
     this.dialogRef.close(data);
   }
 }

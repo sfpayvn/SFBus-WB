@@ -14,7 +14,7 @@ export class SeatTypesService {
   constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
 
   findAll() {
-    const url = `${this.url}`;
+    const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
 

@@ -18,6 +18,7 @@ export class BusStation2Create {
   icon!: string;
   name: string = '';
   detailAddress: string = '';
+  location: string = '';
   provinceId: string = '';
 }
 

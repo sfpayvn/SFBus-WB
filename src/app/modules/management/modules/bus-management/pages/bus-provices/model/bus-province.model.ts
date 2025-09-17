@@ -13,10 +13,8 @@ export class BusProvince {
 }
 
 export class BusProvince2Create {
-  _id: string = '';
   icon!: string;
   name: string = '';
 }
 
-export class BusProvince2Update extends BusProvince2Create {
-}
+export class BusProvince2Update extends BusProvince2Create {}

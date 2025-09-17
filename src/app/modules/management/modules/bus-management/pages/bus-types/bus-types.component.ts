@@ -11,7 +11,7 @@ import { Utils } from 'src/app/shared/utils/utils';
   selector: 'app-bus-types',
   templateUrl: './bus-types.component.html',
   styleUrls: ['./bus-types.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusTypesComponent implements OnInit {
   searchBusType: SearchBusType = new SearchBusType();
@@ -25,11 +25,7 @@ export class BusTypesComponent implements OnInit {
 
   isLoadingBusType: boolean = false;
 
-  constructor(
-    private busTypesService: BusTypesService,
-    private dialog: MatDialog,
-    private utils: Utils
-  ) { }
+  constructor(private busTypesService: BusTypesService, private dialog: MatDialog, private utils: Utils) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -69,7 +65,7 @@ export class BusTypesComponent implements OnInit {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete BusType',
         content:
@@ -77,13 +73,13 @@ export class BusTypesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -105,20 +101,22 @@ export class BusTypesComponent implements OnInit {
   editBusType(busType: BusType): void {
     const dialogRef = this.dialog.open(BusTypeDetailDialogComponent, {
       data: {
-        title: 'Edit BusType',
+        title: 'Cập nhật Loại Xe',
         busType: { ...busType },
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busTypesService.updateBusType(result).subscribe({
+        const busType2Update = { ...result.busType };
+
+        this.busTypesService.updateBusType(busType2Update).subscribe({
           next: (res: BusType) => {
             if (res) {
               this.searchBusType.busTypes = this.searchBusType.busTypes.map((busType: BusType) =>
                 busType._id === res._id ? { ...busType, ...res } : busType,
               );
-              toast.success('BusType updated successfully');
+              toast.success('Cập nhật Loại Xe thành công');
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -130,17 +128,17 @@ export class BusTypesComponent implements OnInit {
   addBusType(): void {
     const dialogRef = this.dialog.open(BusTypeDetailDialogComponent, {
       data: {
-        title: 'Add New BusType',
+        title: 'Thêm Loại Xe',
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busTypesService.createBusType(result).subscribe({
+        this.busTypesService.createBusType(result.busType).subscribe({
           next: (res: BusType) => {
             if (res) {
               this.loadData();
-              toast.success('BusType added successfully');
+              toast.success('Thêm Loại Xe thành công');
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -173,7 +171,7 @@ export class BusTypesComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });

@@ -7,7 +7,7 @@ import { Driver, Driver2Create, Driver2Update } from '../model/driver.model';
   providedIn: 'root',
 })
 export class DriversService {
-  url = '/drivers';
+  url = '/admin/drivers';
 
   constructor(private apiGatewayService: ApiGatewayService) { }
 

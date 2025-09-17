@@ -14,6 +14,7 @@ export interface DialogData {
 }
 
 export class BusProvince2CreateUI extends BusProvince2Create {
+  _id: string = '';
   busStations: BusStation[] = [];
 }
 
@@ -21,7 +22,7 @@ export class BusProvince2CreateUI extends BusProvince2Create {
   selector: 'app-create-bus-province-dialog',
   templateUrl: './bus-province-detail-dialog.component.html',
   styleUrls: ['./bus-province-detail-dialog.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusProvinceDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusProvinceDetailDialogComponent>);
@@ -35,15 +36,11 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   filteredBusStations: BusStation[] = [];
   filteredBusProvinceStations: BusStation[] = [];
 
-  constructor(
-    private fb: FormBuilder,
-    private utils: Utils,
-  ) { }
+  constructor(private fb: FormBuilder, private utils: Utils) {}
 
   async ngOnInit(): Promise<void> {
     await this.initData();
     this.initForm();
-
   }
 
   private async initForm() {
@@ -52,11 +49,15 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     });
   }
 
+  get f() {
+    return this.busProvinceForm.controls;
+  }
+
   async initData() {
     this.busStations = await _.difference(this.busStations, this.busProvince.busStations);
-    this.busStations = this.busStations.map(busStation => ({
+    this.busStations = this.busStations.map((busStation) => ({
       ...busStation,
-      selected: false
+      selected: false,
     }));
     this.filteredBusStations = this.busStations;
     this.filteredBusProvinceStations = this.busProvince.busStations;
@@ -73,42 +74,41 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     }
     const { name } = this.busProvinceForm.getRawValue();
 
-    const busStationsOfProvince = this.filteredBusProvinceStations.map(busStation => ({
+    const busStationsOfProvince = this.filteredBusProvinceStations.map((busStation) => ({
       ...busStation,
-      provinceId: this.busProvince._id
+      provinceId: this.busProvince._id,
     }));
 
-
-    const busStationNotAsssign = _.difference(this.busProvince.busStations, this.filteredBusProvinceStations).map(busStation => ({
-      ...busStation,
-      provinceId: ''
-    }));
+    const busStationNotAsssign = _.difference(this.busProvince.busStations, this.filteredBusProvinceStations).map(
+      (busStation) => ({
+        ...busStation,
+        provinceId: '',
+      }),
+    );
 
     const data = {
       busProvince: {
         ...this.busProvince,
         name,
       },
-      busStations2Update: _.union(busStationsOfProvince, busStationNotAsssign)
-    }
+      busStations2Update: _.union(busStationsOfProvince, busStationNotAsssign),
+    };
     this.dialogRef.close(data);
   }
 
   searchBusStations($event: any) {
-    const keyword = $event.target.value;;
+    const keyword = $event.target.value;
 
     const lowerKeyword = keyword.toLowerCase();
-    this.filteredBusStations = this.busStations.filter(station =>
-      station.name.toLowerCase().includes(lowerKeyword)
-    );
+    this.filteredBusStations = this.busStations.filter((station) => station.name.toLowerCase().includes(lowerKeyword));
   }
 
   searchBusProvinceStations($event: any) {
-    const keyword = $event.target.value;;
+    const keyword = $event.target.value;
 
     const lowerKeyword = keyword.toLowerCase();
-    this.filteredBusProvinceStations = this.busProvince.busStations.filter(station =>
-      station.name.toLowerCase().includes(lowerKeyword)
+    this.filteredBusProvinceStations = this.busProvince.busStations.filter((station) =>
+      station.name.toLowerCase().includes(lowerKeyword),
     );
   }
 
@@ -116,11 +116,11 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     this.isRotated = !this.isRotated;
 
     // Tách riêng các phần tử được chọn và không được chọn từ mỗi mảng
-    const selectedProvince = this.filteredBusProvinceStations?.filter(b => b.selected) || [];
-    const unselectedProvince = this.filteredBusProvinceStations?.filter(b => !b.selected) || [];
+    const selectedProvince = this.filteredBusProvinceStations?.filter((b) => b.selected) || [];
+    const unselectedProvince = this.filteredBusProvinceStations?.filter((b) => !b.selected) || [];
 
-    const selectedStations = this.filteredBusStations?.filter(b => b.selected) || [];
-    const unselectedStations = this.filteredBusStations?.filter(b => !b.selected) || [];
+    const selectedStations = this.filteredBusStations?.filter((b) => b.selected) || [];
+    const unselectedStations = this.filteredBusStations?.filter((b) => !b.selected) || [];
 
     // Đổi chỗ các phần được chọn giữa hai mảng:
     // - Mảng filteredBusStations nhận phần được chọn từ mảng busProvinceStations, sau đó là phần chưa chọn của chính nó.
@@ -129,10 +129,9 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     this.filteredBusProvinceStations = [...selectedStations, ...unselectedProvince];
 
     // Reset trạng thái selected cho tất cả các phần tử
-    this.filteredBusStations = this.filteredBusStations.map(b => ({ ...b, selected: false }));
-    this.filteredBusProvinceStations = this.filteredBusProvinceStations.map(b => ({ ...b, selected: false }));
+    this.filteredBusStations = this.filteredBusStations.map((b) => ({ ...b, selected: false }));
+    this.filteredBusProvinceStations = this.filteredBusProvinceStations.map((b) => ({ ...b, selected: false }));
   }
-
 
   // toggleRotationBusStation() {
   //   // Đảo trạng thái lật của bus station
@@ -161,12 +160,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
   }
 }

@@ -8,7 +8,7 @@ import { FilesService } from '../../files-center-management/service/files-center
   providedIn: 'root',
 })
 export class UsersService {
-  url = '/users';
+  url = '/admin/users';
 
   constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
 

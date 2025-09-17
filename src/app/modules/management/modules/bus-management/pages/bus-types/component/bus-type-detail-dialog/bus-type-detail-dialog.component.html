@@ -10,21 +10,37 @@
   </button>
 </mat-dialog-title>
 <mat-dialog-content class="pb-5 pt-3">
-  <form class="sm:min-w-36 md:min-w-96 mx-auto">
+  <form class="sm:min-w-36 md:min-w-96 mx-auto" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="mb-5">
-      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">NAME</label>
-      <input
-        type="text"
-        id="busType-name"
-        [(ngModel)]="this.busType.name"
-        [ngModelOptions]="{ standalone: true }"
-        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" />
+      <nz-form-item class="!flex !w-full !flex-col">
+        <nz-form-label nzFor="name" class="!flex !items-center !justify-start !text-sm">Loại Xe</nz-form-label>
+        <nz-form-control [nzErrorTip]="busTypeNameErrorTpl" class="!flex flex-col">
+          <nz-input-group [nzSuffix]="busTypeNameClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
+            <input type="text" nz-input formControlName="name" placeholder="Nhập Tên Loại Xe" />
+          </nz-input-group>
+          <ng-template #busTypeNameClearTpl>
+            @if(f['name'].value){
+            <span
+              nz-icon 
+              class="ant-input-clear-icon"
+              nzTheme="fill"
+              nzType="close-circle"
+              (click)="f['name'].patchValue('')"></span>
+            }
+          </ng-template>
+          <ng-template #busTypeNameErrorTpl let-control>
+            <span class="mt-1 !text-xs text-red-500">
+              @if(f['name'].errors?.['required']) { Vui lòng nhập tên loại xe }
+            </span>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
     </div>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions class="line-block space-x-4 text-center">
   <button
-    [matDialogClose]="this.busType"
+    (click)="onSubmit()"
     class="bg-primary text-primary-foreground flex-none rounded-md px-4 py-2.5 text-xs font-semibold">
     SAVE
   </button>

@@ -72,7 +72,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
   rows: number = 11; // Number of rows in the matrix
   cols: number = 7; // Number of columns in the matrix
   busLayoutTemplateReview!: BusTemplateWithLayoutsMatrix;
-  busSeatLayoutTemplateBlockIds: string[] = [];
+  busSeatLayoutBlockIds: string[] = [];
 
   seatTypes: SeatType[] = [];
 
@@ -157,9 +157,9 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
       busRoute,
       busSeatPrices = [],
       busDriverIds = [],
-      busSeatLayoutTemplateBlockIds = [],
+      busSeatLayoutBlockIds = [],
     } = this.busScheduleTemplate || {};
-    this.busSeatLayoutTemplateBlockIds = busSeatLayoutTemplateBlockIds;
+    this.busSeatLayoutBlockIds = busSeatLayoutBlockIds;
     this.busScheduleTemplateDetailForm = this.fb.group({
       name: [name, [Validators.required]],
       busTemplateId: [busTemplateId, [Validators.required]],
@@ -342,13 +342,13 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
 
     try {
       // Wait for the async function to retrieve block IDs
-      const busSeatLayoutTemplateBlockIds = await this.getBusSeatLayoutTemplateBlock();
+      const busSeatLayoutBlockIds = await this.getBusSeatLayoutTemplateBlock();
 
       // Prepare data for creation or update
       const data = this.busScheduleTemplateDetailForm.getRawValue();
       const busSchedule2Create: BusScheduleTemplate2Create = {
         ...data,
-        busSeatLayoutTemplateBlockIds,
+        busSeatLayoutBlockIds,
       };
 
       const busSeatPricesData = this.busSeatPricesForm.getRawValue();
@@ -358,7 +358,6 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
         price: Number(price.price), // Ensure price is a number
         seatTypeName: price.seatTypeName, // Keep the seat type name
       }));
-
 
       // Check if a template exists for updating; otherwise, create a new one
       if (this.busScheduleTemplate) {
@@ -376,13 +375,17 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     }
   }
 
+  getSeatTypeById(id: string): SeatType | undefined {
+    return this.seatTypes.find((seatType: SeatType) => seatType._id === id);
+  }
+
   async getBusSeatLayoutTemplateBlock(): Promise<string[]> {
     const blockIds: string[] = []; // Collect block IDs in this array
     // Iterate through layouts to retrieve block IDs
     this.busLayoutTemplateReview.layoutsForMatrix.forEach((layout: any) => {
       layout.seatsLayoutForMatrix.forEach((row: any) => {
         row.forEach((cell: any) => {
-          if (cell.status === 'blocked') {
+          if (cell.status === 'blocked' && this.getSeatTypeById(cell.typeId)?.isEnv === false) {
             blockIds.push(cell._id); // Add the block ID to the array
           }
         });
@@ -409,6 +412,10 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     this.busScheduleTemplatesService.createBusScheduleTemplate(busSchedule2Create).subscribe({
       next: (res: BusScheduleTemplate) => {
         if (res) {
+          this.busScheduleTemplate = res;
+          const updatedState = { ...history.state, busScheduleTemplate: JSON.stringify(res) };
+          window.history.replaceState(updatedState, '', window.location.href);
+          this.initForm();
           toast.success('Bus Route added successfully');
         }
       },

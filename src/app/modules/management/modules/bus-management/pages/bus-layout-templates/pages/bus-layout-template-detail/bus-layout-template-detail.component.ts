@@ -268,6 +268,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   updateCellType(cell: any, selectedType: any): void {
     if (selectedType?.isEnv) {
       cell.status = 'blocked'; // Đặt trạng thái là blocked nếu loại là env
+    } else {
+      cell.status = 'available'; // Đặt trạng thái là available nếu loại không phải env
     }
 
     cell.typeId = this.currentSeatTypeId; // Cập nhật loại của ô
@@ -466,6 +468,10 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     this.busLayoutTemplatesService.createBusLayoutTemplate(busTemplate2Create).subscribe({
       next: (res: BusLayoutTemplate) => {
         if (res) {
+          this.busLayoutTemplate = res;
+          const updatedState = { ...history.state, busTemplate: JSON.stringify(res) };
+          window.history.replaceState(updatedState, '', window.location.href);
+          this.router.navigate([], { queryParams: { id: res._id } });
           toast.success('BusLayoutTemplate added successfully');
         }
       },
@@ -501,7 +507,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   }
 
   async resetLayout() {
-    // this.usedNames.clear();
+    this.usedNames.clear();
     this.layouts.controls[this.selectedIndex].get('seats')?.patchValue(await this.initializeMaTrix());
   }
 }

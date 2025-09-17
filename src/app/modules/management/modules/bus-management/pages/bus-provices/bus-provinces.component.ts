@@ -12,16 +12,15 @@ import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { Utils } from 'src/app/shared/utils/utils';
 
 export interface filteredProvinces extends BusProvince {
-  busStations: BusStation[],
-};
+  busStations: BusStation[];
+}
 
 @Component({
   selector: 'app-bus-provinces',
   templateUrl: './bus-provinces.component.html',
   styleUrls: ['./bus-provinces.component.scss'],
-  standalone: false
+  standalone: false,
 })
-
 export class BusProvincesComponent implements OnInit {
   searchBusProvince: SearchBusProvince = new SearchBusProvince();
   selectAll: boolean = false;
@@ -38,15 +37,16 @@ export class BusProvincesComponent implements OnInit {
   busStations: BusStation[] = [];
 
   filteredProvinces: filteredProvinces[] = [];
-  searchKeyword: string = "";
+  searchKeyword: string = '';
   timeout: any;
 
   constructor(
     private busProvincesService: BusProvincesService,
     private busStationsService: BusStationsService,
     private utilsModal: UtilsModal,
-    private utils: Utils
-  ) { }
+    private utils: Utils,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -55,7 +55,12 @@ export class BusProvincesComponent implements OnInit {
   loadData(): void {
     this.isLoadingBusProvince = true;
 
-    const searchBusProvince$ = this.busProvincesService.searchBusProvince(this.pageIdx, this.pageSize, this.keyword, this.sortBy);
+    const searchBusProvince$ = this.busProvincesService.searchBusProvince(
+      this.pageIdx,
+      this.pageSize,
+      this.keyword,
+      this.sortBy,
+    );
     const searchBusStation$ = this.busStationsService.findAll(true);
 
     let request = [searchBusProvince$, searchBusStation$];
@@ -70,7 +75,6 @@ export class BusProvincesComponent implements OnInit {
       }
       this.isLoadingBusProvince = false;
     });
-
   }
 
   filterProvinces() {
@@ -81,10 +85,12 @@ export class BusProvincesComponent implements OnInit {
       this.filteredProvinces = this.searchBusProvince.busProvinces
         .map((province) => {
           const matchingBusStations = this.busStations.filter(
-            (busStation: any) => busStation.provinceId === province._id && busStation.name.toLowerCase().includes(keyword),
+            (busStation: any) =>
+              busStation.provinceId === province._id && busStation.name.toLowerCase().includes(keyword),
           );
           const remainingBusStations = this.busStations.filter(
-            (busStation: any) => busStation.provinceId === province._id && !busStation.name.toLowerCase().includes(keyword),
+            (busStation: any) =>
+              busStation.provinceId === province._id && !busStation.name.toLowerCase().includes(keyword),
           );
           return {
             ...province,
@@ -103,7 +109,10 @@ export class BusProvincesComponent implements OnInit {
         });
       this.isLoadingBusProvince = false;
       this.expandMatchingAccordions();
-      console.log("🚀 ~ BusStationsComponent ~ this.timeout=setTimeout ~ this.filteredProvinces:", this.filteredProvinces)
+      console.log(
+        '🚀 ~ BusStationsComponent ~ this.timeout=setTimeout ~ this.filteredProvinces:',
+        this.filteredProvinces,
+      );
     }, 300); // Trì hoãn tìm kiếm 300ms
   }
 
@@ -131,52 +140,52 @@ export class BusProvincesComponent implements OnInit {
   }
 
   deleteBusProvince(id: string): void {
-    // const dialogRef = this.dialog.open(MaterialDialogComponent, {
-    //   data: {
-    //     icon: {
-    //       type: 'dangerous'
-    //     },
-    //     title: 'Delete BusProvince',
-    //     content:
-    //       'Are you sure you want to delete this busProvince? All of your data will be permanently removed. This action cannot be undone.',
-    //     btn: [
-    //       {
-    //         label: 'NO',
-    //         type: 'cancel'
-    //       },
-    //       {
-    //         label: 'YES',
-    //         type: 'submit'
-    //       },
-    //     ]
-    //   },
-    // });
-
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result) {
-    //     this.busProvincesService.deleteBusProvince(id).subscribe({
-    //       next: (res: any) => {
-    //         if (res) {
-    //           this.searchBusProvince.busProvinces = this.searchBusProvince.busProvinces.filter((busProvince) => busProvince._id !== id);
-    //           toast.success('BusProvince deleted successfully');
-    //         }
-    //       },
-    //       error: (error: any) => this.utils.handleRequestError(error),
-    //     });
-    //   }
-    // });
+    const dialogRef = this.dialog.open(MaterialDialogComponent, {
+      data: {
+        icon: {
+          type: 'dangerous',
+        },
+        title: 'Delete BusProvince',
+        content:
+          'Are you sure you want to delete this busProvince? All of your data will be permanently removed. This action cannot be undone.',
+        btn: [
+          {
+            label: 'NO',
+            type: 'cancel',
+          },
+          {
+            label: 'YES',
+            type: 'submit',
+          },
+        ],
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.busProvincesService.deleteBusProvince(id).subscribe({
+          next: (res: any) => {
+            if (res) {
+              this.searchBusProvince.busProvinces = this.searchBusProvince.busProvinces.filter(
+                (busProvince) => busProvince._id !== id,
+              );
+              this.filterProvinces();
+              toast.success('BusProvince deleted successfully');
+            }
+          },
+          error: (error: any) => this.utils.handleRequestError(error),
+        });
+      }
+    });
   }
 
   editBusProvince(busProvince: BusProvince): void {
-    console.log("🚀 ~ BusProvincesComponent ~ editBusProvince ~ busProvince:", busProvince)
     const data = {
-      title: 'Edit Bus Province',
+      title: 'Chỉnh sửa Tỉnh/Thành Phố',
       busProvince: { ...busProvince },
-      busStations: this.busStations
+      busStations: this.busStations,
     };
     this.utilsModal.openModal(BusProvinceDetailDialogComponent, data, 'medium').subscribe((result) => {
       if (result) {
-        console.log("🚀 ~ BusProvincesComponent ~ this.utilsModal.openModal ~ result:", result)
         const updateBusProvince$ = this.busProvincesService.updateBusProvince(result.busProvince);
         const updateBusStations$ = this.busStationsService.updateBusStations(result.busStations2Update);
 
@@ -188,37 +197,34 @@ export class BusProvincesComponent implements OnInit {
               this.loadData();
               toast.success('Cập nhập thành công ');
             }
-          }, error: (error: any) => this.utils.handleRequestError(error),
+          },
+          error: (error: any) => this.utils.handleRequestError(error),
         });
-
       }
     });
   }
 
   addBusProvince(): void {
-    // const dialogRef = this.dialog.open(CreateEditBusProvinceDialogComponent, {
-    //   data: {
-    //     title: 'Add New BusProvince',
-    //   },
-    // });
+    const data = {
+      title: 'Thêm Tỉnh/Thành Phố',
+    };
 
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result) {
+    this.utilsModal.openModal(BusProvinceDetailDialogComponent, data, 'medium').subscribe((result) => {
+      if (result) {
+        const busProvince2Create = new BusProvince2Create();
+        busProvince2Create.name = result.busProvince.name;
 
-    //     const busProvince2Create = new BusProvince2Create();
-    //     busProvince2Create.name = result.name;
-
-    //     this.busProvincesService.createBusProvince(result.file, busProvince2Create).subscribe({
-    //       next: (res: BusProvince) => {
-    //         if (res) {
-    //           this.loadData();
-    //           toast.success('BusProvince added successfully');
-    //         }
-    //       },
-    //       error: (error: any) => this.utils.handleRequestError(error),
-    //     });
-    //   }
-    // });
+        this.busProvincesService.createBusProvince(busProvince2Create).subscribe({
+          next: (res: BusProvince) => {
+            if (res) {
+              this.loadData();
+              toast.success('BusProvince added successfully');
+            }
+          },
+          error: (error: any) => this.utils.handleRequestError(error),
+        });
+      }
+    });
   }
 
   reloadBusProvincePage(data: any): void {
@@ -245,7 +251,7 @@ export class BusProvincesComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });

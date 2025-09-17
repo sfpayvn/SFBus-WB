@@ -9,28 +9,21 @@ import { GoodsManagementRoutingModule } from './goods-management-routing.module'
 import { GoodsCategoriesComponent } from './pages/goods-categories/goods-categories.component';
 import { GoodsCategoryDetailDialogComponent } from './component/goods-category-detail-dialog/goods-category-detail-dialog.component';
 import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
+import { NZModule } from '@rsApp/library-modules/nz-module';
 
 @NgModule({
-  declarations: [
-    GoodsDetailComponent,
-    GoodsComponent,
-    GoodsCategoriesComponent,
-    GoodsCategoryDetailDialogComponent,
-  ],
+  declarations: [GoodsDetailComponent, GoodsComponent, GoodsCategoriesComponent, GoodsCategoryDetailDialogComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     GoodsManagementRoutingModule,
     MangementModule,
-    FilesCenterManagementModule
+    FilesCenterManagementModule,
+    NZModule,
   ],
 
-  providers: [
-    provideNgxMask()
-  ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  providers: [provideNgxMask()],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class GoodsManagementModule { }
+export class GoodsManagementModule {}

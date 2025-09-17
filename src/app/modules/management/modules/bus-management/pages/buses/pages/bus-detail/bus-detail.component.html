@@ -116,7 +116,7 @@
                 <label class="text-xs text-green-700">Services:</label>
                 <div class="flex flex-row">
                   @for(busService of busTemplateReview.busServices; track busService){
-                  <svg-icon svgClass="w-6 h-full mx-1" [src]="busService.icon"></svg-icon>
+                  <svg-icon svgClass="w-6 h-full mx-1" [src]="busService.iconId"></svg-icon>
                   }
                 </div>
               </nz-skeleton>

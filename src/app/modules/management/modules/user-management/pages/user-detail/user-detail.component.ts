@@ -330,6 +330,7 @@ export class UserDetailComponent implements OnInit {
           return;
         }
         toast.success('User added successfully');
+        this.backPage();
       },
       error: (error: any) => this.utils.handleRequestError(error), // Xử lý lỗi
     });

@@ -46,7 +46,7 @@
               @for (busService of busServices; track busService) {
               <nz-option nzCustomContent [nzLabel]="busService.name" [nzValue]="busService._id">
                 <div class="flex items-center">
-                  <svg-icon [src]="busService.icon" [svgClass]="'h-5 w-5'"> </svg-icon>
+                  <svg-icon [src]="busService.iconId" [svgClass]="'h-5 w-5'"> </svg-icon>
                   <span class="pl-4 !font-medium">
                     {{ busService.name }}
                   </span>
@@ -126,7 +126,7 @@
           class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
           nz-button
           nzType="default"
-          (click)="editBusTempate()">
+          (click)="editBusLayoutTempate()">
           Edit Layout BusTempate
         </button>
       </div>

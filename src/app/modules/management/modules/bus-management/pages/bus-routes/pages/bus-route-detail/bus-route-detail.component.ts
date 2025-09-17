@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BusRoute, BusRoute2Create, BusRoute2Update } from '../../model/bus-route.model';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
 import { combineLatest } from 'rxjs';
 import { Router } from '@angular/router';
 import { toast } from 'ngx-sonner';
@@ -17,10 +17,9 @@ import { BusProvince } from '../../../bus-provices/model/bus-province.model';
   selector: 'app-bus-route-detail',
   templateUrl: './bus-route-detail.component.html',
   styleUrl: './bus-route-detail.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class BusRouteDetailComponent implements OnInit {
-
   busRouteDetailForm!: FormGroup;
 
   busRoute!: BusRoute;
@@ -38,19 +37,17 @@ export class BusRouteDetailComponent implements OnInit {
     private busStationsService: BusStationsService,
     private busProvincesService: BusProvincesService,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
     this.initData();
   }
 
-
   async getQueryParams() {
     const params = history.state;
     if (params) {
-      this.busRoute = params["busRoute"] ? JSON.parse(params["busRoute"]) : null;
-      console.log("🚀 ~ BusRouteDetailComponent ~ getQueryParams ~ this.busRoute:", this.busRoute)
+      this.busRoute = params['busRoute'] ? JSON.parse(params['busRoute']) : null;
     }
   }
 
@@ -74,10 +71,11 @@ export class BusRouteDetailComponent implements OnInit {
       name: [name, [Validators.required]],
       distance: [distance, [Validators.required]],
       distanceTime: [distanceTime, [Validators.required]],
-      breakPoints: this.fb.array(breakPoints.length > 0
-        ? breakPoints.map(bp => this.createBreakPoint(bp.busStationId))
-        : [this.createBreakPoint(), this.createBreakPoint()] // Add 2 default breakpoints if none exist
-      )
+      breakPoints: this.fb.array(
+        breakPoints.length > 0
+          ? breakPoints.map((bp) => this.createBreakPoint(bp.busStationId))
+          : [this.createBreakPoint(), this.createBreakPoint()], // Add 2 default breakpoints if none exist
+      ),
     });
   }
 
@@ -94,12 +92,10 @@ export class BusRouteDetailComponent implements OnInit {
   filterProvinces() {
     this.filteredProvinces = this.busProvinces
       // Lọc bỏ các tỉnh không có bus station
-      .filter((province) =>
-        this.busStations.some((busStation: any) => busStation.provinceId === province._id)
-      )
+      .filter((province) => this.busStations.some((busStation: any) => busStation.provinceId === province._id))
       .map((province) => {
         const matchingBusStations = this.busStations.filter(
-          (busStation: any) => busStation.provinceId === province._id
+          (busStation: any) => busStation.provinceId === province._id,
         );
         return {
           ...province,
@@ -118,7 +114,6 @@ export class BusRouteDetailComponent implements OnInit {
     }
   }
 
-
   get breakPoints(): FormArray {
     return this.busRouteDetailForm.get('breakPoints') as FormArray;
   }
@@ -131,8 +126,8 @@ export class BusRouteDetailComponent implements OnInit {
   checkBreakPointsDuplicateErrors(): boolean {
     const breakPoints = this.busRouteDetailForm?.get('breakPoints') as FormArray;
     const busStationIds = breakPoints?.controls
-      .map(control => control.get('busStationId')?.value)
-      .filter(id => id && id.trim() !== ''); // Filter out empty or invalid values
+      .map((control) => control.get('busStationId')?.value)
+      .filter((id) => id && id.trim() !== ''); // Filter out empty or invalid values
 
     return busStationIds.some((id, index) => busStationIds.indexOf(id) !== index);
   }
@@ -145,7 +140,6 @@ export class BusRouteDetailComponent implements OnInit {
     moveItemInArray(this.breakPoints.controls, event.previousIndex, event.currentIndex);
   }
 
-
   onSubmit() {
     if (!this.busRouteDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busRouteDetailForm);
@@ -154,9 +148,8 @@ export class BusRouteDetailComponent implements OnInit {
 
     const data = this.busRouteDetailForm.getRawValue();
     const busRoute2Create: BusRoute2Create = {
-      ...data
-    }
-    console.log("🚀 ~ BusRouteDetailComponent ~ onSubmit ~ busRoute2Create:", busRoute2Create)
+      ...data,
+    };
     if (this.busRoute) {
       const busRoute2Update = {
         ...busRoute2Create,
@@ -188,6 +181,10 @@ export class BusRouteDetailComponent implements OnInit {
       next: (res: BusRoute) => {
         if (res) {
           toast.success('Bus Route added successfully');
+          this.busRoute = res;
+          const updatedState = { ...history.state, busRoute: JSON.stringify(res) };
+          window.history.replaceState(updatedState, '', window.location.href);
+          this.router.navigate([], { queryParams: { id: res._id } });
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

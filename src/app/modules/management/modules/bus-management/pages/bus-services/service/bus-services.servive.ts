@@ -36,7 +36,7 @@ export class BusServicesService {
       return this.filesService.uploadFiles(busServiceIconFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          busService2Create.icon = res[0].link;
+          busService2Create.iconId = res[0]._id;
           return this.createBusService(busService2Create);
         }),
       );
@@ -58,7 +58,7 @@ export class BusServicesService {
       return this.filesService.uploadFiles(busServiceIconFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          busService2Update.icon = res[0].link;
+          busService2Update.iconId = res[0]._id;
           return this.updateBusService(busService2Update);
         }),
       );

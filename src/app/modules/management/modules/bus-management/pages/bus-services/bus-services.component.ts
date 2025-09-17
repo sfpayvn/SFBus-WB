@@ -11,7 +11,7 @@ import { Utils } from 'src/app/shared/utils/utils';
   selector: 'app-bus-services',
   templateUrl: './bus-services.component.html',
   styleUrls: ['./bus-services.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusServicesComponent implements OnInit {
   searchBusService: SearchBusService = new SearchBusService();
@@ -26,11 +26,7 @@ export class BusServicesComponent implements OnInit {
 
   isLoadingBusService: boolean = false;
 
-  constructor(
-    private busServicesService: BusServicesService,
-    private dialog: MatDialog,
-    private utils: Utils
-  ) { }
+  constructor(private busServicesService: BusServicesService, private dialog: MatDialog, private utils: Utils) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -70,7 +66,7 @@ export class BusServicesComponent implements OnInit {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete BusService',
         content:
@@ -78,13 +74,13 @@ export class BusServicesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -93,7 +89,9 @@ export class BusServicesComponent implements OnInit {
         this.busServicesService.deleteBusService(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusService.busServices = this.searchBusService.busServices.filter((busService) => busService._id !== id);
+              this.searchBusService.busServices = this.searchBusService.busServices.filter(
+                (busService) => busService._id !== id,
+              );
               toast.success('BusService deleted successfully');
             }
           },
@@ -116,6 +114,7 @@ export class BusServicesComponent implements OnInit {
         const busServiceType2Update = {
           ...busService,
           name: result.name,
+          iconId: result.iconId,
         };
         this.busServicesService.processUpdateBusService(result.files, busServiceType2Update).subscribe({
           next: (res: BusService) => {
@@ -141,9 +140,9 @@ export class BusServicesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-
         const busService2Create = new BusService2Create();
         busService2Create.name = result.name;
+        busService2Create.iconId = result.iconId;
 
         this.busServicesService.processCreateBusService(result.files, busService2Create).subscribe({
           next: (res: BusService) => {
@@ -182,7 +181,7 @@ export class BusServicesComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });

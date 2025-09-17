@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Bus, Bus2Create, Bus2Update } from '../../model/bus.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
 import { BusService } from '../../../bus-services/model/bus-service.model';
 import { BusServicesService } from '../../../bus-services/service/bus-services.servive';
 import { combineLatest } from 'rxjs';
@@ -23,19 +23,18 @@ interface BusLayoutTemplateWithLayoutsMatrix extends BusLayoutTemplate {
 }
 
 interface BusTemplateReview extends BusTemplate {
-  busServices: BusService[],
-  busType: BusType,
-  isLoading: boolean
+  busServices: BusService[];
+  busType: BusType;
+  isLoading: boolean;
 }
 
 @Component({
   selector: 'app-bus-detail',
   templateUrl: './bus-detail.component.html',
   styleUrl: './bus-detail.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class BusDetailComponent implements OnInit {
-
   busDetailForm!: FormGroup;
 
   busServices: BusService[] = [];
@@ -65,18 +64,17 @@ export class BusDetailComponent implements OnInit {
     private busesService: BusesService,
     private busTemplatesService: BusTemplatesService,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
     this.initData();
   }
 
-
   async getQueryParams() {
     const params = history.state;
     if (params) {
-      this.bus = params["bus"] ? JSON.parse(params["bus"]) : null;
+      this.bus = params['bus'] ? JSON.parse(params['bus']) : null;
     }
   }
 
@@ -114,18 +112,25 @@ export class BusDetailComponent implements OnInit {
   }
 
   async chooseBusTemplate(busTemplateId: string) {
-
-    const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busTemplateId) as BusTemplate;
+    const busTemplate = this.busTemplates.find(
+      (busTemplate: BusTemplate) => busTemplate._id === busTemplateId,
+    ) as BusTemplate;
     this.busTemplateReview = busTemplate as BusTemplateReview;
-    this.busTemplateReview.isLoading = true
+    this.busTemplateReview.isLoading = true;
 
     //setup matrix layout template
-    this.busLayoutTemplateReview = this.busLayoutTemplates.find((busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === busTemplate.busLayoutTemplateId) as BusLayoutTemplateWithLayoutsMatrix;
+    this.busLayoutTemplateReview = this.busLayoutTemplates.find(
+      (busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === busTemplate.busLayoutTemplateId,
+    ) as BusLayoutTemplateWithLayoutsMatrix;
     this.busLayoutTemplateReview.layoutsForMatrix = [];
 
-    await this.initializeMatrix(this.busLayoutTemplateReview.seatLayouts, this.busLayoutTemplateReview.layoutsForMatrix, (layouts) => {
-      this.busLayoutTemplateReview.layoutsForMatrix = layouts;
-    });
+    await this.initializeMatrix(
+      this.busLayoutTemplateReview.seatLayouts,
+      this.busLayoutTemplateReview.layoutsForMatrix,
+      (layouts) => {
+        this.busLayoutTemplateReview.layoutsForMatrix = layouts;
+      },
+    );
 
     //setup service and type for bus review
     let findAllBusServices = this.busServicesService.findAll();
@@ -133,12 +138,12 @@ export class BusDetailComponent implements OnInit {
     const request = [findAllBusServices, findBusTypeById];
     combineLatest(request).subscribe(async ([busServices, busType]) => {
       const serviceOfBus = busServices.filter((service: BusService) =>
-        this.busTemplateReview.busServiceIds.includes(service._id)
+        this.busTemplateReview.busServiceIds.includes(service._id),
       );
       this.busTemplateReview.busServices = serviceOfBus;
       this.busTemplateReview.busType = busType;
       this.busTemplateReview.isLoading = false;
-    })
+    });
   }
 
   async initializeMatrix(seatLayouts: any, layoutsForMatrix: any, out: (layoutsForMatrix: any) => void): Promise<void> {
@@ -149,11 +154,11 @@ export class BusDetailComponent implements OnInit {
         seatVisibleColumns: [],
         seatsLayoutForMatrix: Array.from({ length: this.rows }, (_, i) =>
           Array.from({ length: this.cols }, (_, j) => ({
-            _id: "",
+            _id: '',
             index: i * this.cols + j + 1,
-            typeId: "",
-            name: "",
-            status: "available",
+            typeId: '',
+            name: '',
+            status: 'available',
           })),
         ),
       };
@@ -163,7 +168,7 @@ export class BusDetailComponent implements OnInit {
         const col = (cell.index - 1) % this.cols;
         layoutForMatrix.seatsLayoutForMatrix[row][col] = {
           ...cell,
-          icon: this.getIconByType(cell)
+          icon: this.getIconByType(cell),
         };
       }
 
@@ -228,8 +233,8 @@ export class BusDetailComponent implements OnInit {
   getIconByType(cell: any) {
     // Tìm loại ghế tương ứng dựa trên type
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
-    if (!selectedType) return "";
-    return selectedType.icon
+    if (!selectedType) return '';
+    return selectedType.icon;
   }
 
   backPage() {
@@ -237,7 +242,9 @@ export class BusDetailComponent implements OnInit {
   }
 
   editBusTemplate() {
-    const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === this.busTemplateReview._id) as BusTemplate;
+    const busTemplate = this.busTemplates.find(
+      (busTemplate: BusTemplate) => busTemplate._id === this.busTemplateReview._id,
+    ) as BusTemplate;
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
     const params = { busTemplate: JSON.stringify(busTemplate) };
 
@@ -246,15 +253,18 @@ export class BusDetailComponent implements OnInit {
   }
 
   editBusLayoutTemplate() {
-    const busLayoutTemplate = this.busLayoutTemplates.find((busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === this.busLayoutTemplateReview._id) as BusLayoutTemplate;
+    const busLayoutTemplate = this.busLayoutTemplates.find(
+      (busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === this.busLayoutTemplateReview._id,
+    ) as BusLayoutTemplate;
 
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
     const params = { busLayoutTemplate: JSON.stringify(busLayoutTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
+      state: params,
+    });
   }
-
 
   onSubmit() {
     if (!this.busDetailForm.valid) {
@@ -264,8 +274,8 @@ export class BusDetailComponent implements OnInit {
 
     const data = this.busDetailForm.getRawValue();
     const bus2Create: Bus2Create = {
-      ...data
-    }
+      ...data,
+    };
 
     if (this.bus) {
       const bus2Update = {
@@ -297,6 +307,10 @@ export class BusDetailComponent implements OnInit {
     this.busesService.createBus(bus2Create).subscribe({
       next: (res: Bus) => {
         if (res) {
+          this.bus = res;
+          const updatedState = { ...history.state, bus: JSON.stringify(res) };
+          window.history.replaceState(updatedState, '', window.location.href);
+          this.initForm();
           toast.success('Bus added successfully');
         }
       },

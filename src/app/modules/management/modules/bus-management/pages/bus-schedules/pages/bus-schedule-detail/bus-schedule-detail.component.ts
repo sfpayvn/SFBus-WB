@@ -75,7 +75,7 @@ export class BusScheduleDetailComponent implements OnInit {
   busTemplateReview!: BusTemplate;
   isLoaddingBusTemplateReview = false;
 
-  busSeatLayoutTemplateBlockIds: string[] = [];
+  busSeatLayoutBlockIds: string[] = [];
 
   rows: number = 11; // Number of rows in the matrix
   cols: number = 7; // Number of columns in the matrix
@@ -182,7 +182,6 @@ export class BusScheduleDetailComponent implements OnInit {
       busTemplateId = '',
       busRouteId = '',
       busRoute = null,
-      price = '',
       busScheduleTemplateId = '',
       busLayoutTemplateId = '',
       busDriverIds = [],
@@ -201,7 +200,7 @@ export class BusScheduleDetailComponent implements OnInit {
       }),
       busScheduleTemplateId: [busScheduleTemplateId],
       busLayoutTemplateId: [busLayoutTemplateId, [Validators.required]],
-      busDriverIds: [busDriverIds, [Validators.required]],
+      busDriverIds: [busDriverIds],
       busSeatPrices: this.fb.array([]),
     });
 
@@ -226,6 +225,10 @@ export class BusScheduleDetailComponent implements OnInit {
         : this.busLayoutTemplatesService.findOne(busTemplate.busLayoutTemplateId);
       const [busLayoutTemplateReview] = await Promise.all([busLayoutTemplatePromise]);
       this.busLayoutTemplateReview = (await busLayoutTemplateReview.toPromise()) as BusTemplateWithLayoutsMatrix | null;
+      console.log(
+        '🚀 ~ BusScheduleDetailComponent ~ setupBusScheduleLayout ~ this.busLayoutTemplateReview:',
+        this.busLayoutTemplateReview,
+      );
       this.setupBusSeatPrices();
     } catch (error) {
       console.error('Error setting up bus schedule layout:', error);
@@ -474,7 +477,7 @@ export class BusScheduleDetailComponent implements OnInit {
     busScheduleDetailForm.get('busDriverIds')?.patchValue(busScheduleTemplate.busDriverIds);
     busScheduleDetailForm.get('busId')?.patchValue(busScheduleTemplate.busId);
 
-    this.busSeatLayoutTemplateBlockIds = busScheduleTemplate.busSeatLayoutTemplateBlockIds;
+    this.busSeatLayoutBlockIds = busScheduleTemplate.busSeatLayoutBlockIds;
   }
 
   resetBusScheduleTemplate() {
@@ -590,13 +593,17 @@ export class BusScheduleDetailComponent implements OnInit {
     this.createBus(busSchedule2Create);
   }
 
+  getSeatTypeById(id: string): SeatType | undefined {
+    return this.seatTypes.find((seatType: SeatType) => seatType._id === id);
+  }
+
   async getBusSeatLayoutTemplateBlock(): Promise<string[]> {
     const blockIds: string[] = []; // Collect block IDs in this array
     // Iterate through layouts to retrieve block IDs
     this.busLayoutTemplateReview?.layoutsForMatrix?.forEach((layout: any) => {
       layout.seatsLayoutForMatrix.forEach((row: any) => {
         row.forEach((cell: any) => {
-          if (cell.status === 'blocked') {
+          if (cell.status === 'blocked' && this.getSeatTypeById(cell.typeId)?.isEnv === false) {
             blockIds.push(cell._id); // Add the block ID to the array
           }
         });

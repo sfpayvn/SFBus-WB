@@ -8,12 +8,13 @@ export class SearchBusService {
 export class BusService {
   _id: string = '';
   name: string = '';
+  iconId: string = '';
   icon: string = '';
   selected: boolean = false;
 }
 
 export class BusService2Create {
-  icon!: string;
+  iconId!: string;
   name: string = '';
 }
 

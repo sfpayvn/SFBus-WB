@@ -10,12 +10,16 @@
   </button>
 </mat-dialog-title>
 <mat-dialog-content class="pb-5 pt-3">
-  <form class="sm:min-w-36 md:min-w-96 mx-auto" [formGroup]="busStationForm" nz-form (ngSubmit)="onSubmit()">
+  <form
+    class="sm:min-w-36 md:min-w-96 mx-auto flex flex-col gap-1"
+    [formGroup]="busStationForm"
+    nz-form
+    (ngSubmit)="onSubmit()">
     <nz-form-item class="!w-full">
-      <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
-      <nz-form-control [nzErrorTip]="busStationNameErrorTpl" class="!flex !h-[56px] flex-col">
-        <nz-input-group [nzSuffix]="busStationNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
-          <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+      <nz-form-label nzFor="name" class="!flex !items-center !justify-start">Tên</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationNameErrorTpl" class="!flex flex-col">
+        <nz-input-group [nzSuffix]="busStationNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+          <input type="text" nz-input formControlName="name" placeholder="Nhập Tên" />
         </nz-input-group>
         <ng-template #busStationNameClearTpl>
           <span
@@ -31,62 +35,80 @@
           </span>
         </ng-template>
       </nz-form-control>
-      <nz-form-item class="!w-full">
-        <nz-form-label nzFor="busServiceIds" class="!flex !h-[36px] !items-center !justify-start"
-          >Bus Services</nz-form-label
-        >
-        <nz-form-control [nzErrorTip]="busStationNameBusProviceIdErrorTpl">
-          <nz-select formControlName="busServiceIds" nzPlaceHolder="Chọn Bus Provices">
-            @for (busProvice of busProvices; track busProvice) {
-            <nz-option nzCustomContent [nzLabel]="busProvice.name" [nzValue]="busProvice._id">
-              <div class="flex items-center">
-                <svg-icon [src]="busProvice.icon" [svgClass]="'h-5 w-5'"> </svg-icon>
-                <span class="pl-4 !font-medium">
-                  {{ busProvice.name }}
-                </span>
-              </div>
-            </nz-option>
-            }
-          </nz-select>
-          <ng-template #busStationNameBusProviceIdErrorTpl let-control>
-            <span class="mt-1 !text-xs text-red-500">
-              @if (busStationForm.controls['busServiceIds'].errors?.['required']) { Vui lòng chọn Bus Services}
-            </span>
-          </ng-template>
-        </nz-form-control>
-      </nz-form-item>
     </nz-form-item>
-    <!-- <div class="mb-5">
-      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">NAME</label>
-      <input
-        type="text"
-        id="busType-name"
-        formControlName="name"
-        [ngClass]="{'!border-red-500' : busStationForm.controls['name'].errors?.['required'] && busStationForm.controls['name'].touched}"
-        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" />
-      <p
-        class="mt-1 text-xs text-red-500"
-        *ngIf="busStationForm.controls['name'].errors?.['required'] && busStationForm.controls['name'].touched">
-        Vui lòng điền vào trường này
-      </p>
-    </div>
-    <div class="mb-5">
-      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Province</label>
-      <nz-select
-        class="border-border block w-full rounded-md border p-2 text-sm"
-        nzShowSearch
-        formControlName="busProvice"
-        nzPlaceHolder="Vui lòng chọn 1 Tỉnh">
-        @for (busProvice of busProvices; track busProvice._id) {
-        <nz-option [nzLabel]="busProvice.name" [nzValue]="busProvice._id"></nz-option>
-        }
-      </nz-select>
-    </div> -->
+    <nz-form-item class="!w-full">
+      <nz-form-label nzFor="detailAddress" class="!flex !items-center !justify-start">Địa chỉ</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationDetailAddressErrorTpl" class="!flex flex-col">
+        <nz-input-group [nzSuffix]="busStationDetailAddressClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+          <input type="text" nz-input formControlName="detailAddress" placeholder="Nhập Địa Chỉ" />
+        </nz-input-group>
+        <ng-template #busStationDetailAddressClearTpl>
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            (click)="busStationForm.controls['detailAddress'].patchValue('')"></span>
+        </ng-template>
+        <ng-template #busStationDetailAddressErrorTpl let-control>
+          <span class="mt-1 !text-xs text-red-500">
+            @if (busStationForm.controls['detailAddress'].errors?.['required']) { Vui lòng nhập trường này }
+          </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="!w-full">
+      <nz-form-label nzFor="location" class="!flex !items-center !justify-start">Location</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationDetailLocationErrorTpl" class="!flex flex-col">
+        <nz-input-group [nzSuffix]="busStationDetailLocationClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+          <input type="text" nz-input formControlName="location" placeholder="Nhập Location" />
+        </nz-input-group>
+        <ng-template #busStationDetailLocationClearTpl>
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            (click)="busStationForm.controls['location'].patchValue('')"></span>
+        </ng-template>
+        <ng-template #busStationDetailLocationErrorTpl let-control>
+          <span class="mt-1 !text-xs text-red-500">
+            @if (busStationForm.controls['location'].errors?.['required']) { Vui lòng nhập trường này }
+          </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="!w-full">
+      <nz-form-label nzFor="busProviceId" class="!flex !items-center !justify-start">Tỉnh/Thành Phố</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationNameBusProviceIdErrorTpl">
+        <nz-select
+          formControlName="busProviceId"
+          nzPlaceHolder="Chọn Tỉnh/Thành Phố"
+          nzShowSearch
+          nzAllowClear
+          nzNotFoundContent="Không tìm thấy">
+          @for (busProvice of busProvices; track busProvice) {
+          <nz-option nzCustomContent [nzLabel]="busProvice.name" [nzValue]="busProvice._id">
+            <div class="flex items-center">
+              <svg-icon [src]="busProvice.icon" [svgClass]="'h-5 w-5'"> </svg-icon>
+              <span class="pl-4 !font-medium">
+                {{ busProvice.name }}
+              </span>
+            </div>
+          </nz-option>
+          }
+        </nz-select>
+        <ng-template #busStationNameBusProviceIdErrorTpl let-control>
+          <span class="mt-1 !text-xs text-red-500">
+            @if (busStationForm.controls['busProviceId'].errors?.['required']) { Vui lòng chọn Bus Services}
+          </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions class="line-block space-x-4 text-center">
   <button
-    [matDialogClose]="this.busStation"
     (click)="onSubmit()"
     class="bg-primary text-primary-foreground flex-none rounded-md px-4 py-2.5 text-xs font-semibold">
     SAVE

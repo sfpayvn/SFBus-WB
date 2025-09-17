@@ -11,13 +11,12 @@ interface BusLayoutsMatrix extends BusLayoutTemplate {
   selector: 'app-layout-matrix',
   templateUrl: './layout-matrix.component.html',
   styleUrls: ['./layout-matrix.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class LayoutMatrixComponent implements OnInit {
-
   @Input() busLayoutsMatrix!: BusLayoutsMatrix;
   @Input() seatTypes!: SeatType[];
-  @Input() busSeatLayoutTemplateBlockIds!: string[];
+  @Input() busSeatLayoutBlockIds!: string[];
   @Input() isEditStatus: boolean = false;
 
   rows: number = 11; // Number of rows in the matrix
@@ -28,7 +27,7 @@ export class LayoutMatrixComponent implements OnInit {
     private utilsModal: UtilsModal,
     private el: ElementRef,
     private renderer: Renderer2,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initData();
@@ -41,11 +40,17 @@ export class LayoutMatrixComponent implements OnInit {
   }
 
   async initData() {
-    this.busLayoutsMatrix.layoutsForMatrix = await this.initializeMatrix(this.busLayoutsMatrix.seatLayouts, this.busSeatLayoutTemplateBlockIds)
-    console.log("🚀 ~ LayoutMatrixComponent ~ initData ~ this.busLayoutsMatrix.layoutsForMatrix:", this.busLayoutsMatrix.layoutsForMatrix)
+    this.busLayoutsMatrix.layoutsForMatrix = await this.initializeMatrix(
+      this.busLayoutsMatrix.seatLayouts,
+      this.busSeatLayoutBlockIds,
+    );
+    console.log(
+      '🚀 ~ LayoutMatrixComponent ~ initData ~ this.busLayoutsMatrix.layoutsForMatrix:',
+      this.busLayoutsMatrix.layoutsForMatrix,
+    );
   }
 
-  async initializeMatrix(seatLayouts: any, busSeatLayoutTemplateBlockIds?: string[]) {
+  async initializeMatrix(seatLayouts: any, busSeatLayoutBlockIds?: string[]) {
     const layoutsForMatrix = await Promise.all(
       seatLayouts.map(async (seatLayout: any) => {
         const layoutForMatrix = {
@@ -54,11 +59,11 @@ export class LayoutMatrixComponent implements OnInit {
           seatVisibleColumns: [],
           seatsLayoutForMatrix: Array.from({ length: this.rows }, (_, i) =>
             Array.from({ length: this.cols }, (_, j) => ({
-              _id: "",
+              _id: '',
               index: i * this.cols + j + 1,
-              typeId: "",
-              name: "",
-              status: "available",
+              typeId: '',
+              name: '',
+              status: 'available',
             })),
           ),
         };
@@ -68,9 +73,10 @@ export class LayoutMatrixComponent implements OnInit {
           const col = (cell.index - 1) % this.cols;
           layoutForMatrix.seatsLayoutForMatrix[row][col] = {
             ...cell,
-            status: busSeatLayoutTemplateBlockIds && busSeatLayoutTemplateBlockIds.includes(cell._id)
-              ? "blocked" // Mark as blocked if present in the IDs list
-              : cell.status, // Default to available
+            status:
+              busSeatLayoutBlockIds && busSeatLayoutBlockIds.includes(cell._id)
+                ? 'blocked' // Mark as blocked if present in the IDs list
+                : cell.status, // Default to available
             icon: this.getIconByType(cell),
           };
         }
@@ -92,7 +98,6 @@ export class LayoutMatrixComponent implements OnInit {
 
     return layoutsForMatrix;
   }
-
 
   async updateDisplayMatrix(
     matrix: any,
@@ -137,7 +142,6 @@ export class LayoutMatrixComponent implements OnInit {
   }
 
   onClickToggleStatus(row: number, col: number, layoutForMatrix: any, event: MouseEvent): void {
-
     if (!this.isEditStatus) {
       return;
     }
@@ -152,14 +156,16 @@ export class LayoutMatrixComponent implements OnInit {
     const currentMatrix = layoutForMatrix.seatsLayoutForMatrix;
     const cell = currentMatrix[row][col];
 
-    const currentCellSeatType = this.seatTypes.find(item => item._id == cell.typeId);
+    const currentCellSeatType = this.seatTypes.find((item) => item._id == cell.typeId);
 
     if (currentCellSeatType?.isEnv) {
-      return
+      return;
     }
 
     // Remove the current status class
-    const cellElement = this.el.nativeElement.querySelector(`#cell-${layoutForMatrix.name.replace(' ', '')}-${cell.index}`);
+    const cellElement = this.el.nativeElement.querySelector(
+      `#cell-${layoutForMatrix.name.replace(' ', '')}-${cell.index}`,
+    );
     this.renderer.removeClass(cellElement, `status-${cell.status}`);
 
     //use for animation
@@ -178,8 +184,7 @@ export class LayoutMatrixComponent implements OnInit {
   getIconByType(cell: any) {
     // Tìm loại ghế tương ứng dựa trên type
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
-    if (!selectedType) return "";
+    if (!selectedType) return '';
     return selectedType.icon;
   }
-
 }
