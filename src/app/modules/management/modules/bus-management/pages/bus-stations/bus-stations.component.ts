@@ -8,12 +8,13 @@ import { BusStationsService } from './service/bus-stations.servive';
 import { BusProvince } from '../bus-provices/model/bus-province.model';
 import { BusProvincesService } from '../bus-provices/service/bus-provinces.servive';
 import { Utils } from 'src/app/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-stations',
   templateUrl: './bus-stations.component.html',
   styleUrls: ['./bus-stations.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusStationsComponent implements OnInit {
   searchBusStation: SearchBusStation = new SearchBusStation();
@@ -34,8 +35,9 @@ export class BusStationsComponent implements OnInit {
     private busStationsService: BusStationsService,
     private dialog: MatDialog,
     private busProvincesService: BusProvincesService,
-    private utils: Utils
-  ) { }
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -66,7 +68,7 @@ export class BusStationsComponent implements OnInit {
       error: (error: any) => {
         this.utils.handleRequestError(error);
       },
-    })
+    });
   }
 
   toggleBusStation(event: Event): void {
@@ -81,11 +83,15 @@ export class BusStationsComponent implements OnInit {
     this.selectAll = !this.searchBusStation.busStations.some((busStation) => !busStation.selected);
   }
 
-  deleteBusStation(id: string): void {
+  deleteBusStation(busStation: BusStation): void {
+    if (this.defaultFlagService.isDefault(busStation)) {
+      return;
+    }
+
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete BusStation',
         content:
@@ -93,22 +99,24 @@ export class BusStationsComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busStationsService.deleteBusStation(id).subscribe({
+        this.busStationsService.deleteBusStation(busStation._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusStation.busStations = this.searchBusStation.busStations.filter((busStation) => busStation._id !== id);
+              this.searchBusStation.busStations = this.searchBusStation.busStations.filter(
+                (b) => b._id !== busStation._id,
+              );
               toast.success('BusStation deleted successfully');
             }
           },
@@ -119,11 +127,15 @@ export class BusStationsComponent implements OnInit {
   }
 
   editBusStation(busStation: BusStation): void {
+    if (this.defaultFlagService.isDefault(busStation)) {
+      return;
+    }
+
     const dialogRef = this.dialog.open(BusStationDetailDialogComponent, {
       data: {
         title: 'Edit BusStation',
         busStation: { ...busStation },
-        busProvices: this.busProvices
+        busProvices: this.busProvices,
       },
     });
 
@@ -148,17 +160,16 @@ export class BusStationsComponent implements OnInit {
     const dialogRef = this.dialog.open(BusStationDetailDialogComponent, {
       data: {
         title: 'Add New BusStation',
-        busProvices: this.busProvices
+        busProvices: this.busProvices,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-
         const busStation2Create = new BusStation2Create();
         busStation2Create.name = result.name;
 
-        this.busStationsService.createBusStation(result.file, busStation2Create).subscribe({
+        this.busStationsService.createBusStation(busStation2Create).subscribe({
           next: (res: BusStation) => {
             if (res) {
               this.loadData();
@@ -168,6 +179,22 @@ export class BusStationsComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(busStation: BusStation): void {
+    delete (busStation as any)._id;
+    let busStation2Create = new BusStation2Create();
+    busStation2Create = { ...busStation2Create, ...busStation };
+
+    this.busStationsService.createBusStation(busStation2Create).subscribe({
+      next: (res: BusStation) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 
@@ -195,7 +222,7 @@ export class BusStationsComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });

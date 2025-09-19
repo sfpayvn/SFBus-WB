@@ -5,7 +5,12 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusScheduleTemplatesService } from './service/bus-schedule-templates.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
-import { BusScheduleTemplate, SearchBusScheduleTemplate } from './model/bus-schedule-template.model';
+import {
+  BusScheduleTemplate,
+  BusScheduleTemplate2Create,
+  SearchBusScheduleTemplate,
+} from './model/bus-schedule-template.model';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-schedule-templates',
@@ -31,6 +36,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +83,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
     );
   }
 
-  deleteBusScheduleTemplate(id: string): void {
+  deleteBusScheduleTemplate(busScheduleTemplate: BusScheduleTemplate): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -101,11 +107,13 @@ export class BusScheduleTemplatesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busScheduleTemplatesService.deleteBusScheduleTemplate(id).subscribe({
+        this.busScheduleTemplatesService.deleteBusScheduleTemplate(busScheduleTemplate._id).subscribe({
           next: (res: any) => {
             if (res) {
               this.searchBusScheduleTemplate.busScheduleTemplates =
-                this.searchBusScheduleTemplate.busScheduleTemplates.filter((bus) => bus._id !== id);
+                this.searchBusScheduleTemplate.busScheduleTemplates.filter(
+                  (bst) => bst._id !== busScheduleTemplate._id,
+                );
               toast.success('Bus deleted successfully');
             }
           },
@@ -124,9 +132,23 @@ export class BusScheduleTemplatesComponent implements OnInit {
   }
 
   addBusScheduleTemplate(): void {
-    this.router.navigate([
-      '/management/bus-management/bus-design/bus-schedule-templates/bus-schedule-template-detail',
-    ]);
+    this.router.navigate(['/management/bus-management/bus-design/bus-schedule-templates/bus-schedule-template-detail']);
+  }
+
+  cloneData(busScheduleTemplate: BusScheduleTemplate): void {
+    delete (busScheduleTemplate as any)._id;
+    let busScheduleTemplate2Create = new BusScheduleTemplate2Create();
+    busScheduleTemplate2Create = { ...busScheduleTemplate2Create, ...busScheduleTemplate };
+
+    this.busScheduleTemplatesService.createBusScheduleTemplate(busScheduleTemplate2Create).subscribe({
+      next: (res: BusScheduleTemplate) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
   }
 
   reloadBusScheduleTemplatePage(data: any): void {

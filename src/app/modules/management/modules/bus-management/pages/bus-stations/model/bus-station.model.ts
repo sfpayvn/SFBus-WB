@@ -11,6 +11,7 @@ export class BusStation {
   detailAddress: string = '';
   location: string = '';
   provinceId: string = '';
+  isDefault: boolean = false;
   selected: boolean = false;
 }
 

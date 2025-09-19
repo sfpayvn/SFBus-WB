@@ -9,6 +9,7 @@ export class BusProvince {
   _id: string = '';
   name: string = '';
   icon: string = '';
+  isDefault: boolean = false;
   selected: boolean = false;
 }
 

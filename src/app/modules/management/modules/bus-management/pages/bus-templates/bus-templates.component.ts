@@ -2,16 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { BusTemplate, SearchBusTemplate } from './model/bus-template.model';
+import { BusTemplate, BusTemplate2Create, SearchBusTemplate } from './model/bus-template.model';
 import { BusTemplatesService } from './service/bus-templates.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-templates',
   templateUrl: './bus-templates.component.html',
   styleUrls: ['./bus-templates.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusTemplatesComponent implements OnInit {
   searchBusTemplate: SearchBusTemplate = new SearchBusTemplate();
@@ -31,7 +32,8 @@ export class BusTemplatesComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
-  ) { }
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -43,7 +45,10 @@ export class BusTemplatesComponent implements OnInit {
       next: (res: SearchBusTemplate) => {
         if (res) {
           this.searchBusTemplate = res;
-          console.log("🚀 ~ BusTemplatesComponent ~ this.busTemplatesService.searchBusTemplate ~ this.searchBusTemplate:", this.searchBusTemplate)
+          console.log(
+            '🚀 ~ BusTemplatesComponent ~ this.busTemplatesService.searchBusTemplate ~ this.searchBusTemplate:',
+            this.searchBusTemplate,
+          );
           this.totalItem = this.searchBusTemplate.totalItem;
           this.totalPage = this.searchBusTemplate.totalPage;
         }
@@ -68,11 +73,11 @@ export class BusTemplatesComponent implements OnInit {
     this.selectAll = !this.searchBusTemplate.busTemplates.some((busTemplate: BusTemplate) => !busTemplate.selected);
   }
 
-  deleteBusTemplate(id: string): void {
+  deleteBusTemplate(busTemplate: BusTemplate): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete Bus',
         content:
@@ -80,22 +85,24 @@ export class BusTemplatesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busTemplatesService.deleteBusTemplate(id).subscribe({
+        this.busTemplatesService.deleteBusTemplate(busTemplate._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusTemplate.busTemplates = this.searchBusTemplate.busTemplates.filter((busTemplate: BusTemplate) => busTemplate._id !== id);
+              this.searchBusTemplate.busTemplates = this.searchBusTemplate.busTemplates.filter(
+                (bt: BusTemplate) => bt._id !== busTemplate._id,
+              );
               toast.success('Bus deleted successfully');
             }
           },
@@ -107,11 +114,29 @@ export class BusTemplatesComponent implements OnInit {
 
   editBusTemplate(busTemplate: BusTemplate): void {
     const params = { busTemplate: JSON.stringify(busTemplate) };
-    this.router.navigateByUrl('/management/bus-management/bus-design/bus-templates/bus-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-templates/bus-template-detail', {
+      state: params,
+    });
   }
 
   addBusTemplate(): void {
     this.router.navigate(['/management/bus-management/bus-design/bus-templates/bus-template-detail']);
+  }
+
+  cloneData(busTemplate: BusTemplate): void {
+    delete (busTemplate as any)._id;
+    let busTemplateCreate = new BusTemplate2Create();
+    busTemplateCreate = { ...busTemplateCreate, ...busTemplate };
+
+    this.busTemplatesService.createBusTemplate(busTemplateCreate).subscribe({
+      next: (res: BusTemplate) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
   }
 
   reloadBusTemplatePage(data: any): void {
@@ -138,7 +163,7 @@ export class BusTemplatesComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });

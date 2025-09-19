@@ -8,6 +8,7 @@ import { FilesService } from '../../service/files-center.servive';
 import { CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Utils } from 'src/app/shared/utils/utils';
 import { ViewImageDialogComponent } from '../../components/view-image-dialog/view-image-dialog.component';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-files-center',
@@ -66,6 +67,7 @@ export class FilesComponent implements OnInit {
     private dialog: MatDialog,
     private utilsModal: UtilsModal,
     public utils: Utils,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {

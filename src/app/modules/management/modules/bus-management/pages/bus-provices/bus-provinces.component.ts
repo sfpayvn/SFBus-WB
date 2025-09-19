@@ -10,6 +10,7 @@ import { combineLatest } from 'rxjs';
 import { BusStation } from '../bus-stations/model/bus-station.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { Utils } from 'src/app/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 export interface filteredProvinces extends BusProvince {
   busStations: BusStation[];
@@ -46,6 +47,7 @@ export class BusProvincesComponent implements OnInit {
     private utilsModal: UtilsModal,
     private utils: Utils,
     private dialog: MatDialog,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -139,7 +141,7 @@ export class BusProvincesComponent implements OnInit {
     this.selectAll = !this.searchBusProvince.busProvinces.some((busProvince) => !busProvince.selected);
   }
 
-  deleteBusProvince(id: string): void {
+  deleteBusProvince(busProvince: BusProvince): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -162,11 +164,11 @@ export class BusProvincesComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busProvincesService.deleteBusProvince(id).subscribe({
+        this.busProvincesService.deleteBusProvince(busProvince._id).subscribe({
           next: (res: any) => {
             if (res) {
               this.searchBusProvince.busProvinces = this.searchBusProvince.busProvinces.filter(
-                (busProvince) => busProvince._id !== id,
+                (bp) => bp._id !== busProvince._id,
               );
               this.filterProvinces();
               toast.success('BusProvince deleted successfully');
@@ -224,6 +226,22 @@ export class BusProvincesComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(busProvince: BusProvince): void {
+    delete (busProvince as any)._id;
+    let busProvince2Create = new BusProvince2Create();
+    busProvince2Create = { ...busProvince2Create, ...busProvince };
+
+    this.busProvincesService.createBusProvince(busProvince2Create).subscribe({
+      next: (res: BusProvince) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 

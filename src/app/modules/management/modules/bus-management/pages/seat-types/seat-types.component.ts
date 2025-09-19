@@ -6,6 +6,7 @@ import { SeatType, SeatType2Create, SearchSeatType } from './model/seat-type.mod
 import { SeatTypesDetailDialogComponent } from './component/seat-types-detail-dialog/seat-types-detail-dialog.component';
 import { SeatTypesService } from './service/seat-types.servive';
 import { Utils } from 'src/app/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-seat-types',
@@ -26,7 +27,12 @@ export class SeatTypesComponent implements OnInit {
 
   isLoadingSeatType: boolean = false;
 
-  constructor(private seatTypesService: SeatTypesService, private dialog: MatDialog, private utils: Utils) {}
+  constructor(
+    private seatTypesService: SeatTypesService,
+    private dialog: MatDialog,
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -62,7 +68,7 @@ export class SeatTypesComponent implements OnInit {
     this.selectAll = !this.searchSeatType.seatTypes.some((seatType) => !seatType.selected);
   }
 
-  deleteSeatType(id: string): void {
+  deleteSeatType(seatType: SeatType): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -86,10 +92,10 @@ export class SeatTypesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.seatTypesService.deleteSeatType(id).subscribe({
+        this.seatTypesService.deleteSeatType(seatType._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchSeatType.seatTypes = this.searchSeatType.seatTypes.filter((seatType) => seatType._id !== id);
+              this.searchSeatType.seatTypes = this.searchSeatType.seatTypes.filter((st) => st._id !== seatType._id);
               toast.success('SeatType deleted successfully');
             }
           },
@@ -154,6 +160,22 @@ export class SeatTypesComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(seatType: SeatType): void {
+    delete (seatType as any)._id;
+    let seatType2Create = new SeatType2Create();
+    seatType2Create = { ...seatType2Create, ...seatType };
+
+    this.seatTypesService.createSeatType(seatType2Create).subscribe({
+      next: (res: SeatType) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 

@@ -191,6 +191,7 @@
             [cdkDragData]="file"
             (cdkDragStarted)="onDragStarted(file)"
             (cdkDragEnded)="onDragEnded(file)"
+            [cdkDragDisabled]="defaultFlagService.isDefault(file)"
             [ngClass]="{ selected: isSelected(file) }">
             <nz-skeleton-element
               nzType="image"
@@ -202,9 +203,10 @@
             <div
               *ngIf="!isLoadingFile"
               class="box-img rounded-sm border border-gray-300"
+              [ngClass]="{ 'bg-muted/20': defaultFlagService.isDefault(file) }"
               (click)="toggleFile(file)"
               (dblclick)="onDbClickFile($event, file)">
-              <app-trigger-mask>
+              <app-trigger-mask [disable]="defaultFlagService.isDefault(file)">
                 <div
                   *ngIf="isSelected(file) && isChooseMultiple"
                   class="absolute top-[5px] left-[5px] z-10 flex h-[24px] w-[24px] items-center justify-center rounded-xl border border-gray-300 bg-blue-500">

@@ -5,13 +5,15 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusRoutesService } from './service/bus-routes.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
-import { BusRoute, SearchBusRoute } from './model/bus-route.model';
+import { BusRoute, BusRoute2Create, SearchBusRoute } from './model/bus-route.model';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { SeatType } from '../seat-types/model/seat-type.model';
 
 @Component({
   selector: 'app-bus-routes',
   templateUrl: './bus-routes.component.html',
   styleUrls: ['./bus-routes.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusRoutesComponent implements OnInit {
   searchBusRoute: SearchBusRoute = new SearchBusRoute();
@@ -31,7 +33,8 @@ export class BusRoutesComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
-  ) { }
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -67,11 +70,11 @@ export class BusRoutesComponent implements OnInit {
     this.selectAll = !this.searchBusRoute.busRoutes.some((busRoute) => !busRoute.selected);
   }
 
-  deleteBusRoute(id: string): void {
+  deleteBusRoute(busRoute: BusRoute): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete Bus',
         content:
@@ -79,22 +82,22 @@ export class BusRoutesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busRoutesService.deleteBusRoute(id).subscribe({
+        this.busRoutesService.deleteBusRoute(busRoute._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.filter((bus) => bus._id !== id);
+              this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.filter((br) => br._id !== busRoute._id);
               toast.success('Bus deleted successfully');
             }
           },
@@ -111,6 +114,22 @@ export class BusRoutesComponent implements OnInit {
 
   addBusRoute(): void {
     this.router.navigate(['/management/bus-management/bus-design/bus-routes/bus-route-detail']);
+  }
+
+  cloneData(busRoute: BusRoute): void {
+    delete (busRoute as any)._id;
+    let busRoute2Create = new BusRoute2Create();
+    busRoute2Create = { ...busRoute2Create, ...busRoute };
+
+    this.busRoutesService.createBusRoute(busRoute2Create).subscribe({
+      next: (res: BusRoute) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
   }
 
   reloadBusRoutePage(data: any): void {
@@ -137,7 +156,7 @@ export class BusRoutesComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });

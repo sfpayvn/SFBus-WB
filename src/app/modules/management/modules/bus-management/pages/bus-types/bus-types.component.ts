@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { BusType, SearchBusType } from './model/bus-type.model';
+import { BusType, BusType2Create, SearchBusType } from './model/bus-type.model';
 import { BusTypeDetailDialogComponent } from './component/bus-type-detail-dialog/bus-type-detail-dialog.component';
 import { BusTypesService } from './service/bus-types.servive';
 import { Utils } from 'src/app/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-types',
@@ -25,7 +26,12 @@ export class BusTypesComponent implements OnInit {
 
   isLoadingBusType: boolean = false;
 
-  constructor(private busTypesService: BusTypesService, private dialog: MatDialog, private utils: Utils) {}
+  constructor(
+    private busTypesService: BusTypesService,
+    private dialog: MatDialog,
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -61,7 +67,7 @@ export class BusTypesComponent implements OnInit {
     this.selectAll = !this.searchBusType.busTypes.some((busType) => !busType.selected);
   }
 
-  deleteBusType(id: string): void {
+  deleteBusType(busType: BusType): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -85,10 +91,10 @@ export class BusTypesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busTypesService.deleteBusType(id).subscribe({
+        this.busTypesService.deleteBusType(busType._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusType.busTypes = this.searchBusType.busTypes.filter((busType) => busType._id !== id);
+              this.searchBusType.busTypes = this.searchBusType.busTypes.filter((bt) => bt._id !== busType._id);
               toast.success('BusType deleted successfully');
             }
           },
@@ -144,6 +150,22 @@ export class BusTypesComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(busType: BusType): void {
+    delete (busType as any)._id;
+    let busType2Create = new BusType2Create();
+    busType2Create = { ...busType2Create, ...busType };
+
+    this.busTypesService.createBusType(busType2Create).subscribe({
+      next: (res: BusType) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 

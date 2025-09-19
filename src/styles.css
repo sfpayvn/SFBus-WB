@@ -13,6 +13,7 @@ layer(base);
 @import '../node_modules/ng-zorro-antd/collapse/style/index.min.css';
 @import '../node_modules/ng-zorro-antd/carousel/style/index.min.css';
 @import '../node_modules/ng-zorro-antd/qr-code/style/index.min.css';
+@import '../node_modules/ng-zorro-antd/tabs/style/index.min.css';
 
 @import 'tailwindcss';
 @import 'tailwindcss-animated';

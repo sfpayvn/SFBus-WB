@@ -6,6 +6,7 @@ import { BusService, BusService2Create, SearchBusService } from './model/bus-ser
 import { BusServiceDetailDialogComponent } from './component/bus-service-detail-dialog/bus-service-detail-dialog.component';
 import { BusServicesService } from './service/bus-services.servive';
 import { Utils } from 'src/app/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-services',
@@ -26,7 +27,12 @@ export class BusServicesComponent implements OnInit {
 
   isLoadingBusService: boolean = false;
 
-  constructor(private busServicesService: BusServicesService, private dialog: MatDialog, private utils: Utils) {}
+  constructor(
+    private busServicesService: BusServicesService,
+    private dialog: MatDialog,
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -62,7 +68,7 @@ export class BusServicesComponent implements OnInit {
     this.selectAll = !this.searchBusService.busServices.some((busService) => !busService.selected);
   }
 
-  deleteBusService(id: string): void {
+  deleteBusService(busService: BusService): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -86,11 +92,11 @@ export class BusServicesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busServicesService.deleteBusService(id).subscribe({
+        this.busServicesService.deleteBusService(busService._id).subscribe({
           next: (res: any) => {
             if (res) {
               this.searchBusService.busServices = this.searchBusService.busServices.filter(
-                (busService) => busService._id !== id,
+                (bs) => bs._id !== busService._id,
               );
               toast.success('BusService deleted successfully');
             }
@@ -154,6 +160,22 @@ export class BusServicesComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(busService: BusService): void {
+    delete (busService as any)._id;
+    let busService2Create = new BusService2Create();
+    busService2Create = { ...busService2Create, ...busService };
+
+    this.busServicesService.createBusService(busService2Create).subscribe({
+      next: (res: BusService) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 

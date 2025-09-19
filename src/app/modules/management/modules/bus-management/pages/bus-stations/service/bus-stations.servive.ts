@@ -28,7 +28,7 @@ export class BusStationsService {
     return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
   }
 
-  createBusStation(busServiceIconFile: FileList, busService2Create: BusStation2Create) {
+  createBusStation(busService2Create: BusStation2Create) {
     const url = this.url;
 
     return this.apiGatewayService.post(url, busService2Create).pipe(tap((res: any) => {}));
