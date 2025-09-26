@@ -23,6 +23,10 @@ const routes: Routes = [
         path: 'bus-management',
         loadChildren: () => import('./modules/bus-management/bus-management.module').then((m) => m.BusMangementModule),
       },
+      {
+        path: 'tenant-management',
+        loadChildren: () => import('./modules/tenant-management/tenant-management.module').then((m) => m.TenantManagementModule),
+      },
       { path: '**', redirectTo: 'errors/404' },
     ]
   }

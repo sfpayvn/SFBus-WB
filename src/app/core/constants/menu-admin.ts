@@ -1,6 +1,6 @@
 import { MenuItem } from '../models/menu.model';
 
-export class Menu {
+export class MenuAdmin {
   public static pages: MenuItem[] = [
     {
       group: 'Base',
@@ -48,15 +48,6 @@ export class Menu {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Goods Management',
-          route: '/management/goods-management',
-          children: [
-            { label: 'Goods', route: '/management/goods-management/goods' },
-            { label: 'Goods Category', route: '/management/goods-management/goods-categories' },
-          ],
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Bus Management',
           route: '/management/bus-management',
           children: [
@@ -64,25 +55,6 @@ export class Menu {
               icon: 'assets/icons/heroicons/outline/cube.svg',
               label: 'Buses',
               route: '/management/bus-management/buses',
-            },
-            {
-              icon: 'assets/icons/heroicons/outline/cube.svg',
-              label: 'Bus Schedule',
-              route: '/management/bus-management/bus-schedule',
-              children: [
-                {
-                  label: 'Schedule Calendar',
-                  route: '/management/bus-management/bus-schedule/bus-schedules/calendar',
-                },
-                {
-                  label: 'Bus Scheduler',
-                  route: '/management/bus-management/bus-schedule/bus-schedules/scheduler',
-                },
-                {
-                  label: 'Bus Scheduler Auto',
-                  route: '/management/bus-management/bus-schedule/bus-schedule-autogenerators',
-                },
-              ],
             },
             {
               icon: 'assets/icons/heroicons/outline/cube.svg',
@@ -112,6 +84,11 @@ export class Menu {
               ],
             },
           ],
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Tenant Management',
+          route: '/management/tenant-management/tenant',
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',

@@ -48,19 +48,10 @@ export class GoodsDetailComponent implements OnInit {
 
   busRoutes: BusRoute[] = [];
 
-  passwordConditions: { [key: string]: boolean } = {
-    minLength: false,
-    hasUpperCase: false,
-    hasLowerCase: false,
-    hasNumber: false,
-  };
-
-  passwordVisible: boolean = false;
-
   goodsImageFile!: File;
   goodsImage!: string;
 
-  defaultImage = 'assets/imgs/goods-deail.png';
+  defaultImage = 'assets/images/goods-deail.png';
 
   mode: 'create' | 'update' = 'create';
 
