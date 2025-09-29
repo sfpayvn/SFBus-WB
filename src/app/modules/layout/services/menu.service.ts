@@ -1,46 +1,32 @@
-import { Injectable, OnDestroy, signal } from '@angular/core';
+import { Injectable, OnDestroy, signal, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { User } from '@rsApp/modules/management/modules/user-management/model/user.model';
 import { CredentialService } from '@rsApp/shared/services/credential.service';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 import { MenuAdmin } from '@rsApp/core/constants/menu-admin';
-import { MenuItem, SubMenuItem } from 'src/app/core/models/menu.model';
 import { MenuTenant } from '@rsApp/core/constants/menu-teant';
+import { MenuItem, SubMenuItem } from 'src/app/core/models/menu.model';
+import _ from 'lodash';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class MenuService implements OnDestroy {
+  private router = inject(Router);
+  private credentials = inject(CredentialService);
+
   private _showSidebar = signal(true);
   private _showMobileMenu = signal(false);
   private _pagesMenu = signal<MenuItem[]>([]);
   private _subscription = new Subscription();
 
-  constructor(private router: Router, private credentials: CredentialService) {
-    /** Set dynamic menu */
+  constructor() {
+    // Lần đầu (reload trang) cũng lấy menu
+    this.reloadPagesAndExpand();
 
-    this.getPages().then((pages) => {
-      this._pagesMenu.set(pages);
-      let sub = this.router.events.subscribe((event) => {
-        if (event instanceof NavigationEnd) {
-          /** Expand menu base on active route */
-          this._pagesMenu().forEach((menu) => {
-            let activeGroup = false;
-            menu.items.forEach((subMenu) => {
-              const active = this.isActive(subMenu.route);
-              subMenu.expanded = active;
-              subMenu.active = active;
-              if (active) activeGroup = true;
-              if (subMenu.children) {
-                this.expand(subMenu.children);
-              }
-            });
-            menu.active = activeGroup;
-          });
-        }
-      });
-      this._subscription.add(sub);
-    });
+    // Theo dõi thay đổi route để cập nhật trạng thái expanded/active
+    const sub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => this.syncActiveStates());
+    this._subscription.add(sub);
   }
 
   get showSideBar() {
@@ -53,30 +39,60 @@ export class MenuService implements OnDestroy {
     return this._pagesMenu();
   }
 
-  set showSideBar(value: boolean) {
-    this._showSidebar.set(value);
+  set showSideBar(v: boolean) {
+    this._showSidebar.set(v);
   }
-  set showMobileMenu(value: boolean) {
-    this._showMobileMenu.set(value);
+  set showMobileMenu(v: boolean) {
+    this._showMobileMenu.set(v);
   }
 
-  public toggleSidebar() {
+  toggleSidebar() {
     this._showSidebar.set(!this._showSidebar());
   }
-
-  public toggleMenu(menu: any) {
+  toggleMenu(menu: any) {
     this.showSideBar = true;
     menu.expanded = !menu.expanded;
   }
-
-  public toggleSubMenu(submenu: SubMenuItem) {
+  toggleSubMenu(submenu: SubMenuItem) {
     submenu.expanded = !submenu.expanded;
   }
 
-  private expand(items: Array<any>) {
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
+
+  /** GỌI HÀM NÀY sau khi login xong để rebuild menu theo role mới */
+  async reloadPagesAndExpand(): Promise<void> {
+    const pages = await this.getPages();
+    this._pagesMenu.set(pages);
+    this.syncActiveStates(); // expand theo route hiện tại
+  }
+
+  /** Expand/active theo route hiện tại */
+  private syncActiveStates(): void {
+    const menus = this._pagesMenu();
+    if (!menus?.length) return;
+
+    menus.forEach((menu) => {
+      let activeGroup = false;
+      menu.items?.forEach((sub) => {
+        const active = this.isActive(sub.route);
+        sub.active = active;
+        sub.expanded = active;
+        if (active) activeGroup = true;
+        if (sub.children) this.expandDeep(sub.children);
+      });
+      (menu as any).active = activeGroup;
+    });
+
+    // Ghi lại signal (vì ta mutate object)
+    this._pagesMenu.set([...menus]);
+  }
+
+  private expandDeep(items: Array<any>) {
     items.forEach((item) => {
       item.expanded = this.isActive(item.route);
-      if (item.children) this.expand(item.children);
+      if (item.children) this.expandDeep(item.children);
     });
   }
 
@@ -89,18 +105,12 @@ export class MenuService implements OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this._subscription.unsubscribe();
-  }
-
   /** Lấy menu theo role của current user */
-  async getPages(): Promise<MenuItem[]> {
+  private async getPages(): Promise<MenuItem[]> {
     const currentUser: User = await this.credentials.getCurrentUser();
     const role: string = (currentUser?.role || 'tenant') as string;
-
     const menu = role === 'admin' ? MenuAdmin : MenuTenant;
 
-    // Trả về bản sao để không mutate cấu hình gốc
-    return menu.pages;
+    return _.cloneDeep(menu.pages);
   }
 }

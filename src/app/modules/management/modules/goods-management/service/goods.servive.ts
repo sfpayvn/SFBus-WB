@@ -10,32 +10,20 @@ import { FilesService } from '../../files-center-management/service/files-center
 export class GoodsService {
   url = '/admin/goods';
 
-  constructor(
-    private apiGatewayService: ApiGatewayService,
-    private filesService: FilesService
-  ) { }
+  constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
 
   findAll() {
     const url = `${this.url}/find-all`;
-    return this.apiGatewayService.get(url).pipe(
-      tap((res: any) => { }),
-
-    );
+    return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
 
   findAllByRole(role: string) {
     const url = `${this.url}/find-all/${role}`;
-    return this.apiGatewayService.get(url).pipe(
-      tap((res: any) => { }),
-
-    );
+    return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
   findOne(_id: string, skipLoading?: boolean) {
     const url = `${this.url}/${_id}`;
-    return this.apiGatewayService.get(url, skipLoading).pipe(
-      tap((res: any) => { }),
-
-    );
+    return this.apiGatewayService.get(url, skipLoading).pipe(tap((res: any) => {}));
   }
 
   searchGoods(searchParams: {
@@ -45,13 +33,13 @@ export class GoodsService {
     pageSize: number;
     keyword: string;
     sortBy: {
-      key: string,
-      value: string
-    },
+      key: string;
+      value: string;
+    };
     filters: {
-      key: string,
-      value: string[]
-    },
+      key: string;
+      value: string[];
+    };
   }) {
     const url = `${this.url}/search-paging`;
     const body = {
@@ -61,12 +49,10 @@ export class GoodsService {
       pageSize: searchParams.pageSize,
       keyword: searchParams.keyword,
       sortBy: searchParams.sortBy,
-      filters: searchParams.filters
+      filters: searchParams.filters,
     };
 
-    return this.apiGatewayService.post(url, body, true).pipe(
-      tap((res: any) => { })
-    );
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   processCreateGoods(imageFile: FileList, Goods2Create: Goods2Create) {
@@ -78,7 +64,7 @@ export class GoodsService {
           // Gắn các liên kết trả về từ uploadFiles
           Goods2Create.image = res[0].link;
           return this.createGoods(Goods2Create);
-        })
+        }),
       );
     } else {
       // Nếu không có file, chỉ gọi post trực tiếp
@@ -88,11 +74,7 @@ export class GoodsService {
 
   createGoods(Goods2Create: Goods2Create) {
     const url = `${this.url}`;
-    return this.apiGatewayService.post(url, Goods2Create).pipe(
-      tap((res: any) => {
-      }),
-
-    );
+    return this.apiGatewayService.post(url, Goods2Create).pipe(tap((res: any) => {}));
   }
 
   processUpdateGoods(imageFile: FileList, Goods2Update: Goods2Update) {
@@ -104,7 +86,7 @@ export class GoodsService {
           // Gắn các liên kết trả về từ uploadFiles
           Goods2Update.image = res[0].link;
           return this.updateGoods(Goods2Update);
-        })
+        }),
       );
     } else {
       // Nếu không có file, chỉ gọi post trực tiếp
@@ -114,19 +96,11 @@ export class GoodsService {
 
   updateGoods(Goods2Update: Goods2Update) {
     const url = `${this.url}`;
-    return this.apiGatewayService.put(url, Goods2Update).pipe(
-      tap((res: any) => {
-      }),
-
-    );
+    return this.apiGatewayService.put(url, Goods2Update).pipe(tap((res: any) => {}));
   }
 
   deleteGoods(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
-    return this.apiGatewayService.delete(deleteOptionUrl).pipe(
-      tap((res: any) => {
-      }),
-
-    );
+    return this.apiGatewayService.delete(deleteOptionUrl).pipe(tap((res: any) => {}));
   }
 }

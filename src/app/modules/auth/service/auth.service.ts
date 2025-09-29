@@ -1,12 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 import * as _ from 'lodash';
-import { from, of, throwError } from 'rxjs';
-import { catchError, concatMap, delay, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { defer, from, of, throwError } from 'rxjs';
+import { catchError, concatMap, delay, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { CredentialService } from 'src/app/shared/services/credential.service';
 import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, VerifyAuthRescue } from '../model/auth.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CapsService } from '@rsApp/shared/services/caps.service';
+import { MenuService } from '@rsApp/modules/layout/services/menu.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,7 @@ export class AuthService {
     private apiGatewayService: ApiGatewayService,
     private credentialService: CredentialService,
     private capsService: CapsService,
+    private menuService: MenuService,
   ) {}
 
   async init(): Promise<void> {
@@ -40,60 +42,50 @@ export class AuthService {
   }
 
   login(phoneNumber: string, password: string, tenantCode: string) {
-    const user = {
-      phoneNumber,
-      password,
-      tenantCode,
-    };
-    const url = `/auth/login?phoneNumber=${phoneNumber}`;
+    const body = { phoneNumber, password, tenantCode };
+    const url = `/auth/login?phoneNumber=${encodeURIComponent(phoneNumber)}`;
 
-    return this.apiGatewayService.post(url, user).pipe(
-      switchMap(async (res: any) => {
-        if (res) {
-          await this.capsService.bootstrap();
-          return this.handleAuthenticationSuccess(res.access_token);
-        }
-        return of(null); // No response from API
-      }),
+    return this.apiGatewayService.post(url, body).pipe(
+      map((res: any) => res?.access_token),
+      filter((token): token is string => !!token), // chỉ đi tiếp khi có token
+      switchMap((token) => this.handleAuthenticationSuccess(token)),
+      take(1),
       catchError((error) => {
-        // Log the error or handle it gracefully
         console.error('Login error:', error);
-        return of(error);
+        return throwError(() => error); // để caller xử lý
       }),
     );
   }
 
   /**
-   * Handle successful authentication by setting token and current user
-   * @param accessToken - The access token from authentication response
-   * @returns Observable with user data or null
+   * Đặt token -> lấy current user -> lưu current user -> bootstrap caps
+   * Trả về Observable<User | null>
    */
   private handleAuthenticationSuccess(accessToken: string) {
-    // Ensure setToken is completed before proceeding
-    return from(this.credentialService.setToken(accessToken)).pipe(
-      concatMap(() =>
-        this.getCurrentUser().pipe(
-          concatMap((user: any) => {
-            if (user) {
-              // Ensure setCurrentUser is completed before resolving the user
-              return from(this.credentialService.setCurrentUser(user)).pipe(map(() => user));
-            }
-            return of(null); // No user found
-          }),
-          catchError((err: HttpErrorResponse) => {
-            console.error('handleAuthenticationSuccess error:', err);
-            // ví dụ: hiện toast có mã lỗi server 500
-            const msg = err?.error?.message || err.message || 'Unexpected error';
-            // toast.error(`Get current user failed (${err.status}): ${msg}`);
-            return throwError(() => err); // rất quan trọng: **rethrow** để bên ngoài bắt được
-          }),
-        ),
-      ),
+    return defer(() => from(this.credentialService.setToken(accessToken))).pipe(
+      switchMap(() => this.getCurrentUser()),
+      switchMap((user: any) => {
+        if (!user) return of(null);
+        // đảm bảo setCurrentUser hoàn tất trước khi trả user
+        return from(this.credentialService.setCurrentUser(user)).pipe(
+          tap(() => {
+            this.capsService.bootstrap();
+            this.menuService.reloadPagesAndExpand();
+          }), // <— refresh menu theo role mới
+          map(() => user),
+        );
+      }),
+      catchError((err) => {
+        console.error('handleAuthenticationSuccess error:', err);
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        // ví dụ: show toast ở ngoài; ở đây rethrow để tầng gọi xử lý
+        return throwError(() => err);
+      }),
     );
   }
 
   signUp(signUp: SignUp, skipLoading: boolean) {
-    return this.apiGatewayService.post('/admin/auth/signUp', signUp, skipLoading).pipe(
+    return this.apiGatewayService.post('/admin/auth/signUp', signUp, { skipLoading: skipLoading }).pipe(
       switchMap((res: any) => {
         if (res) {
           return this.handleAuthenticationSuccess(res.access_token);

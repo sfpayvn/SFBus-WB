@@ -18,7 +18,9 @@ export class BusScheduleTemplatesService {
 
   searchBusScheduleTemplate(pageIdx: number = 0, pageSize: number = 999, keyword: string = '', sortBy: string = '') {
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, { pageIdx, pageSize, keyword, sortBy }, true).pipe(tap((res: any) => {}));
+    return this.apiGatewayService
+      .post(url, { pageIdx, pageSize, keyword, sortBy }, { skipLoading: true })
+      .pipe(tap((res: any) => {}));
   }
 
   createBusScheduleTemplate(busSchedule2Create: BusScheduleTemplate2Create) {

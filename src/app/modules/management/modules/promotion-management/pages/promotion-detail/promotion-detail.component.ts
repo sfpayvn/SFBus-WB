@@ -24,6 +24,7 @@ import { SubscriptionService } from '../../../subscription-management/service/su
 import { Subscription } from '../../../subscription-management/model/subscription.model';
 import { FilesCenterDialogComponent } from '../../../files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from '../../../files-center-management/model/file-center.model';
+import { ENV } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-promotion-detail',
@@ -42,8 +43,6 @@ export class PromotionDetailComponent implements OnInit {
 
   promotionImageFile!: File;
   promotionImage!: string;
-
-  defaultImage = 'assets/images/default-img.jpg';
 
   mode: 'create' | 'update' = 'create';
 
@@ -114,6 +113,7 @@ export class PromotionDetailComponent implements OnInit {
   async initForm() {
     const {
       image = '',
+      imageId = '',
       name = '',
       code = '',
       description = '',
@@ -123,9 +123,9 @@ export class PromotionDetailComponent implements OnInit {
       status = 'active',
     } = this.promotion || {};
 
-    this.promotionImage = image ? image : this.defaultImage;
+    this.promotionImage = image ?? null;
     this.mainForm = this.fb.group({
-      image: [image, Validators.required],
+      imageId: [imageId, Validators.required],
       name: [name, [Validators.required]],
       code: [code, [Validators.required]],
       description: [description],
@@ -179,9 +179,10 @@ export class PromotionDetailComponent implements OnInit {
   openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
-      console.log('🚀 ~ SeatTypesDetailDialogComponent ~ this.utilsModal.openModal ~ files:', files);
+
+      // Nếu .link đã trả về URL đầy đủ thì dùng luôn
       this.promotionImage = files[0].link;
-      this.mainForm.patchValue({ image: files[0]._id });
+      this.mainForm.patchValue({ imageId: files[0]._id });
     });
   }
 
@@ -226,7 +227,12 @@ export class PromotionDetailComponent implements OnInit {
           return;
         }
         if (actionName == 'update') {
-          const updatedState = { ...history.state, promotion: res[0] };
+          const promotionUpdated = {
+            ...res[0],
+            image: this.promotionImage,
+          };
+
+          const updatedState = { ...history.state, promotion: promotionUpdated };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Promotion update successfully');
           return;

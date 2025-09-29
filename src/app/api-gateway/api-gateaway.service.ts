@@ -5,6 +5,16 @@ import { catchError } from 'rxjs/operators';
 import { SkipLoading } from '../shared/Interceptor/loading-interceptor';
 import { ENV } from 'src/environments/environment.development';
 
+interface RequestOptions {
+  skipLoading?: boolean; // bật/tắt loading ở interceptor
+  feature?: {
+    // quota feature headers
+    module: string;
+    function?: string | null;
+  };
+  extraHeaders?: Record<string, string> | HttpHeaders; // headers bổ sung
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,9 +27,36 @@ export class ApiGatewayService {
     return throwError(() => error);
   }
 
-  private createHeaders(skipLoading: boolean): { headers: HttpHeaders; context: HttpContext } {
+  private createHeaders(options: RequestOptions): { headers: HttpHeaders; context: HttpContext } {
+    const { skipLoading = false, feature, extraHeaders } = options;
+
     let headers = new HttpHeaders();
     let context = new HttpContext().set(SkipLoading, skipLoading);
+
+    if (feature?.module) {
+      headers = headers.set('X-Feature-Module', feature.module);
+      if (feature.function) {
+        headers = headers.set('X-Feature-Function', feature.function);
+      } else {
+        // đảm bảo không còn header cũ nếu tái sử dụng headers
+        headers = headers.delete('X-Feature-Function');
+      }
+    }
+
+    if (extraHeaders) {
+      if (extraHeaders instanceof HttpHeaders) {
+        // merge HttpHeaders
+        extraHeaders.keys().forEach((k) => {
+          const v = extraHeaders.getAll(k);
+          if (v) v.forEach((val) => (headers = headers.append(k, val)));
+        });
+      } else {
+        // merge từ object
+        Object.entries(extraHeaders).forEach(([k, v]) => {
+          headers = headers.set(k, String(v));
+        });
+      }
+    }
 
     headers = headers.set('Access-Control-Allow-Origin', '*');
     headers = headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT');
@@ -31,8 +68,8 @@ export class ApiGatewayService {
     return { headers, context };
   }
 
-  request(method: string, url: string, body: any = null, skipLoading: boolean = false): Observable<any> {
-    const { headers, context } = this.createHeaders(skipLoading);
+  request(method: string, url: string, body: any = null, options: RequestOptions = {}): Observable<any> {
+    const { headers, context } = this.createHeaders(options);
     url = this.api + url;
 
     switch (method) {
@@ -49,19 +86,19 @@ export class ApiGatewayService {
     }
   }
 
-  get(url: string, params: any = null, skipLoading: boolean = false): Observable<any> {
-    return this.request('GET', url, params, skipLoading);
+  get(url: string, params: any = null, options: RequestOptions = {}): Observable<any> {
+    return this.request('GET', url, params, options);
   }
 
-  post(url: string, body: any, skipLoading: boolean = false): Observable<any> {
-    return this.request('POST', url, body, skipLoading);
+  post(url: string, body: any, options: RequestOptions = {}): Observable<any> {
+    return this.request('POST', url, body, options);
   }
 
-  put(url: string, body: any, skipLoading: boolean = false): Observable<any> {
-    return this.request('PUT', url, body, skipLoading);
+  put(url: string, body: any, options: RequestOptions = {}): Observable<any> {
+    return this.request('PUT', url, body, options);
   }
 
-  delete(url: string, skipLoading: boolean = false): Observable<any> {
-    return this.request('DELETE', url, null, skipLoading);
+  delete(url: string, options: RequestOptions = {}): Observable<any> {
+    return this.request('DELETE', url, null, options);
   }
 }

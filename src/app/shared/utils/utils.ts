@@ -9,6 +9,8 @@ import 'moment/locale/vi';
 export class Utils {
   ref: ComponentRef<any> | undefined;
 
+  VN_MOBILE_REX = /^(?:(?:\+|00)84|0)(?:[35789])\d{8}$/;
+
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
   createComponent(component: any, emlement: any, params: any) {

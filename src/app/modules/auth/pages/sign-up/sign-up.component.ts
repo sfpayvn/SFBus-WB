@@ -57,7 +57,7 @@ export class SignUpComponent implements OnInit {
       {
         tenantName: ['SF', [Validators.required]],
         tenantCode: [{ disabled: true, value: 'SF' }, [Validators.required]],
-        phoneNumber: ['0961090433', [Validators.required, Validators.pattern(/^(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}$/)]],
+        phoneNumber: ['0961090433', [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
         password: [
           '@Solid2023',
           [
@@ -165,7 +165,7 @@ export class SignUpComponent implements OnInit {
 
     this.authService.signUp(signUp, false).subscribe(async (res: any) => {
       if (res.error) {
-          toast.error(res.error.message || res.message);
+        toast.error(res.error.message || res.message);
         return;
       }
 
@@ -176,7 +176,7 @@ export class SignUpComponent implements OnInit {
 
       this.authService.requestAuthRescue(authRescue).subscribe((res) => {
         if (res.error) {
-            toast.error(res.error.message || res.message);
+          toast.error(res.error.message || res.message);
           return;
         }
         this._router.navigate(['/auth/verify-otp']);

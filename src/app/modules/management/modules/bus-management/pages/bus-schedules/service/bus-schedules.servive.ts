@@ -44,7 +44,9 @@ export class BusSchedulesService {
       }
     }
 
-    return this.apiGatewayService.post(url, { ...searchParams, viewDisplayMode }, true).pipe(tap((res: any) => {}));
+    return this.apiGatewayService
+      .post(url, { ...searchParams, viewDisplayMode }, { skipLoading: true })
+      .pipe(tap((res: any) => {}));
   }
 
   createBusSchedule(busSchedule2Create: BusSchedule2Create) {

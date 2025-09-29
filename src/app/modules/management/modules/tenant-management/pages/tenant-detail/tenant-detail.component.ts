@@ -95,7 +95,7 @@ export class TenantDetailComponent implements OnInit {
     const params = history.state;
     if (params && params['tenant']) {
       this.tenant = params['tenant'] ? params['tenant'] : null;
-      console.log("🚀 ~ TenantDetailComponent ~ getQueryParams ~ this.tenant:", this.tenant)
+      console.log('🚀 ~ TenantDetailComponent ~ getQueryParams ~ this.tenant:', this.tenant);
     }
   }
 
@@ -104,7 +104,7 @@ export class TenantDetailComponent implements OnInit {
     combineLatest([findAllSubscription]).subscribe({
       next: ([subscriptions]) => {
         this.subscriptions = subscriptions;
-        console.log("🚀 ~ TenantDetailComponent ~ initData ~ this.subscriptions:", this.subscriptions)
+        console.log('🚀 ~ TenantDetailComponent ~ initData ~ this.subscriptions:', this.subscriptions);
         this.initForm();
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -132,7 +132,7 @@ export class TenantDetailComponent implements OnInit {
       logo: [logo],
       name: [name, [Validators.required]],
       code: [code, [Validators.required]],
-      phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(/(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}/)]],
+      phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
       email: [email, [this.optionalValidator(Validators.email)]],
       address: [address],
       status: [status, [Validators.required]],

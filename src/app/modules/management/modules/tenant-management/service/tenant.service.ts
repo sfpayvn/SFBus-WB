@@ -52,7 +52,7 @@ export class TenantService {
       filters: searchParams.filters,
     };
 
-    return this.apiGatewayService.post(url, body, true).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   processCreateTenant(imageFile: FileList, Tenant2Create: Tenant2Create) {

@@ -8,6 +8,7 @@ import { PromotionDetailComponent } from './pages/promotion-detail/promotion-det
 import { PromotionManagementRoutingModule } from './promotion-management-routing.module';
 import { NZModule } from '@rsApp/library-modules/nz-module';
 import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
+import { SvgIconComponent } from 'angular-svg-icon';
 
 @NgModule({
   declarations: [PromotionComponent, PromotionDetailComponent],

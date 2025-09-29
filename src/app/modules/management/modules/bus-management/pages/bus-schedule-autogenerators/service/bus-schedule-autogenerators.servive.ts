@@ -21,7 +21,7 @@ export class BusScheduleAutoGeneratorsService {
 
   searchBusScheduleAutoGenerator(searchParams: { pageIdx: number; pageSize: number; keyword: string; sortBy: string }) {
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, searchParams, true).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, searchParams, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   createBusScheduleAutoGenerator(busScheduleAutoGenerator2Create: BusScheduleAutoGenerator2Create) {

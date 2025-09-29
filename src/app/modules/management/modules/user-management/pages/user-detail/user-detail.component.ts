@@ -118,7 +118,7 @@ export class UserDetailComponent implements OnInit {
         avatarId: [avatarId],
         name: [name, [Validators.required]],
         email: [email, [Validators.required]],
-        phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(/(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}/)]],
+        phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
         password: [
           '',
           [

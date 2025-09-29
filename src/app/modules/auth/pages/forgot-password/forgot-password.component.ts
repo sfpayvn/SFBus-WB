@@ -27,7 +27,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   initForm() {
     this.form = this._formBuilder.group({
-      phoneNumber: ['0961090433', [Validators.required, Validators.pattern(/^(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}$/)]],
+      phoneNumber: ['0961090433', [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
     });
   }
 
@@ -50,7 +50,7 @@ export class ForgotPasswordComponent implements OnInit {
 
     this.authService.forgotPassword(requestForgotPassword).subscribe((res) => {
       if (res.error) {
-          toast.error(res.error.message || res.message);
+        toast.error(res.error.message || res.message);
         return;
       }
       toast.success('Link reset password has been resent successfully');

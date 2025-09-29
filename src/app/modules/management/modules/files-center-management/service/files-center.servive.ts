@@ -33,7 +33,7 @@ export class FilesService {
       fileFolderId,
     };
 
-    return this.apiGatewayService.post(url, body, skipLoading).pipe(
+    return this.apiGatewayService.post(url, body, { skipLoading: skipLoading }).pipe(
       tap((res: any) => {}),
       catchError((err: HttpErrorResponse) => {
         const msg = err?.error?.message || err.message || 'Unexpected error';

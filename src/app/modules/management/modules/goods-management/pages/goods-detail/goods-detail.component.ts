@@ -211,17 +211,11 @@ export class GoodsDetailComponent implements OnInit {
       goodsNumber: [goodsNumber, []],
 
       senderName: [senderName, [Validators.required]],
-      senderPhoneNumber: [
-        senderPhoneNumber,
-        [Validators.required, Validators.pattern(/(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}/)],
-      ],
+      senderPhoneNumber: [senderPhoneNumber, [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
       senderAddress: [senderAddress, []],
 
       customerName: [customerName, [Validators.required]],
-      customerPhoneNumber: [
-        customerPhoneNumber,
-        [Validators.required, Validators.pattern(/(?:\+84|0084|0)(3|5|7|8|9)[0-9]{8}/)],
-      ],
+      customerPhoneNumber: [customerPhoneNumber, [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
       customerAddress: [customerAddress, []],
 
       quantity: [quantity],

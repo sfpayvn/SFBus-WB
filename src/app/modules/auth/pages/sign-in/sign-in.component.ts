@@ -19,6 +19,7 @@ export class SignInComponent implements OnInit {
   form!: FormGroup;
   passwordVisible: boolean = false;
 
+
   constructor(
     private readonly _formBuilder: FormBuilder,
     private readonly _router: Router,
@@ -34,7 +35,7 @@ export class SignInComponent implements OnInit {
     this.form = this._formBuilder.group({
       phoneNumber: [
         '0961090433',
-        [Validators.required, Validators.pattern(/(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/g)],
+        [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)], // KHÔNG dùng /.../g
       ],
       tenantCode: ['sf', [Validators.required]],
       password: ['@Solid2023', Validators.required],
@@ -53,19 +54,21 @@ export class SignInComponent implements OnInit {
     }
     const { phoneNumber, password, tenantCode } = this.form.value;
 
-
     this.login(phoneNumber, password, tenantCode);
   }
 
   login(phoneNumber: string, password: string, tenantCode: string) {
-    this.authService.login(phoneNumber, password, tenantCode).subscribe(async (res: any) => {
-      if (res.error) {
-        toast.error(res.error.message || res.message);
-        return;
-      }
-      this._router.navigate(['/']);
-    }, (error) => {
-      toast.error('Login failed. Please try again.');
-    });
+    this.authService.login(phoneNumber, password, tenantCode).subscribe(
+      async (res: any) => {
+        if (res.error) {
+          toast.error(res.error.message || res.message);
+          return;
+        }
+        this._router.navigate(['/']);
+      },
+      (error) => {
+        toast.error('Login failed. Please try again.');
+      },
+    );
   }
 }

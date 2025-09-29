@@ -52,7 +52,7 @@ export class PromotionService {
       filters: searchParams.filters,
     };
 
-    return this.apiGatewayService.post(url, body, true).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   processCreatePromotion(imageFile: FileList, Promotion2Create: Promotion2Create) {
@@ -74,7 +74,10 @@ export class PromotionService {
 
   createPromotion(Promotion2Create: Promotion2Create) {
     const url = `${this.url}`;
-    return this.apiGatewayService.post(url, Promotion2Create).pipe(tap((res: any) => {}));
+
+    const options = { feature: { module: 'promotion', function: 'create' } };
+
+    return this.apiGatewayService.post(url, Promotion2Create, options).pipe(tap((res: any) => {}));
   }
 
   processUpdatePromotion(imageFile: FileList, Promotion2Update: Promotion2Update) {

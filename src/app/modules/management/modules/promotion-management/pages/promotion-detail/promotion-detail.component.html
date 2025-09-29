@@ -18,18 +18,19 @@
     <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
       <form [formGroup]="mainForm" nz-form *ngIf="mainForm" (ngSubmit)="onSubmit()">
         <div class="flex gap-4">
-          <div class="flex h-full w-4/12 flex-col">
-            <div>
-              <nz-form-label [nzNoColon]="true" nzFor="logo" class="!flex !items-center !justify-start !font-medium"
+          <div class="flex h-full w-3/12 flex-col">
+            <div class="flex flex-col gap-2">
+              <nz-form-label [nzNoColon]="true" nzFor="image" class="!flex !items-center !justify-start !font-medium"
                 >Hình ảnh</nz-form-label
               >
+              @if(!promotionImage){
               <div class="flex flex-col items-center">
                 <div
                   nz-popover
                   [nzPopoverContent]="contentIconTemplate"
                   class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500"
-                  [ngClass]="{'border-red-500' : mainForm.controls['image'].errors?.['required']
-            && mainForm.controls['image'].touched}">
+                  [ngClass]="{'border-red-500' : mainForm.controls['imageId'].errors?.['required']
+            && mainForm.controls['imageId'].touched}">
                   <div class="mx-auto-8 left-0 m-auto flex h-full w-full flex-wrap content-center items-center px-4">
                     <div class="flex w-full flex-wrap justify-center pb-5 text-center">
                       <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
@@ -41,7 +42,7 @@
                   <div class="grap-2 grid w-96 cursor-pointer grid-cols-2">
                     <div class="relative flex h-12 cursor-pointer flex-wrap items-center justify-center px-2">
                       <input
-                        formControlName="image"
+                        formControlName="imageId"
                         type="file"
                         accept=".svg"
                         class="z-50 block h-full w-full cursor-pointer opacity-0"
@@ -62,13 +63,39 @@
                 </ng-template>
                 <p
                   class="animate-fade-in-down mt-1 text-xs text-red-500"
-                  *ngIf="mainForm.controls['image'].errors?.['required'] && mainForm.controls['image'].touched">
+                  *ngIf="mainForm.controls['imageId'].errors?.['required'] && mainForm.controls['imageId'].touched">
                   Vui lòng upload ảnh cho trường này
                 </p>
               </div>
+              } @else {
+              <div class="flex w-full justify-center">
+                <div class="relative h-32 w-32 select-none rounded border border-gray-200">
+                  <div class="flex h-full w-full cursor-pointer items-center justify-center p-2">
+                    <img class="w-full" [src]="promotionImage" />
+                    <div
+                      class="action-preview-img absolute top-0 right-0 flex h-full w-full items-center justify-center opacity-0">
+                      <button (click)="removeFileImage()">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="size-4 text-white">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              }
             </div>
           </div>
-          <div class="flex h-full w-8/12 flex-col gap-4">
+          <div class="flex h-full w-9/12 flex-col gap-4">
             <div class="flex w-full gap-4">
               <div class="block w-1/2">
                 <nz-form-item class="!mb-0 !flex !flex-col">
@@ -80,12 +107,7 @@
                   >
                   <nz-form-control [nzErrorTip]="mainFormNameErrorTpl" class="!flex flex-col">
                     <nz-input-group [nzSuffix]="mainFormNameClearTpl" class="custom-nz-input-group">
-                      <input
-                        type="text"
-                        nz-input
-                        formControlName="name"
-                        mask="0000 000 000"
-                        placeholder="Nhập tên Promotion" />
+                      <input type="text" nz-input formControlName="name" placeholder="Nhập tên Promotion" />
                     </nz-input-group>
                     <ng-template #mainFormNameClearTpl>
                       <span
@@ -114,12 +136,7 @@
                   >
                   <nz-form-control [nzErrorTip]="mainFormCodeErrorTpl" class="!flex flex-col">
                     <nz-input-group [nzSuffix]="mainFormCodeClearTpl" class="custom-nz-input-group">
-                      <input
-                        type="text"
-                        nz-input
-                        formControlName="code"
-                        mask="0000 000 000"
-                        placeholder="Nhập Promotion Code" />
+                      <input type="text" nz-input formControlName="code" placeholder="Nhập Promotion Code" />
                     </nz-input-group>
                     <ng-template #mainFormCodeClearTpl>
                       <span
@@ -140,7 +157,7 @@
               </div>
             </div>
             <div class="flex w-full gap-4">
-              <div class="block w-1/2">
+              <div class="block w-1/3">
                 <nz-form-item class="!mb-0 !flex !flex-col">
                   <nz-form-label
                     [nzNoColon]="true"
@@ -157,7 +174,7 @@
                   </nz-form-control>
                 </nz-form-item>
               </div>
-              <div class="block w-1/2">
+              <div class="block w-1/3">
                 <nz-form-item class="!mb-0 !flex !flex-col">
                   <nz-form-label
                     [nzNoColon]="true"
@@ -167,12 +184,7 @@
                   >
                   <nz-form-control [nzErrorTip]="mainFormDiscountValueErrorTpl" class="!flex flex-col">
                     <nz-input-group [nzSuffix]="mainFormDiscountValueClearTpl" class="custom-nz-input-group">
-                      <input
-                        type="text"
-                        nz-input
-                        formControlName="discountValue"
-                        mask="0000 000 000"
-                        placeholder="Nhập Discount Value" />
+                      <input type="text" nz-input formControlName="discountValue" placeholder="Nhập Discount Value" />
                     </nz-input-group>
                     <ng-template #mainFormDiscountValueClearTpl>
                       <span
@@ -186,6 +198,25 @@
                     <ng-template #mainFormDiscountValueErrorTpl let-control>
                       <span class="mt-1 !text-xs text-red-500">
                         @if (mainForm.controls['discountValue'].errors?.['required']) { Vui lòng nhập Discount Value }
+                      </span>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="block w-1/3">
+                <nz-form-item class="!w-full">
+                  <nz-form-label nzFor="name" class="!flex !items-center !justify-start !text-sm"
+                    >Expire Date</nz-form-label
+                  >
+                  <nz-form-control [nzErrorTip]="mainFormExpireDateErrorTpl" class="!flex !w-full flex-col">
+                    <nz-date-picker
+                      nzShowTime
+                      nzFormat="yyyy-MM-dd HH:mm"
+                      formControlName="expireDate"
+                      class="!flex h-[36px] !w-full !rounded border-gray-200"></nz-date-picker>
+                    <ng-template #mainFormExpireDateErrorTpl let-control>
+                      <span class="mt-1 !text-xs text-red-500">
+                        @if (mainForm.get('expireDate')?.errors?.['required']) { Vui lòng nhập vào trường này }
                       </span>
                     </ng-template>
                   </nz-form-control>
