@@ -191,7 +191,7 @@
         <div class="mt-4 w-full rounded-lg border border-dashed border-gray-300">
           <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
             <nz-collapse-panel [nzHeader]="collapseHeaderTenantSubscription" [nzActive]="true">
-              <div class="flex w-full gap-4">
+              <!-- <div class="flex w-full gap-4">
                 <nz-form-item class="!mb-0 !flex !w-full !justify-between">
                   <nz-form-label
                     [nzNoColon]="true"
@@ -209,7 +209,7 @@
                     </nz-select>
                   </nz-form-control>
                 </nz-form-item>
-              </div>
+              </div> -->
               @if(tenant && tenant._id) {
               <div class="flex w-full gap-4">
                 <app-tenant-subscription-list class="w-full" [tenantId]="tenant._id"></app-tenant-subscription-list>

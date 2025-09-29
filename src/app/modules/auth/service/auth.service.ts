@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import * as _ from 'lodash';
 import { from, of, throwError } from 'rxjs';
 import { catchError, concatMap, delay, map, mergeMap, switchMap, tap } from 'rxjs/operators';
@@ -6,12 +6,38 @@ import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { CredentialService } from 'src/app/shared/services/credential.service';
 import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, VerifyAuthRescue } from '../model/auth.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CapsService } from '@rsApp/shared/services/caps.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private apiGatewayService: ApiGatewayService, private credentialService: CredentialService) {}
+  initialized = signal(false);
+
+  constructor(
+    private apiGatewayService: ApiGatewayService,
+    private credentialService: CredentialService,
+    private capsService: CapsService,
+  ) {}
+
+  async init(): Promise<void> {
+    try {
+      const token = await this.credentialService.getToken();
+      if (!token) {
+        this.credentialService.removeCurrentUser();
+        this.credentialService.removeToken();
+        return;
+      }
+      const currentUser = await this.getCurrentUser().toPromise();
+      await this.capsService.bootstrap();
+      this.credentialService.setCurrentUser(currentUser);
+    } catch {
+      this.credentialService.removeCurrentUser();
+      this.credentialService.removeToken();
+    } finally {
+      this.initialized.set(true);
+    }
+  }
 
   login(phoneNumber: string, password: string, tenantCode: string) {
     const user = {
@@ -22,8 +48,9 @@ export class AuthService {
     const url = `/auth/login?phoneNumber=${phoneNumber}`;
 
     return this.apiGatewayService.post(url, user).pipe(
-      switchMap((res: any) => {
+      switchMap(async (res: any) => {
         if (res) {
+          await this.capsService.bootstrap();
           return this.handleAuthenticationSuccess(res.access_token);
         }
         return of(null); // No response from API
@@ -84,6 +111,7 @@ export class AuthService {
   async logout() {
     await this.credentialService.removeToken();
     await this.credentialService.removeCurrentUser();
+    await this.capsService.clear();
   }
 
   getCurrentUser() {

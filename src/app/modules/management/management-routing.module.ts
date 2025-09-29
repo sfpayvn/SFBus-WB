@@ -9,15 +9,20 @@ const routes: Routes = [
     children: [
       {
         path: 'users-management',
-        loadChildren: () => import('./modules/user-management/users-management.module').then((m) => m.UsersManagementModule),
+        loadChildren: () =>
+          import('./modules/user-management/users-management.module').then((m) => m.UsersManagementModule),
       },
       {
         path: 'files-center-management',
-        loadChildren: () => import('./modules/files-center-management/files-center-management.module').then((m) => m.FilesCenterManagementModule),
+        loadChildren: () =>
+          import('./modules/files-center-management/files-center-management.module').then(
+            (m) => m.FilesCenterManagementModule,
+          ),
       },
       {
         path: 'goods-management',
-        loadChildren: () => import('./modules/goods-management/goods-management.module').then((m) => m.GoodsManagementModule),
+        loadChildren: () =>
+          import('./modules/goods-management/goods-management.module').then((m) => m.GoodsManagementModule),
       },
       {
         path: 'bus-management',
@@ -25,15 +30,21 @@ const routes: Routes = [
       },
       {
         path: 'tenant-management',
-        loadChildren: () => import('./modules/tenant-management/tenant-management.module').then((m) => m.TenantManagementModule),
+        loadChildren: () =>
+          import('./modules/tenant-management/tenant-management.module').then((m) => m.TenantManagementModule),
+      },
+      {
+        path: 'promotion-management',
+        loadChildren: () =>
+          import('./modules/promotion-management/promotion-management.module').then((m) => m.PromotionManagementModule),
       },
       { path: '**', redirectTo: 'errors/404' },
-    ]
-  }
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ManagementRoutingModule { }
+export class ManagementRoutingModule {}

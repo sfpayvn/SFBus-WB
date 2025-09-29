@@ -92,6 +92,11 @@ export class MenuAdmin {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Promotion Management',
+          route: '/management/promotion-management/promotion',
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Components',
           route: '/components',
           children: [{ label: 'Table', route: '/components/table' }],

@@ -1,6 +1,6 @@
 <!-- tenant-subscription-list.component.html -->
 <div class="toolbar">
-  <form nz-form [formGroup]="form" class="filter-form" (ngSubmit)="search()">
+  <!-- <form nz-form [formGroup]="form" class="filter-form" (ngSubmit)="search()">
     <div nz-row [nzGutter]="12">
       <div nz-col [nzSpan]="8">
         <nz-input-group class="custom-nz-input-group" nzSearch [nzAddOnAfter]="searchBtnTpl">
@@ -22,7 +22,7 @@
         <button nz-button nzType="default" (click)="reset()" [disabled]="loading">Reset</button>
       </div>
     </div>
-  </form>
+  </form> -->
 </div>
 
 <div>
@@ -44,7 +44,7 @@
         <th nzShowSort nzSortKey="startAt">Start</th>
         <th nzShowSort nzSortKey="endAt">End</th>
         <th>Status</th>
-        <th class="w-130">Actions</th>
+        <!-- <th class="w-130">Actions</th> -->
       </tr>
     </thead>
 
@@ -70,7 +70,7 @@
           </nz-tag>
         </td>
 
-        <td>
+        <!-- <td>
           <button nz-button nzSize="small" (click)="onView(item)">View</button>
           <button
             nz-button
@@ -82,7 +82,7 @@
             [disabled]="item.status !== 'active'">
             Cancel
           </button>
-        </td>
+        </td> -->
       </tr>
       }
     </tbody>

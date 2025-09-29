@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from './cookie.service';
+import { ApiGatewayService } from '@rsApp/api-gateway/api-gateaway.service';
 
 export interface CapabilityItem {
   moduleKey: string;
@@ -21,13 +22,16 @@ const COOKIE_EXPIRE_DAYS = 30; // tuỳ bạn
 
 @Injectable({ providedIn: 'root' })
 export class CapsService {
+  url = '/tenant/tenant-subscription-usage/capabilities';
+
   private subject = new BehaviorSubject<CapabilitiesRes | null>(null);
   caps$ = this.subject.asObservable();
 
   private nextRefreshAt: number | null = null;
   private refreshTimer: any;
+    items$: any;
 
-  constructor(private http: HttpClient, private cookie: CookieService) {}
+  constructor(private api: ApiGatewayService, private cookie: CookieService) {}
 
   /** Gọi 1 lần sau login */
   async bootstrap(): Promise<void> {
@@ -41,7 +45,7 @@ export class CapsService {
 
     // 2) đồng bộ mới từ server (không chặn UI)
     try {
-      const fresh = await this.http.get<CapabilitiesRes>('/api/billing/capabilities').toPromise();
+      const fresh: CapabilitiesRes = await this.api.get(this.url).toPromise();
       if (fresh) await this.setCaps(fresh);
     } catch {
       // bỏ qua lỗi mạng: giữ cache cũ
@@ -114,7 +118,7 @@ export class CapsService {
     const delay = Math.max(0, this.nextRefreshAt - Date.now() + 1000); // +1s buffer
     this.refreshTimer = setTimeout(async () => {
       try {
-        const fresh = await this.http.get<CapabilitiesRes>('/api/billing/capabilities').toPromise();
+        const fresh: CapabilitiesRes = await this.api.get(this.url).toPromise();
         if (fresh) await this.setCaps(fresh);
       } catch {
         /* giữ cache */

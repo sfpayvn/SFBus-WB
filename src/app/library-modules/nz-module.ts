@@ -26,6 +26,7 @@ import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzQRCodeModule } from 'ng-zorro-antd/qr-code';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 @NgModule({
   imports: [NzIconModule.forRoot([EyeInvisibleOutline])],
   exports: [
@@ -55,6 +56,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     NzQRCodeModule,
     NzSkeletonModule,
     NzGridModule,
+    NzTagModule,
   ],
 })
 export class NZModule {}

@@ -17,6 +17,7 @@ import { TableHeaderComponent } from './components/table-header/table-header.com
 import { TriggerMaskComponent } from './components/trigger-mask/trigger-mask.component';
 import { TriggerModalComponent } from './components/trigger-modal/trigger-modal.component';
 import { SvgIconComponent } from 'angular-svg-icon';
+import { CapCheckDirective } from '@rsApp/shared/directives/cap-check.directive';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { SvgIconComponent } from 'angular-svg-icon';
     MaterialModule,
     NZModule,
     ClickOutsideDirective,
-    NgxMaskDirective
+    CapCheckDirective,
+    NgxMaskDirective,
   ],
   exports: [
     CommonModule,
@@ -49,22 +51,19 @@ import { SvgIconComponent } from 'angular-svg-icon';
     MaterialModule,
     NZModule,
     ClickOutsideDirective,
+    CapCheckDirective,
     NgxMaskDirective,
     SvgIconComponent,
 
     CalendarEventsComponent,
-    TableHeaderComponent, 
+    TableHeaderComponent,
     TableFooterComponent,
     TableActionComponent,
     TriggerModalComponent,
     TriggerMaskComponent,
     LayoutMatrixComponent,
   ],
-  providers: [
-    provideNgxMask()
-  ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  providers: [provideNgxMask()],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class MangementModule { }
+export class MangementModule {}
