@@ -9,7 +9,7 @@ const routes: Routes = [
     component: SubscriptionComponent,
   },
   {
-    path: 'subscription-detail',
+    path: 'subscription/detail',
     component: SubscriptionDetailComponent,
   },
   { path: '', redirectTo: 'subscriptions', pathMatch: 'full' },

@@ -53,13 +53,13 @@ export class PromotionComponent implements OnInit {
   statusClasses: { [key: string]: string } = {
     active: 'border-green-500 bg-green-200 text-green-800',
     inactive: 'border-indigo-500 bg-indigo-200 text-indigo-800',
-    suspended: 'border-red-500 bg-red-200 text-red-800',
+    expired: 'border-gray-500 bg-gray-200 text-gray-800',
   };
 
   promotionStatuses: { [key: string]: string } = {
     active: 'Hoạt động',
     inactive: 'Không hoạt động',
-    suspended: 'Tạm dừng',
+    expired: 'Đã hết hạn',
   };
 
   constructor(
@@ -209,5 +209,14 @@ export class PromotionComponent implements OnInit {
         });
       }
     });
+  }
+
+  checkStatusPromotion(status: string, expireDate: Date) {
+    expireDate = new Date(expireDate);
+    const currentDate = new Date();
+    if (currentDate > expireDate) {
+      return 'expired';
+    }
+    return status;
   }
 }

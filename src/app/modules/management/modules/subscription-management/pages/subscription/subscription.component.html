@@ -39,6 +39,7 @@
               (nzCheckedChange)="onAllChecked($event)"></th>
             <th class="min-w-[80px]">Name</th>
             <th class="min-w-[80px]">Price</th>
+            <th class="min-w-[80px]">Duration</th>
             <th class="min-w-[80px]">Status</th>
             <th class="min-w-[80px] !text-right">Actions</th>
           </tr>
@@ -66,6 +67,15 @@
                 [nzTitle]="{ width: '100%' }"
                 [nzActive]="true">
                 {{ subscription.price }}
+              </nz-skeleton>
+            </td>
+            <td>
+              <nz-skeleton
+                [nzLoading]="isLoadingSubscription"
+                [nzParagraph]="false"
+                [nzTitle]="{ width: '100%' }"
+                [nzActive]="true">
+                {{ subscription.duration }}
               </nz-skeleton>
             </td>
             <td>

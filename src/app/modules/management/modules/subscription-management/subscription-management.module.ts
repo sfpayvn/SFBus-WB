@@ -8,6 +8,7 @@ import { SubscriptionDetailComponent } from './pages/subscription-detail/subscri
 import { SubscriptionManagementRoutingModule } from './subscription-management-routing.module';
 import { NZModule } from '@rsApp/library-modules/nz-module';
 import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
+import { JsonInputComponent } from '@rsApp/shared/components/json-input/json-input.component';
 
 @NgModule({
   declarations: [SubscriptionComponent, SubscriptionDetailComponent],
@@ -19,6 +20,7 @@ import { FilesCenterManagementModule } from '../files-center-management/files-ce
     MangementModule,
     FilesCenterManagementModule,
     NZModule,
+    JsonInputComponent,
   ],
   providers: [provideNgxMask()],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

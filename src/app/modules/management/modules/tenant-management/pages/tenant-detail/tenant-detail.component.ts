@@ -22,6 +22,8 @@ import { Tenant, Tenant2Create, Tenant2Update } from '../../model/tenant.model';
 import { TenantService } from '../../service/tenant.service';
 import { SubscriptionService } from '../../../subscription-management/service/subscription.service';
 import { Subscription } from '../../../subscription-management/model/subscription.model';
+import { ChooseSubscriptionDialogComponent } from '../../components/choose-subscription-dialog/choose-subscription-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-tenant-detail',
@@ -81,6 +83,7 @@ export class TenantDetailComponent implements OnInit {
     private utilsModal: UtilsModal,
     private loadingService: LoadingService,
     private subscriptionService: SubscriptionService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -187,6 +190,22 @@ export class TenantDetailComponent implements OnInit {
   openFilesCenterDialog() {}
 
   setDefaultValues2Create(data: any) {}
+
+  addNewSubscription() {
+    const dialogRef = this.dialog.open(ChooseSubscriptionDialogComponent, {
+      data: {
+        title: 'Choose Subscription',
+        tenantId: this.tenant?._id || '',
+      },
+      width: '80vw', // hoặc '80%'
+      maxWidth: '100vw', // tránh bị giới hạn mặc định
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+      }
+    });
+  }
 
   onSubmit() {
     if (!this.mainForm.valid) {

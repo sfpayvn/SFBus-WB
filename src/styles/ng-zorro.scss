@@ -38,6 +38,9 @@ nz-form-item {
   nz-input-group {
     min-height: 38px !important;
   }
+  nz-form-control{
+    min-height: auto !important;
+  }
 }
 
 nz-date-picker {
@@ -75,7 +78,7 @@ nz-input-group.custom-nz-input-group {
   display: flex !important;
   align-items: center !important;
   box-shadow: none !important;
-  height: 38px !important;
+  min-height: 38px !important;
   padding: 6px 16px !important;
   border-radius: 5px;
   border-color: var(--color-border) !important;

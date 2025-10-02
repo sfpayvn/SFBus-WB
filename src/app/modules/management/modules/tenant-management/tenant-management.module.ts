@@ -9,9 +9,15 @@ import { TenantManagementRoutingModule } from './tenant-management-routing.modul
 import { NZModule } from '@rsApp/library-modules/nz-module';
 import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
 import { TenantSubscriptionListComponent } from './components/tenant-subscription/tenant-subscription-list.component';
+import { ChooseSubscriptionDialogComponent } from './components/choose-subscription-dialog/choose-subscription-dialog.component';
 
 @NgModule({
-  declarations: [TenantComponent, TenantDetailComponent, TenantSubscriptionListComponent],
+  declarations: [
+    TenantComponent,
+    TenantDetailComponent,
+    TenantSubscriptionListComponent,
+    ChooseSubscriptionDialogComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,

@@ -34,6 +34,11 @@ const routes: Routes = [
           import('./modules/tenant-management/tenant-management.module').then((m) => m.TenantManagementModule),
       },
       {
+        path: 'subscription-management',
+        loadChildren: () =>
+          import('./modules/subscription-management/subscription-management.module').then((m) => m.SubscriptionManagementModule),
+      },
+      {
         path: 'promotion-management',
         loadChildren: () =>
           import('./modules/promotion-management/promotion-management.module').then((m) => m.PromotionManagementModule),

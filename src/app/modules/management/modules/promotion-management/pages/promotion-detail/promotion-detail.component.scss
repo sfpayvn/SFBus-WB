@@ -9,14 +9,4 @@
     color: var(--color-gray-800) !important;
     border: 1px solid var(--color-gray-500) !important;
   }
-  nz-select.promotion-status-archived .ant-select-selector {
-    background-color: var(--color-yellow-200) !important;
-    color: var(--color-yellow-900) !important;
-    border: 1px solid var(--color-yellow-500) !important;
-  }
-  nz-select.promotion-status-blocked .ant-select-selector {
-    background-color: var(--color-red-200) !important;
-    color: var(--color-red-900) !important;
-    border: 1px solid var(--color-red-500) !important;
-  }
 }

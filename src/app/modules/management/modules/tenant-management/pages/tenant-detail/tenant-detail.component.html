@@ -37,8 +37,8 @@
             </div>
           </div>
           <div class="flex w-8/12 flex-wrap">
-            <div class="flex w-full gap-4 p-2" *ngIf="tenant">
-              <div class="block w-6/12">
+            <div class="flex w-full justify-between gap-4 p-2" *ngIf="tenant">
+              <div class="flex flex-col">
                 <nz-form-item class="!mb-0 !flex !flex-col">
                   <nz-form-label
                     [nzNoColon]="true"
@@ -49,7 +49,8 @@
                   <div># {{ tenant.code }}</div>
                 </nz-form-item>
               </div>
-              <div class="block w-6/12">
+              @if(mode == 'update') {
+              <div class="flex flex-col">
                 <nz-form-item class="!mb-0 !flex !flex-col">
                   <nz-form-label
                     [nzNoColon]="true"
@@ -70,6 +71,7 @@
                   </nz-form-control>
                 </nz-form-item>
               </div>
+              }
             </div>
             <div
               class="mt-4 w-full rounded-lg border border-dashed border-gray-300"
@@ -210,6 +212,16 @@
                   </nz-form-control>
                 </nz-form-item>
               </div> -->
+              <div class="flex justify-end">
+                <button
+                  class="!min-w-24 !bg-blue-500 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-blue-500 hover:!bg-blue-200 hover:!text-blue-500"
+                  nz-button
+                  nzType="default"
+                  type="button"
+                  (click)="addNewSubscription()">
+                  <span>Thêm thuê bao</span>
+                </button>
+              </div>
               @if(tenant && tenant._id) {
               <div class="flex w-full gap-4">
                 <app-tenant-subscription-list class="w-full" [tenantId]="tenant._id"></app-tenant-subscription-list>

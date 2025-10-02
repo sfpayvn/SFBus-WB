@@ -56,7 +56,9 @@ export class Subscription {
   name!: string;
   price: number = 0;
   duration: number = 0;
-  limitation: SubscriptionLimitation = new SubscriptionLimitation();
+  durationUnit: 'month' | 'day' | 'year' = 'month';
+  description: string = '';
+  limitation: string = ''; // JSON string của SubscriptionLimitation
   status: string = 'active'; // active, inactive, suspended
 
   /** BE có thể trả string date; FE tuỳ chọn dùng string | Date */
@@ -86,8 +88,7 @@ export class SearchSubscriptions {
 }
 
 export interface Subscription2Create extends Omit<Subscription, '_id' | 'selected' | 'createdAt' | 'updatedAt'> {}
-export class Subscription2Create {}
 
-export class Subscription2Update extends Subscription2Create {
-  _id: string = '';
+export interface Subscription2Update extends Subscription2Create {
+  _id: string;
 }

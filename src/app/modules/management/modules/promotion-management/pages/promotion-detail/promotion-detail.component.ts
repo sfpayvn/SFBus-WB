@@ -33,9 +33,6 @@ import { ENV } from 'src/environments/environment.development';
   standalone: false,
 })
 export class PromotionDetailComponent implements OnInit {
-  @ViewChild('pdfContentInvoice', { static: false }) pdfContentInvoice!: ElementRef;
-  @ViewChild('pdfContentShippingLabel', { static: false }) pdfContentShippingLabel!: ElementRef;
-
   mainForm!: FormGroup;
 
   @Input() promotion!: Promotion;
@@ -54,28 +51,13 @@ export class PromotionDetailComponent implements OnInit {
     {
       value: 'inactive',
       label: 'Ngừng hoạt động',
-    },
-    {
-      value: 'blocked',
-      label: 'Đã chặn',
-    },
-    {
-      value: 'archived',
-      label: 'Đã lưu trữ',
-    },
-  ];
-
-  paidByList = [
-    { value: 'sender', label: 'Người gửi' },
-    { value: 'customer', label: 'Người nhận' },
+    }
   ];
 
   promotionsDiscountTypes = [
     { value: 'percentage', label: 'Phần trăm (%)' },
     { value: 'fixed', label: 'Số tiền cố định' },
   ];
-
-  searchKeywordBusSchedule: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -104,10 +86,6 @@ export class PromotionDetailComponent implements OnInit {
 
   async initData() {
     this.initForm();
-  }
-
-  onSearch(keyword: string) {
-    this.searchKeywordBusSchedule = keyword;
   }
 
   async initForm() {
@@ -173,7 +151,7 @@ export class PromotionDetailComponent implements OnInit {
 
   removeFileImage() {
     this.promotionImage = '';
-    this.mainForm.patchValue({ avatar: '' });
+    this.mainForm.patchValue({ imageId: '' });
   }
 
   openFilesCenterDialog() {
@@ -198,7 +176,7 @@ export class PromotionDetailComponent implements OnInit {
 
     this.setDefaultValues2Create(data);
 
-    const Promotion2Create: Promotion2Create = {
+    const promotion2Create: Promotion2Create = {
       ...data,
     };
     let dataTransfer = new DataTransfer();
@@ -211,14 +189,14 @@ export class PromotionDetailComponent implements OnInit {
     let actionName = 'create';
 
     if (this.mode == 'update') {
-      const Promotion2Update: Promotion2Update = {
-        ...Promotion2Create,
+      const promotion2Update: Promotion2Update = {
+        ...promotion2Create,
         _id: this.promotion._id, // Thêm thuộc tính _id
       };
       actionName = 'update';
-      request.push(this.updatePromotion(files, Promotion2Update));
+      request.push(this.updatePromotion(files, promotion2Update));
     } else {
-      request.push(this.createPromotion(files, Promotion2Create));
+      request.push(this.createPromotion(files, promotion2Create));
     }
 
     combineLatest(request).subscribe({

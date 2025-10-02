@@ -35,7 +35,7 @@
   </div>
   <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
     <app-table-action
-      [title]="'User'"
+      [title]="'Promotions'"
       [totalItem]="totalItem"
       (sortDataEvent)="sortGoodPage($event)"
       (searchDataEvent)="searchGoodPage($event)"></app-table-action>
@@ -58,7 +58,8 @@
             <th class="min-w-[40px]">Image</th>
             <th class="min-w-[80px]">Name</th>
             <th class="min-w-[80px]">Code</th>
-            <th class="min-w-[80px]">Status</th>
+            <th class="min-w-[80px]">Expire Date</th>
+            <th class="min-w-[50px]">Status</th>
             <th class="min-w-[80px] !text-right">Actions</th>
           </tr>
         </thead>
@@ -115,8 +116,17 @@
                 [nzParagraph]="false"
                 [nzTitle]="{ width: '100%' }"
                 [nzActive]="true">
-                <span class="p-2 uppercase rounded-md text-xs {{ statusClasses[promotion.status] }}">
-                  {{ promotionStatuses[promotion.status] }}
+                {{ utils.formatTime(promotion.expireDate) + ' - ' + utils.formatDate(promotion.expireDate) }}
+              </nz-skeleton>
+            </td>
+            <td>
+              <nz-skeleton
+                [nzLoading]="isLoadingPromotion"
+                [nzParagraph]="false"
+                [nzTitle]="{ width: '100%' }"
+                [nzActive]="true">
+                <span class="p-2 uppercase rounded-md text-xs {{ statusClasses[checkStatusPromotion(promotion.status, promotion.expireDate)] }}">
+                  {{ promotionStatuses[checkStatusPromotion(promotion.status, promotion.expireDate)] }}
                 </span>
               </nz-skeleton>
             </td>
