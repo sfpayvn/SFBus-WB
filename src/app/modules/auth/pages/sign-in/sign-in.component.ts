@@ -19,7 +19,6 @@ export class SignInComponent implements OnInit {
   form!: FormGroup;
   passwordVisible: boolean = false;
 
-
   constructor(
     private readonly _formBuilder: FormBuilder,
     private readonly _router: Router,
@@ -67,7 +66,10 @@ export class SignInComponent implements OnInit {
         this._router.navigate(['/']);
       },
       (error) => {
-        toast.error('Login failed. Please try again.');
+        if (error && error.error && error.error.message) {
+          toast.error(error.error.message);
+          return;
+        }
       },
     );
   }

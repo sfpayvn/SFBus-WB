@@ -3,6 +3,9 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
+import { SubscriptionService } from '../../../subscription-management/service/subscription.service';
+import { toast } from 'ngx-sonner';
+import { Subscription } from '../../../subscription-management/model/subscription.model';
 
 export interface DialogData {
   title: string;
@@ -20,29 +23,33 @@ export class ChooseSubscriptionDialogComponent implements OnInit {
   data = inject<DialogData>(MAT_DIALOG_DATA);
   tenantId: string = this.data.tenantId ?? '';
 
-  plans = [
-    { id: 'basic', tier: 'BASIC', price: 0, popular: false, features: ['1 project', 'Community support'] },
-    { id: 'standard', tier: 'STANDARD', price: 19, popular: false, features: ['5 projects', 'Email support'] },
-    { id: 'premium', tier: 'PREMIUM', price: 29, popular: true, features: ['Unlimited projects', 'Priority support'] },
-    { id: 'vip', tier: 'VIP', price: 39, popular: false, features: ['All features', '24/7 support'] },
-  ];
+  subscriptions: Subscription[] = [];
 
-  selected: any = this.plans[2]; // mặc định chọn Premium
+  selected: any;
 
-  seatTypeForm!: FormGroup;
-
-  seatTypeIcon!: string;
-  seatTypeIconFile!: File;
-
-  constructor(private fb: FormBuilder, private utils: Utils, private utilsModal: UtilsModal) {}
+  constructor(
+    private fb: FormBuilder,
+    public utils: Utils,
+    private utilsModal: UtilsModal,
+    private subscriptionService: SubscriptionService,
+  ) {}
 
   ngOnInit(): void {
-    if (this.data) {
+    if (!this.data) {
+      this.dialogRef.close();
     }
-    this.initForm();
+    this.initData();
   }
 
-  private async initForm() {}
+  initData(): void {
+    this.subscriptionService.findAllAvailable().subscribe((subscriptions) => {
+      if (!subscriptions || subscriptions.length === 0) {
+        toast.error('No subscriptions available');
+        return;
+      }
+      this.subscriptions = subscriptions;
+    });
+  }
 
   onButtonClick() {}
 
@@ -54,5 +61,13 @@ export class ChooseSubscriptionDialogComponent implements OnInit {
     this.selected = p;
     // TODO: emit/close nếu muốn
     // this.dialogRef.close(p);
+  }
+
+  confirmSelection() {
+    if (!this.selected) {
+      toast.error('Please select a subscription plan');
+      return;
+    }
+    this.dialogRef.close(this.selected);
   }
 }

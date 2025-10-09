@@ -4,4 +4,6 @@ export abstract class Environment {
   public production: boolean = false;
   public isWebApp: boolean = false;
   public firebase: any;
+
+  public domain: string = 'sf-workbench.com'; // Thay đổi domain cho phù hợp với môi trường của bạn
 }

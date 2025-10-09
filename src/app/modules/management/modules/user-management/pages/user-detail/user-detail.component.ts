@@ -31,13 +31,16 @@ export class UserDetailComponent implements OnInit {
   mainForm!: FormGroup;
 
   user!: User;
-
   driver!: Driver;
 
   roles = [
     {
       label: 'User',
       value: 'user',
+    },
+    {
+      label: 'Pos',
+      value: 'pos',
     },
     {
       label: 'Driver',
@@ -176,15 +179,17 @@ export class UserDetailComponent implements OnInit {
   passwordValidator(control: any) {
     const value = control.value;
     this.passwordConditions['minLength'] = value.length >= 8;
-    this.passwordConditions['hasUpperCase'] = /[A-Z]/.test(value);
-    this.passwordConditions['hasLowerCase'] = /[a-z]/.test(value);
+    this.passwordConditions['hasWordCase'] = /[A-Z]/.test(value) && /[a-z]/.test(value);
     this.passwordConditions['hasNumber'] = /\d/.test(value);
+    this.passwordConditions['hasSpecial'] = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    this.passwordConditions['noneSpace'] = !/\s/.test(value);
 
     if (
       this.passwordConditions['minLength'] &&
-      this.passwordConditions['hasUpperCase'] &&
-      this.passwordConditions['hasLowerCase'] &&
-      this.passwordConditions['hasNumber']
+      this.passwordConditions['hasWordCase'] &&
+      this.passwordConditions['hasSpecial'] &&
+      this.passwordConditions['hasNumber'] &&
+      this.passwordConditions['noneSpace']
     ) {
       return null;
     } else {

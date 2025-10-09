@@ -310,42 +310,43 @@
             </ng-template>
           </nz-form-control>
         </nz-form-item>
-        <div class="text-left text-[14px] text-[#EF5222]">
-          <div>
-            <label class="text-base font-medium text-red-500">Ghi chú</label>
-          </div>
-          <div
-            class="transform transition duration-300 ease-in-out"
-            [ngClass]="{
-              valid: passwordConditions['minLength'],
-              invalid: userForm.controls['password'].touched && !passwordConditions['minLength']
-            }">
-            <label class="text-sm">1. Tối thiểu 8 ký tự</label>
-          </div>
-          <div
-            class="transform transition duration-300 ease-in-out"
-            [ngClass]="{
-              valid: passwordConditions['hasUpperCase'],
-              invalid: userForm.controls['password'].touched && !passwordConditions['hasUpperCase']
-            }">
-            <label class="text-sm">2. Ít nhất một chữ cái viết hoa</label>
-          </div>
-          <div
-            class="transform transition duration-300 ease-in-out"
-            [ngClass]="{
-              valid: passwordConditions['hasLowerCase'],
-              invalid: userForm.controls['password'].touched && !passwordConditions['hasLowerCase']
-            }">
-            <label class="text-sm">3. Ít nhất một chữ cái viết thường</label>
-          </div>
-          <div
-            class="transform transition duration-300 ease-in-out"
-            [ngClass]="{
-              valid: passwordConditions['hasNumber'],
-              invalid: userForm.controls['password'].touched && !passwordConditions['hasNumber']
-            }">
-            <label class="text-sm">4. Ít nhất một chữ số</label>
-          </div>
+        <div class="flex flex-col gap-2 overflow-hidden text-left">
+          <label class="text-sm font-medium">Password yêu cầu</label>
+          <label
+            nz-checkbox
+            [(ngModel)]="passwordConditions['minLength']"
+            [ngModelOptions]="{ standalone: true }"
+            class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
+            Tối thiểu 8 ký tự
+          </label>
+          <label
+            nz-checkbox
+            [(ngModel)]="passwordConditions['hasWordCase']"
+            [ngModelOptions]="{ standalone: true }"
+            class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
+            Ít nhất một chữ cái viết hoa và viết thường
+          </label>
+          <label
+            nz-checkbox
+            [(ngModel)]="passwordConditions['hasNumber']"
+            [ngModelOptions]="{ standalone: true }"
+            class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
+            Ít nhất một chữ số
+          </label>
+          <label
+            nz-checkbox
+            [(ngModel)]="passwordConditions['hasSpecial']"
+            [ngModelOptions]="{ standalone: true }"
+            class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
+            Ít nhất một ký tự đặc biệt: {{ '! @ # $ % ^ & * ( ) _ + - =' }}
+          </label>
+          <label
+            nz-checkbox
+            [(ngModel)]="passwordConditions['noneSpace']"
+            [ngModelOptions]="{ standalone: true }"
+            class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
+            Không chứa khoảng trắng
+          </label>
         </div>
       </div>
       <div class="flex w-8/12 flex-col">

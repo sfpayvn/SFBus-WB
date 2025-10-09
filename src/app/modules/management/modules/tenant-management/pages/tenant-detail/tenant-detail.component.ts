@@ -21,9 +21,11 @@ import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules
 import { Tenant, Tenant2Create, Tenant2Update } from '../../model/tenant.model';
 import { TenantService } from '../../service/tenant.service';
 import { SubscriptionService } from '../../../subscription-management/service/subscription.service';
-import { Subscription } from '../../../subscription-management/model/subscription.model';
+import { Subscription, RegisterToSubscription } from '../../../subscription-management/model/subscription.model';
 import { ChooseSubscriptionDialogComponent } from '../../components/choose-subscription-dialog/choose-subscription-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { TenantSubscriptionService } from '../../service/tenant-subscription.service';
+import { TenantSubscriptionListComponent } from '../../components/tenant-subscription/tenant-subscription-list.component';
 
 @Component({
   selector: 'app-tenant-detail',
@@ -34,6 +36,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class TenantDetailComponent implements OnInit {
   @ViewChild('pdfContentInvoice', { static: false }) pdfContentInvoice!: ElementRef;
   @ViewChild('pdfContentShippingLabel', { static: false }) pdfContentShippingLabel!: ElementRef;
+  @ViewChild('tenantSubscriptionList', { static: false }) tenantSubscriptionList!: TenantSubscriptionListComponent;
 
   mainForm!: FormGroup;
 
@@ -80,6 +83,7 @@ export class TenantDetailComponent implements OnInit {
     public utils: Utils,
     private location: Location,
     private tenantService: TenantService,
+    private tenantSubscriptionService: TenantSubscriptionService,
     private utilsModal: UtilsModal,
     private loadingService: LoadingService,
     private subscriptionService: SubscriptionService,
@@ -197,12 +201,30 @@ export class TenantDetailComponent implements OnInit {
         title: 'Choose Subscription',
         tenantId: this.tenant?._id || '',
       },
-      width: '80vw', // hoặc '80%'
-      maxWidth: '100vw', // tránh bị giới hạn mặc định
+      panelClass: 'dialog-large',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        const registerToSubscription: RegisterToSubscription = {
+          tenantId: this.tenant?._id || '',
+          subscriptionId: result._id,
+          startDate: new Date(),
+          duration: result.duration,
+          replaceCurrent: true,
+        };
+        this.tenantSubscriptionService.registerForTenant(registerToSubscription).subscribe({
+          next: (response) => {
+            console.log('🚀 ~ TenantDetailComponent ~ addNewSubscription ~ response:', response);
+            toast.success('Tenant subscription registered successfully');
+            
+            // Refresh data trong tenant subscription list component
+            if (this.tenantSubscriptionList) {
+              this.tenantSubscriptionList.refreshData();
+            }
+          },
+          error: (error) => this.utils.handleRequestError(error),
+        });
       }
     });
   }

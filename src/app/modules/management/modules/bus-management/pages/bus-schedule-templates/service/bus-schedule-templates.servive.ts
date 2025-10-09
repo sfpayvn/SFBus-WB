@@ -7,7 +7,7 @@ import { BusScheduleTemplate2Create, BusScheduleTemplate2Update } from '../model
   providedIn: 'root',
 })
 export class BusScheduleTemplatesService {
-  url = '/admin/bus-schedule_templates';
+  url = '/admin/bus-schedule-templates';
 
   constructor(private apiGatewayService: ApiGatewayService) {}
 

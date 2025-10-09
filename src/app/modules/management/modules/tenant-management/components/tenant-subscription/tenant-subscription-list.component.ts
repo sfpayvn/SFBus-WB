@@ -31,7 +31,18 @@ export class TenantSubscriptionListComponent implements OnInit {
     { label: 'Expired', value: 'expired' },
   ];
 
-  searchParams = {
+  searchParams: {
+    pageIdx: number;
+    startDate: Date | '';
+    endDate: Date | '';
+    pageSize: number;
+    keyword: string;
+    sortBy: {
+      key: string;
+      value: string;
+    };
+    filters: { key: string; value: any }[];
+  } = {
     pageIdx: 1,
     startDate: '' as Date | '',
     endDate: '' as Date | '',
@@ -41,12 +52,7 @@ export class TenantSubscriptionListComponent implements OnInit {
       key: 'createdAt',
       value: 'descend',
     },
-    filters: ([] = [
-      {
-        key: 'tenantId',
-        value: this.tenantId,
-      },
-    ]),
+    filters: [],
   };
 
   constructor(private fb: FormBuilder, private tenantSubscriptionService: TenantSubscriptionService) {}
@@ -57,7 +63,9 @@ export class TenantSubscriptionListComponent implements OnInit {
       status: [null],
       dateRange: [[]], // [start, end]
     });
-    this.searchParams;
+
+    const filterByTenantId = { key: 'tenantId', value: this.tenantId };
+    this.searchParams.filters.push(filterByTenantId);
     // mock load lần đầu
     this.search();
   }
@@ -142,5 +150,13 @@ export class TenantSubscriptionListComponent implements OnInit {
   onCancel(item: TenantSubscription): void {
     // TODO: gọi API hủy (chỉ khi đang active)
     console.log('cancel', item._id);
+  }
+
+  /**
+   * Public method để refresh data từ parent component
+   */
+  refreshData(): void {
+    console.log('🚀 ~ TenantSubscriptionListComponent ~ refreshData called');
+    this.loadData();
   }
 }

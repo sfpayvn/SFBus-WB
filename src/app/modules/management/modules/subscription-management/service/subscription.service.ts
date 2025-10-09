@@ -17,10 +17,16 @@ export class SubscriptionService {
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
 
+  findAllAvailable() {
+    const url = `${this.url}/find-all-available`;
+    return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
+  }
+
   findAllByRole(role: string) {
     const url = `${this.url}/find-all/${role}`;
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
+
   findOne(_id: string, skipLoading?: boolean) {
     const url = `${this.url}/${_id}`;
     return this.apiGatewayService.get(url, skipLoading).pipe(tap((res: any) => {}));

@@ -60,10 +60,19 @@ export class Subscription {
   description: string = '';
   limitation: string = ''; // JSON string của SubscriptionLimitation
   status: string = 'active'; // active, inactive, suspended
+  popular: boolean = false; // Có thể dùng để đánh dấu gói phổ biến
 
   /** BE có thể trả string date; FE tuỳ chọn dùng string | Date */
   createdAt?: string | Date;
   updatedAt?: string | Date;
+}
+
+export class RegisterToSubscription {
+  tenantId: string = '';
+  subscriptionId: string = '';
+  startDate: Date = new Date();
+  duration: number = 0;
+  replaceCurrent: boolean = false;
 }
 
 /** ====== Search/Filter Classes ====== */

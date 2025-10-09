@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ENV } from '@app/env';
 import { CookieService as NgxCookieService } from 'ngx-cookie-service';
 
 @Injectable({
@@ -10,7 +11,7 @@ export class CookieService {
   set(key: string, value: any, expireDays: number = 30): void {
     const date = new Date();
     date.setTime(date.getTime() + expireDays * 24 * 60 * 60 * 1000);
-    this.cookieService.set(key, JSON.stringify(value), date, '/');
+    this.cookieService.set(key, JSON.stringify(value), date, ENV.domain);
   }
 
   get(key: string): any {
@@ -20,10 +21,10 @@ export class CookieService {
   }
 
   remove(key: string): void {
-    this.cookieService.delete(key, '/');
+    this.cookieService.delete(key, ENV.domain);
   }
 
   clear(): void {
-    this.cookieService.deleteAll('/');
+    this.cookieService.deleteAll(ENV.domain);
   }
 }

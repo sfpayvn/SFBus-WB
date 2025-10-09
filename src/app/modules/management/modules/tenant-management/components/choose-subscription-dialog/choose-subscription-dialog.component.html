@@ -11,17 +11,17 @@
 </mat-dialog-title>
 <mat-dialog-content class="! flex h-full !max-h-full w-full justify-center rounded-xl bg-white !p-4">
   <div class="flex h-full w-full">
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Card -->
       <div
-        *ngFor="let p of plans"
+        *ngFor="let sub of subscriptions"
         class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow ring-1 ring-slate-200 transition hover:shadow-lg dark:bg-slate-800 dark:ring-slate-700">
         <!-- Header -->
-        <div class="bg-slate-900 px-5 py-4 text-white">
-          <div class="text-xs font-semibold uppercase tracking-wider opacity-80">{{ p.tier }}</div>
+        <div class="bg-primary px-5 py-4 text-white">
+          <div class="text-xs font-semibold uppercase tracking-wider opacity-80">{{ sub.name }}</div>
           <!-- Ribbon Popular -->
           <span
-            *ngIf="p.popular"
+            *ngIf="sub.popular"
             class="absolute -right-10 top-6 rotate-45 bg-emerald-500 px-10 py-1 text-[10px] text-white shadow">
             Popular
           </span>
@@ -30,33 +30,45 @@
         <!-- Price -->
         <div class="px-5 pt-6">
           <div class="text-3xl font-bold">
-            ${{ p.price }}<span class="text-sm font-normal text-slate-500">/mo</span>
+            {{ utils.formatPriceToVND(sub.price)
+            }}<span class="text-sm font-normal text-slate-500">/{{ sub.duration }} {{ sub.durationUnit }}</span>
           </div>
         </div>
 
         <!-- Features -->
-        <ul class="mt-4 space-y-2 px-5 text-sm text-slate-600 dark:text-slate-300">
-          <li *ngFor="let f of p.features" class="flex items-start gap-2">
-            <!-- check icon -->
+        <!-- <ul class="mt-4 space-y-2 px-5 text-sm text-slate-600 dark:text-slate-300">
+          <li *ngFor="let f of sub.features" class="flex items-start gap-2">
             <svg viewBox="0 0 24 24" class="size-4 mt-0.5" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <span>{{ f }}</span>
           </li>
-        </ul>
+        </ul> -->
 
         <!-- CTA -->
-        <div class="mt-auto p-5">
+        <div class="mt-auto flex justify-center p-5">
           <button
-            mat-stroked-button
-            color="primary"
-            class="w-full"
-            [ngClass]="{ 'mat-flat-button !bg-primary-600 !text-white': selected?.id === p.id }"
-            (click)="selectPlan(p)">
-            {{ selected?.id === p.id ? 'Selected' : 'Buy now' }}
+            class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+            nz-button
+            [ngClass]="{ '!bg-primary !text-white': selected?._id === sub._id }"
+            nzType="default"
+            (click)="selectPlan(sub)"
+            type="button">
+            {{ selected?._id === sub._id ? 'Selected' : 'Choose' }}
           </button>
         </div>
       </div>
     </div>
   </div>
 </mat-dialog-content>
+<main-dialog-actions class="!flex !justify-center !p-4">
+  <button
+    nz-button
+    class="!min-w-24 !bg-primary !flex !h-max !justify-center !text-white !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+    nzType="default"
+    (click)="confirmSelection()"
+    [disabled]="!selected"
+    type="button">
+    Confirm
+  </button>
+</main-dialog-actions>
