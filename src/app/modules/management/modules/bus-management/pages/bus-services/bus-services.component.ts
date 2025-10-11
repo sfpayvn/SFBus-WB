@@ -16,7 +16,10 @@ import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service'
 })
 export class BusServicesComponent implements OnInit {
   searchBusService: SearchBusService = new SearchBusService();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -56,16 +59,34 @@ export class BusServicesComponent implements OnInit {
     });
   }
 
-  toggleBusService(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusService.busServices = this.searchBusService.busServices.map((busService: BusService) => ({
-      ...busService,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const busServices = event as readonly BusService[];
+    this.searchBusService.busServices = [...busServices];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusService.busServices.some((busService) => !busService.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusService.busServices;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusService.busServices.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusService(busService: BusService): void {

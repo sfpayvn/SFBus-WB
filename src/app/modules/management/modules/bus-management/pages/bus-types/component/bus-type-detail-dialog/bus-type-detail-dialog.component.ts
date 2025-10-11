@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BusType, BusType2Create } from '../../model/bus-type.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from '@rsApp/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 export interface DialogData {
   title: string;
@@ -22,7 +23,7 @@ export class BusTypeDetailDialogComponent implements OnInit {
 
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private utils: Utils) {}
+  constructor(private fb: FormBuilder, private utils: Utils, public defaultFlagService: DefaultFlagService) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -30,7 +31,10 @@ export class BusTypeDetailDialogComponent implements OnInit {
 
   private initForm() {
     this.form = this.fb.group({
-      name: [this.busType.name, [Validators.required]],
+      name: [
+        { value: this.busType.name, disabled: this.defaultFlagService.isDefault(this.busType) },
+        [Validators.required],
+      ],
     });
   }
 
@@ -42,6 +46,17 @@ export class BusTypeDetailDialogComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.busType)) return;
+
+    const control = this.form.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   onSubmit() {

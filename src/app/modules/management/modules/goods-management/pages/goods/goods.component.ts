@@ -1,19 +1,19 @@
-import { Component, OnInit } from "@angular/core";
-import { Utils } from "src/app/shared/utils/utils";
-import { Router } from "@angular/router";
-import { UtilsModal } from "src/app/shared/utils/utils-modal";
-import { Subscription } from "rxjs";
-import { SearchGoods } from "../../model/goods.model";
-import { Goods } from "../../model/goods.model";
-import { GoodsService } from "../../service/goods.servive";
-import { MaterialDialogComponent } from "@rsApp/shared/components/material-dialog/material-dialog.component";
-import { MatDialog } from "@angular/material/dialog";
+import { Component, OnInit } from '@angular/core';
+import { Utils } from 'src/app/shared/utils/utils';
+import { Router } from '@angular/router';
+import { UtilsModal } from 'src/app/shared/utils/utils-modal';
+import { Subscription } from 'rxjs';
+import { Goods2Create, SearchGoods } from '../../model/goods.model';
+import { Goods } from '../../model/goods.model';
+import { GoodsService } from '../../service/goods.servive';
+import { MaterialDialogComponent } from '@rsApp/shared/components/material-dialog/material-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 
 @Component({
-  selector: "app-goods",
-  templateUrl: "./goods.component.html",
-  styleUrls: ["./goods.component.scss"],
+  selector: 'app-goods',
+  templateUrl: './goods.component.html',
+  styleUrls: ['./goods.component.scss'],
   standalone: false,
 })
 export class GoodsComponent implements OnInit {
@@ -23,16 +23,16 @@ export class GoodsComponent implements OnInit {
 
   searchParams = {
     pageIdx: 1,
-    startDate: "" as Date | "",
-    endDate: "" as Date | "",
+    startDate: '' as Date | '',
+    endDate: '' as Date | '',
     pageSize: 5,
-    keyword: "",
+    keyword: '',
     sortBy: {
-      key: "createdAt",
-      value: "descend",
+      key: 'createdAt',
+      value: 'descend',
     },
     filters: {
-      key: "",
+      key: '',
       value: [],
     },
   };
@@ -43,32 +43,33 @@ export class GoodsComponent implements OnInit {
   setOfCheckedId = new Set<string>();
 
   filterRoles = [
-    { text: "User", value: "user" },
-    { text: "Driver", value: "driver" },
+    { text: 'User', value: 'user' },
+    { text: 'Driver', value: 'driver' },
   ];
 
   totalPage: number = 0;
   totalItem: number = 0;
 
   statusClasses: { [key: string]: string } = {
-    pending: "border-blue-500 bg-blue-200 text-blue-800",
-    on_board: "border-indigo-500 bg-indigo-200 text-indigo-800",
-    completed: "border-green-500 bg-green-200 text-green-800",
-    cancelled: "border-red-500 bg-red-200 text-red-800",
+    pending: 'border-blue-500 bg-blue-200 text-blue-800',
+    on_board: 'border-indigo-500 bg-indigo-200 text-indigo-800',
+    completed: 'border-green-500 bg-green-200 text-green-800',
+    cancelled: 'border-red-500 bg-red-200 text-red-800',
   };
 
   goodsStatuses: { [key: string]: string } = {
-    pending: "Nhập hàng",
-    on_board: "Đang trên đường",
-    completed: "Hoàn thành",
-    cancelled: "Đã hủy",
-  }
+    pending: 'Nhập hàng',
+    on_board: 'Đang trên đường',
+    completed: 'Hoàn thành',
+    cancelled: 'Đã hủy',
+  };
 
-  constructor(public utils: Utils,
+  constructor(
+    public utils: Utils,
     private utilsModal: UtilsModal,
     private router: Router,
     private goodsService: GoodsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.eventSubscription = [];
   }
@@ -78,7 +79,7 @@ export class GoodsComponent implements OnInit {
     this.initListenEvent();
   }
 
-  initListenEvent() { }
+  initListenEvent() {}
 
   loadData(): void {
     this.loadGoods();
@@ -90,7 +91,7 @@ export class GoodsComponent implements OnInit {
       next: (res: SearchGoods) => {
         if (res) {
           this.searchGoods = res;
-          console.log("🚀 ~ GoodsComponent ~ this.goodsService.searchGoods ~ this.searchGoods:", this.searchGoods)
+          console.log('🚀 ~ GoodsComponent ~ this.goodsService.searchGoods ~ this.searchGoods:', this.searchGoods);
           this.totalItem = this.searchGoods.totalItem;
           this.totalPage = this.searchGoods.totalPage;
         }
@@ -160,18 +161,18 @@ export class GoodsComponent implements OnInit {
   }
 
   addGoods() {
-    this.router.navigate(["/management/goods-management/goods/detail"]);
+    this.router.navigate(['/management/goods-management/goods/detail']);
   }
 
   editGoods(goods: Goods) {
-    this.router.navigate(["/management/goods-management/goods/detail"], { state: { goods } });
+    this.router.navigate(['/management/goods-management/goods/detail'], { state: { goods } });
   }
 
   deleteGoods(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete SeatType',
         content:
@@ -179,13 +180,13 @@ export class GoodsComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -201,6 +202,22 @@ export class GoodsComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(goods: Goods): void {
+    delete (goods as any)._id;
+    let goods2Create = new Goods2Create();
+    goods2Create = { ...goods2Create, ...goods };
+
+    this.goodsService.createGoods(goods2Create).subscribe({
+      next: (res: Goods) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 }

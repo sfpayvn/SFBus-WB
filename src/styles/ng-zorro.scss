@@ -29,6 +29,7 @@ nz-select {
 
 nz-form-item {
   flex-direction: column !important;
+  margin: 0 !important;
   nz-form-label {
     font-weight: 500 !important;
     min-height: 32px !important;
@@ -38,7 +39,7 @@ nz-form-item {
   nz-input-group {
     min-height: 38px !important;
   }
-  nz-form-control{
+  nz-form-control {
     min-height: auto !important;
   }
 }

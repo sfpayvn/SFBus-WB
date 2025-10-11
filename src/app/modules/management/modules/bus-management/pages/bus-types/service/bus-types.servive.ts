@@ -30,7 +30,7 @@ export class BusTypesService {
     };
 
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   createBusType(busType2Create: BusType2Create) {

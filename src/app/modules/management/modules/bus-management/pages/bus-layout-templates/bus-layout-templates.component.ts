@@ -20,7 +20,10 @@ import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service'
 })
 export class BusLayoutTemplatesComponent implements OnInit {
   searchBusLayoutTemplate: SearchBusLayoutTemplate = new SearchBusLayoutTemplate();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -63,20 +66,34 @@ export class BusLayoutTemplatesComponent implements OnInit {
       });
   }
 
-  toggleBusLayoutTemplate(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusLayoutTemplate.busLayoutTemplates = this.searchBusLayoutTemplate.busLayoutTemplates.map(
-      (busTemplate: BusLayoutTemplate) => ({
-        ...busTemplate,
-        selected: checked,
-      }),
-    );
+  onCurrentPageDataChange(event: any): void {
+    const busLayoutTemplates = event as readonly BusLayoutTemplate[];
+    this.searchBusLayoutTemplate.busLayoutTemplates = [...busLayoutTemplates];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusLayoutTemplate.busLayoutTemplates.some(
-      (busLayoutTemplate) => !busLayoutTemplate.selected,
-    );
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusLayoutTemplate.busLayoutTemplates;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusLayoutTemplate.busLayoutTemplates.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusLayoutTemplate(busLayoutTemplate: BusLayoutTemplate): void {

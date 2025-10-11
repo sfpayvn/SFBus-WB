@@ -14,6 +14,7 @@ import {
 } from '../../model/bus-layout-templates.model';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-layout-template-detail',
@@ -62,6 +63,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     private renderer: Renderer2,
     private utils: Utils,
     private router: Router,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -84,11 +86,18 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     });
   }
 
+  get f() {
+    return this.busTemplateDetailForm.controls;
+  }
+
   private async initForm() {
     const { name = '' } = this.busLayoutTemplate || {};
 
     this.busTemplateDetailForm = this.fb.group({
-      name: [name, [Validators.required]],
+      name: [
+        { value: name, disabled: this.defaultFlagService.isDefault(this.busLayoutTemplate) },
+        [Validators.required],
+      ],
       layouts: this.fb.array([]),
     });
 
@@ -129,7 +138,10 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   async initializeLayout(layout?: any) {
     const layoutForMatrix = this.fb.group({
-      name: [layout?.name ?? 'New Layout', [Validators.required]],
+      name: [
+        { value: layout?.name ?? 'New Layout', disabled: this.defaultFlagService.isDefault(this.busLayoutTemplate) },
+        [Validators.required],
+      ],
       seats: [await this.initializeMaTrix()],
     });
 
@@ -310,6 +322,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   // Bắt đầu nhấn chuột
   onMouseDown(row: number, col: number, event: MouseEvent): void {
+    if (this.defaultFlagService.isDefault(this.busLayoutTemplate)) return;
+
     if (event.button !== 0) return; // Chỉ thực hiện nếu nhấn chuột trái
     event.preventDefault(); // Ngăn chặn hành động mặc định
     this.holdTimeout = setTimeout(() => {
@@ -320,6 +334,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   // Nhả chuột
   onMouseUp(row: number, col: number, event: MouseEvent): void {
+    if (this.defaultFlagService.isDefault(this.busLayoutTemplate)) return;
+
     if (event.button !== 0) return; // Chỉ thực hiện nếu nhả chuột trái
     if (this.holdTimeout) {
       clearTimeout(this.holdTimeout); // Hủy bộ đếm thời gian nếu nhấn giữ chưa xảy ra
@@ -330,6 +346,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   // Di chuột ra khỏi ô
   onMouseLeave(event: MouseEvent): void {
+    if (this.defaultFlagService.isDefault(this.busLayoutTemplate)) return;
+
     if (this.holdTimeout) {
       clearTimeout(this.holdTimeout); // Hủy bộ đếm thời gian nếu nhấn giữ chưa xảy ra
       this.holdTimeout = null; // Đặt lại holdTimeout
@@ -338,6 +356,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
   // Nhấn chuột
   onClick(row: number, col: number, event: MouseEvent): void {
+    if (this.defaultFlagService.isDefault(this.busLayoutTemplate)) return;
+
     if (event.button !== 0) return; // Chỉ thực hiện nếu nhấn chuột trái
     if (this.holdTimeout) {
       clearTimeout(this.holdTimeout); // Hủy bộ đếm thời gian nếu nhấn giữ chưa xảy ra
@@ -409,6 +429,17 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
     cell.hasError = false; // Xóa đánh dấu lỗi
     cell.isEditing = false; // Kết thúc chế độ chỉnh sửa
+  }
+
+  clearFormValue(controlName: string, formControls: any) {
+    if (this.defaultFlagService.isDefault(this.busLayoutTemplate)) return;
+
+    const control = formControls.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   async onSubmit() {

@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BusProvince2Create } from '../../model/bus-province.model';
+import { BusProvince, BusProvince2Create } from '../../model/bus-province.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { BusStation } from '../../../bus-stations/model/bus-station.model';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import _ from 'lodash';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 export interface DialogData {
   title: string;
@@ -13,8 +14,7 @@ export interface DialogData {
   busStations: BusStation[];
 }
 
-export class BusProvince2CreateUI extends BusProvince2Create {
-  _id: string = '';
+export class BusProvinceUI extends BusProvince {
   busStations: BusStation[] = [];
 }
 
@@ -27,7 +27,7 @@ export class BusProvince2CreateUI extends BusProvince2Create {
 export class BusProvinceDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusProvinceDetailDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
-  busProvince: BusProvince2CreateUI = { ...new BusProvince2CreateUI(), ...this.data.busProvince };
+  busProvince: BusProvinceUI = { ...new BusProvinceUI(), ...this.data.busProvince };
   busStations: BusStation[] = this.data.busStations ?? new BusStation();
 
   busProvinceForm!: FormGroup;
@@ -36,7 +36,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   filteredBusStations: BusStation[] = [];
   filteredBusProvinceStations: BusStation[] = [];
 
-  constructor(private fb: FormBuilder, private utils: Utils) {}
+  constructor(private fb: FormBuilder, private utils: Utils, public defaultFlagService: DefaultFlagService) {}
 
   async ngOnInit(): Promise<void> {
     await this.initData();
@@ -44,8 +44,9 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   }
 
   private async initForm() {
+    const { name } = this.busProvince;
     this.busProvinceForm = this.fb.group({
-      name: [this.busProvince.name, [Validators.required]],
+      name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busProvince) }, [Validators.required]],
     });
   }
 
@@ -65,6 +66,17 @@ export class BusProvinceDetailDialogComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.busProvince)) return;
+
+    const control = this.busProvinceForm.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   onSubmit() {
@@ -153,6 +165,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   // }
 
   toggleBusStation(busStation: any) {
+    if (this.defaultFlagService.isDefault(busStation)) return;
     busStation.selected = !busStation.selected;
   }
 

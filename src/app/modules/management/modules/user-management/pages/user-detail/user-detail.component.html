@@ -1,14 +1,15 @@
 <div class="mb-4 flex justify-end">
   <div class="inline-block space-x-4">
     <button
-      class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
       (click)="backPage()">
       Back
     </button>
   </div>
 </div>
 
-<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
   <form [formGroup]="mainForm" nz-form *ngIf="mainForm" (ngSubmit)="onSubmit()">
     <div class="flex gap-4">
       <div class="flex h-full w-4/12 flex-col">
@@ -353,7 +354,7 @@
         <div class="flex justify-between">
           <nz-form-label nzFor="addresses" class="!flex !h-[48px] !items-start !justify-start"> Địa chỉ </nz-form-label>
           <button
-            class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+            class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
             nz-button
             type="button"
             nzType="default"

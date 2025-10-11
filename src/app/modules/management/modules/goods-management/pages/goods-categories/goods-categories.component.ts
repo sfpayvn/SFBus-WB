@@ -1,19 +1,19 @@
-import { Component, OnInit } from "@angular/core";
-import { Utils } from "src/app/shared/utils/utils";
-import { Router } from "@angular/router";
-import { UtilsModal } from "src/app/shared/utils/utils-modal";
-import { Subscription } from "rxjs";
-import { GoodsCategoriesService } from "../../service/goods-categories.servive";
-import { SearchGoodsCategory, GoodsCategory, GoodsCategory2Create } from "../../model/goods-category.model";
-import { MaterialDialogComponent } from "@rsApp/shared/components/material-dialog/material-dialog.component";
-import { MatDialog } from "@angular/material/dialog";
+import { Component, OnInit } from '@angular/core';
+import { Utils } from 'src/app/shared/utils/utils';
+import { Router } from '@angular/router';
+import { UtilsModal } from 'src/app/shared/utils/utils-modal';
+import { Subscription } from 'rxjs';
+import { GoodsCategoriesService } from '../../service/goods-categories.servive';
+import { SearchGoodsCategory, GoodsCategory, GoodsCategory2Create } from '../../model/goods-category.model';
+import { MaterialDialogComponent } from '@rsApp/shared/components/material-dialog/material-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
-import { GoodsCategoryDetailDialogComponent } from "../../component/goods-category-detail-dialog/goods-category-detail-dialog.component";
+import { GoodsCategoryDetailDialogComponent } from '../../component/goods-category-detail-dialog/goods-category-detail-dialog.component';
 
 @Component({
-  selector: "app-goods-categories",
-  templateUrl: "./goods-categories.component.html",
-  styleUrls: ["./goods-categories.component.scss"],
+  selector: 'app-goods-categories',
+  templateUrl: './goods-categories.component.html',
+  styleUrls: ['./goods-categories.component.scss'],
   standalone: false,
 })
 export class GoodsCategoriesComponent implements OnInit {
@@ -23,16 +23,16 @@ export class GoodsCategoriesComponent implements OnInit {
 
   searchParams = {
     pageIdx: 1,
-    startDate: "" as Date | "",
-    endDate: "" as Date | "",
+    startDate: '' as Date | '',
+    endDate: '' as Date | '',
     pageSize: 5,
-    keyword: "",
+    keyword: '',
     sortBy: {
-      key: "createdAt",
-      value: "descend",
+      key: 'createdAt',
+      value: 'descend',
     },
     filters: {
-      key: "",
+      key: '',
       value: [],
     },
   };
@@ -43,29 +43,29 @@ export class GoodsCategoriesComponent implements OnInit {
   setOfCheckedId = new Set<string>();
 
   filterRoles = [
-    { text: "User", value: "user" },
-    { text: "Driver", value: "driver" },
+    { text: 'User', value: 'user' },
+    { text: 'Driver', value: 'driver' },
   ];
 
   totalPage: number = 0;
   totalItem: number = 0;
 
   statusClasses: { [key: string]: string } = {
-    active: "border-green-500 bg-green-200 text-green-800",
-    inactive: "border-red-500 bg-red-200 text-red-800",
+    active: 'border-green-500 bg-green-200 text-green-800',
+    inactive: 'border-red-500 bg-red-200 text-red-800',
   };
 
   goodsStatuses: { [key: string]: string } = {
-    active: "Hoạt động",
-    inactive: "Không hoạt động",
-  }
+    active: 'Hoạt động',
+    inactive: 'Không hoạt động',
+  };
 
   constructor(
     public utils: Utils,
     private utilsModal: UtilsModal,
     private router: Router,
     private goodsCategoriesService: GoodsCategoriesService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.eventSubscription = [];
   }
@@ -75,7 +75,7 @@ export class GoodsCategoriesComponent implements OnInit {
     this.initListenEvent();
   }
 
-  initListenEvent() { }
+  initListenEvent() {}
 
   loadData(): void {
     this.loadGoods();
@@ -159,7 +159,7 @@ export class GoodsCategoriesComponent implements OnInit {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete SeatType',
         content:
@@ -167,13 +167,13 @@ export class GoodsCategoriesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -182,7 +182,9 @@ export class GoodsCategoriesComponent implements OnInit {
         this.goodsCategoriesService.deleteGoodsCategories(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchGoodsCategories.goodsCategories = this.searchGoodsCategories.goodsCategories.filter((goodsCategory) => goodsCategory._id !== id);
+              this.searchGoodsCategories.goodsCategories = this.searchGoodsCategories.goodsCategories.filter(
+                (goodsCategory) => goodsCategory._id !== id,
+              );
               toast.success('Goods Category deleted successfully');
             }
           },
@@ -210,8 +212,9 @@ export class GoodsCategoriesComponent implements OnInit {
         this.goodsCategoriesService.processUpdateGoodsCategories(result.files, goodsCategory2Update).subscribe({
           next: (res: GoodsCategory) => {
             if (res) {
-              this.searchGoodsCategories.goodsCategories = this.searchGoodsCategories.goodsCategories.map((goodsCategory: GoodsCategory) =>
-                goodsCategory._id === res._id ? { ...goodsCategory, ...res } : goodsCategory,
+              this.searchGoodsCategories.goodsCategories = this.searchGoodsCategories.goodsCategories.map(
+                (goodsCategory: GoodsCategory) =>
+                  goodsCategory._id === res._id ? { ...goodsCategory, ...res } : goodsCategory,
               );
               toast.success('Goods Category updated successfully');
             }
@@ -231,7 +234,6 @@ export class GoodsCategoriesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-
         const goodsCategory2Create = new GoodsCategory2Create();
         goodsCategory2Create.name = result.name;
         goodsCategory2Create.icon = result.icon;
@@ -246,6 +248,22 @@ export class GoodsCategoriesComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(goodsCategory: GoodsCategory): void {
+    delete (goodsCategory as any)._id;
+    let goodsCategory2Create = new GoodsCategory2Create();
+    goodsCategory2Create = { ...goodsCategory2Create, ...goodsCategory };
+
+    this.goodsCategoriesService.createGoodsCategories(goodsCategory2Create).subscribe({
+      next: (res: GoodsCategory) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 }

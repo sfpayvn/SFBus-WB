@@ -16,7 +16,10 @@ import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service'
 })
 export class BusTemplatesComponent implements OnInit {
   searchBusTemplate: SearchBusTemplate = new SearchBusTemplate();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -45,10 +48,6 @@ export class BusTemplatesComponent implements OnInit {
       next: (res: SearchBusTemplate) => {
         if (res) {
           this.searchBusTemplate = res;
-          console.log(
-            '🚀 ~ BusTemplatesComponent ~ this.busTemplatesService.searchBusTemplate ~ this.searchBusTemplate:',
-            this.searchBusTemplate,
-          );
           this.totalItem = this.searchBusTemplate.totalItem;
           this.totalPage = this.searchBusTemplate.totalPage;
         }
@@ -61,16 +60,34 @@ export class BusTemplatesComponent implements OnInit {
     });
   }
 
-  toggleBusTemplate(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusTemplate.busTemplates = this.searchBusTemplate.busTemplates.map((busTemplate: BusTemplate) => ({
-      ...busTemplate,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const busTemplates = event as readonly BusTemplate[];
+    this.searchBusTemplate.busTemplates = [...busTemplates];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusTemplate.busTemplates.some((busTemplate: BusTemplate) => !busTemplate.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusTemplate.busTemplates;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusTemplate.busTemplates.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusTemplate(busTemplate: BusTemplate): void {

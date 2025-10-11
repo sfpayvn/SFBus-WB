@@ -41,7 +41,7 @@ export class GoodsService {
       value: string[];
     };
   }) {
-    const url = `${this.url}/search-paging`;
+    const url = `${this.url}/search`;
     const body = {
       pageIdx: searchParams.pageIdx,
       startDate: searchParams.startDate,

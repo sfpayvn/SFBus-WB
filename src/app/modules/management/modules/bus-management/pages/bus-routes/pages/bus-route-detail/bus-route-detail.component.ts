@@ -12,6 +12,7 @@ import { BusStationsService } from '../../../bus-stations/service/bus-stations.s
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { BusProvincesService } from '../../../bus-provices/service/bus-provinces.servive';
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-route-detail',
@@ -37,6 +38,7 @@ export class BusRouteDetailComponent implements OnInit {
     private busStationsService: BusStationsService,
     private busProvincesService: BusProvincesService,
     private router: Router,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -68,9 +70,15 @@ export class BusRouteDetailComponent implements OnInit {
     const { name = '', distance = 0, distanceTime = '', breakPoints = [] } = this.busRoute || {};
 
     this.busRouteDetailForm = this.fb.group({
-      name: [name, [Validators.required]],
-      distance: [distance, [Validators.required]],
-      distanceTime: [distanceTime, [Validators.required]],
+      name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busRoute) }, [Validators.required]],
+      distance: [
+        { value: distance, disabled: this.defaultFlagService.isDefault(this.busRoute) },
+        [Validators.required],
+      ],
+      distanceTime: [
+        { value: distanceTime, disabled: this.defaultFlagService.isDefault(this.busRoute) },
+        [Validators.required],
+      ],
       breakPoints: this.fb.array(
         breakPoints.length > 0
           ? breakPoints.map((bp) => this.createBreakPoint(bp.busStationId))
@@ -79,9 +87,16 @@ export class BusRouteDetailComponent implements OnInit {
     });
   }
 
+  get f() {
+    return this.busRouteDetailForm.controls;
+  }
+
   createBreakPoint(busStationId: string = ''): FormGroup {
     return this.fb.group({
-      busStationId: [busStationId, Validators.required],
+      busStationId: [
+        { value: busStationId, disabled: this.defaultFlagService.isDefault(this.busRoute) },
+        Validators.required,
+      ],
     });
   }
 
@@ -138,6 +153,17 @@ export class BusRouteDetailComponent implements OnInit {
 
   drop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.breakPoints.controls, event.previousIndex, event.currentIndex);
+  }
+
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.busRoute)) return;
+
+    const control = this.busRouteDetailForm.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   onSubmit() {

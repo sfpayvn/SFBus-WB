@@ -13,7 +13,7 @@ export class BusStationsService {
 
   findAll(skipLoadding?: boolean) {
     const url = `${this.url}/find-all`;
-    return this.apiGatewayService.get(url, skipLoadding).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.get(url, null, { skipLoading: skipLoadding }).pipe(tap((res: any) => {}));
   }
 
   searchBusStation(pageIdx: number = 0, pageSize: number = 999, keyword: string = '', sortBy: string = '') {
@@ -25,7 +25,7 @@ export class BusStationsService {
     };
 
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   createBusStation(busService2Create: BusStation2Create) {

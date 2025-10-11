@@ -11,9 +11,9 @@ export class BusProvincesService {
 
   constructor(private apiGatewayService: ApiGatewayService) {}
 
-  findAll() {
+  findAll(skipLoading?: boolean) {
     const url = `${this.url}/find-all`;
-    return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.get(url, null, { skipLoading }).pipe(tap((res: any) => {}));
   }
 
   searchBusProvince(pageIdx: number = 0, pageSize: number = 999, keyword: string = '', sortBy: string = '') {
@@ -25,12 +25,11 @@ export class BusProvincesService {
     };
 
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   createBusProvince(busService2Create: BusProvince2Create) {
     const url = this.url;
-
     return this.apiGatewayService.post(url, busService2Create).pipe(tap((res: any) => {}));
   }
 

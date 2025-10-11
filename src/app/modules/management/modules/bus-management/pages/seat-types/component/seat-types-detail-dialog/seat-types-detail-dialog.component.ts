@@ -6,6 +6,7 @@ import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { FileDto } from 'src/app/modules/management/modules/files-center-management/model/file-center.model';
 import { FilesCenterDialogComponent } from 'src/app/modules/management/modules/files-center-management/components/files-center-dialog/files-center-dialog.component';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 export interface DialogData {
   title: string;
@@ -28,7 +29,12 @@ export class SeatTypesDetailDialogComponent implements OnInit {
   seatTypeIcon!: string;
   seatTypeIconFile!: File;
 
-  constructor(private fb: FormBuilder, private utils: Utils, private utilsModal: UtilsModal) {}
+  constructor(
+    private fb: FormBuilder,
+    private utils: Utils,
+    private utilsModal: UtilsModal,
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     if (this.data) {
@@ -38,10 +44,16 @@ export class SeatTypesDetailDialogComponent implements OnInit {
   }
 
   private async initForm() {
+    const { name, iconId } = this.seatType;
+
     this.seatTypeForm = this.fb.group({
-      name: [this.seatType.name, [Validators.required]],
-      iconId: [this.seatType.iconId, Validators.required],
+      name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.seatType) }, [Validators.required]],
+      iconId: [{ value: iconId, disabled: this.defaultFlagService.isDefault(this.seatType) }, Validators.required],
     });
+  }
+
+  get f() {
+    return this.seatTypeForm.controls;
   }
 
   updateValidators = (controlName: string, shouldSet: boolean) => {
@@ -56,6 +68,17 @@ export class SeatTypesDetailDialogComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.seatType)) return;
+
+    const control = this.seatTypeForm.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   onFileChange(event: any) {

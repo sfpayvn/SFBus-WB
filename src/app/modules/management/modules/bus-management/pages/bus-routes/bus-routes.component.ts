@@ -17,7 +17,10 @@ import { SeatType } from '../seat-types/model/seat-type.model';
 })
 export class BusRoutesComponent implements OnInit {
   searchBusRoute: SearchBusRoute = new SearchBusRoute();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -58,16 +61,34 @@ export class BusRoutesComponent implements OnInit {
     });
   }
 
-  toggleBusRoute(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.map((busRoute: BusRoute) => ({
-      ...busRoute,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const busRoutes = event as readonly BusRoute[];
+    this.searchBusRoute.busRoutes = [...busRoutes];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusRoute.busRoutes.some((busRoute) => !busRoute.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusRoute.busRoutes;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusRoute.busRoutes.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusRoute(busRoute: BusRoute): void {

@@ -24,7 +24,10 @@ export interface filteredProvinces extends BusProvince {
 })
 export class BusProvincesComponent implements OnInit {
   searchBusProvince: SearchBusProvince = new SearchBusProvince();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -129,16 +132,34 @@ export class BusProvincesComponent implements OnInit {
     // });
   }
 
-  toggleBusProvince(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusProvince.busProvinces = this.searchBusProvince.busProvinces.map((busProvince: BusProvince) => ({
-      ...busProvince,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const provinces = event as readonly filteredProvinces[];
+    this.filteredProvinces = [...provinces];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusProvince.busProvinces.some((busProvince) => !busProvince.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.filteredProvinces;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.filteredProvinces.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusProvince(busProvince: BusProvince): void {

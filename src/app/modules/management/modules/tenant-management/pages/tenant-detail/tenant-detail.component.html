@@ -15,7 +15,7 @@
         <span *ngIf="mode == 'create'"> Thêm Tenant </span>
       </label>
     </div>
-    <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
+    <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
       <form [formGroup]="mainForm" nz-form *ngIf="mainForm" (ngSubmit)="onSubmit()">
         <div class="flex gap-4">
           <div class="flex h-full w-4/12 flex-col">

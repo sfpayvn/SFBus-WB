@@ -34,7 +34,7 @@ export class BusSchedulesService {
     },
     viewDisplayMode: string,
   ) {
-    const url = `${this.url}/search-paging`;
+    const url = `${this.url}/search`;
 
     if (viewDisplayMode === 'table') {
       for (const filter of searchParams.filters) {

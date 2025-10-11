@@ -25,7 +25,7 @@ export class BusesService {
     };
 
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   createBus(bus2Create: Bus2Create) {

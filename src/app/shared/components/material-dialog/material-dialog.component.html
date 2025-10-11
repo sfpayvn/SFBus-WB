@@ -59,11 +59,13 @@
   </div>
 </mat-dialog-content>
 @if(data.btn && data.btn.length > 0){
-<mat-dialog-actions class="line-block space-x-4 text-center">
+<mat-dialog-actions class="flex justify-center gap-4">
   @for(btn of data.btn; track $index){
   <button
+    class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border-gray-300 border !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+    nz-button
     [matDialogClose]="btn.type == 'cancel' ? false : true"
-    class="bg-muted hover:text-foreground flex-none rounded-md px-4 py-2.5 text-xs font-semibold">
+    aria-label="Import CSV">
     {{ btn.label }}
   </button>
   }

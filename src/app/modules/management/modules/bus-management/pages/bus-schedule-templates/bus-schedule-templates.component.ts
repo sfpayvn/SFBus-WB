@@ -20,7 +20,10 @@ import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service'
 })
 export class BusScheduleTemplatesComponent implements OnInit {
   searchBusScheduleTemplate: SearchBusScheduleTemplate = new SearchBusScheduleTemplate();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -29,7 +32,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
   keyword: string = '';
   sortBy: string = '';
 
-  isLoadingBus: boolean = false;
+  isLoadingBusScheduleTemplate: boolean = false;
 
   constructor(
     private busScheduleTemplatesService: BusScheduleTemplatesService,
@@ -44,7 +47,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBus = true;
+    this.isLoadingBusScheduleTemplate = true;
     this.busScheduleTemplatesService
       .searchBusScheduleTemplate(this.pageIdx, this.pageSize, this.keyword, this.sortBy)
       .subscribe({
@@ -58,29 +61,43 @@ export class BusScheduleTemplatesComponent implements OnInit {
             this.totalItem = this.searchBusScheduleTemplate.totalItem;
             this.totalPage = this.searchBusScheduleTemplate.totalPage;
           }
-          this.isLoadingBus = false;
+          this.isLoadingBusScheduleTemplate = false;
         },
         error: (error: any) => {
           this.utils.handleRequestError(error);
-          this.isLoadingBus = false;
+          this.isLoadingBusScheduleTemplate = false;
         },
       });
   }
 
-  toggleBus(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusScheduleTemplate.busScheduleTemplates = this.searchBusScheduleTemplate.busScheduleTemplates.map(
-      (busScheduleTemplate: BusScheduleTemplate) => ({
-        ...busScheduleTemplate,
-        selected: checked,
-      }),
-    );
+  onCurrentPageDataChange(event: any): void {
+    const busScheduleTemplates = event as readonly BusScheduleTemplate[];
+    this.searchBusScheduleTemplate.busScheduleTemplates = [...busScheduleTemplates];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusScheduleTemplate.busScheduleTemplates.some(
-      (busScheduleTemplate) => !busScheduleTemplate.selected,
-    );
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusScheduleTemplate.busScheduleTemplates;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusScheduleTemplate.busScheduleTemplates.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusScheduleTemplate(busScheduleTemplate: BusScheduleTemplate): void {

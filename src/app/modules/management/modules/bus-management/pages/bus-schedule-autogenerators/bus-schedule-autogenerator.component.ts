@@ -5,23 +5,33 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusScheduleAutoGeneratorsService } from './service/bus-schedule-autogenerators.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
-import { BusScheduleAutoGenerator, SearchBusScheduleAutoGenerator, SpecificTimeSlot } from './model/bus-schedule-autogenerator.model';
+import {
+  BusScheduleAutoGenerator,
+  BusScheduleAutoGenerator2Create,
+  SearchBusScheduleAutoGenerator,
+  SpecificTimeSlot,
+} from './model/bus-schedule-autogenerator.model';
 import moment from 'moment';
 
 export interface CalendarEvent {
-  _id: string; name: string; startDate: Date; status: string
+  _id: string;
+  name: string;
+  startDate: Date;
+  status: string;
 }
 
 @Component({
   selector: 'app-bus-schedules',
   templateUrl: './bus-schedule-autogenerator.component.html',
   styleUrls: ['./bus-schedule-autogenerator.component.scss'],
-  standalone: false
+  standalone: false,
 })
-
 export class BusScheduleAutoGeneratorsComponent implements OnInit {
   searchBusScheduleAutoGenerator: SearchBusScheduleAutoGenerator = new SearchBusScheduleAutoGenerator();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   searchParams = {
     pageIdx: 1,
@@ -47,7 +57,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
-  ) { }
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.setParamsToSearch();
@@ -60,10 +70,15 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       next: async (res: SearchBusScheduleAutoGenerator) => {
         if (res) {
           this.searchBusScheduleAutoGenerator = res;
-          console.log("🚀 ~ BusesComponent ~ this.busScheduleAutoGeneratorsService.searchBus ~ this.searchBusScheduleAutoGenerator:", this.searchBusScheduleAutoGenerator)
+          console.log(
+            '🚀 ~ BusesComponent ~ this.busScheduleAutoGeneratorsService.searchBus ~ this.searchBusScheduleAutoGenerator:',
+            this.searchBusScheduleAutoGenerator,
+          );
           this.totalItem = this.searchBusScheduleAutoGenerator.totalItem;
           this.totalPage = this.searchBusScheduleAutoGenerator.totalPage;
-          this.calendarEvents = await this.convertToCalendarEventData(this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators);
+          this.calendarEvents = await this.convertToCalendarEventData(
+            this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators,
+          );
         }
         this.isLoadingBusScheduleAutoGenerator = false;
       },
@@ -85,7 +100,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
         endDate: null,
         pageSize: 5,
         keyword: '',
-        sortBy: ''
+        sortBy: '',
       };
     }
   }
@@ -105,7 +120,6 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       startOfWeek.setHours(0, 0, 0, 0);
       this.searchParams.startDate = startOfWeek;
       this.searchParams.endDate = endOfWeek;
-
     } else if (this.viewMode === 'month') {
       // Tính ngày đầu tháng
       const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -115,7 +129,6 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       startOfMonth.setHours(0, 0, 0, 0);
       this.searchParams.startDate = startOfMonth;
       this.searchParams.endDate = endOfMonth;
-
     } else if (this.viewMode === 'day') {
       // Tính toán cho chế độ ngày
       const startOfDay = new Date(currentDate);
@@ -127,23 +140,43 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     }
   }
 
-  toggleBusScheduleAutoGenerator(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators = this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators.map((busScheduleAutoGenerator: BusScheduleAutoGenerator) => ({
-      ...busScheduleAutoGenerator,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const busScheduleAutoGenerators = event as readonly BusScheduleAutoGenerator[];
+    this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators = [...busScheduleAutoGenerators];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators.some((busScheduleAutoGenerator) => !busScheduleAutoGenerator.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators.forEach(({ _id }) =>
+      this.updateCheckedSet(_id, checked),
+    );
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusScheduleAutoGenerator(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete Bus',
         content:
@@ -151,13 +184,13 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -166,7 +199,8 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
         this.busScheduleAutoGeneratorsService.deleteBusScheduleAutoGenerator(id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators = this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators.filter((bus) => bus._id !== id);
+              this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators =
+                this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators.filter((bus) => bus._id !== id);
               toast.success('Bus deleted successfully');
             }
           },
@@ -186,7 +220,10 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       // return
     }
     const params = { busScheduleAutoGenerator: JSON.stringify(busScheduleAutoGenerator) };
-    this.router.navigateByUrl('/management/bus-management/bus-schedule/bus-schedule-autogenerators/bus-schedule-autogenerator-detail', { state: params });
+    this.router.navigateByUrl(
+      '/management/bus-management/bus-schedule/bus-schedule-autogenerators/bus-schedule-autogenerator-detail',
+      { state: params },
+    );
   }
 
   addBusScheduleAutoGenerator(startDate?: Date): void {
@@ -197,14 +234,32 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     //   });
     //   return
     // }
-    this.router.navigate(['/management/bus-management/bus-schedule/bus-schedule-autogenerators/bus-schedule-autogenerator-detail']);
+    this.router.navigate([
+      '/management/bus-management/bus-schedule/bus-schedule-autogenerators/bus-schedule-autogenerator-detail',
+    ]);
+  }
+
+  cloneData(busScheduleAutoGenerator: BusScheduleAutoGenerator): void {
+    delete (busScheduleAutoGenerator as any)._id;
+    let busScheduleAutoGenerator2Create = new BusScheduleAutoGenerator2Create();
+    busScheduleAutoGenerator2Create = { ...busScheduleAutoGenerator2Create, ...busScheduleAutoGenerator };
+
+    this.busScheduleAutoGeneratorsService.createBusScheduleAutoGenerator(busScheduleAutoGenerator2Create).subscribe({
+      next: (res: BusScheduleAutoGenerator) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
   }
 
   reloadBusScheduleAutoGeneratorPage(data: any): void {
     this.searchParams = {
       ...this.searchParams,
-      ...data
-    }
+      ...data,
+    };
     this.loadData();
   }
 
@@ -212,28 +267,27 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     this.searchParams = {
       ...this.searchParams,
       pageIdx: 1,
-      keyword
-    }
+      keyword,
+    };
     this.loadData();
   }
 
   sortBusScheduleAutoGeneratorPage(sortBy: string) {
     this.searchParams = {
       ...this.searchParams,
-      sortBy
-    }
+      sortBy,
+    };
     this.loadData();
   }
 
   reLoadDataEvent(params: { startDate: Date; endDate: Date }): void {
     this.searchParams = {
       ...this.searchParams,
-      ...params
-    }
+      ...params,
+    };
     // Xử lý logic theo khoảng thời gian startDate và endDate
     this.loadData();
   }
-
 
   changeviewDisplayMode(viewDisplayMode: string) {
     this.viewDisplayMode = viewDisplayMode;
@@ -243,7 +297,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
 
   // Function to check if today is a run day and generate events
   convertToCalendarEventData(
-    busScheduleAutoGenerators: BusScheduleAutoGenerator[]
+    busScheduleAutoGenerators: BusScheduleAutoGenerator[],
   ): { _id: string; name: string; startDate: Date; status: string }[] {
     if (!busScheduleAutoGenerators || busScheduleAutoGenerators.length === 0) {
       return [];
@@ -258,7 +312,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       date: Date,
       events: { _id: string; name: string; startDate: Date; status: string }[],
     ) => {
-      const isRunDayCheck = isRunDay(schedule, date)
+      const isRunDayCheck = isRunDay(schedule, date);
       if (schedule.specificTimeSlots && schedule.specificTimeSlots.length > 0 && isRunDayCheck) {
         schedule.specificTimeSlots.forEach((specificTimeSlot: SpecificTimeSlot) => {
           const eventDate = new Date(date);
@@ -270,7 +324,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
 
           events.push({
             _id: schedule._id,
-            name: schedule.name || "Unnamed Event",
+            name: schedule.name || 'Unnamed Event',
             startDate: eventDate,
             status: this.updateStatus(eventDate),
           });
@@ -296,24 +350,21 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       }
     };
 
-    const isRunDay = (
-      busScheduleAutoGenerator: BusScheduleAutoGenerator,
-      date: Date
-    ): boolean => {
+    const isRunDay = (busScheduleAutoGenerator: BusScheduleAutoGenerator, date: Date): boolean => {
       // Adjust startDate by subtracting preGenerateDays
       const adjustedStartDate = new Date(busScheduleAutoGenerator.startDate);
-      console.log("🚀 ~ BusScheduleAutoGeneratorsComponent ~ adjustedStartDate:", adjustedStartDate)
+      console.log('🚀 ~ BusScheduleAutoGeneratorsComponent ~ adjustedStartDate:', adjustedStartDate);
       adjustedStartDate.setDate(adjustedStartDate.getDate() + busScheduleAutoGenerator.preGenerateDays);
 
       // Lấy ngày hôm nay, loại bỏ thời gian (giờ, phút, giây)
       const todayWithoutTime = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      console.log("🚀 ~ BusScheduleAutoGeneratorsComponent ~ todayWithoutTime:", todayWithoutTime)
+      console.log('🚀 ~ BusScheduleAutoGeneratorsComponent ~ todayWithoutTime:', todayWithoutTime);
 
       // Lấy phần ngày của adjustedStartDate (không tính giờ, phút, giây)
       const start = new Date(
         adjustedStartDate.getFullYear(),
         adjustedStartDate.getMonth(),
-        adjustedStartDate.getDate()
+        adjustedStartDate.getDate(),
       );
 
       // Tính chênh lệch thời gian tính bằng mili-giây giữa hôm nay và ngày bắt đầu
@@ -329,14 +380,12 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
 
         // Kiểm tra điều kiện ngày chạy
         const isDayValid = busScheduleAutoGenerator.repeatDaysPerWeek.includes(
-          todayWithoutTime.toLocaleString('en-US', { weekday: 'short' })
+          todayWithoutTime.toLocaleString('en-US', { weekday: 'short' }),
         );
 
         // Kết quả cuối cùng
         return isWeekValid && isDayValid;
-      }
-
-      else {
+      } else {
         // Nếu lặp theo ngày, so sánh dựa trên số ngày
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)); // Số ngày chênh lệch
         return diffDays >= 0 && diffDays % busScheduleAutoGenerator.repeatInterval === 0;
@@ -344,10 +393,9 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     };
 
     iterateDays(startDate, endDate);
-    console.log("🚀 ~ BusScheduleAutoGeneratorsComponent ~ events:", events)
+    console.log('🚀 ~ BusScheduleAutoGeneratorsComponent ~ events:', events);
     return events;
   }
-
 
   updateStatus(eventDate: Date): string {
     const currentDate = new Date();
@@ -360,25 +408,27 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
   }
 
   triggerRunCreateBusSchedule(busScheduleAutoGenerator: any) {
-    console.log("🚀 ~ BusScheduleAutoGeneratorsComponent ~ triggerRunCreateBusSchedule ~ busScheduleAutoGenerator:", busScheduleAutoGenerator)
+    console.log(
+      '🚀 ~ BusScheduleAutoGeneratorsComponent ~ triggerRunCreateBusSchedule ~ busScheduleAutoGenerator:',
+      busScheduleAutoGenerator,
+    );
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'warning'
+          type: 'warning',
         },
         title: 'Run Bus Schedule',
-        content:
-          'Are you sure you want to run this bus schedule?',
+        content: 'Are you sure you want to run this bus schedule?',
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -396,5 +446,4 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
       }
     });
   }
-
 }

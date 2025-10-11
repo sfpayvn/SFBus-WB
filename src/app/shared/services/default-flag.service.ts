@@ -7,4 +7,8 @@ export class DefaultFlagService {
   isDefault(item: any): boolean {
     return item && item.isDefault === true;
   }
+
+  defaultTextFlag(item: any): string {
+    return item && item.isDefault === true ? ' - [Mặc định]' : '';
+  }
 }

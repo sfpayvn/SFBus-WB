@@ -5,9 +5,10 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusSchedulesService } from './service/bus-schedules.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
-import { BusSchedule, SearchBusSchedule } from './model/bus-schedule.model';
+import { BusSchedule, BusSchedule2Create, SearchBusSchedule } from './model/bus-schedule.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { BusScheduleDetailDialogComponent } from './components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-schedules',
@@ -17,7 +18,10 @@ import { BusScheduleDetailDialogComponent } from './components/bus-schedule-deta
 })
 export class BusSchedulesComponent implements OnInit {
   searchBusSchedule: SearchBusSchedule = new SearchBusSchedule();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   searchParams = {
     pageIdx: 1,
@@ -141,16 +145,34 @@ export class BusSchedulesComponent implements OnInit {
     };
   }
 
-  toggleBusSchedule(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusSchedule.busSchedules = this.searchBusSchedule.busSchedules.map((busSchedule: BusSchedule) => ({
-      ...busSchedule,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const busSchedules = event as readonly BusSchedule[];
+    this.searchBusSchedule.busSchedules = [...busSchedules];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusSchedule.busSchedules.some((busSchedule) => !busSchedule.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusSchedule.busSchedules;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusSchedule.busSchedules.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusSchedule(id: string): void {
@@ -218,6 +240,22 @@ export class BusSchedulesComponent implements OnInit {
       return;
     }
     this.router.navigate(['/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail']);
+  }
+
+  cloneData(busSchedule: BusSchedule): void {
+    delete (busSchedule as any)._id;
+    let busSchedule2Create = new BusSchedule2Create();
+    busSchedule2Create = { ...busSchedule2Create, ...busSchedule };
+
+    this.busSchedulesService.createBusSchedule(busSchedule2Create).subscribe({
+      next: (res: BusSchedule) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
   }
 
   reloadBusSchedulePage(data: any): void {

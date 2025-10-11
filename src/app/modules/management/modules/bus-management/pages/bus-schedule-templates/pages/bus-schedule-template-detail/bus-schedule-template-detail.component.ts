@@ -32,6 +32,7 @@ import { SeatTypesService } from '../../../seat-types/service/seat-types.servive
 import { Router } from '@angular/router';
 import { UserDriver } from 'src/app/modules/management/modules/user-management/model/driver.model';
 import { DriversService } from 'src/app/modules/management/modules/user-management/service/driver.servive';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 interface BusTemplateReview extends BusTemplate {
   busServices: BusService[];
@@ -91,6 +92,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     private busLayoutTemplatesService: BusLayoutTemplatesService,
     private seatTypesService: SeatTypesService,
     private router: Router,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -155,25 +157,42 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
       busTemplateId = '',
       busRouteId,
       busRoute,
-      busSeatPrices = [],
       busDriverIds = [],
       busSeatLayoutBlockIds = [],
     } = this.busScheduleTemplate || {};
-    this.busSeatLayoutBlockIds = busSeatLayoutBlockIds;
-    this.busScheduleTemplateDetailForm = this.fb.group({
-      name: [name, [Validators.required]],
-      busTemplateId: [busTemplateId, [Validators.required]],
 
-      busId: [busId],
-      busRouteId: [busRouteId, [Validators.required]],
+    this.busSeatLayoutBlockIds = busSeatLayoutBlockIds;
+
+    this.busScheduleTemplateDetailForm = this.fb.group({
+      name: [
+        { value: name, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) },
+        [Validators.required],
+      ],
+      busTemplateId: [
+        { value: busTemplateId, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) },
+        [Validators.required],
+      ],
+
+      busId: [{ value: busId, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) }],
+      busRouteId: [
+        { value: busRouteId, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) },
+        [Validators.required],
+      ],
       busRoute: this.fb.group({
-        name: [busRoute?.name || ''],
+        name: [{ value: busRoute?.name || '', disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) }],
         breakPoints: this.fb.array([]),
-        distance: [busRoute?.distance || ''],
-        distanceTime: [busRoute?.distanceTime || ''],
+        distance: [
+          { value: busRoute?.distance || '', disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) },
+        ],
+        distanceTime: [
+          {
+            value: busRoute?.distanceTime || '',
+            disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate),
+          },
+        ],
       }),
       busSeatPrices: this.fb.array([]),
-      busDriverIds: [busDriverIds],
+      busDriverIds: [{ value: busDriverIds, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) }],
     });
 
     if (busRoute) {
@@ -191,6 +210,10 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     if (busId) {
       this.chooseBus(busId);
     }
+  }
+
+  get f() {
+    return this.busScheduleTemplateDetailForm.controls;
   }
 
   async setupBusSeatPrices() {
@@ -220,10 +243,13 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     }
 
     return this.fb.group({
-      seatTypeId: [seatType._id], // giữ giá trị tĩnh
-      seatTypeName: [seatType.name], // giữ giá trị tĩnh
-      seatTypeIcon: [seatType.icon], // giữ giá trị tĩnh
-      price: [seatPrice || '', [Validators.required]], // chỉ trường này được nhập
+      seatTypeId: [{ value: seatType._id, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) }], // giữ giá trị tĩnh
+      seatTypeName: [{ value: seatType.name, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) }], // giữ giá trị tĩnh
+      seatTypeIcon: [{ value: seatType.icon, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) }], // giữ giá trị tĩnh
+      price: [
+        { value: seatPrice || '', disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) },
+        [Validators.required],
+      ], // chỉ trường này được nhập
     });
   }
 
@@ -254,14 +280,14 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     this.location.back();
   }
 
-  editBusTempate() {
+  editBusLayoutTemplate() {
     const allowedKeys = ['_id', 'name', 'seatLayouts']; // Danh sách các thuộc tính trong BusTemplate
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
       Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key)),
     ) as BusLayoutTemplate;
 
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
-    const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
+    const params = { busLayoutTemplate: JSON.stringify(combinedBusTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
     this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
@@ -322,8 +348,14 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
   createBreakPoint(breakPoint: BusRouteScheduleTemplateBreakPoints): FormGroup {
     const { timeOffset = '' } = breakPoint;
     return this.fb.group({
-      busStationId: [breakPoint.busStationId],
-      timeOffset: [timeOffset, [Validators.required, Validators.pattern(/^(\d{1,2}(h|m)?|\d{1,2})$/)]],
+      busStationId: [
+        { value: breakPoint.busStationId || '', disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) },
+        [Validators.required],
+      ],
+      timeOffset: [
+        { value: timeOffset, disabled: this.defaultFlagService.isDefault(this.busScheduleTemplate) },
+        [Validators.required, Validators.pattern(/^(\d{1,2}(h|m)?|\d{1,2})$/)],
+      ],
     });
   }
 
@@ -331,6 +363,17 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     const busStationId = this.breakPoints.controls[idx].get('busStationId')?.value;
     const busStation = this.busStations.find((busStation: BusStation) => busStation._id === busStationId) as BusStation;
     return busStation;
+  }
+
+  clearFormValue(controlName: string, formGroup: FormGroup) {
+    if (this.defaultFlagService.isDefault(this.busScheduleTemplate)) return;
+
+    const control = formGroup.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   async onSubmit() {

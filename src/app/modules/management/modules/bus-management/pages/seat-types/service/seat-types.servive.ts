@@ -27,7 +27,7 @@ export class SeatTypesService {
     };
 
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, body).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   processCreateBusService(seatTypeIconFile: FileList, seatType2Create: SeatType2Create) {

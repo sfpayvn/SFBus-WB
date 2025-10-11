@@ -18,9 +18,10 @@ import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service'
 })
 export class BusStationsComponent implements OnInit {
   searchBusStation: SearchBusStation = new SearchBusStation();
-  selectAll: boolean = false;
 
-  busProvices: BusProvince[] = [];
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -34,7 +35,6 @@ export class BusStationsComponent implements OnInit {
   constructor(
     private busStationsService: BusStationsService,
     private dialog: MatDialog,
-    private busProvincesService: BusProvincesService,
     private utils: Utils,
     public defaultFlagService: DefaultFlagService,
   ) {}
@@ -45,6 +45,7 @@ export class BusStationsComponent implements OnInit {
 
   loadData(): void {
     this.isLoadingBusStation = true;
+
     this.busStationsService.searchBusStation(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
       next: (res: SearchBusStation) => {
         if (res) {
@@ -59,28 +60,36 @@ export class BusStationsComponent implements OnInit {
         this.isLoadingBusStation = false;
       },
     });
-    this.busProvincesService.findAll().subscribe({
-      next: (res: BusProvince[]) => {
-        if (res) {
-          this.busProvices = res;
-        }
-      },
-      error: (error: any) => {
-        this.utils.handleRequestError(error);
-      },
-    });
   }
 
-  toggleBusStation(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusStation.busStations = this.searchBusStation.busStations.map((busStation: BusStation) => ({
-      ...busStation,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const busStations = event as readonly BusStation[];
+    this.searchBusStation.busStations = [...busStations];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusStation.busStations.some((busStation) => !busStation.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusStation.busStations;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusStation.busStations.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusStation(busStation: BusStation): void {
@@ -127,15 +136,10 @@ export class BusStationsComponent implements OnInit {
   }
 
   editBusStation(busStation: BusStation): void {
-    if (this.defaultFlagService.isDefault(busStation)) {
-      return;
-    }
-
     const dialogRef = this.dialog.open(BusStationDetailDialogComponent, {
       data: {
         title: 'Edit BusStation',
         busStation: { ...busStation },
-        busProvices: this.busProvices,
       },
     });
 
@@ -160,7 +164,6 @@ export class BusStationsComponent implements OnInit {
     const dialogRef = this.dialog.open(BusStationDetailDialogComponent, {
       data: {
         title: 'Add New BusStation',
-        busProvices: this.busProvices,
       },
     });
 

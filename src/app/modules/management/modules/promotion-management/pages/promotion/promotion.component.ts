@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { MaterialDialogComponent } from '@rsApp/shared/components/material-dialog/material-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
-import { SearchPromotion, Promotion } from '../../model/promotion.model';
+import { SearchPromotion, Promotion, Promotion2Create } from '../../model/promotion.model';
 import { PromotionService } from '../../service/promotion.service';
 import { CapsService } from '@rsApp/shared/services/caps.service';
 
@@ -208,6 +208,22 @@ export class PromotionComponent implements OnInit {
           error: (error: any) => this.utils.handleRequestError(error),
         });
       }
+    });
+  }
+
+  cloneData(promotion: Promotion): void {
+    delete (promotion as any)._id;
+    let promotion2Create = new Promotion2Create();
+    promotion2Create = { ...promotion2Create, ...promotion };
+
+    this.promotionService.createPromotion(promotion2Create).subscribe({
+      next: (res: Promotion) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
     });
   }
 

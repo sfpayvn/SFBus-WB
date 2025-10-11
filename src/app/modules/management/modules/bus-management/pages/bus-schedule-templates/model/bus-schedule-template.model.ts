@@ -32,6 +32,7 @@ export class BusScheduleTemplate {
   busSeatLayoutBlockIds: string[] = [];
   busSeatPrices: BusScheduleTemplateSeatPrices[] = [];
   selected: boolean = false;
+  isDefault: boolean = false;
 }
 
 export interface BusScheduleTemplate2Create extends Omit<BusScheduleTemplate, '_id' | 'selected'> {}

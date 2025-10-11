@@ -22,6 +22,7 @@ import { BusRoute } from '../../../bus-management/pages/bus-routes/model/bus-rou
 import { BusRoutesService } from '../../../bus-management/pages/bus-routes/service/bus-routes.servive';
 import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
 import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-goods-detail',
@@ -95,6 +96,7 @@ export class GoodsDetailComponent implements OnInit {
     private goodsCategoriesService: GoodsCategoriesService,
     private busRoutesService: BusRoutesService,
     private loadingService: LoadingService,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {

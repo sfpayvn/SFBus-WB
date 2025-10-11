@@ -3,11 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
-import { BusStation2Create } from '../../model/bus-station.model';
+import { BusStation, BusStation2Create } from '../../model/bus-station.model';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { BusProvincesService } from '../../../bus-provices/service/bus-provinces.servive';
 
 export interface DialogData {
   title: string;
-  busStation: BusStation2Create;
+  busStation: BusStation;
   busProvices: BusProvince[];
 }
 
@@ -20,30 +22,69 @@ export interface DialogData {
 export class BusStationDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusStationDetailDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
-  busStation: BusStation2Create = this.data.busStation ?? new BusStation2Create();
+  busStation: BusStation = this.data.busStation ?? new BusStation();
   busProvices: BusProvince[] = this.data.busProvices ?? [];
 
   busStationForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private utils: Utils) {}
+  constructor(
+    private fb: FormBuilder,
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+    private busProvincesService: BusProvincesService,
+  ) {}
 
   ngOnInit(): void {
-    this.initForm();
+    this.initData();
+  }
+
+  private initData() {
+    this.busProvincesService.findAll().subscribe({
+      next: (res: BusProvince[]) => {
+        if (res) {
+          this.busProvices = res;
+          this.initForm();
+        }
+      },
+      error: (error: any) => {
+        this.utils.handleRequestError(error);
+      },
+    });
   }
 
   private async initForm() {
     const busProvice = this.busProvices.find((busProvice) => busProvice._id === this.busStation.provinceId);
 
+    const { name, detailAddress, location } = this.busStation;
+
     this.busStationForm = this.fb.group({
-      name: [this.busStation.name, [Validators.required]],
-      detailAddress: [this.busStation.detailAddress],
-      location: [this.busStation.location],
-      busProviceId: [busProvice?._id],
+      name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busStation) }, [Validators.required]],
+      detailAddress: [{ value: detailAddress, disabled: this.defaultFlagService.isDefault(this.busStation) }],
+      location: [{ value: location, disabled: this.defaultFlagService.isDefault(this.busStation) }],
+      busProviceId: [
+        { value: busProvice?._id, disabled: this.defaultFlagService.isDefault(this.busStation) },
+        [Validators.required],
+      ],
     });
+  }
+
+  get f() {
+    return this.busStationForm.controls;
   }
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.busStation)) return;
+
+    const control = this.busStationForm.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   onSubmit() {

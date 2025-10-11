@@ -44,6 +44,7 @@ export interface SearchPromotion {
 
 export interface Promotion2Create
   extends Omit<Promotion, '_id' | 'selected' | 'isEditing' | 'createdAt' | 'updatedAt'> {}
+export class Promotion2Create {}
 
 export interface Promotion2Update extends Promotion2Create {
   _id: string;

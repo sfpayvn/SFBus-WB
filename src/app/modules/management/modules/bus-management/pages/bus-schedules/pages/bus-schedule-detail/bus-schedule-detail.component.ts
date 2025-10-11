@@ -38,6 +38,7 @@ import { SeatTypesService } from '../../../seat-types/service/seat-types.servive
 import { Router } from '@angular/router';
 import { UserDriver } from 'src/app/modules/management/modules/user-management/model/driver.model';
 import { DriversService } from 'src/app/modules/management/modules/user-management/service/driver.servive';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -105,6 +106,7 @@ export class BusScheduleDetailComponent implements OnInit {
     private router: Router,
     private el: ElementRef,
     private renderer: Renderer2,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {

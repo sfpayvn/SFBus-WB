@@ -15,6 +15,7 @@ import { toast } from 'ngx-sonner';
 import { BusTemplatesService } from '../../service/bus-templates.servive';
 import { BusLayoutTemplate } from '../../../bus-layout-templates/model/bus-layout-templates.model';
 import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service/bus-layout-templates.servive';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -50,6 +51,7 @@ export class BusTemplateDetailComponent implements OnInit {
     private seatTypesService: SeatTypesService,
     private busTemplatesService: BusTemplatesService,
     private router: Router,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -85,15 +87,28 @@ export class BusTemplateDetailComponent implements OnInit {
     const { name = '', busServiceIds = [], busTypeId = '', busLayoutTemplateId = '' } = this.busTemplate || {};
 
     this.busTemplateDetailForm = this.fb.group({
-      name: [name, [Validators.required]],
-      busServiceIds: [busServiceIds ?? [], [Validators.required]],
-      busTypeId: [busTypeId, [Validators.required]],
-      busLayoutTemplateId: [busLayoutTemplateId, [Validators.required]],
+      name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busTemplate) }, [Validators.required]],
+      busServiceIds: [
+        { value: busServiceIds ?? [], disabled: this.defaultFlagService.isDefault(this.busTemplate) },
+        [Validators.required],
+      ],
+      busTypeId: [
+        { value: busTypeId, disabled: this.defaultFlagService.isDefault(this.busTemplate) },
+        [Validators.required],
+      ],
+      busLayoutTemplateId: [
+        { value: busLayoutTemplateId, disabled: this.defaultFlagService.isDefault(this.busTemplate) },
+        [Validators.required],
+      ],
     });
 
     if (this.busTemplateDetailForm.get('busLayoutTemplateId')?.value) {
       this.chooseBusTemplate(this.busTemplateDetailForm.get('busLayoutTemplateId')?.value);
     }
+  }
+
+  get f() {
+    return this.busTemplateDetailForm.controls;
   }
 
   async chooseBusTemplate(busLayoutTemplateId: string) {
@@ -119,6 +134,17 @@ export class BusTemplateDetailComponent implements OnInit {
     this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
       state: params,
     });
+  }
+
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.busTemplate)) return;
+
+    const control = this.busTemplateDetailForm.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   onSubmit() {
