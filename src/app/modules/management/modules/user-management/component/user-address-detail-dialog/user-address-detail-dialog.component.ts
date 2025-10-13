@@ -13,7 +13,7 @@ export interface DialogData {
   selector: 'app-user-address-detail-dialog',
   templateUrl: './user-address-detail-dialog.component.html',
   styleUrl: './user-address-detail-dialog.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class UserAddressDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<UserAddressDetailDialogComponent>);
@@ -22,24 +22,21 @@ export class UserAddressDetailDialogComponent implements OnInit {
 
   userAddressForm!: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    public utils: Utils,
-  ) {
-    this.initForm()
+  constructor(private fb: FormBuilder, public utils: Utils) {
+    this.initForm();
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   async initForm() {
-    const { addressType = '', address = '' } = this.address
+    const { addressType = '', address = '' } = this.address;
     this.userAddressForm = this.fb.group({
       addressType: [addressType],
       address: [address, [Validators.required]],
-    })
+    });
   }
 
-  onButtonClick() { }
+  onButtonClick() {}
 
   closeDialog(): void {
     this.dialogRef.close();

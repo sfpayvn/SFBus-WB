@@ -405,7 +405,7 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   editBusTempate() {
-    const allowedKeys = ['_id', 'name', 'seatLayouts']; // Danh sách các thuộc tính trong BusTemplate
+    const allowedKeys = ['_id', 'name', 'seatLayouts', 'isDefault']; // Danh sách các thuộc tính trong BusTemplate
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
       this.busLayoutTemplateReview
         ? Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key))

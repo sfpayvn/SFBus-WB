@@ -27,6 +27,8 @@ import { NzQRCodeModule } from 'ng-zorro-antd/qr-code';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+
 @NgModule({
   imports: [NzIconModule.forRoot([EyeInvisibleOutline])],
   exports: [
@@ -57,6 +59,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzSkeletonModule,
     NzGridModule,
     NzTagModule,
+    NzTimePickerModule,
   ],
 })
 export class NZModule {}

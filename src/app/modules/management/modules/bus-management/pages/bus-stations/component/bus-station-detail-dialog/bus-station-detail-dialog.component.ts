@@ -53,7 +53,7 @@ export class BusStationDetailDialogComponent implements OnInit {
   }
 
   private async initForm() {
-    const busProvice = this.busProvices.find((busProvice) => busProvice._id === this.busStation.provinceId);
+    const busProvice = await this.busProvices.find((busProvice) => busProvice._id === this.busStation.provinceId);
 
     const { name, detailAddress, location } = this.busStation;
 

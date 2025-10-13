@@ -11,7 +11,7 @@ export class CookieService {
   set(key: string, value: any, expireDays: number = 30): void {
     const date = new Date();
     date.setTime(date.getTime() + expireDays * 24 * 60 * 60 * 1000);
-    this.cookieService.set(key, JSON.stringify(value), date, "/");
+    this.cookieService.set(key, JSON.stringify(value), date, '/');
   }
 
   get(key: string): any {
@@ -21,10 +21,10 @@ export class CookieService {
   }
 
   remove(key: string): void {
-    this.cookieService.delete(key, "/");
+    this.cookieService.delete(key, '/');
   }
 
   clear(): void {
-    this.cookieService.deleteAll("/");
+    this.cookieService.deleteAll('/');
   }
 }

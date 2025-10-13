@@ -281,10 +281,14 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
   }
 
   editBusLayoutTemplate() {
-    const allowedKeys = ['_id', 'name', 'seatLayouts']; // Danh sách các thuộc tính trong BusTemplate
+    const allowedKeys = ['_id', 'name', 'seatLayouts', 'isDefault']; // Danh sách các thuộc tính trong BusTemplate
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
       Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key)),
     ) as BusLayoutTemplate;
+    console.log(
+      '🚀 ~ BusScheduleTemplateDetailComponent ~ editBusLayoutTemplate ~ combinedBusTemplate:',
+      combinedBusTemplate,
+    );
 
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
     const params = { busLayoutTemplate: JSON.stringify(combinedBusTemplate) };

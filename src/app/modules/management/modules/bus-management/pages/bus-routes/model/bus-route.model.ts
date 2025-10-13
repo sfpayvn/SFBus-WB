@@ -19,9 +19,8 @@ export class BusRoute {
   selected: boolean = false;
 }
 
-export interface BusRoute2Create extends Omit<BusRoute, '_id' | 'selected'> { }
-export class BusRoute2Create {
-}
+export interface BusRoute2Create extends Omit<BusRoute, '_id' | 'selected'> {}
+export class BusRoute2Create {}
 
 export class BusRoute2Update extends BusRoute2Create {
   _id: string = '';

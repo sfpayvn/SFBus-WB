@@ -120,6 +120,11 @@ export class MenuTenant {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Booking Management',
+          route: '/management/booking-management/booking',
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Components',
           route: '/components',
           children: [{ label: 'Table', route: '/components/table' }],

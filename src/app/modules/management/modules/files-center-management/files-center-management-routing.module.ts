@@ -8,11 +8,10 @@ const routes: Routes = [
     component: FilesComponent,
   },
   { path: '**', redirectTo: 'errors/404' },
-
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class FilesCenterManagementRoutingModule { }
+export class FilesCenterManagementRoutingModule {}

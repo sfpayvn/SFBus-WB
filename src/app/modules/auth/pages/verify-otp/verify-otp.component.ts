@@ -49,7 +49,7 @@ export class VerifyOtpComponent implements OnInit {
 
   async initData() {
     this.currentUser = await this.credentialService.getCurrentUser();
-    console.log("🚀 ~ VerifyOtpComponent ~ initData ~ this.currentUser:", this.currentUser)
+    console.log('🚀 ~ VerifyOtpComponent ~ initData ~ this.currentUser:', this.currentUser);
   }
 
   initForm() {

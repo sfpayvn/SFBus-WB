@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { BusSchedule, BusSchedule2Create, SearchBusSchedule } from './model/bus-schedule.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { BusScheduleDetailDialogComponent } from './components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
-import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-schedules',
@@ -242,10 +241,12 @@ export class BusSchedulesComponent implements OnInit {
     this.router.navigate(['/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail']);
   }
 
-  cloneData(busSchedule: BusSchedule): void {
-    delete (busSchedule as any)._id;
+  cloneData(busSchedule: any): void {
+    const busSchedule2Clone = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
+
+    delete (busSchedule2Clone as any)._id;
     let busSchedule2Create = new BusSchedule2Create();
-    busSchedule2Create = { ...busSchedule2Create, ...busSchedule };
+    busSchedule2Create = { ...busSchedule2Create, ...busSchedule2Clone };
 
     this.busSchedulesService.createBusSchedule(busSchedule2Create).subscribe({
       next: (res: BusSchedule) => {

@@ -8,9 +8,8 @@ describe('LoaddingScreenComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoaddingScreenComponent]
-    })
-    .compileComponents();
+      imports: [LoaddingScreenComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(LoaddingScreenComponent);
     component = fixture.componentInstance;

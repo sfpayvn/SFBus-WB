@@ -83,12 +83,9 @@ export class ProfileMenuComponent implements OnInit {
 
   public themeMode = ['light', 'dark'];
 
-  constructor(
-    public themeService: ThemeService,
-    private authService: AuthService,
-    private readonly _router: Router) { }
+  constructor(public themeService: ThemeService, private authService: AuthService, private readonly _router: Router) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   public toggleMenu(): void {
     this.isOpen = !this.isOpen;

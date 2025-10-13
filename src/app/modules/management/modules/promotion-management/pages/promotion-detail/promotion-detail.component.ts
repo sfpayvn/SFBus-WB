@@ -51,7 +51,7 @@ export class PromotionDetailComponent implements OnInit {
     {
       value: 'inactive',
       label: 'Ngừng hoạt động',
-    }
+    },
   ];
 
   promotionsDiscountTypes = [

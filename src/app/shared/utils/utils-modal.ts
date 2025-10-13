@@ -9,44 +9,42 @@ import { MaterialDialogComponent } from '../components/material-dialog/material-
 export class UtilsModal {
   ref: ComponentRef<any> | undefined;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog) {}
 
   openModalConfirm(title: string, content: string, type?: string, btns?: any) {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: type || 'success'
+          type: type || 'success',
         },
         title: title,
         content: content,
         btn: btns || [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
     return dialogRef.afterClosed();
   }
 
   openModal(component: any, data: any, size: string = 'small') {
-
     let height = '';
-    let width = ''
+    let width = '';
     if (size == 'small') {
-      height = width = '40%'
+      height = width = '40%';
     } else if (size == 'medium') {
-      height = width = '60%'
+      height = width = '60%';
     } else if (size == 'large') {
-      height = width = '80%'
-    }
-    else if (size == 'full') {
-      height = width = '100%'
+      height = width = '80%';
+    } else if (size == 'full') {
+      height = width = '100%';
     }
 
     const dialogRef = this.dialog.open(component, {
@@ -54,7 +52,7 @@ export class UtilsModal {
       width: width,
       maxWidth: width,
       panelClass: 'custom-dialog',
-      data: data
+      data: data,
     });
     return dialogRef.afterClosed();
   }

@@ -36,12 +36,19 @@ const routes: Routes = [
       {
         path: 'subscription-management',
         loadChildren: () =>
-          import('./modules/subscription-management/subscription-management.module').then((m) => m.SubscriptionManagementModule),
+          import('./modules/subscription-management/subscription-management.module').then(
+            (m) => m.SubscriptionManagementModule,
+          ),
       },
       {
         path: 'promotion-management',
         loadChildren: () =>
           import('./modules/promotion-management/promotion-management.module').then((m) => m.PromotionManagementModule),
+      },
+      {
+        path: 'booking-management',
+        loadChildren: () =>
+          import('./modules/booking-management/booking-management.module').then((m) => m.BookingManagementModule),
       },
       { path: '**', redirectTo: 'errors/404' },
     ],

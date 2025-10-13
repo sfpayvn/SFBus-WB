@@ -25,11 +25,11 @@ export class MaterialDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<MaterialDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
-  onButtonClick() { }
+  onButtonClick() {}
 
   closeDialog(): void {
     this.dialogRef.close();

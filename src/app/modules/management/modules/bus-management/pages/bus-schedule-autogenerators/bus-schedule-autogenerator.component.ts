@@ -12,6 +12,8 @@ import {
   SpecificTimeSlot,
 } from './model/bus-schedule-autogenerator.model';
 import moment from 'moment';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { BusScheduleAutogeneratorsDetailDialogComponent } from './components/bus-schedule-autogenerators-detail-dialog/bus-schedule-autogenerators-detail-dialog.component';
 
 export interface CalendarEvent {
   _id: string;
@@ -56,6 +58,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     private busScheduleAutoGeneratorsService: BusScheduleAutoGeneratorsService,
     private dialog: MatDialog,
     private utils: Utils,
+    private utilsModal: UtilsModal,
     private router: Router,
   ) {}
 
@@ -212,12 +215,20 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
 
   editBusScheduleAutoGenerator(busScheduleAutoGenerator: any): void {
     if (this.viewDisplayMode == 'calendar') {
-      // const busSchedule2Edit = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
-      // this.utilsModal.openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large').subscribe((busSchedule: BusSchedule) => {
-      //   if (!busSchedule) return;
-      //   this.loadData();
-      // });
-      // return
+      const busScheduleAutoGenerator2Edit = this.searchBusScheduleAutoGenerator.busScheduleAutoGenerators.find(
+        (b: BusScheduleAutoGenerator) => b._id == busScheduleAutoGenerator._id,
+      );
+      this.utilsModal
+        .openModal(
+          BusScheduleAutogeneratorsDetailDialogComponent,
+          { busScheduleAutoGenerator: busScheduleAutoGenerator2Edit },
+          'large',
+        )
+        .subscribe((busScheduleAutoGenerator: BusScheduleAutoGenerator) => {
+          if (!busScheduleAutoGenerator) return;
+          this.loadData();
+        });
+      return;
     }
     const params = { busScheduleAutoGenerator: JSON.stringify(busScheduleAutoGenerator) };
     this.router.navigateByUrl(
@@ -227,13 +238,15 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
   }
 
   addBusScheduleAutoGenerator(startDate?: Date): void {
-    // if (this.viewMode == 'calendar') {
-    //   this.utilsModal.openModal(BusScheduleDetailDialogComponent, { startDate }, 'large').subscribe((busSchedule: BusSchedule) => {
-    //     if (!busSchedule) return;
-    //     this.loadData();
-    //   });
-    //   return
-    // }
+    if (this.viewDisplayMode == 'calendar') {
+      this.utilsModal
+        .openModal(BusScheduleAutogeneratorsDetailDialogComponent, { startDate }, 'large')
+        .subscribe((busScheduleAutoGenerator: BusScheduleAutoGenerator) => {
+          if (!busScheduleAutoGenerator) return;
+          this.loadData();
+        });
+      return;
+    }
     this.router.navigate([
       '/management/bus-management/bus-schedule/bus-schedule-autogenerators/bus-schedule-autogenerator-detail',
     ]);

@@ -16,7 +16,6 @@ th {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
 }
 
-
 .bg-icon {
   background-image: url('../../../../../../../assets/icons/folder.svg');
   background-size: 25px;
@@ -24,7 +23,6 @@ th {
   height: 27px;
   background-repeat: no-repeat;
 }
-
 
 .box-img:hover .file-favorite {
   display: none;
@@ -110,9 +108,7 @@ th {
 }
 
 .cdk-drop-list-dragging.file-folders {
-
   .cdk-drag:hover:not(.not-drop) {
-
     background-color: #c3e0ff;
     border: 1px solid #0054ad;
     border-style: dashed;
@@ -121,7 +117,6 @@ th {
     .bg-icon {
       background-image: url('../../../../../../../assets/icons/file-drop.svg');
     }
-
   }
 
   .not-drop {
@@ -131,7 +126,6 @@ th {
   .cdk-drag-placeholder {
     display: none;
   }
-
 }
 
 .cdk-drag-placeholder {

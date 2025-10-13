@@ -1,0 +1,186 @@
+<div class="search-form m-2x">
+  @if (bookingSearchForm) {
+  <form nz-form [formGroup]="bookingSearchForm" (ngSubmit)="onSubmit()">
+    <div class="flex items-center justify-end gap-2" (click)="resetFilter()">
+      <label class="text-primary cursor-pointer font-semibold">Bỏ lọc</label>
+      <ion-icon class="text-primary cursor-pointer font-semibold" name="refresh-outline"></ion-icon>
+    </div>
+    <div class="flex gap-4 pb-4">
+      <div class="flex w-5/12 flex-col gap-2">
+        <div class="mb-0 flex h-full w-full flex-col" id="chooseBusRoute">
+          <label class="m-0 flex min-h-[32px] items-center justify-start p-0 text-base font-semibold">
+            Thông tin tuyến xe
+          </label>
+          <div
+            (click)="chooseBusRoute($event)"
+            class="flex h-full w-full cursor-pointer justify-between rounded border border-gray-300 px-4 py-2">
+            @if (busRoute || busSchedule) {
+            <div class="flex w-5/12 flex-col gap-2 text-left">
+              @if (busRoute) {
+              <span>
+                {{ busRoute.name }}
+              </span>
+              } @if (busSchedule) {
+              <span>
+                {{ busSchedule.bus?.name || 'Chưa có xe' }}
+              </span>
+              }
+            </div>
+            <div class="flex w-5/12 flex-col gap-2 text-right">
+              @if (busSchedule) {
+              <span> {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }} </span>
+              <span> {{ formatTime(busSchedule.endDate) }} - {{ formatDate(busSchedule.endDate) }} </span>
+              }
+            </div>
+            <div class="flex w-auto justify-end">
+              @if (busRoute || busSchedule) {
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="clearBusRoute($event)"></span>
+              }
+            </div>
+            } @else {
+            <label class="line-clamp-1 block w-full cursor-pointer text-base font-semibold"> Chọn tuyến xe </label>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="flex w-7/12 flex-col gap-2">
+        <div class="flex gap-2">
+          <div class="flex w-7/12 flex-col">
+            <nz-form-item class="!mb-0 !w-full !flex-col">
+              <nz-form-label
+                nzFor="timeSchedule"
+                class="!m-0 !flex !items-center !justify-start !p-0 !text-base !font-semibold"
+                >Thời gian</nz-form-label
+              >
+              <div class="flex w-full flex-row gap-2">
+                <nz-date-picker
+                  class="w-full"
+                  [nzDisabledDate]="checkDisableDateTime(0)"
+                  [nzDisabledTime]="checkDisableDateTime(0).nzDisabledTime"
+                  nzShowTime
+                  nzFormat="yyyy-MM-dd HH:mm"
+                  [nzMode]="'date'"
+                  formControlName="startTimeScheduleValue"
+                  nzPlaceHolder="Start"
+                  (ngModelChange)="timeScheduleChange($event)"
+                  (nzOnOpenChange)="handleStartOpenChange($event)"></nz-date-picker>
+                <nz-date-picker
+                  class="w-full"
+                  #endDatePicker
+                  [nzDisabledDate]="checkDisableDateTime(1)"
+                  [nzDisabledTime]="checkDisableDateTime(1).nzDisabledTime"
+                  nzShowTime
+                  nzFormat="yyyy-MM-dd HH:mm"
+                  [nzMode]="'date'"
+                  formControlName="endTimeScheduleValue"
+                  nzPlaceHolder="End"
+                  (ngModelChange)="timeScheduleChange($event)"
+                  (nzOnOpenChange)="handleEndOpenChange($event)"></nz-date-picker>
+              </div>
+            </nz-form-item>
+          </div>
+          <div class="flex w-5/12 flex-col">
+            <nz-form-item class="!mb-0 !w-full !flex-col">
+              <nz-form-label
+                nzFor="busRouteId"
+                class="!m-0 !flex !items-center !justify-start !p-0 !text-base !font-semibold"
+                >Tình trạng</nz-form-label
+              >
+              <nz-form-control>
+                <nz-select
+                  class="custom-nz-select height-large !mt-0 !mb-0 !h-[42px] 
+            custom-nz-select-booking-status-{{ bookingSearchForm.get('status')?.value }}"
+                  formControlName="status"
+                  nzPlaceHolder="Chọn tình trạng"
+                  (ngModelChange)="chooseStatus($event)"
+                  [nzAllowClear]="true">
+                  @for (status of statuses; track status) {
+                  <nz-option nzCustomContent [nzLabel]="status.label" [nzValue]="status.value">
+                    <div class="flex items-center">
+                      <span class="!font-medium">
+                        {{ status.label }}
+                      </span>
+                    </div>
+                  </nz-option>
+                  }
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <div class="flex w-full">
+            <nz-form-item class="!mb-0 !flex !w-full !flex-col">
+              <nz-form-label
+                [nzNoColon]="true"
+                nzFor="phoneNumber"
+                class="!flex !items-center !justify-start !font-medium"
+                >Số điện thoại</nz-form-label
+              >
+              <nz-form-control class="nz-form-control-required !flex flex-col">
+                <nz-input-group
+                  [nzSuffix]="bookingFormPhoneNumberClearTpl"
+                  class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                  <input
+                    type="text"
+                    nz-input
+                    formControlName="phoneNumber"
+                    mask="0000 000 000"
+                    placeholder="Nhập số điện thoại" />
+                </nz-input-group>
+                <ng-template #bookingFormPhoneNumberClearTpl>
+                  @if (bookingSearchForm.controls['phoneNumber'].value) {
+                  <span
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    (click)="clearFormValue('phoneNumber')"></span>
+                  }
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="flex w-full">
+            <nz-form-item class="!mb-0 !flex !w-full !flex-col">
+              <nz-form-label [nzNoColon]="true" nzFor="keyword" class="!flex !items-center !justify-start !font-medium"
+                >Tìm kiếm</nz-form-label
+              >
+              <nz-form-control class="nz-form-control-required !flex flex-col">
+                <nz-input-group
+                  [nzSuffix]="bookingFormKeywordClearTpl"
+                  class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                  <input type="text" nz-input formControlName="keyword" placeholder="Tìm kiếm" />
+                </nz-input-group>
+                <ng-template #bookingFormKeywordClearTpl>
+                  @if (bookingSearchForm.controls['keyword'].value) {
+                  <span
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    (click)="clearFormValue('keyword')"></span>
+                  }
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="relative flex w-full justify-center">
+      <button
+        type="submit"
+        [disabled]="!bookingSearchForm.valid || !isLoaded"
+        class="bg-primary absolute z-10 h-12 cursor-pointer rounded-full px-20 text-base font-semibold !text-white transition duration-200">
+        Tìm Kiếm
+      </button>
+    </div>
+  </form>
+  }
+</div>

@@ -36,11 +36,6 @@ export class FileFolder2Create {
   name: string = '';
 }
 
-
 export class FileFolder2Update extends FileFolder2Create {
   _id: string = '';
 }
-
-
-
-

@@ -13,7 +13,7 @@ export interface Event {
   selector: 'app-calendar-events',
   templateUrl: './calendar-events.component.html',
   styleUrls: ['./calendar-events.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class CalendarEventsComponent implements OnInit {
   viewMode: 'list' | 'day' | 'week' | 'month' = 'week';
@@ -23,7 +23,7 @@ export class CalendarEventsComponent implements OnInit {
   currentWeekWiew: Date = new Date();
   currentMonthWiew: Date = new Date();
 
-  isViewAllEvent: boolean = false
+  isViewAllEvent: boolean = false;
   activePopover: Event[] | null = null;
 
   statusClasses: { [key: string]: string } = {
@@ -31,32 +31,30 @@ export class CalendarEventsComponent implements OnInit {
     cancelled: 'border-red-500 bg-red-200 text-red-800',
     in_progress: 'border-indigo-500 bg-indigo-200 text-indigo-800',
     completed: 'border-green-500 bg-green-200 text-green-800',
-    overdue: 'border-orange-500 bg-orange-200 text-orange-800'
+    overdue: 'border-orange-500 bg-orange-200 text-orange-800',
   };
 
   @Input() events: Event[] = [];
+  @Input() isCloneEvent = false;
 
   @Input() isLoadedEvent = false;
 
   @Output() viewDetailEventEmit = new EventEmitter<Event>();
-  @Output() reLoadEventEmit = new EventEmitter<{ startDate: Date, endDate: Date }>();
+  @Output() cloneDataEventEmit = new EventEmitter<Event>();
+
+  @Output() reLoadEventEmit = new EventEmitter<{ startDate: Date; endDate: Date }>();
   @Output() createEventEmit = new EventEmitter<Date>();
 
-  constructor(
-    public utils: Utils,
-    private utilsModal: UtilsModal,
-  ) { }
+  constructor(public utils: Utils, private utilsModal: UtilsModal) {}
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   get weekDays(): string[] {
     return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   }
 
-  get monthDates(): { date: Date, isCurrentMonth: boolean, events: Event[] }[] {
-    const dates: { date: Date, isCurrentMonth: boolean, events: Event[] }[] = [];
+  get monthDates(): { date: Date; isCurrentMonth: boolean; events: Event[] }[] {
+    const dates: { date: Date; isCurrentMonth: boolean; events: Event[] }[] = [];
     const startOfMonth = new Date(this.currentMonthWiew.getFullYear(), this.currentMonthWiew.getMonth(), 1);
     const endOfMonth = new Date(this.currentMonthWiew.getFullYear(), this.currentMonthWiew.getMonth() + 1, 0);
 
@@ -72,13 +70,15 @@ export class CalendarEventsComponent implements OnInit {
       dates.push({
         date: new Date(date),
         isCurrentMonth: date.getMonth() === this.currentMonthWiew.getMonth(),
-        events: this.events.filter(event =>
-          this.utils.compareDate(event.startDate, date) // So sánh ngày đúng cách
-        ).sort((a, b) => {
-          const timeA = new Date(a.startDate).getTime();
-          const timeB = new Date(b.startDate).getTime();
-          return timeA - timeB;
-        })
+        events: this.events
+          .filter(
+            (event) => this.utils.compareDate(event.startDate, date), // So sánh ngày đúng cách
+          )
+          .sort((a, b) => {
+            const timeA = new Date(a.startDate).getTime();
+            const timeB = new Date(b.startDate).getTime();
+            return timeA - timeB;
+          }),
       });
     }
     return dates;
@@ -102,7 +102,6 @@ export class CalendarEventsComponent implements OnInit {
 
     return dates; // Trả về 7 ngày trong tuần (Thứ Hai -> Chủ Nhật)
   }
-
 
   // Lấy khoảng thời gian của tuần để hiển thị tiêu đề (header)
   get weekRange(): { start: Date; end: Date } {
@@ -135,22 +134,22 @@ export class CalendarEventsComponent implements OnInit {
     slotEnd.setMinutes(slotEnd.getMinutes() + 60);
 
     // Lọc các sự kiện có thời gian bắt đầu nằm trong khoảng slot
-    return this.events.filter(event => {
-      const eventStart = new Date(event.startDate);
-      return eventStart >= slotStart && eventStart < slotEnd; // Kiểm tra khoảng thời gian
-    }).sort((a, b) => {
-      const timeA = new Date(a.startDate).getTime();
-      const timeB = new Date(b.startDate).getTime();
-      return timeA - timeB;
-    });
+    return this.events
+      .filter((event) => {
+        const eventStart = new Date(event.startDate);
+        return eventStart >= slotStart && eventStart < slotEnd; // Kiểm tra khoảng thời gian
+      })
+      .sort((a, b) => {
+        const timeA = new Date(a.startDate).getTime();
+        const timeB = new Date(b.startDate).getTime();
+        return timeA - timeB;
+      });
   }
-
-
 
   getEventsForDay(day: Date): Event[] {
     const target = day.toDateString();
     return (this.events ?? [])
-      .filter(event => new Date(event.startDate).toDateString() === target)
+      .filter((event) => new Date(event.startDate).toDateString() === target)
       .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
   }
 
@@ -171,7 +170,6 @@ export class CalendarEventsComponent implements OnInit {
     // Return the list of events for the day with the most events
     return this.getEventsForDayAndSlot(dayWithMostEvents, slot);
   }
-
 
   // Mảng các khung giờ (ví dụ từ 07:00 đến 12:00)
   get timeSlots(): string[] {
@@ -219,7 +217,6 @@ export class CalendarEventsComponent implements OnInit {
     }
   }
 
-
   // Chức năng chuyển tuần: delta = -1 (tuần trước), delta = 1 (tuần sau)
   navigatePeriod(delta: number): void {
     if (this.viewMode === 'day') {
@@ -260,22 +257,18 @@ export class CalendarEventsComponent implements OnInit {
 
     // Tạo đối tượng Date và chỉ lấy phần ngày (bỏ qua giờ, phút, giây)
     const startDate = new Date(startDateString);
-    const eventDate = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate()
-    );
+    const eventDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
 
     // Lấy phần ngày của weekRange.start và weekRange.end
     const weekStart = new Date(
       this.weekRange.start.getFullYear(),
       this.weekRange.start.getMonth(),
-      this.weekRange.start.getDate()
+      this.weekRange.start.getDate(),
     );
     const weekEnd = new Date(
       this.weekRange.end.getFullYear(),
       this.weekRange.end.getMonth(),
-      this.weekRange.end.getDate()
+      this.weekRange.end.getDate(),
     );
 
     // Nếu ngày của sự kiện nằm trong khoảng (bao gồm cả weekStart và weekEnd) thì trả về true
@@ -310,7 +303,12 @@ export class CalendarEventsComponent implements OnInit {
 
   viewDetailEvent($event: any, event: Event) {
     $event.stopPropagation();
-    this.viewDetailEventEmit.emit(event)
+    this.viewDetailEventEmit.emit(event);
+  }
+
+  cloneDataEvent($event: any, event: Event) {
+    $event.stopPropagation();
+    this.cloneDataEventEmit.emit(event);
   }
 
   createEvent($event: any, slot: string | null, day?: Date) {
@@ -331,12 +329,10 @@ export class CalendarEventsComponent implements OnInit {
     this.createEventEmit.emit(startDate);
   }
 
-
   convertSlotToDate(slot: string, baseDate: Date) {
     const [hours, minutes] = slot.split(':').map(Number);
     const date = new Date(baseDate); // Clone the base date
     date.setHours(hours, minutes, 0, 0); // Set time to match the slot
     return date;
   }
-
 }

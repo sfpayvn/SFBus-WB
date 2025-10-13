@@ -24,17 +24,15 @@ export class ViewImageDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<ViewImageDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void { 
-    console.log("🚀 ~ ViewImageDialogComponent ~ ngOnInit ~ this.data:", this.data)
+  ngOnInit(): void {
+    console.log('🚀 ~ ViewImageDialogComponent ~ ngOnInit ~ this.data:', this.data);
   }
 
-  onButtonClick() { }
+  onButtonClick() {}
 
-  downloadFile(link: string) {
-
-  }
+  downloadFile(link: string) {}
 
   closeDialog(): void {
     this.dialogRef.close();

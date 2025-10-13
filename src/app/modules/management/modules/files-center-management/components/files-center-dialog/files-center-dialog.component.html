@@ -6,7 +6,10 @@
     </button>
   </div>
   <mat-dialog-content class="flex h-full !max-h-full w-full justify-center !overflow-y-scroll rounded-xl bg-white !p-4">
-    <app-files-center class="flex h-full w-full" [isChooseMultiple]="false" [isDialog]="true"
+    <app-files-center
+      class="flex h-full w-full"
+      [isChooseMultiple]="false"
+      [isDialog]="true"
       (chooseFileEvent)="chooseFiles($event)"></app-files-center>
   </mat-dialog-content>
 </div>

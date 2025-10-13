@@ -1,5 +1,5 @@
-import { BusService } from "../../bus-services/model/bus-service.model";
-import { BusType } from "../../bus-types/model/bus-type.model";
+import { BusService } from '../../bus-services/model/bus-service.model';
+import { BusType } from '../../bus-types/model/bus-type.model';
 
 export class SearchBusTemplate {
   busTemplates: BusTemplate[] = [];
@@ -19,9 +19,8 @@ export class BusTemplate {
   selected: boolean = false;
 }
 
-export interface BusTemplate2Create extends Omit<BusTemplate, '_id' | 'selected'> { }
-export class BusTemplate2Create {
-}
+export interface BusTemplate2Create extends Omit<BusTemplate, '_id' | 'selected'> {}
+export class BusTemplate2Create {}
 
 export class BusTemplate2Update extends BusTemplate2Create {
   _id: string = '';

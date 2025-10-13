@@ -1,0 +1,218 @@
+<div class="mx-auto w-[1128px] py-6">
+  <div class="mb-4 flex items-center justify-between">
+    <h2 class="text-2xl font-bold">
+      {{ mode === 'create' ? 'Add Booking' : mode === 'update' ? 'Edit Booking' : 'View Booking' }}
+    </h2>
+    <button
+      (click)="goBack()"
+      class="bg-muted text-muted-foreground hover:text-foreground cursor-pointer rounded-md px-4 py-2.5 text-xs font-semibold"
+      aria-label="Go back">
+      Back
+    </button>
+  </div>
+
+  <div class="border-muted/20 bg-background rounded-xl border p-6">
+    <form [formGroup]="mainForm">
+      <!-- Customer Information -->
+      <div class="mb-6">
+        <h3 class="mb-4 text-lg font-semibold">Customer Information</h3>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label class="mb-2 block text-sm font-medium">Customer Name *</label>
+            <input
+              type="text"
+              formControlName="customerName"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter customer name" />
+            <span
+              class="text-xs text-red-500"
+              *ngIf="mainForm.get('customerName')?.invalid && mainForm.get('customerName')?.touched">
+              {{ getErrorMessage('customerName') }}
+            </span>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Phone Number *</label>
+            <input
+              type="text"
+              formControlName="customerPhone"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter phone number" />
+            <span
+              class="text-xs text-red-500"
+              *ngIf="mainForm.get('customerPhone')?.invalid && mainForm.get('customerPhone')?.touched">
+              {{ getErrorMessage('customerPhone') }}
+            </span>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Email</label>
+            <input
+              type="email"
+              formControlName="customerEmail"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter email" />
+            <span
+              class="text-xs text-red-500"
+              *ngIf="mainForm.get('customerEmail')?.invalid && mainForm.get('customerEmail')?.touched">
+              {{ getErrorMessage('customerEmail') }}
+            </span>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Booking Code *</label>
+            <input
+              type="text"
+              formControlName="bookingCode"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter booking code" />
+            <span
+              class="text-xs text-red-500"
+              *ngIf="mainForm.get('bookingCode')?.invalid && mainForm.get('bookingCode')?.touched">
+              {{ getErrorMessage('bookingCode') }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trip Information -->
+      <div class="mb-6">
+        <h3 class="mb-4 text-lg font-semibold">Trip Information</h3>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label class="mb-2 block text-sm font-medium">Schedule ID *</label>
+            <input
+              type="text"
+              formControlName="scheduleId"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter schedule ID" />
+            <span
+              class="text-xs text-red-500"
+              *ngIf="mainForm.get('scheduleId')?.invalid && mainForm.get('scheduleId')?.touched">
+              {{ getErrorMessage('scheduleId') }}
+            </span>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Route Name</label>
+            <input
+              type="text"
+              formControlName="routeName"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter route name" />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Bus Name</label>
+            <input
+              type="text"
+              formControlName="busName"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter bus name" />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Total Seats *</label>
+            <input
+              type="number"
+              formControlName="totalSeats"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter total seats" />
+            <span
+              class="text-xs text-red-500"
+              *ngIf="mainForm.get('totalSeats')?.invalid && mainForm.get('totalSeats')?.touched">
+              {{ getErrorMessage('totalSeats') }}
+            </span>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Pickup Location</label>
+            <input
+              type="text"
+              formControlName="pickupLocation"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter pickup location" />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Dropoff Location</label>
+            <input
+              type="text"
+              formControlName="dropoffLocation"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter dropoff location" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment & Status -->
+      <div class="mb-6">
+        <h3 class="mb-4 text-lg font-semibold">Payment & Status</h3>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label class="mb-2 block text-sm font-medium">Total Price *</label>
+            <input
+              type="number"
+              formControlName="totalPrice"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter total price" />
+            <span
+              class="text-xs text-red-500"
+              *ngIf="mainForm.get('totalPrice')?.invalid && mainForm.get('totalPrice')?.touched">
+              {{ getErrorMessage('totalPrice') }}
+            </span>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Payment Status *</label>
+            <select
+              formControlName="paymentStatus"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm">
+              <option *ngFor="let status of paymentStatuses" [value]="status.value">
+                {{ status.label }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Booking Status *</label>
+            <select
+              formControlName="bookingStatus"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm">
+              <option *ngFor="let status of bookingStatuses" [value]="status.value">
+                {{ status.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="mb-2 block text-sm font-medium">Notes</label>
+            <textarea
+              formControlName="notes"
+              rows="3"
+              class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Enter notes"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-2" *ngIf="mode !== 'view'">
+        <button
+          type="button"
+          (click)="goBack()"
+          class="bg-muted text-muted-foreground hover:text-foreground cursor-pointer rounded-md px-4 py-2.5 text-xs font-semibold"
+          aria-label="Cancel">
+          Cancel
+        </button>
+        <button
+          type="button"
+          (click)="save()"
+          class="bg-primary cursor-pointer rounded-md px-4 py-2.5 text-xs font-semibold !text-white"
+          aria-label="Save">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

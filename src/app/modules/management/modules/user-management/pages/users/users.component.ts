@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class UsersComponent implements OnInit {
   searchUser: SearchUser = new SearchUser();
@@ -24,11 +24,11 @@ export class UsersComponent implements OnInit {
     keyword: '',
     sortBy: {
       key: 'createdAt',
-      value: 'descend'
+      value: 'descend',
     },
     filters: {
       key: '',
-      value: []
+      value: [],
     },
   };
 
@@ -42,15 +42,15 @@ export class UsersComponent implements OnInit {
 
   filterRoles = [
     { text: 'User', value: 'user' },
-    { text: 'Driver', value: 'driver' }
-  ]
+    { text: 'Driver', value: 'driver' },
+  ];
 
   constructor(
     private usersService: UsersService,
     private dialog: MatDialog,
     public utils: Utils,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -74,7 +74,6 @@ export class UsersComponent implements OnInit {
     });
   }
 
-
   sortRoleFn(sortValue: any) {
     this.searchParams.sortBy.key = 'role';
     this.searchParams.sortBy.value = sortValue;
@@ -95,12 +94,11 @@ export class UsersComponent implements OnInit {
     }));
   }
 
-
   deleteUser(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete User',
         content:
@@ -108,13 +106,13 @@ export class UsersComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -145,8 +143,8 @@ export class UsersComponent implements OnInit {
   reloadUserPage(data: any): void {
     this.searchParams = {
       ...this.searchParams,
-      ...data
-    }
+      ...data,
+    };
     this.loadData();
   }
 
@@ -154,16 +152,16 @@ export class UsersComponent implements OnInit {
     this.searchParams = {
       ...this.searchParams,
       pageIdx: 1,
-      keyword
-    }
+      keyword,
+    };
     this.loadData();
   }
 
-  sortUserPage(sortBy: { key: string, value: string }) {
+  sortUserPage(sortBy: { key: string; value: string }) {
     this.searchParams = {
       ...this.searchParams,
-      sortBy
-    }
+      sortBy,
+    };
     this.loadData();
   }
 

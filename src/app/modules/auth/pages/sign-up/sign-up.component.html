@@ -150,11 +150,11 @@
           </ng-template>
         </nz-form-control>
       </nz-form-item>
-      <div 
-        class="flex flex-col gap-2 text-left overflow-hidden transition-all duration-300 ease-in-out"
+      <div
+        class="flex flex-col gap-2 overflow-hidden text-left transition-all duration-300 ease-in-out"
         [ngClass]="{
-          'max-h-0 opacity-0 transform -translate-y-2': !passwordFocused,
-          'max-h-96 opacity-100 transform translate-y-0': passwordFocused
+          'max-h-0 -translate-y-2 transform opacity-0': !passwordFocused,
+          'max-h-96 translate-y-0 transform opacity-100': passwordFocused
         }">
         <label class="text-sm font-medium">Password yêu cầu</label>
         <label

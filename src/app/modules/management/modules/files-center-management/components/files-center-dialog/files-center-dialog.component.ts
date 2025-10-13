@@ -16,18 +16,16 @@ export class FilesCenterDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<FilesCenterDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
-  onButtonClick() { }
+  onButtonClick() {}
 
-  downloadFile(link: string) {
-
-  }
+  downloadFile(link: string) {}
 
   chooseFiles(file: FileDto) {
-    this.closeDialog(file)
+    this.closeDialog(file);
   }
 
   closeDialog(file?: FileDto): void {

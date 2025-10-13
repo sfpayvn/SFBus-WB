@@ -1,4 +1,4 @@
-import { User } from "./user.model";
+import { User } from './user.model';
 
 export class UserDriver extends User {
   userId: string = '';
@@ -18,9 +18,8 @@ export class Driver {
   licenseImage: string = '';
 }
 
-export interface Driver2Create extends Omit<Driver, '_id' | 'selected'> { }
-export class Driver2Create {
-}
+export interface Driver2Create extends Omit<Driver, '_id' | 'selected'> {}
+export class Driver2Create {}
 
 export class Driver2Update extends Driver2Create {
   _id: string = '';

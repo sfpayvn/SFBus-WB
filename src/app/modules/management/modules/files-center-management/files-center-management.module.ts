@@ -8,26 +8,10 @@ import { FilesComponent } from './pages/files-center/files-center.component';
 import { FilesCenterManagementRoutingModule } from './files-center-management-routing.module';
 
 @NgModule({
-  declarations: [
-    FilesComponent,
-    FilesCenterDialogComponent,
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    FilesCenterManagementRoutingModule,
-    MangementModule,
-  ],
-  exports: [
-    FilesComponent,
-    FilesCenterDialogComponent
-  ],
-  providers: [
-    provideNgxMask()
-  ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  declarations: [FilesComponent, FilesCenterDialogComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FilesCenterManagementRoutingModule, MangementModule],
+  exports: [FilesComponent, FilesCenterDialogComponent],
+  providers: [provideNgxMask()],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class FilesCenterManagementModule { }
+export class FilesCenterManagementModule {}

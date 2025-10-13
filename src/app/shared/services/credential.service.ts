@@ -18,7 +18,7 @@ export class CredentialService {
 
   async removeToken(): Promise<void> {
     await this.cookieService.remove('token');
-  } 
+  }
 
   async setCurrentUser(user: any) {
     await this.cookieService.set('user', user, this.expires); // Sử dụng biến expires

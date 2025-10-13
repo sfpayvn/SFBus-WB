@@ -217,7 +217,7 @@ export class TenantDetailComponent implements OnInit {
           next: (response) => {
             console.log('🚀 ~ TenantDetailComponent ~ addNewSubscription ~ response:', response);
             toast.success('Tenant subscription registered successfully');
-            
+
             // Refresh data trong tenant subscription list component
             if (this.tenantSubscriptionList) {
               this.tenantSubscriptionList.refreshData();

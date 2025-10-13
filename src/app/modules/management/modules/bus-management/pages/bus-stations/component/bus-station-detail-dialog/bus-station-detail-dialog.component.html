@@ -19,7 +19,7 @@
       <nz-form-label nzFor="name" class="!flex !items-center !justify-start">Tên</nz-form-label>
       <nz-form-control [nzErrorTip]="busStationNameErrorTpl" class="!flex flex-col">
         <nz-input-group [nzSuffix]="busStationNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
-          <input type="text" nz-input formControlName="name" placeholder="Nhập Tên" />
+          <input type="text" nz-input formControlName="name" placeholder="Nhập Tên" [disabled]="f['name'].disabled" />
         </nz-input-group>
 
         <ng-template #busStationNameClearTpl>
@@ -43,7 +43,12 @@
       <nz-form-label nzFor="detailAddress" class="!flex !items-center !justify-start">Địa chỉ</nz-form-label>
       <nz-form-control [nzErrorTip]="busStationDetailAddressErrorTpl" class="!flex flex-col">
         <nz-input-group [nzSuffix]="busStationDetailAddressClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
-          <input type="text" nz-input formControlName="detailAddress" placeholder="Nhập Địa Chỉ" />
+          <input
+            type="text"
+            nz-input
+            formControlName="detailAddress"
+            placeholder="Nhập Địa Chỉ"
+            [disabled]="f['detailAddress'].disabled" />
         </nz-input-group>
         <ng-template #busStationDetailAddressClearTpl>
           @if(f['detailAddress'].value && !defaultFlagService.isDefault(busStation)) {

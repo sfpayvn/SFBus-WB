@@ -13,11 +13,10 @@ const routes: Routes = [
     component: UserDetailComponent,
   },
   { path: '**', redirectTo: 'errors/404' },
-
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class UsersManagementRoutingModule { }
+export class UsersManagementRoutingModule {}

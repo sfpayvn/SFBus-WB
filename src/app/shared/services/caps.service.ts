@@ -29,7 +29,7 @@ export class CapsService {
 
   private nextRefreshAt: number | null = null;
   private refreshTimer: any;
-    items$: any;
+  items$: any;
 
   constructor(private api: ApiGatewayService, private cookie: CookieService) {}
 

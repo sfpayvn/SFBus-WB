@@ -89,15 +89,15 @@ export class Utils {
 
   formatDate(date: Date) {
     if (!date) return '';
-    
+
     // Đảm bảo date là một Date object hợp lệ
     const validDate = new Date(date);
-    
+
     // Kiểm tra xem date có hợp lệ không
     if (isNaN(validDate.getTime())) {
       return '';
     }
-    
+
     // Lấy ngày, tháng, năm từ đối tượng Date
     const day = validDate.getDate().toString().padStart(2, '0');
     const month = (validDate.getMonth() + 1).toString().padStart(2, '0');
@@ -231,15 +231,15 @@ export class Utils {
 
   formatTime(date: Date): string {
     if (!date) return '';
-    
+
     // Đảm bảo date là một Date object hợp lệ
     const validDate = new Date(date);
-    
+
     // Kiểm tra xem date có hợp lệ không
     if (isNaN(validDate.getTime())) {
       return '';
     }
-    
+
     const hours = validDate.getHours().toString().padStart(2, '0');
     const minutes = validDate.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
@@ -247,15 +247,15 @@ export class Utils {
 
   compareDate(date1: Date, date2: Date): boolean {
     if (!date1 || !date2) return false;
-    
+
     const validDate1 = new Date(date1);
     const validDate2 = new Date(date2);
-    
+
     // Kiểm tra xem cả hai date có hợp lệ không
     if (isNaN(validDate1.getTime()) || isNaN(validDate2.getTime())) {
       return false;
     }
-    
+
     return (
       validDate1.getFullYear() === validDate2.getFullYear() &&
       validDate1.getMonth() === validDate2.getMonth() &&

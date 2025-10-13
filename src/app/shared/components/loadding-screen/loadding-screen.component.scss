@@ -7,8 +7,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, .32);
-  transition: opacity .4s cubic-bezier(.25, .8, .25, 1);
+  background: rgba(0, 0, 0, 0.32);
+  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 #container {
@@ -28,7 +28,7 @@
 
   span {
     display: inline-block;
-    margin: 0 -.05em;
+    margin: 0 -0.05em;
   }
 }
 
@@ -51,15 +51,14 @@
     }
 
     @for $i from 1 through 9 {
-      &:nth-child(#{$i+1})::after {
-        animation-delay: #{$i*.2}s;
+      &:nth-child(#{$i + 1})::after {
+        animation-delay: #{$i * 0.2}s;
       }
     }
   }
 }
 
 @keyframes loading06 {
-
   0%,
   75%,
   100% {

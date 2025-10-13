@@ -26,11 +26,12 @@ import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.compo
 import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
 import { BusScheduleAutoGeneratorsComponent } from './pages/bus-schedule-autogenerators/bus-schedule-autogenerator.component';
 import { BusScheduleAutoGeneratorDetailComponent } from './pages/bus-schedule-autogenerators/pages/bus-schedule-autogenerator-detail/bus-schedule-autogenerator-detail.component';
-import { BusScheduleDetailDialogComponent } from './pages/bus-schedules/components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
 import { BusManagementRoutingModule } from './bus-management-routing.module';
 import { MangementModule } from '../../management.module';
 import { BusStationDetailDialogComponent } from './pages/bus-stations/component/bus-station-detail-dialog/bus-station-detail-dialog.component';
 import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
+import { BusScheduleDetailDialogComponent } from './pages/bus-schedules/components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
+import { BusScheduleAutogeneratorsDetailDialogComponent } from './pages/bus-schedule-autogenerators/components/bus-schedule-autogenerators-detail-dialog/bus-schedule-autogenerators-detail-dialog.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { FilesCenterManagementModule } from '../files-center-management/files-ce
     BusScheduleTemplatesComponent,
     BusScheduleTemplateDetailComponent,
 
+    BusScheduleAutogeneratorsDetailDialogComponent,
     BusScheduleAutoGeneratorDetailComponent,
     BusScheduleAutoGeneratorsComponent,
   ],

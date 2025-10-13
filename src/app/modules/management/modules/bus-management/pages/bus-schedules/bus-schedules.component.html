@@ -140,7 +140,9 @@
         *ngIf="searchBusSchedule && searchBusSchedule.busSchedules"
         [events]="convertToCalendarEventData(searchBusSchedule.busSchedules)"
         [isLoadedEvent]="!isLoadingBusSchedule"
+        [isCloneEvent]="true"
         (viewDetailEventEmit)="editBusSchedule($event)"
+        (cloneDataEventEmit)="cloneData($event)"
         (createEventEmit)="addBusSchedule($event)"
         (reLoadEventEmit)="reLoadDataEvent($event)"></app-calendar-events
     ></ng-container>

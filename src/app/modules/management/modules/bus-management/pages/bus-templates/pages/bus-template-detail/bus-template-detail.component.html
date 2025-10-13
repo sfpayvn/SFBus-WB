@@ -51,7 +51,10 @@
           <nz-form-control [nzErrorTip]="busTemplateDetailBusServiceIdsErrorTpl">
             <nz-select formControlName="busServiceIds" nzMode="multiple" nzPlaceHolder="Chọn Bus Services">
               @for (busService of busServices; track busService) {
-              <nz-option nzCustomContent [nzLabel]="busService.name + defaultFlagService.defaultTextFlag(busService)" [nzValue]="busService._id">
+              <nz-option
+                nzCustomContent
+                [nzLabel]="busService.name + defaultFlagService.defaultTextFlag(busService)"
+                [nzValue]="busService._id">
                 <div class="flex items-center">
                   <svg-icon [src]="busService.iconId" [svgClass]="'h-5 w-5'"> </svg-icon>
                   <span class="pl-4 !font-medium">

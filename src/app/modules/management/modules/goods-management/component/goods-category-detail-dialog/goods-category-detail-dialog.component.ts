@@ -16,7 +16,7 @@ export interface DialogData {
   selector: 'app-goods-category-detail-dialog',
   templateUrl: './goods-category-detail-dialog.component.html',
   styleUrl: './goods-category-detail-dialog.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class GoodsCategoryDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<GoodsCategoryDetailDialogComponent>);
@@ -28,11 +28,7 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
   goodsCategoryIcon!: string;
   goodsCategoryIconFile!: File;
 
-  constructor(
-    private fb: FormBuilder,
-    private utils: Utils,
-    private utilsModal: UtilsModal,
-  ) { }
+  constructor(private fb: FormBuilder, private utils: Utils, private utilsModal: UtilsModal) {}
 
   ngOnInit(): void {
     if (this.data) {
@@ -40,7 +36,6 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
     }
     this.initForm();
   }
-
 
   private async initForm() {
     this.goodsCategoryForm = this.fb.group({
@@ -55,9 +50,9 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
       shouldSet ? control.setValidators(Validators.required) : control.clearValidators();
       control.updateValueAndValidity(); // Cập nhật giá trị và trạng thái của validator
     }
-  }
+  };
 
-  onButtonClick() { }
+  onButtonClick() {}
 
   closeDialog(): void {
     this.dialogRef.close();
@@ -69,7 +64,6 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
     if (!files || files.length === 0) return;
     const file = files[0];
     this.goodsCategoryIconFile = file;
-
 
     if (file) {
       this.readAndSetImage(file);
@@ -84,16 +78,14 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
       const blob = new Blob([arrayBuffer], { type: file.type });
       const blobUrl = URL.createObjectURL(blob);
       this.goodsCategoryIcon = blobUrl;
-
     };
-    reader.readAsArrayBuffer(file);  // Đọc file dưới dạng ArrayBuffer
+    reader.readAsArrayBuffer(file); // Đọc file dưới dạng ArrayBuffer
   }
-
 
   removeFileImage() {
     this.goodsCategoryIcon = '';
     this.goodsCategoryForm.patchValue({ icon: '' });
-  };
+  }
 
   openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {

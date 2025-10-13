@@ -5,19 +5,19 @@ import { map } from 'rxjs/operators';
 import { CredentialService } from '../shared/services/credential.service';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class NoAuthGuard implements CanActivate {
-    constructor(private credentialService: CredentialService, private router: Router) { }
+  constructor(private credentialService: CredentialService, private router: Router) {}
 
-    async canActivate(): Promise<boolean> {
-        const token = await this.credentialService.getToken();
-        const user = await this.credentialService.getCurrentUser();
-        if (!token || !user) {
-            return Promise.resolve(true);
-        } else {
-            this.router.navigate(['/']);
-            return Promise.resolve(false);
-        }
+  async canActivate(): Promise<boolean> {
+    const token = await this.credentialService.getToken();
+    const user = await this.credentialService.getCurrentUser();
+    if (!token || !user) {
+      return Promise.resolve(true);
+    } else {
+      this.router.navigate(['/']);
+      return Promise.resolve(false);
     }
+  }
 }

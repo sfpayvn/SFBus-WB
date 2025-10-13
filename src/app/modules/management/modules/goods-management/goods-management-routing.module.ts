@@ -18,11 +18,10 @@ const routes: Routes = [
     component: GoodsCategoriesComponent,
   },
   { path: '**', redirectTo: 'errors/404' },
-
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GoodsManagementRoutingModule { }
+export class GoodsManagementRoutingModule {}
