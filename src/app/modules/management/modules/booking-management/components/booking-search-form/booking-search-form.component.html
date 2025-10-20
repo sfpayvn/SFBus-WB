@@ -126,12 +126,7 @@
                 <nz-input-group
                   [nzSuffix]="bookingFormPhoneNumberClearTpl"
                   class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
-                  <input
-                    type="text"
-                    nz-input
-                    formControlName="phoneNumber"
-                    mask="0000 000 000"
-                    placeholder="Nhập số điện thoại" />
+                  <input type="text" nz-input formControlName="phoneNumber" placeholder="Nhập số điện thoại" />
                 </nz-input-group>
                 <ng-template #bookingFormPhoneNumberClearTpl>
                   @if (bookingSearchForm.controls['phoneNumber'].value) {

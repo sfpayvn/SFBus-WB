@@ -18,7 +18,7 @@ This is an Angular 19 + Tailwind CSS admin dashboard for bus management system. 
 - Example: Bus management is in `modules/management/modules/bus-management/`
 
 ### Module Dependencies
-- Import `MangementModule` for shared management components
+- Import `ManagementModule` for shared management components
 - Use `MaterialModule` from `library-modules/` for Material UI components
 - Import `FilesCenterManagementModule` when file upload/management is needed
 

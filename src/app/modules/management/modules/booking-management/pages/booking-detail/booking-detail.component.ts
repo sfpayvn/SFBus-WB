@@ -1,181 +1,160 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { Utils } from 'src/app/shared/utils/utils';
-import { Location } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Utils } from '@rsApp/shared/utils/utils';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { toast } from 'ngx-sonner';
-import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { combineLatest, tap } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+import { SafeResourceUrl } from '@angular/platform-browser';
+import { Booking, Booking2Create } from '../../model/booking.model';
 import { LoadingService } from '@rsApp/shared/services/loading.service';
-import { Booking, Booking2Create, Booking2Update } from '../../model/booking.model';
-import { BookingService } from '../../service/booking.service';
-import { ActivatedRoute } from '@angular/router';
+import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
+import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
+import { SeatType } from '../../../bus-management/pages/seat-types/model/seat-type.model';
+import { SeatTypesService } from '../../../bus-management/pages/seat-types/service/seat-types.servive';
 
+interface DepartureDestination {
+  value: string;
+  label: string;
+  color: string;
+  disabledd: boolean;
+  selected: boolean;
+}
 @Component({
   selector: 'app-booking-detail',
+  standalone: false,
   templateUrl: './booking-detail.component.html',
   styleUrl: './booking-detail.component.scss',
-  standalone: false,
 })
 export class BookingDetailComponent implements OnInit {
-  mainForm!: FormGroup;
-
-  @Input() booking!: Booking;
+  @Input() booking: Booking = new Booking();
   @Input() isDialog: boolean = false;
 
-  mode: 'create' | 'update' | 'view' = 'create';
+  seatTypes: SeatType[] = [];
 
-  bookingStatuses = [
-    { value: 'confirmed', label: 'Đã xác nhận' },
-    { value: 'cancelled', label: 'Đã hủy' },
-    { value: 'completed', label: 'Hoàn thành' },
-  ];
+  busSchedule: BusSchedule = new BusSchedule();
 
-  paymentStatuses = [
-    { value: 'pending', label: 'Chờ thanh toán' },
-    { value: 'paid', label: 'Đã thanh toán' },
-    { value: 'cancelled', label: 'Đã hủy' },
-    { value: 'refunded', label: 'Đã hoàn tiền' },
-  ];
+  statusClasses: { [key: string]: string } = {
+    not_picked_up: 'bg-yellow-100 border-yellow-300',
+    picked_up: 'bg-blue-100 border-blue-300 ',
+    on_board: 'bg-green-100 border-green-300 ',
+    dropped_off: 'bg-purple-100 border-purple-300 ',
+  };
+
+  seatStatuses: { [key: string]: string } = {
+    not_picked_up: 'Chưa đón',
+    picked_up: 'Đã đón',
+    on_board: 'Đã lên xe',
+    dropped_off: 'Đã trả khách',
+  };
+
+  bookingStatuses: { [key: string]: string } = {
+    reserved: 'Đã đặt',
+    paid: 'Đã thanh toán',
+    deposited: 'Đã đặt cọc',
+  };
+
+  bookingtatusClasses: { [key: string]: string } = {
+    reserved: 'border-yellow-500 bg-yellow-200 text-yellow-800',
+    paid: 'border-green-500 bg-green-200 text-green-800',
+    deposited: 'border-red-500 bg-red-200 text-red-800',
+  };
+
+  @Output() bookingChange = new EventEmitter<any>();
+
+  selectedSeatIndex: number = 0;
+
+  eventSubscription!: Subscription[];
+
+  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
+  pdfUrl: SafeResourceUrl | null = null;
 
   constructor(
-    private fb: FormBuilder,
     public utils: Utils,
+    private seatTypesService: SeatTypesService,
+    private busSchedulesService: BusSchedulesService,
     private location: Location,
-    private bookingService: BookingService,
-    private utilsModal: UtilsModal,
+    private router: Router,
     private loadingService: LoadingService,
-    private route: ActivatedRoute,
-  ) {}
+  ) {
+    this.eventSubscription = [];
+  }
 
-  ngOnInit(): void {
+  // Thêm các helper methods
+  getSeatStatusLabel(status: string): string {
+    return this.seatStatuses[status] || 'Không xác định';
+  }
+
+  getSeatStatusClass(status: string): string {
+    return this.statusClasses[status] || 'bg-gray-100 text-gray-800';
+  }
+
+  getBookingStatusLabel(status: string): string {
+    return this.bookingStatuses[status] || 'Không xác định';
+  }
+
+  getBookingStatusClass(status: string): string {
+    return this.bookingtatusClasses[status] || 'border-gray-300 bg-gray-100 text-gray-800';
+  }
+
+  async ngOnInit(): Promise<void> {
     this.getQueryParams();
+    this.initListenEvent();
+  }
+
+  ngOnDestroy() {
+    this.eventSubscription.forEach((sub: Subscription) => {
+      sub.unsubscribe();
+    });
+  }
+
+  async ngOnChanges(): Promise<void> {}
+
+  async getQueryParams() {
+    const params = history.state;
+    if (!params || !params['booking']) {
+      this.router.navigate(['/booking']);
+      return;
+    }
+    this.booking = params['booking'] ? params['booking'] : null;
     this.initData();
-    if (this.booking) {
-      this.mode = 'update';
-    }
   }
 
-  getQueryParams() {
-    this.route.queryParams.subscribe((params) => {
-      if (params['mode']) {
-        this.mode = params['mode'];
-      }
-      if (params['_id']) {
-        this.loadBooking(params['_id']);
-      }
+  initListenEvent() {}
+
+  async initData(): Promise<void> {
+    const busScheduleId = this.booking.busScheduleId || '';
+
+    const findBusSchedule = this.busSchedulesService.findOne(busScheduleId);
+    const findSeatTypes = this.seatTypesService.findAll();
+
+    let request = [findBusSchedule, findSeatTypes];
+    combineLatest(request).subscribe(([busSchedule, seatTypes]) => {
+      this.busSchedule = busSchedule;
+      this.seatTypes = seatTypes;
     });
   }
 
-  initData() {
-    this.initForm();
+  getTypeOfSeat(cell: any) {
+    console.log('🚀 ~ BookingDetailComponent ~ getTypeOfSeat ~ cell:', cell);
+    // Tìm loại ghế tương ứng dựa trên type
+    const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
+    console.log('🚀 ~ BookingDetailComponent ~ getTypeOfSeat ~ this.seatTypes:', this.seatTypes);
+    return selectedType;
   }
 
-  initForm() {
-    this.mainForm = this.fb.group({
-      bookingCode: ['', Validators.required],
-      customerName: ['', Validators.required],
-      customerPhone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      customerEmail: ['', [Validators.email]],
-      scheduleId: ['', Validators.required],
-      routeName: [''],
-      busName: [''],
-      departureTime: [''],
-      arrivalTime: [''],
-      totalSeats: [0, [Validators.required, Validators.min(1)]],
-      seatNumbers: [[]],
-      totalPrice: [0, [Validators.required, Validators.min(0)]],
-      paymentStatus: ['pending', Validators.required],
-      bookingStatus: ['confirmed', Validators.required],
-      pickupLocation: [''],
-      dropoffLocation: [''],
-      notes: [''],
-    });
-
-    if (this.mode === 'view') {
-      this.mainForm.disable();
-    }
-  }
-
-  loadBooking(_id: string) {
-    this.bookingService.findOne(_id).subscribe({
-      next: (res: Booking) => {
-        this.booking = res;
-        this.mainForm.patchValue(this.booking);
-      },
-      error: (error: any) => {
-        this.utils.handleRequestError(error);
-      },
-    });
-  }
-
-  goBack() {
+  backPage() {
     this.location.back();
   }
 
-  save() {
-    if (this.mainForm.invalid) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    if (this.mode === 'create') {
-      this.create();
-    } else if (this.mode === 'update') {
-      this.update();
-    }
+  formatTime(date: Date | undefined) {
+    if (!date) return;
+    date = new Date(date);
+    return this.utils.formatTime(date);
   }
 
-  create() {
-    const payload: Booking2Create = this.mainForm.value;
-    this.bookingService.create(payload).subscribe({
-      next: (res: any) => {
-        toast.success('Booking created successfully');
-        this.goBack();
-      },
-      error: (error: any) => {
-        this.utils.handleRequestError(error);
-      },
-    });
-  }
-
-  update() {
-    const payload: Booking2Update = {
-      ...this.mainForm.value,
-      _id: this.booking._id,
-    };
-    this.bookingService.update(payload).subscribe({
-      next: (res: any) => {
-        toast.success('Booking updated successfully');
-        this.goBack();
-      },
-      error: (error: any) => {
-        this.utils.handleRequestError(error);
-      },
-    });
-  }
-
-  getErrorMessage(fieldName: string): string {
-    const control = this.mainForm.get(fieldName);
-    if (control?.hasError('required')) {
-      return `${fieldName} is required`;
-    }
-    if (control?.hasError('email')) {
-      return 'Invalid email format';
-    }
-    if (control?.hasError('pattern')) {
-      return 'Invalid phone number format (10 digits required)';
-    }
-    if (control?.hasError('min')) {
-      return `${fieldName} must be greater than 0`;
-    }
-    return '';
+  formatDate(date: Date | undefined) {
+    if (!date) return;
+    return this.utils.formatDate(date);
   }
 }

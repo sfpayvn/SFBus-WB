@@ -26,7 +26,7 @@ const routes: Routes = [
       },
       {
         path: 'bus-management',
-        loadChildren: () => import('./modules/bus-management/bus-management.module').then((m) => m.BusMangementModule),
+        loadChildren: () => import('./modules/bus-management/bus-management.module').then((m) => m.BusManagementModule),
       },
       {
         path: 'tenant-management',
@@ -44,6 +44,11 @@ const routes: Routes = [
         path: 'promotion-management',
         loadChildren: () =>
           import('./modules/promotion-management/promotion-management.module').then((m) => m.PromotionManagementModule),
+      },
+      {
+        path: 'setting-management',
+        loadChildren: () =>
+          import('./modules/setting-management/setting-management.module').then((m) => m.SettingManagementModule),
       },
       {
         path: 'booking-management',

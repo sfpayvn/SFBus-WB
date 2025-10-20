@@ -4,7 +4,7 @@ import { BusSchedule } from '../../model/bus-schedule.model';
 
 export interface DialogData {
   busSchedule: BusSchedule;
-  startDate: Date
+  startDate: Date;
 }
 
 @Component({
@@ -17,20 +17,18 @@ export class BusScheduleDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusScheduleDetailDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
-    console.log("🚀 ~ BusScheduleDetailDialogComponent ~ ngOnInit ~ data.busSchedule:", this.data)
+    console.log('🚀 ~ BusScheduleDetailDialogComponent ~ ngOnInit ~ data.busSchedule:', this.data);
   }
 
-  onButtonClick() { }
+  onButtonClick() {}
 
-  downloadFile(link: string) {
-
-  }
+  downloadFile(link: string) {}
 
   chooseFiles(busSchedule: BusSchedule) {
-    this.closeDialog(busSchedule)
+    this.closeDialog(busSchedule);
   }
 
   closeDialog(busSchedule?: BusSchedule): void {

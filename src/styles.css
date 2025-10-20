@@ -8,6 +8,7 @@ layer(base);
 @import './styles/apexchart.scss';
 @import './styles/material-dialog.scss';
 @import './styles/ng-zorro.scss';
+@import './styles/context-modal.scss';
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";

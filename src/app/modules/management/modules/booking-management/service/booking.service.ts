@@ -40,10 +40,7 @@ export class BookingService {
       key: string;
       value: string;
     };
-    filters: {
-      key: string;
-      value: string[];
-    };
+    filters: { key: string; value: string }[];
   }) {
     const url = `${this.url}/search`;
     const body = {

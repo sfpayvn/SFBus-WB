@@ -4,16 +4,20 @@ import { LayoutComponent } from './layout.component';
 
 const routes: Routes = [
   {
-    path: 'dashboard',
+    path: '',
     component: LayoutComponent,
-    loadChildren: () => import('../dashboard/dashboard.module').then((m) => m.DashboardModule),
+    children: [
+      {
+        path: 'dashboard',
+        loadChildren: () => import('../dashboard/dashboard.module').then((m) => m.DashboardModule),
+      },
+      {
+        path: 'management',
+        loadChildren: () => import('../management/management.module').then((m) => m.ManagementModule),
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    ],
   },
-  {
-    path: 'management',
-    component: LayoutComponent,
-    loadChildren: () => import('../management/management.module').then((m) => m.MangementModule),
-  },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'error/404' },
 ];
 

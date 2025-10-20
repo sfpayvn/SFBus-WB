@@ -11,6 +11,11 @@ export class BusSchedulesService {
 
   constructor(private apiGatewayService: ApiGatewayService) {}
 
+  findOne(busScheduleId: string) {
+    const url = `${this.url}/${busScheduleId}`;
+    return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
+  }
+
   findAll() {
     const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));

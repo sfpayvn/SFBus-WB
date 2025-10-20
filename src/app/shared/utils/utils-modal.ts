@@ -56,4 +56,31 @@ export class UtilsModal {
     });
     return dialogRef.afterClosed();
   }
+
+  openContextModal(component: any, dataInput: any, event: any, id: string) {
+    const parentElement = (event.currentTarget as HTMLElement).closest(id);
+    if (!parentElement) return;
+
+    const rect = parentElement.getBoundingClientRect();
+
+    // Tính toán vị trí context modal
+    const position = {
+      top: `${rect.top}px`,
+      left: `${rect.left}px`,
+    };
+
+    const dialogRef = this.dialog.open(component, {
+      data: dataInput,
+      position: position,
+      panelClass: 'custom-context-modal',
+      backdropClass: 'custom-context-backdrop',
+      hasBackdrop: true,
+      disableClose: false,
+      width: `${rect.width}px`,
+      height: 'auto',
+      autoFocus: false,
+    });
+
+    return dialogRef.afterClosed();
+  }
 }

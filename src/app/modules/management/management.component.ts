@@ -3,9 +3,8 @@ import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-management',
-  standalone: true,
-  imports: [RouterOutlet],
+  standalone: false,
   templateUrl: './management.component.html',
-  styleUrl: './management.component.scss',
+  styleUrls: ['./management.component.scss'],
 })
 export class ManagementComponent {}

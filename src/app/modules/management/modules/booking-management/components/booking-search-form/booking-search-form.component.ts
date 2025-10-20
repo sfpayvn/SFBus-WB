@@ -92,19 +92,6 @@ export class BookingSearchFormComponent implements OnInit {
   }
 
   async chooseBusRoute(event: MouseEvent) {
-    let data = await this.openModalchooseBusRouteWeb(event, '#chooseBusRoute');
-    if (data && data.selectedData) {
-      const { busRoute, busSchedule, startTimeScheduleValueBusScheduleSearch, endTimeScheduleValueBusScheduleSearch } =
-        data.selectedData;
-      this.busRoute = busRoute || null;
-      this.busSchedule = busSchedule || null;
-
-      this.startTimeScheduleValueBusScheduleSearch = startTimeScheduleValueBusScheduleSearch;
-      this.endTimeScheduleValueBusScheduleSearch = endTimeScheduleValueBusScheduleSearch;
-    }
-  }
-
-  async openModalchooseBusRouteWeb(event: MouseEvent, id: string) {
     const dataInput = {
       busRoutes: this.busRoutes,
       busRoute: this.busRoute,
@@ -116,9 +103,16 @@ export class BookingSearchFormComponent implements OnInit {
       endTimeScheduleValueBusScheduleSearch: this.endTimeScheduleValueBusScheduleSearch,
     };
 
-    // const data = await this.utilsModal.openContextModal(ChooseBusSchedule2BookingDialogComponent, dataInput, event, id);
-    // return data;
-    return of({ selectedData: null }).toPromise();
+    this.utilsModal
+      .openContextModal(ChooseBusSchedule2BookingDialogComponent, dataInput, event, '#chooseBusRoute')
+      ?.subscribe((res) => {
+        if (res) {
+          this.busRoute = res.busRoute;
+          this.busSchedule = res.busSchedule;
+          this.startTimeScheduleValueBusScheduleSearch = res.startTimeScheduleValueBusScheduleSearch;
+          this.endTimeScheduleValueBusScheduleSearch = res.endTimeScheduleValueBusScheduleSearch;
+        }
+      });
   }
 
   ///////////////////////////////// Time Schedule ////////////////////////////////////////////////////////

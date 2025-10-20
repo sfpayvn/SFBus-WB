@@ -102,6 +102,17 @@ export class MenuAdmin {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Setting',
+          route: '/management/setting-management',
+          children: [
+            {
+              label: 'Payment Method',
+              route: '/management/setting-management/payment-method',
+            },
+          ],
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
           label: 'Components',
           route: '/components',
           children: [{ label: 'Table', route: '/components/table' }],

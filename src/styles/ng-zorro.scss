@@ -27,6 +27,15 @@ nz-select {
   }
 }
 
+.custom-nz-select.custom-nz-select-2-line {
+  nz-select-top-control {
+    height: 60px !important;
+    align-items: start !important;
+    display: flex !important;
+    padding: 4px 16px !important;
+  }
+}
+
 nz-form-item {
   flex-direction: column !important;
   margin: 0 !important;

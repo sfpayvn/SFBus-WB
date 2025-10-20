@@ -31,7 +31,7 @@ export class BookingComponent implements OnInit {
       key: 'createdAt',
       value: 'descend',
     },
-    filters: { key: '', value: [] as string[] },
+    filters: [{ key: '', value: '' }],
   };
 
   isLoaded: boolean = false;
@@ -83,7 +83,7 @@ export class BookingComponent implements OnInit {
     this.initListenEvent();
   }
 
-  ionViewWillEnter() {
+  ngAfterViewInit() {
     this.initializeData();
   }
 
@@ -122,11 +122,16 @@ export class BookingComponent implements OnInit {
   loadDataFindBooking(event: any) {
     const fields = ['busRouteId', 'busScheduleId', 'startDate', 'endDate', 'status', 'phoneNumber'];
     this.searchParams.keyword = event.keyword || '';
-    this.searchParams.filters = { key: '', value: [] as string[] };
+    this.searchParams.filters = [];
+
     fields.forEach((key) => {
       if (event[key]) {
-        this.searchParams.filters.key = key;
-        this.searchParams.filters.value.push(event[key]);
+        const filter = {
+          key,
+          value: event[key],
+        };
+
+        this.searchParams.filters.push(filter);
       }
     });
 
@@ -190,7 +195,7 @@ export class BookingComponent implements OnInit {
   }
 
   editBooking(booking: Booking) {
-    this.router.navigate(['/booking/detail'], { state: { booking } });
+    this.router.navigate(['/management/booking-management/booking/detail'], { state: { booking } });
   }
 
   async deleteBooking(bookingId: string) {

@@ -1,11 +1,21 @@
-import { Component, OnInit, ViewChildren, QueryList, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, Input, ViewChild, inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { NzDatePickerComponent } from 'ng-zorro-antd/date-picker';
-import { combineLatest } from 'rxjs';
 import { BusRoute } from '../../../bus-management/pages/bus-routes/model/bus-route.model';
 import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
-import { BusService } from '../../../bus-management/pages/bus-services/model/bus-service.model';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+export interface DialogData {
+  busRoutes: BusRoute[];
+  busRoute: BusRoute;
+
+  busSchedules: BusSchedule[];
+  busSchedule: BusSchedule;
+
+  startTimeScheduleValueBusScheduleSearch: Date | null;
+  endTimeScheduleValueBusScheduleSearch: Date | null;
+}
 
 @Component({
   selector: 'app-choose-bus-schedule-2-booking-dialog',
@@ -15,26 +25,36 @@ import { BusService } from '../../../bus-management/pages/bus-services/model/bus
 })
 export class ChooseBusSchedule2BookingDialogComponent implements OnInit {
   @ViewChild('endDatePicker') endDatePicker!: NzDatePickerComponent;
+  dialogRef = inject(MatDialogRef<ChooseBusSchedule2BookingDialogComponent>);
+  data = inject<DialogData>(MAT_DIALOG_DATA);
 
   busScheduleSearchForm: FormGroup = new FormGroup({});
 
   searchKeyword: string = '';
   loading: boolean = false;
 
-  @Input() busRoutes: BusRoute[] = [];
-  @Input() busRoute: BusRoute = null as any; // Default to null to avoid undefined errors
+  busRoutes: BusRoute[] = [];
+  busRoute: BusRoute = null as any; // Default to null to avoid undefined errors
 
-  @Input() busSchedules: BusSchedule[] = [];
-  @Input() busSchedule: BusSchedule = null as any; // Default to null to avoid undefined errors
+  busSchedules: BusSchedule[] = [];
+  busSchedule: BusSchedule = null as any; // Default to null to avoid undefined errors
 
-  @Input() startTimeScheduleValueBusScheduleSearch: Date | null = null; // Default to null to avoid undefined errors
-  @Input() endTimeScheduleValueBusScheduleSearch: Date | null = null; // Default to null to avoid undefined errors
+  startTimeScheduleValueBusScheduleSearch: Date | null = null; // Default to null to avoid undefined errors
+  endTimeScheduleValueBusScheduleSearch: Date | null = null; // Default to null to avoid undefined errors
 
   busSchedulesFiltered: BusSchedule[] = [];
 
-  constructor(private busService: BusService, public utils: Utils, public fb: FormBuilder) {}
+  constructor(public utils: Utils, public fb: FormBuilder) {}
 
   ngOnInit() {
+    this.busRoutes = this.data.busRoutes;
+    this.busRoute = this.data.busRoute;
+
+    this.busSchedules = this.data.busSchedules;
+    this.busSchedule = this.data.busSchedule;
+
+    this.startTimeScheduleValueBusScheduleSearch = this.data.startTimeScheduleValueBusScheduleSearch;
+    this.endTimeScheduleValueBusScheduleSearch = this.data.endTimeScheduleValueBusScheduleSearch;
     this.initForm();
   }
 
@@ -226,13 +246,11 @@ export class ChooseBusSchedule2BookingDialogComponent implements OnInit {
   }
 
   onSubmit() {
-    // this.modalCtrl.dismiss({
-    //   selectedData: {
-    //     busRoute: this.busRoute,
-    //     busSchedule: this.busSchedule,
-    //     startTimeScheduleValueBusScheduleSearch: this.busScheduleSearchForm.value.startTimeScheduleValue,
-    //     endTimeScheduleValueBusScheduleSearch: this.busScheduleSearchForm.value.endTimeScheduleValue,
-    //   },
-    // });
+    this.dialogRef.close({
+      busRoute: this.busRoute,
+      busSchedule: this.busSchedule,
+      startTimeScheduleValueBusScheduleSearch: this.busScheduleSearchForm.value.startTimeScheduleValue,
+      endTimeScheduleValueBusScheduleSearch: this.busScheduleSearchForm.value.endTimeScheduleValue,
+    });
   }
 }
