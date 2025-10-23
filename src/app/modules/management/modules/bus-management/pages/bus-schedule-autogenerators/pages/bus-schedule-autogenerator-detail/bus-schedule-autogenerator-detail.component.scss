@@ -32,3 +32,35 @@
 .ant-form-item-control-input-content {
   display: flex !important;
 }
+
+:host ::ng-deep {
+  nz-select.busSchedule-status-un_published .ant-select-selector {
+    border: 1px solid var(--color-gray-500) !important;
+    background-color: var(--color-gray-200) !important;
+    color: var(--color-gray-800) !important;
+  }
+
+  nz-select.busSchedule-status-scheduled .ant-select-selector {
+    border: 1px solid var(--color-blue-500) !important;
+    background-color: var(--color-blue-200) !important;
+    color: var(--color-blue-800) !important;
+  }
+
+  nz-select.busSchedule-status-cancelled .ant-select-selector {
+    border: 1px solid var(--color-red-500) !important;
+    background-color: var(--color-red-200) !important;
+    color: var(--color-red-800) !important;
+  }
+
+  nz-select.busSchedule-status-in_progress .ant-select-selector {
+    border: 1px solid var(--color-indigo-500) !important;
+    background-color: var(--color-indigo-200) !important;
+    color: var(--color-indigo-800) !important;
+  }
+
+  nz-select.busSchedule-status-completed .ant-select-selector {
+    border: 1px solid var(--color-green-500) !important;
+    background-color: var(--color-green-200) !important;
+    color: var(--color-green-800) !important;
+  }
+}

@@ -54,6 +54,24 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
 
   calendarEvents: CalendarEvent[] = [];
 
+  statusClasses: { [key: string]: string } = {
+    un_published: 'border-gray-blue-500 bg-gray-200 text-gray-800',
+    scheduled: 'border-blue-500 bg-blue-200 text-blue-800',
+    cancelled: 'border-red-500 bg-red-200 text-red-800',
+    in_progress: 'border-indigo-500 bg-indigo-200 text-indigo-800',
+    completed: 'border-green-500 bg-green-200 text-green-800',
+    overdue: 'border-orange-500 bg-orange-200 text-orange-800',
+  };
+
+  busScheduleAutoGeneratorStatuses: { [key: string]: string } = {
+    un_published: 'Chưa xuất bản',
+    scheduled: 'Đã lên lịch',
+    cancelled: 'Đã hủy',
+    in_progress: 'Đang diễn ra',
+    completed: 'Đã hoàn thành',
+    overdue: 'Quá hạn',
+  };
+
   constructor(
     private busScheduleAutoGeneratorsService: BusScheduleAutoGeneratorsService,
     private dialog: MatDialog,
@@ -256,6 +274,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     delete (busScheduleAutoGenerator as any)._id;
     let busScheduleAutoGenerator2Create = new BusScheduleAutoGenerator2Create();
     busScheduleAutoGenerator2Create = { ...busScheduleAutoGenerator2Create, ...busScheduleAutoGenerator };
+    busScheduleAutoGenerator2Create.status = 'un_published';
 
     this.busScheduleAutoGeneratorsService.createBusScheduleAutoGenerator(busScheduleAutoGenerator2Create).subscribe({
       next: (res: BusScheduleAutoGenerator) => {

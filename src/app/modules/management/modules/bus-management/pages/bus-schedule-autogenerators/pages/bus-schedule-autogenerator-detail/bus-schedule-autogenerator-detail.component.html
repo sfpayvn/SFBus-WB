@@ -10,6 +10,7 @@
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
   <form [formGroup]="busScheduleAutoGeneratorDetailForm" nz-form *ngIf="busScheduleAutoGeneratorDetailForm">
+    <span class="mb-5 text-xl font-bold">{{ busScheduleAutoGenerator ? 'Chỉnh sửa' : 'Thêm mới' }}</span>
     <div class="flex gap-4">
       <div class="flex w-5/12">
         <nz-form-item class="!min-h-[96px] !w-full">
@@ -36,6 +37,140 @@
             </ng-template>
           </nz-form-control>
         </nz-form-item>
+      </div>
+      <div class="flex w-7/12 gap-4">
+        <div class="flex w-full flex-col">
+          <nz-form-item class="!min-h-[98px] !w-full">
+            <nz-form-label nzFor="busScheduleTemplateId" class="!flex !h-[36px] !items-center !justify-start"
+              >Bus Schedule Template
+            </nz-form-label>
+            <nz-form-control
+              [nzErrorTip]="busScheduleAutogeneratorDetailBusScheduleTemplateIdErrorTpl"
+              class="!flex !w-full flex-col">
+              <nz-select formControlName="busScheduleTemplateId" nzPlaceHolder="Chọn Bus Schedule Template">
+                @for (busScheduleTemplate of busScheduleTemplates; track busScheduleTemplate) {
+                <nz-option nzCustomContent [nzLabel]="busScheduleTemplate.name" [nzValue]="busScheduleTemplate._id">
+                  <div class="flex items-center">
+                    <span class="!font-medium">
+                      {{ busScheduleTemplate.name }}
+                    </span>
+                  </div>
+                </nz-option>
+                }
+              </nz-select>
+              <ng-template #busScheduleAutogeneratorDetailBusScheduleTemplateIdErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busScheduleAutoGeneratorDetailForm.get('busScheduleTemplateId')?.errors?.['required']) { Vui lòng
+                  Bus Schedule Template }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="flex min-w-[150px]">
+          <nz-form-item class="!mb-0 !flex w-full !flex-col">
+            <nz-form-label nzFor="status" class="!flex !items-center !justify-start">Status</nz-form-label>
+            <nz-form-control class="!flex !max-h-[42px] flex-col">
+              <nz-select
+                class="custom-nz-select height-large !mt-0 !mb-0 !w-full busSchedule-status-{{
+                  busScheduleAutoGeneratorDetailForm.get('status')?.value
+                }}"
+                formControlName="status">
+                @for (status of busScheduleAutoGeneratorStatuses; track status) {
+                <nz-option [nzLabel]="status.label" [nzValue]="status.value"></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="flex w-5/12 gap-4">
+        <div class="flex w-4/12">
+          <nz-form-item class="!min-h-[96px] !w-full">
+            <nz-form-label nzFor="repeatInterval" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+              >Run rule every</nz-form-label
+            >
+            <nz-form-control
+              [nzErrorTip]="busScheduleAutoGeneratorDetailRepeatIntervalDaysErrorTpl"
+              class="!flex flex-col">
+              <nz-input-group
+                [nzSuffix]="busScheduleAutoGeneratorDetailRepeatIntervalDaysClearTpl"
+                class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+                <input type="number" nz-input formControlName="repeatInterval" />
+              </nz-input-group>
+              <ng-template #busScheduleAutoGeneratorDetailRepeatIntervalDaysClearTpl>
+                <span
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  (click)="busScheduleAutoGeneratorDetailForm.controls['repeatInterval'].patchValue('')"></span>
+              </ng-template>
+              <ng-template #busScheduleAutoGeneratorDetailRepeatIntervalDaysErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busScheduleAutoGeneratorDetailForm.controls['repeatInterval'].errors?.['required']) { Vui lòng
+                  nhập trường này }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="flex w-4/12">
+          <nz-form-item class="!min-h-[98px] !w-full">
+            <nz-form-label nzFor="repeatType" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+              >Repeat Types</nz-form-label
+            >
+            <nz-form-control>
+              <nz-select
+                formControlName="repeatType"
+                nzPlaceHolder="Chọn Bus Repeat Types"
+                (ngModelChange)="changeRepeatType($event)">
+                <nz-option nzCustomContent [nzLabel]="'Days'" [nzValue]="'days'">
+                  <div class="flex items-center">
+                    <span class="!font-medium"> Days </span>
+                  </div>
+                </nz-option>
+                <nz-option nzCustomContent [nzLabel]="'Weeks'" [nzValue]="'weeks'">
+                  <div class="flex items-center">
+                    <span class="!font-medium"> Weeks </span>
+                  </div>
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="flex w-4/12">
+          <nz-form-item class="!min-h-[96px] !w-full">
+            <nz-form-label nzFor="preGenerateDays" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+              >PreGenerate Days</nz-form-label
+            >
+            <nz-form-control
+              [nzErrorTip]="busScheduleAutoGeneratorDetailPreGenerateDaysErrorTpl"
+              class="!flex flex-col">
+              <nz-input-group
+                [nzSuffix]="busScheduleAutoGeneratorDetailPreGenerateDaysClearTpl"
+                class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+                <input type="number" nz-input formControlName="preGenerateDays" />
+              </nz-input-group>
+              <ng-template #busScheduleAutoGeneratorDetailPreGenerateDaysClearTpl>
+                <span
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  (click)="busScheduleAutoGeneratorDetailForm.controls['preGenerateDays'].patchValue('')"></span>
+              </ng-template>
+              <ng-template #busScheduleAutoGeneratorDetailPreGenerateDaysErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busScheduleAutoGeneratorDetailForm.controls['preGenerateDays'].errors?.['required']) { Vui lòng
+                  nhập trường này }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
       <div class="flex w-7/12 gap-4">
         <div class="flex w-5/12">
@@ -92,124 +227,6 @@
                 >Nerver
               </label>
             </div>
-          </nz-form-item>
-        </div>
-      </div>
-    </div>
-    <div class="flex gap-4">
-      <div class="flex w-5/12 gap-4">
-        <div class="flex w-4/12">
-          <nz-form-item class="!min-h-[96px] !w-full">
-            <nz-form-label nzFor="repeatInterval" class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >Run rule every</nz-form-label
-            >
-            <nz-form-control
-              [nzErrorTip]="busScheduleAutoGeneratorDetailRepeatIntervalDaysErrorTpl"
-              class="!flex flex-col">
-              <nz-input-group
-                [nzSuffix]="busScheduleAutoGeneratorDetailRepeatIntervalDaysClearTpl"
-                class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-                <input type="number" nz-input formControlName="repeatInterval" />
-              </nz-input-group>
-              <ng-template #busScheduleAutoGeneratorDetailRepeatIntervalDaysClearTpl>
-                <span
-                  nz-icon
-                  class="ant-input-clear-icon"
-                  nzTheme="fill"
-                  nzType="close-circle"
-                  (click)="busScheduleAutoGeneratorDetailForm.controls['repeatInterval'].patchValue('')"></span>
-              </ng-template>
-              <ng-template #busScheduleAutoGeneratorDetailRepeatIntervalDaysErrorTpl let-control>
-                <span class="mt-1 !text-xs text-red-500">
-                  @if (busScheduleAutoGeneratorDetailForm.controls['repeatInterval'].errors?.['required']) { Vui lòng
-                  nhập trường này }
-                </span>
-              </ng-template>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-        <div class="flex w-8/12">
-          <nz-form-item class="!min-h-[98px] !w-full">
-            <nz-form-label nzFor="repeatType" class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >Repeat Types</nz-form-label
-            >
-            <nz-form-control>
-              <nz-select
-                formControlName="repeatType"
-                nzPlaceHolder="Chọn Bus Repeat Types"
-                (ngModelChange)="changeRepeatType($event)">
-                <nz-option nzCustomContent [nzLabel]="'Days'" [nzValue]="'days'">
-                  <div class="flex items-center">
-                    <span class="!font-medium"> Days </span>
-                  </div>
-                </nz-option>
-                <nz-option nzCustomContent [nzLabel]="'Weeks'" [nzValue]="'weeks'">
-                  <div class="flex items-center">
-                    <span class="!font-medium"> Weeks </span>
-                  </div>
-                </nz-option>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-      </div>
-      <div class="flex w-7/12 gap-4">
-        <div class="flex w-4/12">
-          <nz-form-item class="!min-h-[96px] !w-full">
-            <nz-form-label nzFor="preGenerateDays" class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >PreGenerate Days</nz-form-label
-            >
-            <nz-form-control
-              [nzErrorTip]="busScheduleAutoGeneratorDetailPreGenerateDaysErrorTpl"
-              class="!flex flex-col">
-              <nz-input-group
-                [nzSuffix]="busScheduleAutoGeneratorDetailPreGenerateDaysClearTpl"
-                class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-                <input type="number" nz-input formControlName="preGenerateDays" />
-              </nz-input-group>
-              <ng-template #busScheduleAutoGeneratorDetailPreGenerateDaysClearTpl>
-                <span
-                  nz-icon
-                  class="ant-input-clear-icon"
-                  nzTheme="fill"
-                  nzType="close-circle"
-                  (click)="busScheduleAutoGeneratorDetailForm.controls['preGenerateDays'].patchValue('')"></span>
-              </ng-template>
-              <ng-template #busScheduleAutoGeneratorDetailPreGenerateDaysErrorTpl let-control>
-                <span class="mt-1 !text-xs text-red-500">
-                  @if (busScheduleAutoGeneratorDetailForm.controls['preGenerateDays'].errors?.['required']) { Vui lòng
-                  nhập trường này }
-                </span>
-              </ng-template>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-        <div class="flex w-8/12 flex-col">
-          <nz-form-item class="!min-h-[98px] !w-full">
-            <nz-form-label nzFor="busScheduleTemplateId" class="!flex !h-[36px] !items-center !justify-start"
-              >Bus Schedule Template
-            </nz-form-label>
-            <nz-form-control
-              [nzErrorTip]="busScheduleAutogeneratorDetailBusScheduleTemplateIdErrorTpl"
-              class="!flex !w-full flex-col">
-              <nz-select formControlName="busScheduleTemplateId" nzPlaceHolder="Chọn Bus Schedule Template">
-                @for (busScheduleTemplate of busScheduleTemplates; track busScheduleTemplate) {
-                <nz-option nzCustomContent [nzLabel]="busScheduleTemplate.name" [nzValue]="busScheduleTemplate._id">
-                  <div class="flex items-center">
-                    <span class="!font-medium">
-                      {{ busScheduleTemplate.name }}
-                    </span>
-                  </div>
-                </nz-option>
-                }
-              </nz-select>
-              <ng-template #busScheduleAutogeneratorDetailBusScheduleTemplateIdErrorTpl let-control>
-                <span class="mt-1 !text-xs text-red-500">
-                  @if (busScheduleAutoGeneratorDetailForm.get('busScheduleTemplateId')?.errors?.['required']) { Vui lòng
-                  Bus Schedule Template }
-                </span>
-              </ng-template>
-            </nz-form-control>
           </nz-form-item>
         </div>
       </div>

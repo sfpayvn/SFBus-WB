@@ -58,6 +58,8 @@
                 nzLabel="Select all"
                 (nzCheckedChange)="onAllChecked($event)"></th>
               <th class="min-w-[200px]">Name</th>
+              <th class="min-w-[200px]">Bus Schedule Template</th>
+              <th class="min-w-[200px]">Status</th>
               <th class="w-[150px] text-center">Actions</th>
             </tr>
           </thead>
@@ -75,6 +77,26 @@
                   [nzTitle]="{ width: '100%' }"
                   [nzActive]="true">
                   {{ busScheduleAutoGenerator.name }}
+                </nz-skeleton>
+              </td>
+              <td>
+                <nz-skeleton
+                  [nzLoading]="isLoadingBusScheduleAutoGenerator"
+                  [nzParagraph]="false"
+                  [nzTitle]="{ width: '100%' }"
+                  [nzActive]="true">
+                  {{ busScheduleAutoGenerator.busScheduleTemplate?.name }}
+                </nz-skeleton>
+              </td>
+              <td>
+                <nz-skeleton
+                  [nzLoading]="isLoadingBusScheduleAutoGenerator"
+                  [nzParagraph]="false"
+                  [nzTitle]="{ width: '100%' }"
+                  [nzActive]="true">
+                  <span class="p-2 uppercase rounded-md text-xs {{ statusClasses[busScheduleAutoGenerator.status] }}">
+                    {{ busScheduleAutoGeneratorStatuses[busScheduleAutoGenerator.status] }}
+                  </span>
                 </nz-skeleton>
               </td>
               <td class="text-center">

@@ -21,7 +21,7 @@ export class User {
   email: string = '';
   phoneNumber: string = '';
   gender: string = '';
-  role: string = '';
+  roles: string[] = [];
   birthdate: string = '';
   addresses: UserAddress[] = [];
   selected: boolean = false;

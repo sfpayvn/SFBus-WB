@@ -196,9 +196,9 @@
           </div>
           <div class="flex w-6/12">
             <nz-form-item class="!min-h-[98px] !w-full">
-              <nz-form-label nzFor="role" class="!flex !h-[36px] !items-center !justify-start">Roles</nz-form-label>
+              <nz-form-label nzFor="roles" class="!flex !h-[36px] !items-center !justify-start">Roles</nz-form-label>
               <nz-form-control [nzErrorTip]="userFormRoleErrorTpl">
-                <nz-select formControlName="role" nzPlaceHolder="Chọn Role">
+                <nz-select formControlName="roles" nzMode="multiple" nzPlaceHolder="Chọn Role">
                   @for (role of roles; track role) {
                   <nz-option nzCustomContent [nzLabel]="role.label" [nzValue]="role.value">
                     <div class="flex items-center">
@@ -211,7 +211,7 @@
                 </nz-select>
                 <ng-template #userFormRoleErrorTpl let-control>
                   <span class="mt-1 !text-xs text-red-500">
-                    @if (userForm.controls['role'].errors?.['required']) { Vui lòng chọn Role}
+                    @if (userForm.controls['roles'].errors?.['required']) { Vui lòng chọn Role}
                   </span>
                 </ng-template>
               </nz-form-control>
@@ -221,7 +221,7 @@
       </div>
     </div>
 
-    <div class="flex gap-4" formGroupName="driverForm" *ngIf="userForm.get('role')?.value == 'driver'">
+    <div class="flex gap-4" formGroupName="driverForm" *ngIf="userForm.get('roles')?.value.includes('driver')">
       <div class="flex w-4/12 flex-col">
         <nz-form-item class="!min-h-[96px] !w-full">
           <nz-form-label nzFor="licenseNumber" class="!flex !h-[36px] !items-center !justify-start"
@@ -306,7 +306,8 @@
             <ng-template #passwordErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
                 @if (userForm.controls['password'].errors?.['passwordInvalid'] && userForm.controls['password'].touched)
-                { Vui lòng nhập đúng format mật khẩu. }
+                { Vui lòng nhập đúng format mật khẩu. } @if (userForm.controls['password'].errors?.['required'] &&
+                userForm.controls['password'].touched) { Vui lòng nhập mật khẩu. }
               </span>
             </ng-template>
           </nz-form-control>

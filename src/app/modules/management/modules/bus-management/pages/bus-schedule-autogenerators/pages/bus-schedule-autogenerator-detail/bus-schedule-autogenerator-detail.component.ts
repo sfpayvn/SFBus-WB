@@ -31,6 +31,29 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
 
   daysOfWeek: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+  busScheduleAutoGeneratorStatuses = [
+    {
+      value: 'un_published',
+      label: 'Chưa xuất bản',
+    },
+    {
+      value: 'scheduled',
+      label: 'Đã lên lịch',
+    },
+    {
+      value: 'cancelled',
+      label: 'Đã hủy',
+    },
+    {
+      value: 'in_progress',
+      label: 'Đang diễn ra',
+    },
+    {
+      value: 'completed',
+      label: 'Đã hoàn thành',
+    },
+  ];
+
   busScheduleTemplates: BusScheduleTemplate[] = [];
 
   isNonEndDate: boolean = false;
@@ -83,11 +106,13 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
       repeatInterval = 1,
       repeatDaysPerWeek = [],
       preGenerateDays = 0,
+      status = 'un_published',
     } = this.busScheduleAutoGenerator || {};
     console.log('🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ preGenerateDays:', preGenerateDays);
 
     this.busScheduleAutoGeneratorDetailForm = this.fb.group({
       name: [name, [Validators.required]],
+      status: [status, [Validators.required]],
       busScheduleTemplateId: [busScheduleTemplateId, [Validators.required]],
       startDate: [startDate, [Validators.required]],
       endDate: [endDate, endDate ? [Validators.required] : []],

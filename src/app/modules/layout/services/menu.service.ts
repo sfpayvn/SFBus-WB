@@ -108,7 +108,7 @@ export class MenuService implements OnDestroy {
   /** Lấy menu theo role của current user */
   private async getPages(): Promise<MenuItem[]> {
     const currentUser: User = await this.credentials.getCurrentUser();
-    const role: string = (currentUser?.role || 'tenant') as string;
+    const role: string = currentUser.roles.includes('admin') ? 'admin' : 'tenant';
     const menu = role === 'admin' ? MenuAdmin : MenuTenant;
 
     return _.cloneDeep(menu.pages);

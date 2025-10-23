@@ -52,4 +52,9 @@ export class DriversService {
     const deleteOptionUrl = this.url + `/${id}`;
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(tap((res: any) => {}));
   }
+
+  deleteDriverByUser(id: string) {
+    const deleteOptionUrl = this.url + `/delete-by-user/${id}`;
+    return this.apiGatewayService.delete(deleteOptionUrl).pipe(tap((res: any) => {}));
+  }
 }

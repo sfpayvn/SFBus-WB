@@ -58,6 +58,8 @@
                 nzLabel="Select all"
                 (nzCheckedChange)="onAllChecked($event)"></th>
               <th class="min-w-[200px]">Name</th>
+              <th class="min-w-[200px]">Bus Route</th>
+              <th class="min-w-[200px]">Status</th>
               <th class="w-[100px] text-center">Actions</th>
             </tr>
           </thead>
@@ -75,6 +77,26 @@
                   [nzTitle]="{ width: '100%' }"
                   [nzActive]="true">
                   {{ busSchedule.name }}
+                </nz-skeleton>
+              </td>
+              <td>
+                <nz-skeleton
+                  [nzLoading]="isLoadingBusSchedule"
+                  [nzParagraph]="false"
+                  [nzTitle]="{ width: '100%' }"
+                  [nzActive]="true">
+                  {{ busSchedule.busRoute?.name }}
+                </nz-skeleton>
+              </td>
+              <td>
+                <nz-skeleton
+                  [nzLoading]="isLoadingBusSchedule"
+                  [nzParagraph]="false"
+                  [nzTitle]="{ width: '100%' }"
+                  [nzActive]="true">
+                  <span class="p-2 uppercase rounded-md text-xs {{ statusClasses[busSchedule.status] }}">
+                    {{ busScheduleStatuses[busSchedule.status] }}
+                  </span>
                 </nz-skeleton>
               </td>
               <td class="text-center">

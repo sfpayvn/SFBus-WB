@@ -1,3 +1,5 @@
+import { BusScheduleTemplate } from '../../bus-schedule-templates/model/bus-schedule-template.model';
+
 export class SearchBusScheduleAutoGenerator {
   busScheduleAutoGenerators: BusScheduleAutoGenerator[] = [];
   pageIdx: number = 0;
@@ -14,6 +16,7 @@ export class BusScheduleAutoGenerator {
   _id: string = '';
   name: string = '';
   busScheduleTemplateId: string = '';
+  busScheduleTemplate?: BusScheduleTemplate;
   repeatType: 'days' | 'weeks' = 'days';
   repeatInterval: number = 0;
   specificTimeSlots: SpecificTimeSlot[] = [];
@@ -21,6 +24,7 @@ export class BusScheduleAutoGenerator {
   preGenerateDays: number = 0;
   startDate: Date = new Date();
   endDate: Date | any;
+  status: 'un_published' | 'scheduled' | 'in_progress' | 'completed' | 'cancelled' = 'un_published';
   selected: boolean = false;
 }
 

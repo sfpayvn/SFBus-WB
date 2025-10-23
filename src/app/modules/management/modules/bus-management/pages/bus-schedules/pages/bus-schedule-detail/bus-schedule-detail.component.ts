@@ -87,6 +87,35 @@ export class BusScheduleDetailComponent implements OnInit {
   @Input() startDate!: Date;
   @Output() saveScheduleEvent = new EventEmitter<BusSchedule>();
 
+  busScheduleStatuses = [
+    {
+      value: 'un_published',
+      label: 'Chưa xuất bản',
+    },
+    {
+      value: 'scheduled',
+      label: 'Đã lên lịch',
+    },
+    {
+      value: 'cancelled',
+      label: 'Đã hủy',
+    },
+    {
+      value: 'in_progress',
+      label: 'Đang diễn ra',
+    },
+    {
+      value: 'completed',
+      label: 'Đã hoàn thành',
+    },
+    {
+      value: 'overdue',
+      label: 'Quá hạn',
+    },
+  ];
+
+  busScheduleClasses: { [key: string]: string } = {};
+
   constructor(
     private fb: FormBuilder,
     public utils: Utils,
@@ -187,10 +216,12 @@ export class BusScheduleDetailComponent implements OnInit {
       busScheduleTemplateId = '',
       busLayoutTemplateId = '',
       busDriverIds = [],
+      status = 'un_published',
     } = this.busSchedule || {};
 
     this.busScheduleDetailForm = this.fb.group({
       name: [name, [Validators.required]],
+      status: [status, [Validators.required]],
       busTemplateId: [busTemplateId, [Validators.required]],
       busId: [busId],
       busRouteId: [busRouteId, [Validators.required]],

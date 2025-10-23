@@ -6,6 +6,7 @@ import { Utils } from 'src/app/shared/utils/utils';
 import { SearchUser, User } from '../../model/user.model';
 import { UsersService } from '../../service/user.servive';
 import { Router } from '@angular/router';
+import { DriversService } from '../../service/driver.servive';
 
 @Component({
   selector: 'app-users',
@@ -50,6 +51,7 @@ export class UsersComponent implements OnInit {
     private dialog: MatDialog,
     public utils: Utils,
     private router: Router,
+    private driversService: DriversService,
   ) {}
 
   ngOnInit(): void {
@@ -94,7 +96,7 @@ export class UsersComponent implements OnInit {
     }));
   }
 
-  deleteUser(id: string): void {
+  deleteUser(user: User): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -118,11 +120,14 @@ export class UsersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.usersService.deleteUser(id).subscribe({
+        this.usersService.deleteUser(user._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchUser.users = this.searchUser.users.filter((user) => user._id !== id);
+              this.searchUser.users = this.searchUser.users.filter((u) => u._id !== user._id);
               toast.success('User deleted successfully');
+              if (user.roles.includes('driver')) {
+                this.driversService.deleteDriverByUser(user._id).subscribe();
+              }
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),

@@ -41,6 +41,24 @@ export class BusSchedulesComponent implements OnInit {
 
   isLoadingBusSchedule: boolean = false;
 
+  statusClasses: { [key: string]: string } = {
+    un_published: 'border-gray-blue-500 bg-gray-200 text-gray-800',
+    scheduled: 'border-blue-500 bg-blue-200 text-blue-800',
+    cancelled: 'border-red-500 bg-red-200 text-red-800',
+    in_progress: 'border-indigo-500 bg-indigo-200 text-indigo-800',
+    completed: 'border-green-500 bg-green-200 text-green-800',
+    overdue: 'border-orange-500 bg-orange-200 text-orange-800',
+  };
+
+  busScheduleStatuses: { [key: string]: string } = {
+    un_published: 'Chưa xuất bản',
+    scheduled: 'Đã lên lịch',
+    cancelled: 'Đã hủy',
+    in_progress: 'Đang diễn ra',
+    completed: 'Đã hoàn thành',
+    overdue: 'Quá hạn',
+  };
+
   constructor(
     private busSchedulesService: BusSchedulesService,
     private dialog: MatDialog,
@@ -247,6 +265,7 @@ export class BusSchedulesComponent implements OnInit {
     delete (busSchedule2Clone as any)._id;
     let busSchedule2Create = new BusSchedule2Create();
     busSchedule2Create = { ...busSchedule2Create, ...busSchedule2Clone };
+    busSchedule2Create.status = 'un_published';
 
     this.busSchedulesService.createBusSchedule(busSchedule2Create).subscribe({
       next: (res: BusSchedule) => {

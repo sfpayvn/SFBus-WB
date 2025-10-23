@@ -46,6 +46,10 @@ export class UserDetailComponent implements OnInit {
       label: 'Driver',
       value: 'driver',
     },
+    {
+      label: 'Tenant',
+      value: 'tenant',
+    },
   ];
 
   genders = [
@@ -111,7 +115,7 @@ export class UserDetailComponent implements OnInit {
       email = '',
       phoneNumber = '',
       gender = '',
-      role = '',
+      roles = [],
       birthdate = twelveYearsAgo,
       addresses = [],
     } = this.user || {};
@@ -131,7 +135,7 @@ export class UserDetailComponent implements OnInit {
           ],
         ],
         gender: [gender],
-        role: [role, [Validators.required]],
+        roles: [roles, [Validators.required]],
         birthdate: [birthdate],
       }),
       driverForm: this.fb.group({
@@ -143,7 +147,11 @@ export class UserDetailComponent implements OnInit {
 
     this.addresses = addresses;
 
-    if (role == 'driver') {
+    if (!this.user) {
+      this.userForm.get('password')?.addValidators(Validators.required);
+    }
+
+    if (roles.includes('driver')) {
       this.setDataWithDriver();
     }
   }
@@ -283,12 +291,12 @@ export class UserDetailComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.mainForm.valid) {
-      this.utils.markFormGroupTouched(this.mainForm);
+    if (!this.userForm.valid) {
+      this.utils.markFormGroupTouched(this.userForm);
       return;
     }
 
-    const { userForm } = this.mainForm.getRawValue();
+    const { userForm, driverForm } = this.mainForm.getRawValue();
 
     const user2Create: User2Create = {
       ...userForm,
@@ -302,60 +310,90 @@ export class UserDetailComponent implements OnInit {
     }
     const files: FileList = dataTransfer.files;
 
-    let request = [];
-    let actionName = 'create';
+    const hasDriverRole = user2Create.roles.includes('driver');
+    const isUserFormChanged = this.userForm.dirty;
+    const isDriverFormChanged = this.driverForm.dirty;
 
     if (this.user) {
+      // Update flow
       const user2Update = {
         ...user2Create,
-        _id: this.user._id, // Thêm thuộc tính _id
+        _id: this.user._id,
         isEmailVerified: this.user.isEmailVerified,
         isLocked: this.user.isLocked,
         isDeleted: this.user.isDeleted,
       };
-      actionName = 'update';
-      request.push(this.updateUser(files, user2Update));
+
+      // Update user if form changed
+      if (isUserFormChanged) {
+        this.updateUser(files, user2Update).subscribe({
+          next: (updatedUser: User) => {
+            this.user = updatedUser;
+            const updatedState = { ...history.state, user: JSON.stringify(updatedUser) };
+            window.history.replaceState(updatedState, '', window.location.href);
+            this.userForm.markAsPristine();
+
+            // Handle driver after user update
+            this.handleDriverOperation(hasDriverRole, isDriverFormChanged, this.user._id);
+          },
+          error: (error: any) => this.utils.handleRequestError(error),
+        });
+      } else {
+        // Only handle driver if user form not changed
+        this.handleDriverOperation(hasDriverRole, isDriverFormChanged, this.user._id);
+      }
     } else {
-      request.push(this.createUser(files, user2Create));
+      // Create flow
+      this.createUser(files, user2Create).subscribe({
+        next: (createdUser: User) => {
+          this.user = createdUser;
+          // Handle driver after user create
+          this.handleDriverOperation(hasDriverRole, true, createdUser._id);
+        },
+        error: (error: any) => this.utils.handleRequestError(error?.error),
+      });
     }
-
-    if (user2Create.role == 'driver') {
-      request.push(this.processSubmitDriver());
-    }
-
-    combineLatest(request).subscribe({
-      next: (res: any) => {
-        if (!res) {
-          return;
-        }
-        if (actionName == 'update') {
-          const updatedState = { ...history.state, user: JSON.stringify(res[0]) };
-          window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('User update successfully');
-          return;
-        }
-        toast.success('User added successfully');
-        this.backPage();
-      },
-      error: (error: any) => this.utils.handleRequestError(error), // Xử lý lỗi
-    });
   }
 
-  processSubmitDriver() {
+  handleDriverOperation(hasDriverRole: boolean, isDriverFormChanged: boolean, userId: string) {
+    if (!isDriverFormChanged || !hasDriverRole) {
+      toast.success('Không có thay đổi nào trong thông tin');
+      return;
+    }
+
     const { driverForm } = this.mainForm.getRawValue();
 
-    const driver2Create: Driver2Create = {
-      ...driverForm,
-      userId: this.user._id,
-    };
     if (this.driver) {
-      const driver2Update = {
-        ...driver2Create,
+      // Update driver
+      const driver2Update: Driver2Update = {
+        ...driverForm,
         _id: this.driver._id,
+        userId: userId,
       };
-      return this.updateDriver(driver2Update);
+
+      this.updateDriver(driver2Update).subscribe({
+        next: () => {
+          this.driverForm.markAsPristine();
+          toast.success('User and Driver updated successfully');
+        },
+        error: (error: any) => this.utils.handleRequestError(error),
+      });
+    } else {
+      // Create driver
+      const driver2Create: Driver2Create = {
+        ...driverForm,
+        userId: userId,
+      };
+
+      this.createDriver(driver2Create).subscribe({
+        next: () => {
+          this.driverForm.markAsPristine();
+          toast.success('User and Driver saved successfully');
+          this.backPage();
+        },
+        error: (error: any) => this.utils.handleRequestError(error),
+      });
     }
-    return this.createDriver(driver2Create);
   }
 
   updateUser(files: FileList, user2Update: User2Update) {

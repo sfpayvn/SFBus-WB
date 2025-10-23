@@ -27,6 +27,7 @@ export class CalendarEventsComponent implements OnInit {
   activePopover: Event[] | null = null;
 
   statusClasses: { [key: string]: string } = {
+    un_published: 'border-gray-blue-500 bg-gray-200 text-gray-800',
     scheduled: 'border-blue-500 bg-blue-200 text-blue-800',
     cancelled: 'border-red-500 bg-red-200 text-red-800',
     in_progress: 'border-indigo-500 bg-indigo-200 text-indigo-800',
