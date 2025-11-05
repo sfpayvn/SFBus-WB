@@ -399,7 +399,6 @@
                           formControlName="categories"
                           nzPlaceHolder="Chọn Phân loại"
                           nzSize="large"
-                          [nzOptionHeightPx]="80"
                           nzMode="multiple"
                           [nzCustomTemplate]="defaultTemplateSelectGoodsCategory">
                           @for (goodsCategory of goodsCategories; track goodsCategory) {
@@ -572,8 +571,7 @@
                           class="custom-nz-select height-large !mt-0 !mb-0"
                           formControlName="paidBy"
                           nzPlaceHolder="Chọn người thanh toán"
-                          nzSize="large"
-                          [nzOptionHeightPx]="80">
+                          nzSize="large">
                           @for (paidBy of paidByList; track paidBy) {
                           <nz-option nzCustomContent [nzLabel]="paidBy.label" [nzValue]="paidBy.value">
                             <div class="flex flex-col">
@@ -779,7 +777,6 @@
                           nzPlaceHolder="Chọn Bus Route"
                           nzAllowClear
                           nzSize="large"
-                          [nzOptionHeightPx]="80"
                           (ngModelChange)="chooseBusRoute($event)">
                           @for (busRoute of busRoutes; track busRoute) {
                           <nz-option
@@ -815,7 +812,6 @@
                           nzServerSearch
                           nzAllowClear
                           (nzOnSearch)="onSearch($event)"
-                          [nzOptionHeightPx]="80"
                           (ngModelChange)="chooseBusSchedule($event)"
                           [nzCustomTemplate]="defaultTemplateSelectBusSchedule"
                           [nzDisabled]="!mainForm.get('busRouteId')?.value">

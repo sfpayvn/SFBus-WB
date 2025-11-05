@@ -95,9 +95,7 @@ export class VerifyOtpComponent implements OnInit {
         return;
       }
 
-      const updateResult = await this.userService
-        .updateUserField(this.currentUser._id, 'isPhoneNumberVerified', true)
-        .toPromise();
+      const updateResult = await this.userService.updateUserField('isPhoneNumberVerified', true).toPromise();
 
       if (updateResult !== true && (updateResult == null || (updateResult as any).error)) {
         toast.error(

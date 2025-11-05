@@ -16,9 +16,8 @@ export class UserService {
 
   constructor(private apiGatewayService: ApiGatewayService) {}
 
-  updateUserField(userId: string, fieldName: string, value: any): Observable<boolean> {
+  updateUserField(fieldName: string, value: any): Observable<boolean> {
     const body = {
-      userId,
       fieldName,
       value,
     };

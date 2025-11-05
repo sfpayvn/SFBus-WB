@@ -83,8 +83,7 @@
                 formControlName="busDriverIds"
                 nzMode="multiple"
                 nzPlaceHolder="Chọn Bus Services"
-                nzSize="large"
-                [nzOptionHeightPx]="80">
+                nzSize="large">
                 @for (driver of drivers; track driver) {
                 <nz-option nzCustomContent [nzLabel]="driver.name" [nzValue]="driver._id">
                   <div class="flex items-center">
@@ -313,7 +312,7 @@
             </nz-form-item>
           </div>
           <div class="flex min-w-[150px]">
-            <nz-form-item class="!mb-0 !flex !flex-col w-full">
+            <nz-form-item class="!mb-0 !flex w-full !flex-col">
               <nz-form-label nzFor="status" class="!flex !items-center !justify-start">Status</nz-form-label>
               <nz-form-control class="!flex !max-h-[42px] flex-col">
                 <nz-select

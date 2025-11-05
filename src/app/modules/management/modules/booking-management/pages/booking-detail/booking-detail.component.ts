@@ -31,6 +31,7 @@ export class BookingDetailComponent implements OnInit {
   @Input() isDialog: boolean = false;
 
   seatTypes: SeatType[] = [];
+  private seatTypeCache: Map<string, SeatType | undefined> = new Map();
 
   busSchedule: BusSchedule = new BusSchedule();
 
@@ -132,14 +133,23 @@ export class BookingDetailComponent implements OnInit {
     combineLatest(request).subscribe(([busSchedule, seatTypes]) => {
       this.busSchedule = busSchedule;
       this.seatTypes = seatTypes;
+      // Clear cache when seatTypes change
+      this.seatTypeCache.clear();
     });
   }
 
   getTypeOfSeat(cell: any) {
-    console.log('🚀 ~ BookingDetailComponent ~ getTypeOfSeat ~ cell:', cell);
+    // Check cache first
+    if (this.seatTypeCache.has(cell.typeId)) {
+      return this.seatTypeCache.get(cell.typeId);
+    }
+
     // Tìm loại ghế tương ứng dựa trên type
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
-    console.log('🚀 ~ BookingDetailComponent ~ getTypeOfSeat ~ this.seatTypes:', this.seatTypes);
+    
+    // Cache the result
+    this.seatTypeCache.set(cell.typeId, selectedType);
+    
     return selectedType;
   }
 

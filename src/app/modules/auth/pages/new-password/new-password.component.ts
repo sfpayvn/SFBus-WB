@@ -62,45 +62,38 @@ export class NewPasswordComponent implements OnInit {
   }
 
   initForm() {
-    this.form = this._formBuilder.group(
-      {
-        password: [
-          '@Solid2023',
-          [
-            Validators.required,
-            this.optionalValidator(
-              Validators.compose([Validators.minLength(8), this.passwordValidator.bind(this)]) || (() => null),
-            ),
-          ],
+    this.form = this._formBuilder.group({
+      password: [
+        '@Solid2023',
+        [
+          Validators.required,
+          this.optionalValidator(
+            Validators.compose([Validators.minLength(8), this.passwordValidator.bind(this)]) || (() => null),
+          ),
         ],
-        confirmPassword: ['@Solid2023', [Validators.required]],
-      },
-      {
-        validators: this.passwordMatchValidator, // Sử dụng form-level validator
-      },
-    );
+      ],
+      confirmPassword: ['@Solid2023', [Validators.required]],
+    });
+
+    // Add custom validator for confirmPassword khi password thay đổi
+    this.form.get('password')?.valueChanges.subscribe(() => {
+      this.form.get('confirmPassword')?.updateValueAndValidity();
+    });
+
+    // Set custom validator cho confirmPassword
+    this.form.get('confirmPassword')?.setValidators([Validators.required, this.confirmPasswordValidator.bind(this)]);
   }
 
   get f() {
     return this.form.controls;
   }
 
-  passwordMatchValidator = (formGroup: FormGroup) => {
-    const password = formGroup.get('password')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
+  confirmPasswordValidator = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
 
-    if (password && confirmPassword && password !== confirmPassword) {
-      formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
+    const password = this.form?.get('password')?.value;
+    if (password && control.value !== password) {
       return { passwordMismatch: true };
-    } else {
-      // Clear error nếu passwords match
-      const confirmPasswordControl = formGroup.get('confirmPassword');
-      if (confirmPasswordControl?.errors?.['passwordMismatch']) {
-        delete confirmPasswordControl.errors['passwordMismatch'];
-        if (Object.keys(confirmPasswordControl.errors).length === 0) {
-          confirmPasswordControl.setErrors(null);
-        }
-      }
     }
     return null;
   };
