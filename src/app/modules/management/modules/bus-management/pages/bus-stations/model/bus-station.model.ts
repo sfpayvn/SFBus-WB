@@ -12,7 +12,6 @@ export class BusStation {
   location: string = '';
   provinceId: string = '';
   isDefault: boolean = false;
-  selected: boolean = false;
 }
 
 export class BusStation2Create {

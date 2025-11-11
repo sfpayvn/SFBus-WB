@@ -21,14 +21,21 @@ export class BusServicesComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingBusService: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
     private busServicesService: BusServicesService,
@@ -42,19 +49,19 @@ export class BusServicesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBusService = true;
-    this.busServicesService.searchBusService(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.isLoading = true;
+    this.busServicesService.searchBusService(this.searchParams).subscribe({
       next: (res: SearchBusService) => {
         if (res) {
           this.searchBusService = res;
           this.totalItem = this.searchBusService.totalItem;
           this.totalPage = this.searchBusService.totalPage;
         }
-        this.isLoadingBusService = false;
+        this.isLoading = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingBusService = false;
+        this.isLoading = false;
       },
     });
   }
@@ -200,20 +207,27 @@ export class BusServicesComponent implements OnInit {
     });
   }
 
-  reloadBusServicePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchBusServicePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortBusServicePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
   }
 

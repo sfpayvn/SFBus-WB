@@ -1,12 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BusProvince, BusProvince2Create } from '../../model/bus-province.model';
+import { BusProvince, BusProvince2Create, BusProvince2Update } from '../../model/bus-province.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { BusStation } from '../../../bus-stations/model/bus-station.model';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import _ from 'lodash';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 export interface DialogData {
   title: string;
@@ -36,7 +37,21 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   filteredBusStations: BusStation[] = [];
   filteredBusProvinceStations: BusStation[] = [];
 
-  constructor(private fb: FormBuilder, private utils: Utils, public defaultFlagService: DefaultFlagService) {}
+  // Selection tracking with Map for O(1) lookup
+  private selectedBusStationsMap: Map<string, boolean> = new Map();
+  private selectedProvinceStationsMap: Map<string, boolean> = new Map();
+
+  // Store initial values for change detection
+  private initialFormValue: any = null;
+  private initialBusProvinceStations: BusStation[] = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private utils: Utils,
+    private utilsModal: UtilsModal,
+    public defaultFlagService: DefaultFlagService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   async ngOnInit(): Promise<void> {
     await this.initData();
@@ -48,6 +63,10 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     this.busProvinceForm = this.fb.group({
       name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busProvince) }, [Validators.required]],
     });
+
+    // Store initial values after form is created
+    this.initialFormValue = this.busProvinceForm.getRawValue();
+    this.initialBusProvinceStations = _.cloneDeep(this.filteredBusProvinceStations);
   }
 
   get f() {
@@ -56,16 +75,27 @@ export class BusProvinceDetailDialogComponent implements OnInit {
 
   async initData() {
     this.busStations = await _.difference(this.busStations, this.busProvince.busStations);
-    this.busStations = this.busStations.map((busStation) => ({
-      ...busStation,
-      selected: false,
-    }));
     this.filteredBusStations = this.busStations;
     this.filteredBusProvinceStations = this.busProvince.busStations;
+
+    // Initialize selection maps
+    this.selectedBusStationsMap.clear();
+    this.selectedProvinceStationsMap.clear();
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    if (this.hasChanges()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.dialogRef.close();
+            return;
+          }
+        });
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   clearFormValue(controlName: string) {
@@ -79,31 +109,59 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     }
   }
 
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busProvinceForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
+  }
+
+  hasStationsChanged(): boolean {
+    const initialStationIds = this.initialBusProvinceStations.map((s) => s._id).sort();
+    const currentStationIds = this.filteredBusProvinceStations.map((s) => s._id).sort();
+    return JSON.stringify(initialStationIds) !== JSON.stringify(currentStationIds);
+  }
+
+  hasChanges(): boolean {
+    return this.hasFormChanged() || this.hasStationsChanged();
+  }
+
   onSubmit() {
     if (!this.busProvinceForm.valid) {
       this.utils.markFormGroupTouched(this.busProvinceForm);
       return;
     }
+
+    // Check if there are any changes
+    if (!this.hasChanges()) {
+      this.dialogRef.close();
+      return;
+    }
+
     const { name } = this.busProvinceForm.getRawValue();
 
-    const busStationsOfProvince = this.filteredBusProvinceStations.map((busStation) => ({
-      ...busStation,
-      provinceId: this.busProvince._id,
-    }));
+    // Các station mới được thêm vào province (không có trong initial)
+    const busStationsAdded = this.filteredBusProvinceStations
+      .filter((station) => !this.initialBusProvinceStations.some((initial) => initial._id === station._id))
+      .map((busStation) => ({
+        ...busStation,
+        provinceId: this.busProvince._id,
+      }));
 
-    const busStationNotAsssign = _.difference(this.busProvince.busStations, this.filteredBusProvinceStations).map(
-      (busStation) => ({
+    // Các station đã bị loại bỏ khỏi province (có trong initial nhưng không có trong current)
+    const busStationsRemoved = this.initialBusProvinceStations
+      .filter((initial) => !this.filteredBusProvinceStations.some((current) => current._id === initial._id))
+      .map((busStation) => ({
         ...busStation,
         provinceId: '',
-      }),
-    );
+      }));
+
+    const busProvince2Update: BusProvince2Update = {
+      ...this.busProvince,
+      name,
+    };
 
     const data = {
-      busProvince: {
-        ...this.busProvince,
-        name,
-      },
-      busStations2Update: _.union(busStationsOfProvince, busStationNotAsssign),
+      busProvince: this.hasFormChanged() ? busProvince2Update : null,
+      busStations2Update: this.hasStationsChanged() ? _.union(busStationsAdded, busStationsRemoved) : null,
     };
     this.dialogRef.close(data);
   }
@@ -127,46 +185,60 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   toggleRotationBusStation() {
     this.isRotated = !this.isRotated;
 
-    // Tách riêng các phần tử được chọn và không được chọn từ mỗi mảng
-    const selectedProvince = this.filteredBusProvinceStations?.filter((b) => b.selected) || [];
-    const unselectedProvince = this.filteredBusProvinceStations?.filter((b) => !b.selected) || [];
+    // Tách các station được chọn và không được chọn từ mỗi bên
+    const selectedFromProvince: BusStation[] = [];
+    const unselectedFromProvince: BusStation[] = [];
+    const selectedFromBus: BusStation[] = [];
+    const unselectedFromBus: BusStation[] = [];
 
-    const selectedStations = this.filteredBusStations?.filter((b) => b.selected) || [];
-    const unselectedStations = this.filteredBusStations?.filter((b) => !b.selected) || [];
+    // Duyệt province stations
+    for (const station of this.filteredBusProvinceStations) {
+      if (this.selectedProvinceStationsMap.get(station._id)) {
+        selectedFromProvince.push(station);
+      } else {
+        unselectedFromProvince.push(station);
+      }
+    }
 
-    // Đổi chỗ các phần được chọn giữa hai mảng:
-    // - Mảng filteredBusStations nhận phần được chọn từ mảng busProvinceStations, sau đó là phần chưa chọn của chính nó.
-    // - Mảng filteredBusProvinceStations nhận phần được chọn từ mảng busStations, sau đó là phần chưa chọn của chính nó.
-    this.filteredBusStations = [...selectedProvince, ...unselectedStations];
-    this.filteredBusProvinceStations = [...selectedStations, ...unselectedProvince];
+    // Duyệt bus stations
+    for (const station of this.filteredBusStations) {
+      if (this.selectedBusStationsMap.get(station._id)) {
+        selectedFromBus.push(station);
+      } else {
+        unselectedFromBus.push(station);
+      }
+    }
 
-    // Reset trạng thái selected cho tất cả các phần tử
-    this.filteredBusStations = this.filteredBusStations.map((b) => ({ ...b, selected: false }));
-    this.filteredBusProvinceStations = this.filteredBusProvinceStations.map((b) => ({ ...b, selected: false }));
+    // Hoán đổi:
+    // - filteredBusStations = các station được chọn từ province + các station không chọn của bus
+    // - filteredBusProvinceStations = các station được chọn từ bus + các station không chọn của province
+    this.filteredBusStations = [...selectedFromProvince, ...unselectedFromBus];
+    this.filteredBusProvinceStations = [...selectedFromBus, ...unselectedFromProvince];
+
+    // Swap Maps và clear selections
+    const tempMap = this.selectedBusStationsMap;
+    this.selectedBusStationsMap = this.selectedProvinceStationsMap;
+    this.selectedProvinceStationsMap = tempMap;
+
+    // Clear cả 2 Maps để reset trạng thái selected
+    this.selectedBusStationsMap.clear();
+    this.selectedProvinceStationsMap.clear();
+
+    this.cdr.detectChanges();
   }
 
-  // toggleRotationBusStation() {
-  //   // Đảo trạng thái lật của bus station
-  //   this.isRotated = !this.isRotated;
+  toggleBusStation(busStation: any, isProvinceStation: boolean = false) {
+    if (this.defaultFlagService.isDefault(this.busProvince)) return;
 
-  //   // Sắp xếp lại filteredBusStations: Các phần tử selected đặt lên đầu, phần còn lại giữ nguyên thứ tự
-  //   const selectedBusStations = this.filteredBusStations?.filter(bt => bt.selected) || [];
-  //   const unselectedBusStations = this.filteredBusStations?.filter(bt => !bt.selected) || [];
-  //   this.filteredBusStations = [...selectedBusStations, ...unselectedBusStations];
+    const targetMap = isProvinceStation ? this.selectedProvinceStationsMap : this.selectedBusStationsMap;
+    const currentState = targetMap.get(busStation._id) || false;
 
-  //   // Sắp xếp lại filteredBusProvinceStations theo cùng cách
-  //   const selectedBusProvinceStations = this.filteredBusProvinceStations?.filter(b => b.selected) || [];
-  //   const unselectedBusProvinceStations = this.filteredBusProvinceStations?.filter(b => !b.selected) || [];
-  //   this.filteredBusProvinceStations = [...selectedBusProvinceStations, ...unselectedBusProvinceStations];
+    targetMap.set(busStation._id, !currentState);
+  }
 
-  //   // Nếu cần, reset lại flag selected cho tất cả các phần tử
-  //   this.filteredBusStations = this.filteredBusStations.map(bt => ({ ...bt, selected: false }));
-  //   this.filteredBusProvinceStations = this.filteredBusProvinceStations.map(b => ({ ...b, selected: false }));
-  // }
-
-  toggleBusStation(busStation: any) {
-    if (this.defaultFlagService.isDefault(busStation)) return;
-    busStation.selected = !busStation.selected;
+  isStationSelected(busStation: any, isProvinceStation: boolean = false): boolean {
+    const targetMap = isProvinceStation ? this.selectedProvinceStationsMap : this.selectedBusStationsMap;
+    return targetMap.get(busStation._id) || false;
   }
 
   drop(event: any) {

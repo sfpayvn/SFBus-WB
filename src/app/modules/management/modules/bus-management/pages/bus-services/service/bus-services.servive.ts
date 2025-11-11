@@ -17,16 +17,20 @@ export class BusServicesService {
     return this.apiGatewayService.get(url, true).pipe(tap((res: any) => {}));
   }
 
-  searchBusService(pageIdx: number = 0, pageSize: number = 999, keyword: string = '', sortBy: string = '') {
-    const body = {
-      pageIdx,
-      pageSize,
-      keyword,
-      sortBy,
-    };
-
+  searchBusService(
+    searchParams = {
+      pageIdx: 1,
+      pageSize: 5,
+      keyword: '',
+      sortBy: {
+        key: 'createdAt',
+        value: 'descend',
+      },
+      filters: [] as any[],
+    },
+  ) {
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, searchParams, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   processCreateBusService(busServiceIconFile: FileList, busService2Create: BusService2Create) {

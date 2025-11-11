@@ -20,8 +20,8 @@
   <app-table-action
     [title]="'Bus Province'"
     [totalItem]="totalItem"
-    (sortDataEvent)="sortBusProvincePage($event)"
-    (searchDataEvent)="searchBusProvincePage($event)"></app-table-action>
+    (sortDataEvent)="sortPage($event)"
+    (searchDataEvent)="searchPage($event)"></app-table-action>
   <div class="overflow-x-auto">
     <nz-table
       #rowSelectionTable
@@ -29,7 +29,7 @@
       nzShowSizeChanger
       [nzFrontPagination]="false"
       [nzData]="filteredProvinces"
-      [nzLoading]="isLoadingBusProvince"
+      [nzLoading]="isLoading"
       class="!w-full"
       (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
       <thead class="border-muted/20 text-muted-foreground border text-xs">
@@ -46,14 +46,14 @@
       </thead>
       <tbody>
         @for (busProvince of rowSelectionTable.data; track busProvince._id) {
-        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-muted/20': defaultFlagService.isDefault(busProvince) }">
+        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-card/50': defaultFlagService.isDefault(busProvince) }">
           <td
             [nzChecked]="setOfCheckedId.has(busProvince._id)"
             [nzLabel]="busProvince.name"
             (nzCheckedChange)="onItemChecked(busProvince._id, $event)"></td>
           <td>
             <nz-skeleton
-              [nzLoading]="isLoadingBusProvince"
+              [nzLoading]="isLoading"
               [nzParagraph]="{ rows: 2 }"
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
@@ -69,7 +69,7 @@
           </td>
           <td>
             <nz-skeleton
-              [nzLoading]="isLoadingBusProvince"
+              [nzLoading]="isLoading"
               [nzParagraph]="{ rows: 2 }"
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
@@ -115,11 +115,11 @@
     </nz-table>
   </div>
   <app-table-footer
-    [pageIdx]="pageIdx"
-    [pageSize]="pageSize"
+    [pageIdx]="searchParams.pageIdx"
+    [pageSize]="searchParams.pageSize"
     [totalItem]="totalItem"
-    [isLoading]="isLoadingBusProvince"
+    [isLoading]="isLoading"
     [totalPage]="totalPage"
-    (reloadDataAndPageEvent)="reloadBusProvincePage($event)">
+    (reloadDataAndPageEvent)="reloadPage($event)">
   </app-table-footer>
 </div>

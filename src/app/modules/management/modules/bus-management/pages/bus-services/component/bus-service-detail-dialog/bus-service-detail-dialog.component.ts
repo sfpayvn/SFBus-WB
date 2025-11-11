@@ -29,6 +29,8 @@ export class BusServiceDetailDialogComponent implements OnInit {
   busServiceIcon!: string;
   busServiceIconFile!: File;
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
@@ -50,16 +52,34 @@ export class BusServiceDetailDialogComponent implements OnInit {
       name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busService) }, [Validators.required]],
       iconId: [{ value: iconId, disabled: this.defaultFlagService.isDefault(this.busService) }, Validators.required],
     });
+
+    this.initialFormValue = this.busServiceForm.getRawValue();
   }
 
   get f() {
     return this.busServiceForm.controls;
   }
 
+  hasChanges(): boolean {
+    const currentFormValue = this.busServiceForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
+  }
+
   onButtonClick() {}
 
   closeDialog(): void {
-    this.dialogRef.close();
+    if (this.hasChanges()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.dialogRef.close();
+            return;
+          }
+        });
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   clearFormValue(controlName: string) {
@@ -115,6 +135,13 @@ export class BusServiceDetailDialogComponent implements OnInit {
       this.utils.markFormGroupTouched(this.busServiceForm);
       return;
     }
+
+    // Check if there are any changes
+    if (!this.hasChanges()) {
+      this.dialogRef.close();
+      return;
+    }
+
     const { name, iconId } = this.busServiceForm.getRawValue();
 
     let dataTransfer = new DataTransfer();

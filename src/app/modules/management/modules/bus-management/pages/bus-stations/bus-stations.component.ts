@@ -23,14 +23,21 @@ export class BusStationsComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingBusStation: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
     private busStationsService: BusStationsService,
@@ -44,20 +51,20 @@ export class BusStationsComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBusStation = true;
+    this.isLoading = true;
 
-    this.busStationsService.searchBusStation(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.busStationsService.searchBusStation(this.searchParams).subscribe({
       next: (res: SearchBusStation) => {
         if (res) {
           this.searchBusStation = res;
           this.totalItem = this.searchBusStation.totalItem;
           this.totalPage = this.searchBusStation.totalPage;
         }
-        this.isLoadingBusStation = false;
+        this.isLoading = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingBusStation = false;
+        this.isLoading = false;
       },
     });
   }
@@ -120,17 +127,21 @@ export class BusStationsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busStationsService.deleteBusStation(busStation._id).subscribe({
-          next: (res: any) => {
-            if (res) {
-              this.searchBusStation.busStations = this.searchBusStation.busStations.filter(
-                (b) => b._id !== busStation._id,
-              );
-              toast.success('BusStation deleted successfully');
-            }
-          },
-          error: (error: any) => this.utils.handleRequestError(error),
-        });
+        try {
+          this.busStationsService.deleteBusStation(busStation._id).subscribe({
+            next: (res: any) => {
+              if (res) {
+                this.searchBusStation.busStations = this.searchBusStation.busStations.filter(
+                  (b) => b._id !== busStation._id,
+                );
+                toast.success('BusStation deleted successfully');
+              }
+            },
+            error: (error: any) => this.utils.handleRequestError(error),
+          });
+        } catch (err: any) {
+          this.utils.handleRequestError(err.error);
+        }
       }
     });
   }
@@ -145,17 +156,21 @@ export class BusStationsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busStationsService.updateBusStation(result).subscribe({
-          next: (res: BusStation) => {
-            if (res) {
-              this.searchBusStation.busStations = this.searchBusStation.busStations.map((busStation: BusStation) =>
-                busStation._id === res._id ? { ...busStation, ...res } : busStation,
-              );
-              toast.success('BusStation updated successfully');
-            }
-          },
-          error: (error: any) => this.utils.handleRequestError(error),
-        });
+        try {
+          this.busStationsService.updateBusStation(result).subscribe({
+            next: (res: BusStation) => {
+              if (res) {
+                this.searchBusStation.busStations = this.searchBusStation.busStations.map((busStation: BusStation) =>
+                  busStation._id === res._id ? { ...busStation, ...res } : busStation,
+                );
+                toast.success('BusStation updated successfully');
+              }
+            },
+            error: (err: any) => this.utils.handleRequestError(err.error),
+          });
+        } catch (err: any) {
+          this.utils.handleRequestError(err.error);
+        }
       }
     });
   }
@@ -172,15 +187,19 @@ export class BusStationsComponent implements OnInit {
         const busStation2Create = new BusStation2Create();
         busStation2Create.name = result.name;
 
-        this.busStationsService.createBusStation(busStation2Create).subscribe({
-          next: (res: BusStation) => {
-            if (res) {
-              this.loadData();
-              toast.success('BusStation added successfully');
-            }
-          },
-          error: (error: any) => this.utils.handleRequestError(error),
-        });
+        try {
+          this.busStationsService.createBusStation(busStation2Create).subscribe({
+            next: (res: BusStation) => {
+              if (res) {
+                this.loadData();
+                toast.success('BusStation added successfully');
+              }
+            },
+            error: (error: any) => this.utils.handleRequestError(error),
+          });
+        } catch (err: any) {
+          this.utils.handleRequestError(err.error);
+        }
       }
     });
   }
@@ -201,33 +220,27 @@ export class BusStationsComponent implements OnInit {
     });
   }
 
-  reloadBusStationPage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchBusStationPage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortBusStationPage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
-  }
-
-  private handleRequestError(error: any): void {
-    const msg = 'An error occurred while processing your request';
-    toast.error(msg, {
-      position: 'bottom-right',
-      description: error.message || 'Please try again later',
-      action: {
-        label: 'Dismiss',
-        onClick: () => {},
-      },
-      actionButtonStyle: 'background-color:#DC2626; color:white;',
-    });
   }
 }

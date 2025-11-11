@@ -203,7 +203,7 @@
             <div
               *ngIf="!isLoadingFile"
               class="box-img rounded-sm border border-gray-300"
-              [ngClass]="{ 'bg-muted/20': defaultFlagService.isDefault(file) }"
+              [ngClass]="{ 'bg-card/20': defaultFlagService.isDefault(file) }"
               (click)="toggleFile(file)"
               (dblclick)="onDbClickFile($event, file)">
               <app-trigger-mask [disable]="defaultFlagService.isDefault(file)">

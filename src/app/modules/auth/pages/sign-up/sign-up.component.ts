@@ -1,32 +1,26 @@
-import { NgIf, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { NZModule } from '@rsApp/library-modules/nz-module';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Utils } from '@rsApp/shared/utils/utils';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { AuthRescue, SignUp } from '../../model/auth.model';
 import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
-import { CredentialService } from '@rsApp/shared/services/credential.service';
+import { CustomCommonModule } from '@rsApp/library-modules/custom-common-module';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.css'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, ButtonComponent, NgClass, NZModule],
+  imports: [CustomCommonModule, NgxMaskDirective],
+  providers: [provideNgxMask()],
 })
 export class SignUpComponent implements OnInit {
+  maskConfig = {
+    dropSpecialCharacters: true,
+    showMaskTyped: true,
+  };
+
   form!: FormGroup;
   submitted = false;
   passwordVisible: boolean = false;

@@ -1,6 +1,6 @@
 <mat-dialog-title class="p-3 text-center">
   <span class="text-xl font-bold">{{ defaultFlagService.isDefault(seatType) ? 'Chi Tiết' : data.title }}</span>
-  <button class="absolute right-10" [matDialogClose]="">
+  <button class="absolute right-10" (click)="closeDialog()">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
       <path
         fill-rule="evenodd"
@@ -44,13 +44,7 @@
         </nz-form-item>
       </div>
       <div class="flex w-5/12">
-        <label
-          nz-checkbox
-          [(ngModel)]="this.seatType.isEnv"
-          [disabled]="defaultFlagService.isDefault(seatType)"
-          [ngModelOptions]="{ standalone: true }"
-          >Is Environment</label
-        >
+        <label nz-checkbox formControlName="isEnv">Is Environment</label>
       </div>
     </div>
     <div class="flex flex-row gap-2">

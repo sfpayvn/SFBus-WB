@@ -48,7 +48,7 @@
       </thead>
       <tbody>
         @for (busRoute of rowSelectionTable.data; track busRoute._id) {
-        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-muted/20': defaultFlagService.isDefault(busRoute) }">
+        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-card/20': defaultFlagService.isDefault(busRoute) }">
           <td
             [nzChecked]="setOfCheckedId.has(busRoute._id)"
             [nzLabel]="busRoute.name"

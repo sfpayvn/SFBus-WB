@@ -6,6 +6,8 @@ import { BusProvince } from '../../../bus-provices/model/bus-province.model';
 import { BusStation, BusStation2Create } from '../../model/bus-station.model';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { BusProvincesService } from '../../../bus-provices/service/bus-provinces.servive';
+import _ from 'lodash';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 export interface DialogData {
   title: string;
@@ -27,11 +29,14 @@ export class BusStationDetailDialogComponent implements OnInit {
 
   busStationForm!: FormGroup;
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
     public defaultFlagService: DefaultFlagService,
     private busProvincesService: BusProvincesService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -66,14 +71,31 @@ export class BusStationDetailDialogComponent implements OnInit {
         [Validators.required],
       ],
     });
+    this.initialFormValue = this.busStationForm.getRawValue();
   }
 
   get f() {
     return this.busStationForm.controls;
   }
 
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busStationForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
+  }
+
   closeDialog(): void {
-    this.dialogRef.close();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.dialogRef.close();
+            return;
+          }
+        });
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   clearFormValue(controlName: string) {
@@ -92,6 +114,13 @@ export class BusStationDetailDialogComponent implements OnInit {
       this.utils.markFormGroupTouched(this.busStationForm);
       return;
     }
+
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      this.dialogRef.close();
+      return;
+    }
+
     const { name, busProviceId } = this.busStationForm.getRawValue();
     const data = {
       ...this.busStation,

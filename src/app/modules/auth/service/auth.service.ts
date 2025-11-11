@@ -107,7 +107,7 @@ export class AuthService {
   }
 
   getCurrentUser() {
-    const url = `/admin/users/get-current-user`;
+    const url = `/admin/auth/get-current-user`;
     return this.apiGatewayService.get(url).pipe(
       tap((res: any) => {}),
       map((res: any) => {
@@ -125,7 +125,7 @@ export class AuthService {
       password,
       isTempPassWord: true,
     };
-    const url = `/admin/users/update-password`;
+    const url = `/admin/auth/update-password`;
     return this.apiGatewayService.post(url, user).pipe(
       tap((res: any) => {}),
       map((res: any) => {
@@ -146,7 +146,7 @@ export class AuthService {
       gender: user.gender,
       birthdate: user.birthdate,
     };
-    const url = `/users/profile`;
+    const url = `/admin/a/users/profile`;
     return this.apiGatewayService.put(url, userToUpdate).pipe(
       tap((res: any) => {}),
       map((res: any) => {

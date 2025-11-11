@@ -4,6 +4,8 @@ import { BusType, BusType2Create } from '../../model/bus-type.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import _ from 'lodash';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 export interface DialogData {
   title: string;
@@ -23,7 +25,14 @@ export class BusTypeDetailDialogComponent implements OnInit {
 
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private utils: Utils, public defaultFlagService: DefaultFlagService) {}
+  private initialFormValue: any = null;
+
+  constructor(
+    private fb: FormBuilder,
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -36,16 +45,33 @@ export class BusTypeDetailDialogComponent implements OnInit {
         [Validators.required],
       ],
     });
+    this.initialFormValue = this.form.getRawValue();
   }
 
   get f() {
     return this.form.controls;
   }
 
+  hasFormChanged(): boolean {
+    const currentFormValue = this.form.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
+  }
+
   onButtonClick() {}
 
   closeDialog(): void {
-    this.dialogRef.close();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.dialogRef.close();
+            return;
+          }
+        });
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   clearFormValue(controlName: string) {
@@ -64,6 +90,13 @@ export class BusTypeDetailDialogComponent implements OnInit {
       this.utils.markFormGroupTouched(this.form);
       return;
     }
+
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      this.dialogRef.close();
+      return;
+    }
+
     const { name } = this.form.getRawValue();
 
     const data = {

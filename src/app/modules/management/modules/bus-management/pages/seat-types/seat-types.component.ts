@@ -21,14 +21,21 @@ export class SeatTypesComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingSeatType: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
     private seatTypesService: SeatTypesService,
@@ -42,19 +49,19 @@ export class SeatTypesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingSeatType = true;
-    this.seatTypesService.searchSeatType(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.isLoading = true;
+    this.seatTypesService.searchSeatType(this.searchParams).subscribe({
       next: (res: SearchSeatType) => {
         if (res) {
           this.searchSeatType = res;
           this.totalItem = this.searchSeatType.totalItem;
           this.totalPage = this.searchSeatType.totalPage;
         }
-        this.isLoadingSeatType = false;
+        this.isLoading = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingSeatType = false;
+        this.isLoading = false;
       },
     });
   }
@@ -200,20 +207,27 @@ export class SeatTypesComponent implements OnInit {
     });
   }
 
-  reloadSeatTypePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchSeatTypePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortSeatTypePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
   }
 }

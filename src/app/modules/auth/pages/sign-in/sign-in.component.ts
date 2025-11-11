@@ -1,23 +1,27 @@
-import { NgClass, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
-import { NZModule } from '@rsApp/library-modules/nz-module';
 import { Utils } from '@rsApp/shared/utils/utils';
+import { CustomCommonModule } from '@rsApp/library-modules/custom-common-module';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.css'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, ButtonComponent, NZModule],
+  imports: [CustomCommonModule, NgxMaskDirective],
+  providers: [provideNgxMask()],
 })
 export class SignInComponent implements OnInit {
   form!: FormGroup;
   passwordVisible: boolean = false;
+
+  maskConfig = {
+    dropSpecialCharacters: true,
+    showMaskTyped: true,
+  };
 
   constructor(
     private readonly _formBuilder: FormBuilder,

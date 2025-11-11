@@ -90,6 +90,8 @@
               nz-input
               formControlName="phoneNumber"
               mask="0000 000 000"
+              [dropSpecialCharacters]="maskConfig.dropSpecialCharacters"
+              [showMaskTyped]="maskConfig.showMaskTyped"
               placeholder="Nhập Phone Number" />
           </nz-input-group>
           <ng-template #userFormPhoneNumberClearTpl>

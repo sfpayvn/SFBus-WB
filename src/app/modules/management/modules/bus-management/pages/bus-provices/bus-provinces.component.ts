@@ -6,7 +6,7 @@ import { BusProvince, BusProvince2Create, SearchBusProvince } from './model/bus-
 import { BusProvinceDetailDialogComponent } from './component/bus-province-detail-dialog/bus-province-detail-dialog.component';
 import { BusProvincesService } from './service/bus-provinces.servive';
 import { BusStationsService } from '../bus-stations/service/bus-stations.servive';
-import { combineLatest } from 'rxjs';
+import { catchError, combineLatest, EMPTY, finalize, forkJoin, of, take } from 'rxjs';
 import { BusStation } from '../bus-stations/model/bus-station.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { Utils } from 'src/app/shared/utils/utils';
@@ -29,14 +29,21 @@ export class BusProvincesComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingBusProvince: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   busStations: BusStation[] = [];
 
@@ -58,14 +65,9 @@ export class BusProvincesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBusProvince = true;
+    this.isLoading = true;
 
-    const searchBusProvince$ = this.busProvincesService.searchBusProvince(
-      this.pageIdx,
-      this.pageSize,
-      this.keyword,
-      this.sortBy,
-    );
+    const searchBusProvince$ = this.busProvincesService.searchBusProvince(this.searchParams);
     const searchBusStation$ = this.busStationsService.findAll(true);
 
     let request = [searchBusProvince$, searchBusStation$];
@@ -78,14 +80,14 @@ export class BusProvincesComponent implements OnInit {
         this.busStations = busStations;
         this.filterProvinces();
       }
-      this.isLoadingBusProvince = false;
+      this.isLoading = false;
     });
   }
 
   filterProvinces() {
     clearTimeout(this.timeout); // Xóa bộ hẹn giờ cũ (nếu có)
     this.timeout = setTimeout(() => {
-      this.isLoadingBusProvince = true;
+      this.isLoading = true;
       const keyword = this.searchKeyword.toLowerCase();
       this.filteredProvinces = this.searchBusProvince.busProvinces
         .map((province) => {
@@ -112,7 +114,7 @@ export class BusProvincesComponent implements OnInit {
           const bMatches = b.name.toLowerCase().includes(keyword) ? -1 : 1;
           return aMatches - bMatches;
         });
-      this.isLoadingBusProvince = false;
+      this.isLoading = false;
       this.expandMatchingAccordions();
       console.log(
         '🚀 ~ BusStationsComponent ~ this.timeout=setTimeout ~ this.filteredProvinces:',
@@ -185,18 +187,22 @@ export class BusProvincesComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busProvincesService.deleteBusProvince(busProvince._id).subscribe({
-          next: (res: any) => {
-            if (res) {
-              this.searchBusProvince.busProvinces = this.searchBusProvince.busProvinces.filter(
-                (bp) => bp._id !== busProvince._id,
-              );
-              this.filterProvinces();
-              toast.success('BusProvince deleted successfully');
-            }
-          },
-          error: (error: any) => this.utils.handleRequestError(error),
-        });
+        try {
+          this.busProvincesService.deleteBusProvince(busProvince._id).subscribe({
+            next: (res: any) => {
+              if (res) {
+                this.searchBusProvince.busProvinces = this.searchBusProvince.busProvinces.filter(
+                  (bp) => bp._id !== busProvince._id,
+                );
+                this.filterProvinces();
+                toast.success('Xóa Tỉnh/Thành Phố thành công');
+              }
+            },
+            error: (err: any) => this.utils.handleRequestError(err.error),
+          });
+        } catch (err: any) {
+          this.utils.handleRequestError(err.error);
+        }
       }
     });
   }
@@ -209,20 +215,43 @@ export class BusProvincesComponent implements OnInit {
     };
     this.utilsModal.openModal(BusProvinceDetailDialogComponent, data, 'medium').subscribe((result) => {
       if (result) {
-        const updateBusProvince$ = this.busProvincesService.updateBusProvince(result.busProvince);
-        const updateBusStations$ = this.busStationsService.updateBusStations(result.busStations2Update);
+        const requests = [];
+        if (result.busProvince) {
+          requests.push(this.busProvincesService.updateBusProvince(result.busProvince));
+        }
+        if (result.busStations2Update) {
+          requests.push(this.busStationsService.updateBusStations(result.busStations2Update));
+        }
 
-        let request = [updateBusProvince$, updateBusStations$];
+        // nếu không có request nào thì không làm gì và không thông báo
+        if (requests.length === 0) {
+          return;
+        }
 
-        combineLatest(request).subscribe({
-          next: ([updateBusProvinceRes, updateBusStationsRes]) => {
-            if (updateBusProvinceRes && updateBusStationsRes) {
-              this.loadData();
-              toast.success('Cập nhập thành công ');
-            }
-          },
-          error: (error: any) => this.utils.handleRequestError(error),
-        });
+        try {
+          forkJoin(requests)
+            .pipe(
+              take(1),
+              catchError((err: any) => {
+                this.utils.handleRequestError(err.error);
+                // trả về EMPTY để luồng hoàn thành mà không ném lỗi lên subscribe
+                return EMPTY;
+              }),
+              finalize(() => {}),
+            )
+            .subscribe((responses: any[]) => {
+              // kiểm tra xem có ít nhất 1 response là "hợp lệ" (thay predicate nếu cần)
+              const anyUpdated = responses.some((r) => !!r);
+
+              if (anyUpdated) {
+                this.loadData();
+                toast.success('Cập nhật thành công');
+              }
+              // nếu none -> không thông báo gì
+            });
+        } catch (err: any) {
+          this.utils.handleRequestError(err.error);
+        }
       }
     });
   }
@@ -236,16 +265,19 @@ export class BusProvincesComponent implements OnInit {
       if (result) {
         const busProvince2Create = new BusProvince2Create();
         busProvince2Create.name = result.busProvince.name;
-
-        this.busProvincesService.createBusProvince(busProvince2Create).subscribe({
-          next: (res: BusProvince) => {
-            if (res) {
-              this.loadData();
-              toast.success('BusProvince added successfully');
-            }
-          },
-          error: (error: any) => this.utils.handleRequestError(error),
-        });
+        try {
+          this.busProvincesService.createBusProvince(busProvince2Create).subscribe({
+            next: (res: BusProvince) => {
+              if (res) {
+                this.loadData();
+                toast.success('Thêm Tỉnh/Thành Phố thành công');
+              }
+            },
+            error: (err: any) => this.utils.handleRequestError(err.error),
+          });
+        } catch (err: any) {
+          this.utils.handleRequestError(err.error);
+        }
       }
     });
   }
@@ -255,44 +287,42 @@ export class BusProvincesComponent implements OnInit {
     let busProvince2Create = new BusProvince2Create();
     busProvince2Create = { ...busProvince2Create, ...busProvince };
 
-    this.busProvincesService.createBusProvince(busProvince2Create).subscribe({
-      next: (res: BusProvince) => {
-        if (res) {
-          this.loadData();
-          toast.success('Nhân bản thành công');
-        }
-      },
-      error: (error: any) => this.utils.handleRequestError(error),
-    });
+    try {
+      this.busProvincesService.createBusProvince(busProvince2Create).subscribe({
+        next: (res: BusProvince) => {
+          if (res) {
+            this.loadData();
+            toast.success('Nhân bản thành công');
+          }
+        },
+        error: (err: any) => this.utils.handleRequestError(err.error),
+      });
+    } catch (err: any) {
+      this.utils.handleRequestError(err.error);
+    }
   }
 
-  reloadBusProvincePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchBusProvincePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortBusProvincePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
-  }
-
-  private handleRequestError(error: any): void {
-    const msg = 'An error occurred while processing your request';
-    toast.error(msg, {
-      position: 'bottom-right',
-      description: error.message || 'Please try again later',
-      action: {
-        label: 'Dismiss',
-        onClick: () => {},
-      },
-      actionButtonStyle: 'background-color:#DC2626; color:white;',
-    });
   }
 }

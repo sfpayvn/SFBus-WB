@@ -46,7 +46,7 @@
       </thead>
       <tbody>
         @for (busScheduleTemplate of rowSelectionTable.data; track busScheduleTemplate._id) {
-        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-muted/20': defaultFlagService.isDefault(busScheduleTemplate) }">
+        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-card/20': defaultFlagService.isDefault(busScheduleTemplate) }">
           <td
             [nzChecked]="setOfCheckedId.has(busScheduleTemplate._id)"
             [nzLabel]="busScheduleTemplate.name"

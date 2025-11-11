@@ -29,6 +29,8 @@ export class SeatTypesDetailDialogComponent implements OnInit {
   seatTypeIcon!: string;
   seatTypeIconFile!: File;
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
@@ -44,16 +46,24 @@ export class SeatTypesDetailDialogComponent implements OnInit {
   }
 
   private async initForm() {
-    const { name, iconId } = this.seatType;
+    const { name, iconId, isEnv } = this.seatType;
 
     this.seatTypeForm = this.fb.group({
       name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.seatType) }, [Validators.required]],
       iconId: [{ value: iconId, disabled: this.defaultFlagService.isDefault(this.seatType) }, Validators.required],
+      isEnv: [{ value: isEnv, disabled: this.defaultFlagService.isDefault(this.seatType) }],
     });
+
+    this.initialFormValue = this.seatTypeForm.getRawValue();
   }
 
   get f() {
     return this.seatTypeForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.seatTypeForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   updateValidators = (controlName: string, shouldSet: boolean) => {
@@ -67,7 +77,18 @@ export class SeatTypesDetailDialogComponent implements OnInit {
   onButtonClick() {}
 
   closeDialog(): void {
-    this.dialogRef.close();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.dialogRef.close();
+            return;
+          }
+        });
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   clearFormValue(controlName: string) {
@@ -125,7 +146,13 @@ export class SeatTypesDetailDialogComponent implements OnInit {
       return;
     }
 
-    const { name, iconId } = this.seatTypeForm.getRawValue();
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      this.dialogRef.close();
+      return;
+    }
+
+    const { name, iconId, isEnv } = this.seatTypeForm.getRawValue();
 
     let dataTransfer = new DataTransfer();
 
@@ -138,7 +165,7 @@ export class SeatTypesDetailDialogComponent implements OnInit {
     const data = {
       name,
       iconId,
-      isEnv: this.seatType.isEnv,
+      isEnv,
       files: files,
     };
     this.dialogRef.close(data);

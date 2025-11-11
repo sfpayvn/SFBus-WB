@@ -43,7 +43,7 @@ export class Utils {
   }
 
   handleRequestError(error: any): void {
-    const msg = 'An error occurred while processing your request';
+    const msg = 'Oh No! Some things wrong error';
     toast.error(msg, {
       position: 'bottom-right',
       description: error.message || 'Please try again later',

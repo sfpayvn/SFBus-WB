@@ -82,7 +82,8 @@
               <nz-select
                 formControlName="busDriverIds"
                 nzMode="multiple"
-                nzPlaceHolder="Chọn Bus Services"
+                nzPlaceHolder="Chọn Bus Drivers"
+                [nzOptionHeightPx]="42"
                 nzSize="large">
                 @for (driver of drivers; track driver) {
                 <nz-option nzCustomContent [nzLabel]="driver.name" [nzValue]="driver._id">

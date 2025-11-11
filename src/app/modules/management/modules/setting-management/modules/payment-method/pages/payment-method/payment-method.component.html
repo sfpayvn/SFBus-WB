@@ -48,7 +48,7 @@
       </thead>
       <tbody>
         @for (paymentMethod of rowSelectionTable.data; track paymentMethod) {
-        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-muted/20': defaultFlagService.isDefault(paymentMethod) }">
+        <tr class="hover:bg-card/50" [ngClass]="{ 'bg-card/20': defaultFlagService.isDefault(paymentMethod) }">
           <td
             [nzChecked]="setOfCheckedId.has(paymentMethod._id)"
             [nzLabel]="paymentMethod.name"

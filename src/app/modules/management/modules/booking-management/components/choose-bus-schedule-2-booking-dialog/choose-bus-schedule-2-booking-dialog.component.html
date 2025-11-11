@@ -81,7 +81,6 @@
             nzServerSearch
             nzAllowClear
             (nzOnSearch)="onSearch($event)"
-            [nzOptionHeightPx]="80"
             (ngModelChange)="chooseBusSchedule($event)"
             [nzCustomTemplate]="defaultTemplateSelectBusSchedule">
             @for (busSchedule of busSchedulesFiltered; track busSchedule) {

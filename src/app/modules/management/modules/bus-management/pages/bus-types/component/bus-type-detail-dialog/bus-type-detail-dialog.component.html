@@ -1,6 +1,6 @@
 <mat-dialog-title class="text-center">
   <span class="text-xl font-bold">{{ defaultFlagService.isDefault(busType) ? 'Chi Tiết' : data.title }}</span>
-  <button class="absolute right-3" [matDialogClose]="">
+  <button class="absolute right-3" (click)="closeDialog()">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
       <path
         fill-rule="evenodd"
