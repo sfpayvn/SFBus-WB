@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import moment from 'moment-timezone';
 import 'moment/locale/vi';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -286,5 +287,30 @@ export class Utils {
     const textColor = luminance > 0.8 ? '#000000' : '#FFFFFF'; // Sáng → chữ đen, tối → chữ trắng
 
     return { bg: bgColor, text: textColor };
+  }
+
+  normalizeAndStringify(obj: any): string {
+    if (obj == null) return '';
+
+    if (typeof obj !== 'object') return String(obj);
+
+    if (Array.isArray(obj)) {
+      return '[' + obj.map(this.normalizeAndStringify.bind(this)).join(',') + ']';
+    }
+
+    const keys = Object.keys(obj)
+      .filter((k) => obj[k] !== undefined)
+      .sort();
+    return '{' + keys.map((k) => `"${k}":${this.normalizeAndStringify(obj[k])}`).join(',') + '}';
+  }
+
+  hashToken(obj: any): string {
+    const str = this.normalizeAndStringify(obj);
+    // Tạo token dạng hash số (rất nhanh)
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) | 0;
+    }
+    return String(hash);
   }
 }

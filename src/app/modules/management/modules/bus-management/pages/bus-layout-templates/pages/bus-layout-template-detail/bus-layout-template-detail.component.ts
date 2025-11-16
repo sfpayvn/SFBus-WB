@@ -15,6 +15,7 @@ import {
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 @Component({
   selector: 'app-bus-layout-template-detail',
@@ -32,6 +33,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   selectedIndex = 0;
 
   seatTypes: SeatType[] = [];
+  seatTypesCache: Map<string, SeatType | undefined> = new Map();
   currentSeatTypeId: string = '';
 
   rows: number = 11; // Number of rows in the matrix
@@ -54,6 +56,8 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   usedNames: Set<string> = new Set(); // Danh sách lưu trữ các giá trị đã được sử dụng
   originalName: string = '';
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     private location: Location,
@@ -64,6 +68,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     private utils: Utils,
     private router: Router,
     public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -84,10 +89,6 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
       this.currentSeatTypeId = this.seatTypes ? this.seatTypes[0]._id : '';
       this.initForm();
     });
-  }
-
-  get f() {
-    return this.busTemplateDetailForm.controls;
   }
 
   private async initForm() {
@@ -111,14 +112,25 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
       }
 
       this.selectedIndex = 0;
-
-      return;
+    } else {
+      //initializeLayout để create
+      const layout = await this.initializeLayout();
+      layoutsForMatrixForm.push(layout);
+      this.selectedIndex = 0;
     }
 
-    //initializeLayout để create
-    const layout = await this.initializeLayout();
-    layoutsForMatrixForm.push(layout);
-    this.selectedIndex = 0;
+    // Set initialFormValue sau khi form load xong hoàn toàn
+    // Deep clone để tránh reference issue với seats array
+    this.initialFormValue = JSON.parse(JSON.stringify(this.busTemplateDetailForm.getRawValue()));
+  }
+
+  get f() {
+    return this.busTemplateDetailForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busTemplateDetailForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   // Hàm để thêm layout vào layouts FormArray
@@ -149,7 +161,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
       const seatsControl = layoutForMatrix.get('seats'); // Use get() directly on the FormGroup
       const seats = seatsControl?.value || null;
 
-      if (!seats) return;
+      if (!seats) return layoutForMatrix;
       layout.seats.forEach((cell: any) => {
         const row = Math.floor((cell.index - 1) / this.cols);
         const col = (cell.index - 1) % this.cols;
@@ -203,7 +215,19 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   }
 
   backPage() {
-    this.location.back();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   closeTab({ index }: { index: number }): void {
@@ -249,6 +273,15 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
   hasError(): boolean {
     const currentMatrix = this.getCurrentLayoutMatrix();
     return currentMatrix.some((row: any) => row.some((cell: any) => cell.hasError));
+  }
+
+  getSeatTypeById(seatTypeId: string): SeatType | undefined {
+    if (this.seatTypesCache.has(seatTypeId)) {
+      return this.seatTypesCache.get(seatTypeId);
+    }
+    const seatType = this.seatTypes.find((type) => type._id === seatTypeId);
+    this.seatTypesCache.set(seatTypeId, seatType);
+    return seatType;
   }
 
   // Áp dụng kiểu vào ô được chọn, không cho phép bỏ chọn khi đang chỉnh sửa
@@ -366,15 +399,6 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     }
   }
 
-  getIconByType(seatTypeId: string, status: string = 'available'): string {
-    const selectedType = this.seatTypes.find((seatType) => seatType._id === seatTypeId);
-    // if (!selectedType?.isEnv && status === 'blocked') {
-    //   return selectedType?.blockIcon || '';
-    // }
-    // return selectedType?.icon || '';
-    return '';
-  }
-
   // Kiểm tra xem ô có đang ở chế độ chỉnh sửa
   isEditing(row: number, col: number): boolean {
     const currentMatrix = this.getCurrentLayoutMatrix();
@@ -446,8 +470,12 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     const validLayout = this.processValidLayout();
     if (!validLayout) return;
 
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      return;
+    }
+
     const data = this.busTemplateDetailForm.getRawValue();
-    console.log('🚀 ~ BusLayoutTemplateDetailComponent ~ onSubmit ~ data:', data);
 
     // Chuyển đổi sang cấu trúc class và lọc những seat có typeId
     const busTemplate2Create = new BusLayoutTemplate2Create();
@@ -486,9 +514,13 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     this.busLayoutTemplatesService.updateBusLayoutTemplate(busTemplate2Update).subscribe({
       next: (res: BusLayoutTemplate) => {
         if (res) {
-          const updatedState = { ...history.state, busTemplate: JSON.stringify(res) };
+          this.busLayoutTemplate = res;
+          const updatedState = { ...history.state, busLayoutTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('BusLayoutTemplate update successfully');
+
+          // Update initialFormValue sau khi save thành công (deep clone)
+          this.initialFormValue = JSON.parse(JSON.stringify(this.busTemplateDetailForm.getRawValue()));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -500,10 +532,13 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
       next: (res: BusLayoutTemplate) => {
         if (res) {
           this.busLayoutTemplate = res;
-          const updatedState = { ...history.state, busTemplate: JSON.stringify(res) };
+          const updatedState = { ...history.state, busLayoutTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           this.router.navigate([], { queryParams: { id: res._id } });
           toast.success('BusLayoutTemplate added successfully');
+
+          // Update initialFormValue sau khi save thành công (deep clone)
+          this.initialFormValue = JSON.parse(JSON.stringify(this.busTemplateDetailForm.getRawValue()));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

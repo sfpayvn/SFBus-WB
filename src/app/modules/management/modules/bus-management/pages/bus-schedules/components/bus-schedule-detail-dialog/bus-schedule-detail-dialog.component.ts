@@ -1,6 +1,8 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, model, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, model, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BusSchedule } from '../../model/bus-schedule.model';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { BusScheduleDetailComponent } from '../../pages/bus-schedule-detail/bus-schedule-detail.component';
 
 export interface DialogData {
   busSchedule: BusSchedule;
@@ -17,21 +19,22 @@ export class BusScheduleDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusScheduleDetailDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
 
+  isReloadData: boolean = false;
+
   constructor() {}
 
-  ngOnInit(): void {
-    console.log('🚀 ~ BusScheduleDetailDialogComponent ~ ngOnInit ~ data.busSchedule:', this.data);
+  ngOnInit(): void {}
+
+  closeDialog(): void {
+    this.dialogRef.close(this.isReloadData);
   }
 
-  onButtonClick() {}
-
-  downloadFile(link: string) {}
-
-  chooseFiles(busSchedule: BusSchedule) {
-    this.closeDialog(busSchedule);
+  closeDialogWithReloadData(): void {
+    this.isReloadData = true;
+    this.dialogRef.close(this.isReloadData);
   }
 
-  closeDialog(busSchedule?: BusSchedule): void {
-    this.dialogRef.close(busSchedule);
+  saveSchedule(): void {
+    this.isReloadData = true;
   }
 }

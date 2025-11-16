@@ -36,10 +36,7 @@ export class UsersService {
       key: string;
       value: string;
     };
-    filters: {
-      key: string;
-      value: string[];
-    };
+    filters: { key: string; value: any }[];
   }) {
     const url = `${this.url}/search`;
     const body = {
@@ -102,5 +99,13 @@ export class UsersService {
   deleteUser(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(tap((res: any) => {}));
+  }
+
+  setPassword(userId: string, newPassword: string) {
+    const url = `${this.url}/set-password-temp/${userId}`;
+    const body = {
+      newPassword,
+    };
+    return this.apiGatewayService.put(url, body).pipe(tap((res: any) => {}));
   }
 }

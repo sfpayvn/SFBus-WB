@@ -39,6 +39,7 @@ import { Router } from '@angular/router';
 import { UserDriver } from 'src/app/modules/management/modules/user-management/model/driver.model';
 import { DriversService } from 'src/app/modules/management/modules/user-management/service/driver.servive';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -85,7 +86,10 @@ export class BusScheduleDetailComponent implements OnInit {
 
   @Input() isDialog: boolean = false;
   @Input() startDate!: Date;
+  @Output() createScheduleEvent = new EventEmitter<BusSchedule>();
   @Output() saveScheduleEvent = new EventEmitter<BusSchedule>();
+
+  private initialFormValue: any = null;
 
   busScheduleStatuses = [
     {
@@ -136,6 +140,7 @@ export class BusScheduleDetailComponent implements OnInit {
     private el: ElementRef,
     private renderer: Renderer2,
     public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -226,6 +231,7 @@ export class BusScheduleDetailComponent implements OnInit {
       busId: [busId],
       busRouteId: [busRouteId, [Validators.required]],
       busRoute: this.fb.group({
+        _id: [busRoute?._id || ''],
         name: [busRoute?.name || ''],
         breakPoints: this.fb.array([]),
         distance: [busRoute?.distance || ''],
@@ -249,6 +255,11 @@ export class BusScheduleDetailComponent implements OnInit {
       this.setBusTemplateReview(busTemplate as BusTemplate);
     }
     this.busReview = bus as Bus;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busScheduleDetailForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   async setupBusScheduleLayout(busTemplate: BusTemplate) {
@@ -278,17 +289,23 @@ export class BusScheduleDetailComponent implements OnInit {
 
     this.busSeatPricesForm.clear();
 
-    this.seatTypes.map(async (seatType: SeatType) => {
+    const seatPricePromises = this.seatTypes.map(async (seatType: SeatType) => {
       if (seatType.isEnv || !availableSeatIds.includes(seatType._id)) {
         return;
       }
       this.busSeatPricesForm.push(await this.createSeatPriceForm(seatType));
     });
+
+    // Wait for all seat prices to be added
+    await Promise.all(seatPricePromises);
+
+    // Set initialFormValue after all data is loaded (deep clone)
+    this.initialFormValue = JSON.parse(JSON.stringify(this.busScheduleDetailForm.getRawValue()));
   }
 
   async createSeatPriceForm(seatType: SeatType): Promise<FormGroup> {
     let seatPrice = '';
-    const { busSeatPrices } = this.busSchedule || {};
+    const { busSeatPrices } = this.busSchedule || [];
 
     if (busSeatPrices && busSeatPrices.length > 0) {
       const foundPrice = busSeatPrices.find((price) => price.seatTypeId === seatType._id)?.price;
@@ -432,9 +449,20 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   backPage() {
-    this.location.back();
-  }
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result: any) => {
+          if (result) {
+            this.location.back();
 
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
+  }
   editBusTempate() {
     const allowedKeys = ['_id', 'name', 'seatLayouts', 'isDefault']; // Danh sách các thuộc tính trong BusTemplate
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
@@ -480,6 +508,7 @@ export class BusScheduleDetailComponent implements OnInit {
       busRoute = this.busScheduleTemplate.busRoute;
     }
 
+    busRouteForm.get('_id')?.patchValue(busRouteId);
     busRouteForm.get('name')?.patchValue(busRoute.name);
     busRouteForm.get('distance')?.patchValue(busRoute.distance);
     busRouteForm.get('distanceTime')?.patchValue(busRoute.distanceTime);
@@ -585,7 +614,6 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   async onSubmit() {
-    console.log('🚀 ~ onSubmit ~ this.busScheduleDetailForm:', this.busScheduleDetailForm);
     if (!this.busScheduleDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busScheduleDetailForm);
       return;
@@ -652,8 +680,10 @@ export class BusScheduleDetailComponent implements OnInit {
         if (res) {
           const updatedState = { ...history.state, busSchedule: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
-          this.saveScheduleEvent.emit(res);
           toast.success('Bus Route update successfully');
+          // Update initialFormValue after successful save (deep clone)
+          this.initialFormValue = JSON.parse(JSON.stringify(this.busScheduleDetailForm.getRawValue()));
+          this.saveScheduleEvent.emit(res);
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -664,8 +694,11 @@ export class BusScheduleDetailComponent implements OnInit {
     this.busSchedulesService.createBusSchedule(busSchedule2Create).subscribe({
       next: (res: BusSchedule) => {
         if (res) {
-          this.saveScheduleEvent.emit(res);
+          this.createScheduleEvent.emit(res);
           toast.success('Bus Route added successfully');
+
+          // Update initialFormValue after successful create (deep clone)
+          this.initialFormValue = JSON.parse(JSON.stringify(this.busScheduleDetailForm.getRawValue()));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

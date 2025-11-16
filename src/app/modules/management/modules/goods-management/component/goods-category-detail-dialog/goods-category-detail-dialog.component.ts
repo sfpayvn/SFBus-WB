@@ -28,6 +28,8 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
   goodsCategoryIcon!: string;
   goodsCategoryIconFile!: File;
 
+  private initialFormValue: any = null;
+
   constructor(private fb: FormBuilder, private utils: Utils, private utilsModal: UtilsModal) {}
 
   ngOnInit(): void {
@@ -42,6 +44,8 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
       name: [this.goodsCategory.name, [Validators.required]],
       icon: [this.goodsCategory.icon, Validators.required],
     });
+
+    this.initialFormValue = this.goodsCategoryForm.getRawValue();
   }
 
   updateValidators = (controlName: string, shouldSet: boolean) => {
@@ -53,9 +57,24 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
   };
 
   onButtonClick() {}
+  hasFormChanged(): boolean {
+    const currentFormValue = this.goodsCategoryForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
+  }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.dialogRef.close();
+            return;
+          }
+        });
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   onFileChange(event: any) {
@@ -98,6 +117,11 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
   onSubmit() {
     if (!this.goodsCategoryForm.valid) {
       this.utils.markFormGroupTouched(this.goodsCategoryForm);
+      return;
+    }
+
+    if (!this.hasFormChanged()) {
+      this.dialogRef.close();
       return;
     }
 

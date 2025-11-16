@@ -131,8 +131,9 @@
                     aria-hidden="true">
                   </svg-icon>
                 </button>
+                @if(!defaultFlagService.isDefault(paymentMethod)) {
                 <button
-                  (click)="deletePaymentMethod(paymentMethod._id)"
+                  (click)="deletePaymentMethod(paymentMethod)"
                   class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
                   aria-label="Delete paymentMethod">
                   <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -142,6 +143,7 @@
                       clip-rule="evenodd" />
                   </svg>
                 </button>
+                }
               </div>
             </nz-skeleton>
           </td>

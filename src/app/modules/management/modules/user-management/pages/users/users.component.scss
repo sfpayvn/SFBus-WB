@@ -1,14 +1,16 @@
-td {
-  padding: 0.75rem 1rem;
-  font-size: 0.85rem;
+.role-client {
+  color: var(--color-indigo-800) !important;
+  background-color: var(--color-indigo-100) !important;
 }
-
-th {
-  font-weight: 500;
-  padding: 0.625rem 1rem;
-  font-weight: 500;
-  font-size: 0.8125rem;
-  line-height: 1.125rem;
-  vertical-align: middle;
-  @apply border-b border-r;
+.role-tenant {
+  color: var(--color-green-800) !important;
+  background-color: var(--color-green-100) !important;
+}
+.role-pos {
+  color: var(--color-blue-800) !important;
+  background-color: var(--color-blue-100) !important;
+}
+.role-driver {
+  color: var(--color-yellow-800) !important;
+  background-color: var(--color-yellow-100) !important;
 }

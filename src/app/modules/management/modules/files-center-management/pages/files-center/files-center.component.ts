@@ -463,6 +463,8 @@ export class FilesComponent implements OnInit {
               }
               _.remove(this.fileFolders, { _id: item._id });
               this.originalFileFolders = this.fileFolders;
+              this.resetSelectedFileFolder();
+
               toast.success('Xóa thư mực thành công');
             },
             (error: any) => {
@@ -471,6 +473,10 @@ export class FilesComponent implements OnInit {
           );
         }
       });
+  }
+
+  resetSelectedFileFolder() {
+   this.selectFileFolder(this.fileFolders[0]);
   }
 
   onFileChange($event: any) {

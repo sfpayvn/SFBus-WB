@@ -116,10 +116,13 @@
                   @for (busProvince of filteredProvinces; track busProvince) {
                   <nz-option-group nzLabel="{{ busProvince.name }}">
                     @for (busStation of busProvince.busStations; track busStation) {
-                    <nz-option nzCustomContent [nzLabel]="busStation.name" [nzValue]="busStation._id">
+                    <nz-option
+                      nzCustomContent
+                      [nzLabel]="busStation.name + ' ' + defaultFlagService.defaultTextFlag(busStation)"
+                      [nzValue]="busStation._id">
                       <div class="flex items-center">
                         <span class="pl-4 !font-medium">
-                          {{ busStation.name }}
+                          {{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
                         </span>
                       </div>
                     </nz-option>

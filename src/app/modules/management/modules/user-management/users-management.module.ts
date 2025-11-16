@@ -5,12 +5,22 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { UsersComponent } from './pages/users/users.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { UserAddressDetailDialogComponent } from './component/user-address-detail-dialog/user-address-detail-dialog.component';
+import { UserInfoComponent } from './pages/user-detail/components/user-info/user-info.component';
+import { UserPasswordComponent } from './pages/user-detail/components/user-password/user-password.component';
+import { UserDriverInfoComponent } from './pages/user-detail/components/user-driver-info/user-driver-info.component';
 import { UsersManagementRoutingModule } from './users-management-routing.module';
 import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
 import { ManagementSharedModule } from '../../management-share.module';
 
 @NgModule({
-  declarations: [UsersComponent, UserDetailComponent, UserAddressDetailDialogComponent],
+  declarations: [
+    UsersComponent,
+    UserDetailComponent,
+    UserAddressDetailDialogComponent,
+    UserInfoComponent,
+    UserPasswordComponent,
+    UserDriverInfoComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,

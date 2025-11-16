@@ -24,15 +24,21 @@ export class BusScheduleTemplatesComponent implements OnInit {
   indeterminate = false;
   checked = false;
   setOfCheckedId = new Set<string>();
-
-  pageIdx: number = 1;
-  pageSize: number = 5;
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingBusScheduleTemplate: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
     private busScheduleTemplatesService: BusScheduleTemplatesService,
@@ -47,27 +53,21 @@ export class BusScheduleTemplatesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBusScheduleTemplate = true;
-    this.busScheduleTemplatesService
-      .searchBusScheduleTemplate(this.pageIdx, this.pageSize, this.keyword, this.sortBy)
-      .subscribe({
-        next: (res: SearchBusScheduleTemplate) => {
-          if (res) {
-            this.searchBusScheduleTemplate = res;
-            console.log(
-              '🚀 ~ BusesComponent ~ this.busScheduleTemplatesService.searchBus ~ this.searchBusScheduleTemplate:',
-              this.searchBusScheduleTemplate,
-            );
-            this.totalItem = this.searchBusScheduleTemplate.totalItem;
-            this.totalPage = this.searchBusScheduleTemplate.totalPage;
-          }
-          this.isLoadingBusScheduleTemplate = false;
-        },
-        error: (error: any) => {
-          this.utils.handleRequestError(error);
-          this.isLoadingBusScheduleTemplate = false;
-        },
-      });
+    this.isLoading = true;
+    this.busScheduleTemplatesService.searchBusScheduleTemplate(this.searchParams).subscribe({
+      next: (res: SearchBusScheduleTemplate) => {
+        if (res) {
+          this.searchBusScheduleTemplate = res;
+          this.totalItem = this.searchBusScheduleTemplate.totalItem;
+          this.totalPage = this.searchBusScheduleTemplate.totalPage;
+        }
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        this.utils.handleRequestError(error);
+        this.isLoading = false;
+      },
+    });
   }
 
   onCurrentPageDataChange(event: any): void {
@@ -168,23 +168,29 @@ export class BusScheduleTemplatesComponent implements OnInit {
     });
   }
 
-  reloadBusScheduleTemplatePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchBusScheduleTemplatePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortBusScheduleTemplatePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
   }
-
   private handleRequestError(error: any): void {
     const msg = 'An error occurred while processing your request';
     toast.error(msg, {

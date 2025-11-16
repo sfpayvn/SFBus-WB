@@ -16,6 +16,7 @@ import { BusTemplatesService } from '../../service/bus-templates.servive';
 import { BusLayoutTemplate } from '../../../bus-layout-templates/model/bus-layout-templates.model';
 import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service/bus-layout-templates.servive';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -41,6 +42,8 @@ export class BusTemplateDetailComponent implements OnInit {
 
   busTemplate!: BusTemplate;
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
@@ -52,6 +55,7 @@ export class BusTemplateDetailComponent implements OnInit {
     private busTemplatesService: BusTemplatesService,
     private router: Router,
     public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -105,10 +109,17 @@ export class BusTemplateDetailComponent implements OnInit {
     if (this.busTemplateDetailForm.get('busLayoutTemplateId')?.value) {
       this.chooseBusTemplate(this.busTemplateDetailForm.get('busLayoutTemplateId')?.value);
     }
+
+    this.initialFormValue = this.busTemplateDetailForm.getRawValue();
   }
 
   get f() {
     return this.busTemplateDetailForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busTemplateDetailForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   async chooseBusTemplate(busLayoutTemplateId: string) {
@@ -118,7 +129,19 @@ export class BusTemplateDetailComponent implements OnInit {
   }
 
   backPage() {
-    this.location.back();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   editBusLayoutTempate() {
@@ -153,6 +176,11 @@ export class BusTemplateDetailComponent implements OnInit {
       return;
     }
 
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      return;
+    }
+
     const data = this.busTemplateDetailForm.getRawValue();
     const busTemplate2Create: BusTemplate2Create = {
       ...data,
@@ -178,6 +206,7 @@ export class BusTemplateDetailComponent implements OnInit {
           const updatedState = { ...history.state, busTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus update successfully');
+          this.initialFormValue = this.busTemplateDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -193,6 +222,7 @@ export class BusTemplateDetailComponent implements OnInit {
           window.history.replaceState(updatedState, '', window.location.href);
           this.router.navigate([], { queryParams: { id: res._id } });
           toast.success('Bus added successfully');
+          this.initialFormValue = this.busTemplateDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

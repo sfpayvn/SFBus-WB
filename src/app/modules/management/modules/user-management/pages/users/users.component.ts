@@ -27,10 +27,7 @@ export class UsersComponent implements OnInit {
       key: 'createdAt',
       value: 'descend',
     },
-    filters: {
-      key: '',
-      value: [],
-    },
+    filters: [] as { key: string; value: any }[],
   };
 
   totalPage: number = 0;
@@ -41,9 +38,13 @@ export class UsersComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
+  filterRoleSelected = [] as string[];
+
   filterRoles = [
-    { text: 'User', value: 'user' },
+    { text: 'Client', value: 'client' },
     { text: 'Driver', value: 'driver' },
+    { text: 'Pos', value: 'pos' },
+    { text: 'Tenant', value: 'tenant' },
   ];
 
   constructor(
@@ -77,14 +78,20 @@ export class UsersComponent implements OnInit {
   }
 
   sortRoleFn(sortValue: any) {
-    this.searchParams.sortBy.key = 'role';
+    this.searchParams.sortBy.key = 'roles';
     this.searchParams.sortBy.value = sortValue;
     this.loadData();
   }
 
   filterRolesFn(filterArr: any) {
-    this.searchParams.filters.key = 'role';
-    this.searchParams.filters.value = filterArr;
+    if (filterArr.length === 0) {
+      // Xóa filter roles nếu không có giá trị nào được chọn
+      this.searchParams.filters = this.searchParams.filters.filter((f) => f.key !== 'roles');
+      this.loadData();
+      return;
+    }
+
+    this.addOrReplaceFilters({ key: 'roles', value: filterArr });
     this.loadData();
   }
 
@@ -197,5 +204,17 @@ export class UsersComponent implements OnInit {
   onItemChecked(_id: string, checked: boolean): void {
     this.updateCheckedSet(_id, checked);
     this.refreshCheckedStatus();
+  }
+
+  addOrReplaceFilters(newItem: { key: string; value: any }): void {
+    const idx = this.searchParams.filters.findIndex((i) => i.key === newItem.key && i.value === newItem.value);
+
+    if (idx > -1) {
+      // Thay thế phần tử cũ
+      this.searchParams.filters[idx] = newItem;
+    } else {
+      // Thêm mới
+      this.searchParams.filters.push(newItem);
+    }
   }
 }

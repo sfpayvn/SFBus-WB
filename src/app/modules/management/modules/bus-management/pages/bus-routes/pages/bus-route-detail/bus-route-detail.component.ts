@@ -13,6 +13,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { BusProvincesService } from '../../../bus-provices/service/bus-provinces.servive';
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 @Component({
   selector: 'app-bus-route-detail',
@@ -29,6 +30,7 @@ export class BusRouteDetailComponent implements OnInit {
   busProvinces: BusProvince[] = [];
 
   filteredProvinces: any[] = [];
+  private initialFormValue: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -39,6 +41,7 @@ export class BusRouteDetailComponent implements OnInit {
     private busProvincesService: BusProvincesService,
     private router: Router,
     public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -85,10 +88,16 @@ export class BusRouteDetailComponent implements OnInit {
           : [this.createBreakPoint(), this.createBreakPoint()], // Add 2 default breakpoints if none exist
       ),
     });
+    this.initialFormValue = this.busRouteDetailForm.getRawValue();
   }
 
   get f() {
     return this.busRouteDetailForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busRouteDetailForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   createBreakPoint(busStationId: string = ''): FormGroup {
@@ -117,6 +126,7 @@ export class BusRouteDetailComponent implements OnInit {
           busStations: matchingBusStations, // Không lặp lại
         };
       });
+    console.log('🚀 ~ BusRouteDetailComponent ~ filterProvinces ~ this.filteredProvinces:', this.filteredProvinces);
   }
 
   removeBreakPoint(index: number): void {
@@ -148,7 +158,19 @@ export class BusRouteDetailComponent implements OnInit {
   }
 
   backPage() {
-    this.location.back();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   drop(event: CdkDragDrop<any[]>) {
@@ -169,6 +191,11 @@ export class BusRouteDetailComponent implements OnInit {
   onSubmit() {
     if (!this.busRouteDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busRouteDetailForm);
+      return;
+    }
+
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
       return;
     }
 
@@ -196,6 +223,7 @@ export class BusRouteDetailComponent implements OnInit {
           const updatedState = { ...history.state, busRoute: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus Route update successfully');
+          this.initialFormValue = this.busRouteDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -211,6 +239,7 @@ export class BusRouteDetailComponent implements OnInit {
           const updatedState = { ...history.state, busRoute: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           this.router.navigate([], { queryParams: { id: res._id } });
+          this.initialFormValue = this.busRouteDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { BusProvince, BusProvince2Create, SearchBusProvince } from './model/bus-province.model';
+import { BusProvince, BusProvince2Create, CloneBusProvince, SearchBusProvince } from './model/bus-province.model';
 import { BusProvinceDetailDialogComponent } from './component/bus-province-detail-dialog/bus-province-detail-dialog.component';
 import { BusProvincesService } from './service/bus-provinces.servive';
 import { BusStationsService } from '../bus-stations/service/bus-stations.servive';
@@ -211,7 +211,7 @@ export class BusProvincesComponent implements OnInit {
     const data = {
       title: 'Chỉnh sửa Tỉnh/Thành Phố',
       busProvince: { ...busProvince },
-      busStations: this.busStations,
+      busStations: this.busStations.filter((bs) => !bs.isDefault),
     };
     this.utilsModal.openModal(BusProvinceDetailDialogComponent, data, 'medium').subscribe((result) => {
       if (result) {
@@ -283,12 +283,16 @@ export class BusProvincesComponent implements OnInit {
   }
 
   cloneData(busProvince: BusProvince): void {
-    delete (busProvince as any)._id;
     let busProvince2Create = new BusProvince2Create();
     busProvince2Create = { ...busProvince2Create, ...busProvince };
 
+    const cloneBusProvince: CloneBusProvince = {
+      busProvince: busProvince2Create,
+      busStations: this.busStations.filter((bs) => bs.provinceId === busProvince._id),
+    };
+
     try {
-      this.busProvincesService.createBusProvince(busProvince2Create).subscribe({
+      this.busProvincesService.cloneBusProvince(cloneBusProvince).subscribe({
         next: (res: BusProvince) => {
           if (res) {
             this.loadData();

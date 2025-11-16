@@ -10,7 +10,8 @@
       class="flex h-full w-full"
       [busSchedule]="data.busSchedule"
       [startDate]="data.startDate"
-      (saveScheduleEvent)="closeDialog($event)"
+      (createScheduleEvent)="closeDialogWithReloadData()"
+      (saveScheduleEvent)="saveSchedule()"
       [isDialog]="true"></app-bus-schedule-detail>
   </mat-dialog-content>
 </div>

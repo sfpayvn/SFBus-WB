@@ -12,19 +12,12 @@ import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { async, combineLatest, tap } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { LoadingService } from '@rsApp/shared/services/loading.service';
-import { BusRoute } from '../../../bus-management/pages/bus-routes/model/bus-route.model';
-import { BusRoutesService } from '../../../bus-management/pages/bus-routes/service/bus-routes.servive';
-import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
-import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 import { Promotion, Promotion2Create, Promotion2Update } from '../../model/promotion.model';
 import { PromotionService } from '../../service/promotion.service';
-import { SubscriptionService } from '../../../subscription-management/service/subscription.service';
-import { Subscription } from '../../../subscription-management/model/subscription.model';
 import { FilesCenterDialogComponent } from '../../../files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from '../../../files-center-management/model/file-center.model';
-import { ENV } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-promotion-detail',
@@ -59,13 +52,14 @@ export class PromotionDetailComponent implements OnInit {
     { value: 'fixed', label: 'Số tiền cố định' },
   ];
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     public utils: Utils,
     private location: Location,
     private promotionService: PromotionService,
     private utilsModal: UtilsModal,
-    private loadingService: LoadingService,
   ) {}
 
   ngOnInit(): void {
@@ -112,6 +106,13 @@ export class PromotionDetailComponent implements OnInit {
       expireDate: [expireDate, [Validators.required]],
       status: [status, [Validators.required]],
     });
+
+    this.initialFormValue = this.mainForm.getRawValue();
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.mainForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   optionalValidator(validator: ValidatorFn): ValidatorFn {
@@ -124,7 +125,19 @@ export class PromotionDetailComponent implements OnInit {
   }
 
   backPage() {
-    this.location.back();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result: any) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   onFileChange(event: any) {
@@ -172,6 +185,11 @@ export class PromotionDetailComponent implements OnInit {
       return;
     }
 
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      return;
+    }
+
     const data = this.mainForm.getRawValue();
 
     this.setDefaultValues2Create(data);
@@ -212,6 +230,7 @@ export class PromotionDetailComponent implements OnInit {
 
           const updatedState = { ...history.state, promotion: promotionUpdated };
           window.history.replaceState(updatedState, '', window.location.href);
+          this.initialFormValue = this.mainForm.getRawValue();
           toast.success('Promotion update successfully');
           return;
         }

@@ -173,7 +173,7 @@ export class PaymentMethodComponent implements OnInit {
     this.router.navigate(['/management/setting-management/payment-method/detail'], { state: { paymentMethod } });
   }
 
-  deletePaymentMethod(id: string): void {
+  deletePaymentMethod(paymentMethod: PaymentMethod): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
@@ -197,11 +197,11 @@ export class PaymentMethodComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.paymentMethodService.deletePaymentMethod(id).subscribe({
+        this.paymentMethodService.deletePaymentMethod(paymentMethod._id).subscribe({
           next: (res: any) => {
             if (res) {
               this.searchPaymentMethod.paymentMethods = this.searchPaymentMethod.paymentMethods.filter(
-                (paymentMethod) => paymentMethod._id !== id,
+                (pm) => pm._id !== paymentMethod._id,
               );
               toast.success('PaymentMethod Category deleted successfully');
             }
@@ -214,6 +214,11 @@ export class PaymentMethodComponent implements OnInit {
 
   cloneData(paymentMethod: PaymentMethod): void {
     delete (paymentMethod as any)._id;
+
+    if (!paymentMethod.banking || Object.keys(paymentMethod.banking).length === 0) {
+      delete (paymentMethod as any).banking;
+    }
+
     let paymentMethod2Create = new PaymentMethod2Create();
     paymentMethod2Create = { ...paymentMethod2Create, ...paymentMethod };
 

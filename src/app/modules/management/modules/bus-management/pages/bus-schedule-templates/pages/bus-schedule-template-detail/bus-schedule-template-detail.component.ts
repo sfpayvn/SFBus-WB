@@ -33,6 +33,7 @@ import { Router } from '@angular/router';
 import { UserDriver } from 'src/app/modules/management/modules/user-management/model/driver.model';
 import { DriversService } from 'src/app/modules/management/modules/user-management/service/driver.servive';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 interface BusTemplateReview extends BusTemplate {
   busServices: BusService[];
@@ -77,6 +78,8 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
 
   seatTypes: SeatType[] = [];
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     public utils: Utils,
@@ -93,6 +96,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     private seatTypesService: SeatTypesService,
     private router: Router,
     public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -198,6 +202,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     if (busRoute) {
       for (const breakPoint of busRoute.breakPoints) {
         this.breakPoints.push(this.createBreakPoint(breakPoint));
+        this.initialFormValue = this.busScheduleTemplateDetailForm.getRawValue();
       }
     }
 
@@ -210,10 +215,17 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     if (busId) {
       this.chooseBus(busId);
     }
+
+    this.initialFormValue = this.busScheduleTemplateDetailForm.getRawValue();
   }
 
   get f() {
     return this.busScheduleTemplateDetailForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busScheduleTemplateDetailForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   async setupBusSeatPrices() {
@@ -229,6 +241,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
         return;
       }
       this.busSeatPricesForm.push(await this.createSeatPriceForm(seatType));
+      this.initialFormValue = this.busScheduleTemplateDetailForm.getRawValue();
     });
   }
 
@@ -263,11 +276,6 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
 
     combineLatest(request).subscribe(([busLayoutTemplate]) => {
       this.busLayoutTemplateReview = busLayoutTemplate as BusTemplateWithLayoutsMatrix;
-      console.log(
-        '🚀 ~ BusScheduleTemplateDetailComponent ~ combineLatest ~ this.busLayoutTemplateReview:',
-        this.busLayoutTemplateReview,
-      );
-
       this.setupBusSeatPrices();
     });
   }
@@ -277,7 +285,21 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
   }
 
   backPage() {
-    this.location.back();
+    console.log('🚀 ~ BusScheduleTemplateDetailComponent ~ onSubmit ~ this.initialFormValue:', this.initialFormValue);
+
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   editBusLayoutTemplate() {
@@ -285,10 +307,6 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
       Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key)),
     ) as BusLayoutTemplate;
-    console.log(
-      '🚀 ~ BusScheduleTemplateDetailComponent ~ editBusLayoutTemplate ~ combinedBusTemplate:',
-      combinedBusTemplate,
-    );
 
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
     const params = { busLayoutTemplate: JSON.stringify(combinedBusTemplate) };
@@ -386,6 +404,12 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
       this.utils.markFormGroupTouched(this.busScheduleTemplateDetailForm);
       return;
     }
+    console.log('🚀 ~ BusScheduleTemplateDetailComponent ~ onSubmit ~ this.initialFormValue:', this.initialFormValue);
+
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      return;
+    }
 
     try {
       // Wait for the async function to retrieve block IDs
@@ -417,6 +441,8 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
       } else {
         await this.createBus(busSchedule2Create); // Ensure the creation process completes
       }
+
+      this.initialFormValue = this.busScheduleTemplateDetailForm.getRawValue(); // Update initial form value after submission
     } catch (error) {
       console.error('Error in onSubmit:', error); // Log error for debugging
     }

@@ -16,16 +16,20 @@ export class BusRoutesService {
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
 
-  searchBusRoute(pageIdx: number = 0, pageSize: number = 999, keyword: string = '', sortBy: string = '') {
-    const body = {
-      pageIdx,
-      pageSize,
-      keyword,
-      sortBy,
-    };
-
+  searchBusRoute(
+    searchParams = {
+      pageIdx: 1,
+      pageSize: 5,
+      keyword: '',
+      sortBy: {
+        key: 'createdAt',
+        value: 'descend',
+      },
+      filters: [] as any[],
+    },
+  ) {
     const url = `${this.url}/search`;
-    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, searchParams, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
   createBusRoute(busRoute2Create: BusRoute2Create) {

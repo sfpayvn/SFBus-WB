@@ -21,14 +21,21 @@ export class BusTemplatesComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingBusTemplate: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
     private busTemplatesService: BusTemplatesService,
@@ -43,19 +50,19 @@ export class BusTemplatesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBusTemplate = true;
-    this.busTemplatesService.searchBusTemplate(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.isLoading = true;
+    this.busTemplatesService.searchBusTemplate(this.searchParams).subscribe({
       next: (res: SearchBusTemplate) => {
         if (res) {
           this.searchBusTemplate = res;
           this.totalItem = this.searchBusTemplate.totalItem;
           this.totalPage = this.searchBusTemplate.totalPage;
         }
-        this.isLoadingBusTemplate = false;
+        this.isLoading = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingBusTemplate = false;
+        this.isLoading = false;
       },
     });
   }
@@ -156,20 +163,27 @@ export class BusTemplatesComponent implements OnInit {
     });
   }
 
-  reloadBusTemplatePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchBusTemplatePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortBusTemplatePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
   }
 

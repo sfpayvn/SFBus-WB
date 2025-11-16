@@ -234,8 +234,8 @@ export class BusSchedulesComponent implements OnInit {
       const busSchedule2Edit = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
       this.utilsModal
         .openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large')
-        .subscribe((busSchedule: BusSchedule) => {
-          if (!busSchedule) return;
+        .subscribe((isReloadData: boolean) => {
+          if (!isReloadData) return;
           this.loadData();
         });
       return;
@@ -250,8 +250,8 @@ export class BusSchedulesComponent implements OnInit {
     if (this.viewDisplayMode == 'calendar') {
       this.utilsModal
         .openModal(BusScheduleDetailDialogComponent, { startDate }, 'large')
-        .subscribe((busSchedule: BusSchedule) => {
-          if (!busSchedule) return;
+        .subscribe((isReloadData: boolean) => {
+          if (!isReloadData) return;
           this.loadData();
         });
       return;

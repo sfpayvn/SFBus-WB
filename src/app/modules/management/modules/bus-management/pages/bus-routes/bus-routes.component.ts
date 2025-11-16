@@ -22,14 +22,21 @@ export class BusRoutesComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingBusRoute: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
     private busRoutesService: BusRoutesService,
@@ -44,19 +51,19 @@ export class BusRoutesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoadingBusRoute = true;
-    this.busRoutesService.searchBusRoute(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.isLoading = true;
+    this.busRoutesService.searchBusRoute(this.searchParams).subscribe({
       next: (res: SearchBusRoute) => {
         if (res) {
           this.searchBusRoute = res;
           this.totalItem = this.searchBusRoute.totalItem;
           this.totalPage = this.searchBusRoute.totalPage;
         }
-        this.isLoadingBusRoute = false;
+        this.isLoading = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingBusRoute = false;
+        this.isLoading = false;
       },
     });
   }
@@ -153,23 +160,29 @@ export class BusRoutesComponent implements OnInit {
     });
   }
 
-  reloadBusRoutePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchBusRoutePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortBusRoutePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
   }
-
   private handleRequestError(error: any): void {
     const msg = 'An error occurred while processing your request';
     toast.error(msg, {

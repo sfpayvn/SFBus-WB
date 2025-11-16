@@ -1,3 +1,5 @@
+import { BusStation } from '../../bus-stations/model/bus-station.model';
+
 export class SearchBusProvince {
   busProvinces: BusProvince[] = [];
   pageIdx: number = 0;
@@ -19,3 +21,8 @@ export class BusProvince2Create {
 }
 
 export class BusProvince2Update extends BusProvince2Create {}
+
+export class CloneBusProvince {
+  busProvince: BusProvince2Create = new BusProvince2Create();
+  busStations: BusStation[] = [];
+}

@@ -1,0 +1,77 @@
+<nz-skeleton [nzLoading]="!isLoaded" [nzActive]="true" class="w-full" [nzParagraph]="{ rows: 1, width: '100%' }">
+  @if(driverForm){
+  <form [formGroup]="driverForm" (ngSubmit)="onSubmit()">
+    <div class="flex gap-4">
+      <div class="flex w-4/12 flex-col">
+        <nz-form-item class="!min-h-[96px] !w-full">
+          <nz-form-label nzFor="licenseNumber" class="!flex !h-[36px] !items-center !justify-start"
+            >License Number
+          </nz-form-label>
+          <nz-form-control class="!flex flex-col">
+            <nz-input-group
+              [nzSuffix]="driverFormLicenseNumberClearTpl"
+              class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+              <input type="text" nz-input formControlName="licenseNumber" placeholder="Nhập License Number" />
+            </nz-input-group>
+            <ng-template #driverFormLicenseNumberClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="driverForm.controls['licenseNumber'].patchValue('')"></span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="flex w-4/12 flex-col">
+        <nz-form-item class="!min-h-[96px] !w-full">
+          <nz-form-label nzFor="licenseType" class="!flex !h-[36px] !items-center !justify-start"
+            >License Type
+          </nz-form-label>
+          <nz-form-control class="!flex flex-col">
+            <nz-input-group
+              [nzSuffix]="driverFormLicenseTypeClearTpl"
+              class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
+              <input type="text" nz-input formControlName="licenseType" placeholder="Nhập License Type" />
+            </nz-input-group>
+            <ng-template #driverFormLicenseTypeClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="driverForm.controls['licenseType'].patchValue('')"></span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="flex w-4/12">
+        <nz-form-item class="!min-h-[96px] !w-full">
+          <nz-form-label nzFor="licenseExpirationDate" class="!flex !h-[36px] !items-center !justify-start"
+            >License Expiration Date</nz-form-label
+          >
+          <nz-form-control class="!flex w-full flex-col">
+            <nz-date-picker
+              class="h-[36px] w-full"
+              [nzMode]="'date'"
+              nzFormat="yyyy-MM-dd"
+              formControlName="licenseExpirationDate"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="my-5 flex w-full justify-end">
+      <button
+        class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+        nz-button
+        nzType="default"
+        type="submit"
+        [disabled]="!hasFormChanged()">
+        SAVE
+      </button>
+    </div>
+  </form>
+  }
+</nz-skeleton>

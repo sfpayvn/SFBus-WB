@@ -58,6 +58,10 @@ export class GoodsDetailComponent implements OnInit {
 
   goodsStatuses = [
     {
+      value: 'new',
+      label: 'Mới tạo',
+    },
+    {
       value: 'pending',
       label: 'Nhập hàng',
     },

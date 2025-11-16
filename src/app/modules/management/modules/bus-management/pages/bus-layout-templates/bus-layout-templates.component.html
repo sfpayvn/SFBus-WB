@@ -20,15 +20,15 @@
   <app-table-action
     [title]="'Bus Layout'"
     [totalItem]="totalItem"
-    (sortDataEvent)="sortBusLayoutTemplatePage($event)"
-    (searchDataEvent)="searchBusLayoutTemplatePage($event)"></app-table-action>
+    (sortDataEvent)="sortPage($event)"
+    (searchDataEvent)="searchPage($event)"></app-table-action>
   <div class="overflow-x-auto">
     <nz-table
       #rowSelectionTable
       nzShowPagination
       nzShowSizeChanger
       [nzFrontPagination]="false"
-      [nzLoading]="isLoadingBusLayoutTemplate"
+      [nzLoading]="isLoading"
       [nzData]="searchBusLayoutTemplate.busLayoutTemplates"
       class="!w-full"
       (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
@@ -52,20 +52,12 @@
             [nzLabel]="busLayoutTemplate.name"
             (nzCheckedChange)="onItemChecked(busLayoutTemplate._id, $event)"></td>
           <td>
-            <nz-skeleton
-              [nzLoading]="isLoadingBusLayoutTemplate"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
+            <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
               {{ busLayoutTemplate.name }} {{ defaultFlagService.defaultTextFlag(busLayoutTemplate) }}
             </nz-skeleton>
           </td>
           <td class="text-center">
-            <nz-skeleton
-              [nzLoading]="isLoadingBusLayoutTemplate"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
+            <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
               <div class="flex items-center justify-center">
                 <button
                   (click)="editBusLayoutTemplate(busLayoutTemplate)"
@@ -112,11 +104,11 @@
     </nz-table>
   </div>
   <app-table-footer
-    [pageIdx]="pageIdx"
-    [pageSize]="pageSize"
+    [pageIdx]="searchParams.pageIdx"
+    [pageSize]="searchParams.pageSize"
     [totalItem]="totalItem"
-    [isLoading]="isLoadingBusLayoutTemplate"
+    [isLoading]="isLoading"
     [totalPage]="totalPage"
-    (reloadDataAndPageEvent)="reloadBusLayoutTemplatePage($event)">
+    (reloadDataAndPageEvent)="reloadPage($event)">
   </app-table-footer>
 </div>

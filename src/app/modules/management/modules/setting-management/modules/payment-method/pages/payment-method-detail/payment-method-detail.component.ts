@@ -1,19 +1,9 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { LoadingService } from '@rsApp/shared/services/loading.service';
-
 import { combineLatest } from 'rxjs';
 import { PaymentMethod, PaymentMethod2Create, PaymentMethod2Update } from '../../model/payment-method.model';
 import { PaymentMethodService } from '../../service/payment-method.service';
@@ -55,13 +45,14 @@ export class PaymentMethodDetailComponent implements OnInit {
     { value: 'cash', label: 'Tiền Mặt' },
   ];
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     public utils: Utils,
     private location: Location,
     private paymentMethodService: PaymentMethodService,
     private utilsModal: UtilsModal,
-    private loadingService: LoadingService,
     public defaultFlagService: DefaultFlagService,
   ) {}
 
@@ -92,9 +83,6 @@ export class PaymentMethodDetailComponent implements OnInit {
       name = '',
       type = 'cash',
       note = '',
-      // discountType = 'percentage',
-      // discountValue = '',
-      // expireDate = '',
       status = 'active',
       isPaymentMethodDefault = false,
     } = this.paymentMethod || {};
@@ -118,6 +106,7 @@ export class PaymentMethodDetailComponent implements OnInit {
     });
 
     this.initPaymentMethodTypeData(type);
+    this.initialFormValue = this.mainForm.getRawValue();
   }
 
   onTypeChange(type: any) {
@@ -170,8 +159,25 @@ export class PaymentMethodDetailComponent implements OnInit {
     );
   }
 
+  hasFormChanged(): boolean {
+    const currentFormValue = this.mainForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
+  }
+
   backPage() {
-    this.location.back();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result: any) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   onFileChange(event: any) {
@@ -219,20 +225,29 @@ export class PaymentMethodDetailComponent implements OnInit {
       return;
     }
 
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      return;
+    }
+
     const data = this.mainForm.getRawValue();
 
     this.setDefaultValues2Create(data);
 
     const paymentMethod2Create: PaymentMethod2Create = {
       ...data,
-      banking: {
+    };
+
+    if (data.type !== 'cash') {
+      paymentMethod2Create.banking = {
         accountName: data.accountName,
         accountNumber: data.accountNumber,
         bankName: data.bankName,
         token: data.token,
         providerId: data.providerId,
-      },
-    };
+      };
+    }
+
     let dataTransfer = new DataTransfer();
     if (this.paymentMethodImageFile) {
       dataTransfer.items.add(this.paymentMethodImageFile);
@@ -266,6 +281,7 @@ export class PaymentMethodDetailComponent implements OnInit {
 
           const updatedState = { ...history.state, paymentMethod: paymentMethodUpdated };
           window.history.replaceState(updatedState, '', window.location.href);
+          this.initialFormValue = this.mainForm.getRawValue();
           toast.success('PaymentMethod update successfully');
           return;
         }
