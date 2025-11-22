@@ -53,7 +53,7 @@ export class FilesService {
         });
       }),
     ).then(() => formData);
-    const url = `${this.url}/upload-file/${folderId}`;
+    const url = `${this.url}/upload-file-save-to-media/${folderId}`;
 
     // Chuyển đổi Promise thành Observable
     return from(formDataPromise).pipe(

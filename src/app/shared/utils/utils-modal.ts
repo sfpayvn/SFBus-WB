@@ -34,6 +34,25 @@ export class UtilsModal {
     return dialogRef.afterClosed();
   }
 
+  openModalAlert(title: string, content: string, type?: string, btnLabel?: string) {
+    const dialogRef = this.dialog.open(MaterialDialogComponent, {
+      data: {
+        icon: {
+          type: type || 'info',
+        },
+        title: title,
+        content: content,
+        btn: [
+          {
+            label: btnLabel || 'OK',
+            type: 'submit',
+          },
+        ],
+      },
+    });
+    return dialogRef.afterClosed();
+  }
+
   openModal(component: any, data: any, size: string = 'small') {
     let height = '';
     let width = '';

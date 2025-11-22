@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, from, Observable, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { Goods, Goods2Create, Goods2Update } from '../model/goods.model';
 import { FilesService } from '../../files-center-management/service/files-center.servive';
@@ -55,48 +55,56 @@ export class GoodsService {
     return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
-  processCreateGoods(imageFile: FileList, Goods2Create: Goods2Create) {
+  processCreateGoods(imageFile: FileList, goods2Create: Goods2Create) {
     const url = this.url;
     // Kiểm tra nếu có file trong FileList
     if (imageFile.length > 0) {
       return this.filesService.uploadFiles(imageFile).pipe(
-        switchMap((res: any) => {
+        switchMap((res: any[]) => {
           // Gắn các liên kết trả về từ uploadFiles
-          Goods2Create.image = res[0].link;
-          return this.createGoods(Goods2Create);
+          goods2Create.imageIds = res.map((file) => file._id);
+          return this.createGoods(goods2Create);
         }),
       );
     } else {
       // Nếu không có file, chỉ gọi post trực tiếp
-      return this.createGoods(Goods2Create);
+      return this.createGoods(goods2Create);
     }
   }
 
-  createGoods(Goods2Create: Goods2Create) {
+  createGoods(goods2Create: Goods2Create) {
     const url = `${this.url}`;
-    return this.apiGatewayService.post(url, Goods2Create).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, goods2Create).pipe(tap((res: any) => {}));
   }
 
-  processUpdateGoods(imageFile: FileList, Goods2Update: Goods2Update) {
+  processUpdateGoods(imageFile: FileList, goods2Update: Goods2Update) {
     const url = this.url;
-    // Kiểm tra nếu có file trong FileList
+    
+    // Nếu có file mới, upload và thêm vào imageIds hiện tại
     if (imageFile.length > 0) {
       return this.filesService.uploadFiles(imageFile).pipe(
-        switchMap((res: any) => {
-          // Gắn các liên kết trả về từ uploadFiles
-          Goods2Update.image = res[0].link;
-          return this.updateGoods(Goods2Update);
+        switchMap((res: any[]) => {
+          // Lấy imageIds từ files mới upload
+          const newImageIds = res.map((file) => file._id);
+          
+          // Kết hợp imageIds hiện tại với imageIds mới
+          goods2Update.imageIds = [
+            ...(goods2Update.imageIds || []),
+            ...newImageIds
+          ];
+          
+          return this.updateGoods(goods2Update);
         }),
       );
     } else {
-      // Nếu không có file, chỉ gọi post trực tiếp
-      return this.updateGoods(Goods2Update);
+      // Không có file mới, chỉ update với imageIds hiện tại
+      return this.updateGoods(goods2Update);
     }
   }
 
-  updateGoods(Goods2Update: Goods2Update) {
+  updateGoods(goods2Update: Goods2Update) {
     const url = `${this.url}`;
-    return this.apiGatewayService.put(url, Goods2Update).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.put(url, goods2Update).pipe(tap((res: any) => {}));
   }
 
   deleteGoods(id: string) {

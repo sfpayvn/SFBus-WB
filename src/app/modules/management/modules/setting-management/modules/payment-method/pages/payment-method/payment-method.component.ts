@@ -10,6 +10,7 @@ import { CapsService } from '@rsApp/shared/services/caps.service';
 import { SearchPaymentMethod, PaymentMethod, PaymentMethod2Create } from '../../model/payment-method.model';
 import { PaymentMethodService } from '../../service/payment-method.service';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-payment-method',
@@ -51,15 +52,9 @@ export class PaymentMethodComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  statusClasses: { [key: string]: string } = {
-    active: 'border-green-500 bg-green-200 text-green-800',
-    inactive: 'border-indigo-500 bg-indigo-200 text-indigo-800',
-  };
+  statusClasses = COMMON_STATUS_CLASSES;
 
-  paymentMethodStatuses: { [key: string]: string } = {
-    active: 'Hoạt động',
-    inactive: 'Không hoạt động',
-  };
+  paymentMethodStatuses = COMMON_STATUS_LABELS;
 
   constructor(
     public utils: Utils,

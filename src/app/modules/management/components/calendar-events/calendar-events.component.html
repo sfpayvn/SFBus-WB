@@ -110,11 +110,13 @@
               <ng-container *ngFor="let slot of halfHourSlots">
                 <div
                   class="flex flex-row border-r border-t border-gray-200 text-sm text-gray-400"
+                  [ngClass]="{ 'bg-gray-100': isSlotDisabled(slot, currentDayView) }"
                   (click)="createEvent($event, slot)">
                   <div class="flex w-2/12 border-r border-gray-200 py-2">
                     {{ slot }}
                   </div>
-                  <div class="flex w-10/12 cursor-pointer flex-col gap-1 p-2 hover:bg-stone-100">
+                  <div class="flex w-10/12 flex-col gap-1 p-2"
+                    [ngClass]="{ 'cursor-not-allowed': isSlotDisabled(slot, currentDayView), 'cursor-pointer hover:bg-stone-100': !isSlotDisabled(slot, currentDayView) }">
                     <!-- Render event nếu tồn tại cho ngày và slot này -->
                     <div class="flex flex-row flex-wrap gap-2">
                       <ng-container *ngFor="let event of getEventsForDayAndSlot(currentDayView, slot)">
@@ -163,7 +165,8 @@
               <div class="flex flex-col">
                 <ng-container *ngFor="let slot of halfHourSlots">
                   <div
-                    class="flex max-h-[120px] cursor-pointer flex-col items-end gap-1 border-t border-r border-gray-200 p-0.5 hover:bg-stone-100"
+                    class="flex max-h-[120px] flex-col items-end gap-1 border-t border-r border-gray-200 p-0.5"
+                    [ngClass]="{ 'bg-gray-100 cursor-not-allowed': isSlotDisabled(slot, day), 'cursor-pointer hover:bg-stone-100': !isSlotDisabled(slot, day) }"
                     [ngStyle]="{ height: 54 * (eventInSlot(slot).length || 1) + 'px' }"
                     (click)="createEvent($event, slot, day)">
                     <!-- Render event nếu tồn tại cho ngày và slot này -->

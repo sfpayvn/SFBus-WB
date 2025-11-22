@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { BusSchedule, BusSchedule2Create, SearchBusSchedule } from './model/bus-schedule.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { BusScheduleDetailDialogComponent } from './components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
+import { EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-bus-schedules',
@@ -41,14 +42,7 @@ export class BusSchedulesComponent implements OnInit {
 
   isLoadingBusSchedule: boolean = false;
 
-  statusClasses: { [key: string]: string } = {
-    un_published: 'border-gray-blue-500 bg-gray-200 text-gray-800',
-    scheduled: 'border-blue-500 bg-blue-200 text-blue-800',
-    cancelled: 'border-red-500 bg-red-200 text-red-800',
-    in_progress: 'border-indigo-500 bg-indigo-200 text-indigo-800',
-    completed: 'border-green-500 bg-green-200 text-green-800',
-    overdue: 'border-orange-500 bg-orange-200 text-orange-800',
-  };
+  statusClasses = EVENT_STATUS_CLASSES;
 
   busScheduleStatuses: { [key: string]: string } = {
     un_published: 'Chưa xuất bản',

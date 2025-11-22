@@ -9,6 +9,7 @@ import { MaterialDialogComponent } from '@rsApp/shared/components/material-dialo
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { GoodsCategoryDetailDialogComponent } from '../../component/goods-category-detail-dialog/goods-category-detail-dialog.component';
+import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-goods-categories',
@@ -50,15 +51,9 @@ export class GoodsCategoriesComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  statusClasses: { [key: string]: string } = {
-    active: 'border-green-500 bg-green-200 text-green-800',
-    inactive: 'border-red-500 bg-red-200 text-red-800',
-  };
+  statusClasses = COMMON_STATUS_CLASSES;
 
-  goodsStatuses: { [key: string]: string } = {
-    active: 'Hoạt động',
-    inactive: 'Không hoạt động',
-  };
+  goodsStatuses = COMMON_STATUS_LABELS;
 
   constructor(
     public utils: Utils,

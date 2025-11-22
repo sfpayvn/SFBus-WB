@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { SearchTenant, Tenant } from '../../model/tenant.model';
 import { TenantService } from '../../service/tenant.service';
+import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-tenant',
@@ -49,17 +50,9 @@ export class TenantComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  statusClasses: { [key: string]: string } = {
-    active: 'border-green-500 bg-green-200 text-green-800',
-    inactive: 'border-indigo-500 bg-indigo-200 text-indigo-800',
-    suspended: 'border-red-500 bg-red-200 text-red-800',
-  };
+  statusClasses = COMMON_STATUS_CLASSES;
 
-  tenantStatuses: { [key: string]: string } = {
-    active: 'Hoạt động',
-    inactive: 'Không hoạt động',
-    suspended: 'Tạm dừng',
-  };
+  tenantStatuses = COMMON_STATUS_LABELS;
 
   constructor(
     public utils: Utils,

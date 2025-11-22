@@ -150,6 +150,10 @@ export class FilesComponent implements OnInit {
   }
 
   toggleFile(file: FileDto): void {
+    if (this.defaultFlagService.isDefault(file)) {
+      return;
+    }
+
     if (!this.isChooseMultiple && this.selectedFiles.length > 0 && !this.isSelected(file)) {
       this.selectedFiles = [];
       this.selectedFiles.push(file);
@@ -476,7 +480,7 @@ export class FilesComponent implements OnInit {
   }
 
   resetSelectedFileFolder() {
-   this.selectFileFolder(this.fileFolders[0]);
+    this.selectFileFolder(this.fileFolders[0]);
   }
 
   onFileChange($event: any) {

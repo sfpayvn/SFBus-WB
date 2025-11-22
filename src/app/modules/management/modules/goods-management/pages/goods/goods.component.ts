@@ -9,6 +9,7 @@ import { GoodsService } from '../../service/goods.servive';
 import { MaterialDialogComponent } from '@rsApp/shared/components/material-dialog/material-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
+import { GOODS_STATUS_CLASSES, GOODS_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-goods',
@@ -50,21 +51,9 @@ export class GoodsComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  statusClasses: { [key: string]: string } = {
-    new: 'border-blue-500 bg-blue-200 text-blue-800',
-    pending: 'border-teal-500 bg-teal-200 text-teal-800',
-    on_board: 'border-indigo-500 bg-indigo-200 text-indigo-800',
-    completed: 'border-green-500 bg-green-200 text-green-800',
-    cancelled: 'border-red-500 bg-red-200 text-red-800',
-  };
+  statusClasses = GOODS_STATUS_CLASSES;
 
-  goodsStatuses: { [key: string]: string } = {
-    new: 'Mới tạo',
-    pending: 'Nhập hàng',
-    on_board: 'Đang trên đường',
-    completed: 'Hoàn thành',
-    cancelled: 'Đã hủy',
-  };
+  goodsStatuses = GOODS_STATUS_LABELS;
 
   constructor(
     public utils: Utils,
@@ -208,18 +197,17 @@ export class GoodsComponent implements OnInit {
   }
 
   cloneData(goods: Goods): void {
-    delete (goods as any)._id;
-    let goods2Create = new Goods2Create();
-    goods2Create = { ...goods2Create, ...goods };
-
-    this.goodsService.createGoods(goods2Create).subscribe({
-      next: (res: Goods) => {
-        if (res) {
-          this.loadData();
-          toast.success('Nhân bản thành công');
-        }
-      },
-      error: (error: any) => this.utils.handleRequestError(error),
-    });
+    // delete (goods as any)._id;
+    // let goods2Create = new Goods2Create();
+    // goods2Create = { ...goods2Create, ...goods };
+    // this.goodsService.createGoods(goods2Create).subscribe({
+    //   next: (res: Goods) => {
+    //     if (res) {
+    //       this.loadData();
+    //       toast.success('Nhân bản thành công');
+    //     }
+    //   },
+    //   error: (error: any) => this.utils.handleRequestError(error),
+    // });
   }
 }

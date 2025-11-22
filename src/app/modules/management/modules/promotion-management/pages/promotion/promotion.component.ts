@@ -9,6 +9,7 @@ import { toast } from 'ngx-sonner';
 import { SearchPromotion, Promotion, Promotion2Create } from '../../model/promotion.model';
 import { PromotionService } from '../../service/promotion.service';
 import { CapsService } from '@rsApp/shared/services/caps.service';
+import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-promotion',
@@ -50,11 +51,7 @@ export class PromotionComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  statusClasses: { [key: string]: string } = {
-    active: 'border-green-500 bg-green-200 text-green-800',
-    inactive: 'border-indigo-500 bg-indigo-200 text-indigo-800',
-    expired: 'border-gray-500 bg-gray-200 text-gray-800',
-  };
+  statusClasses = COMMON_STATUS_CLASSES;
 
   promotionStatuses: { [key: string]: string } = {
     active: 'Hoạt động',

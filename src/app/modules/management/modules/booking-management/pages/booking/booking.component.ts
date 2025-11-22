@@ -9,6 +9,7 @@ import { BusRoutesService } from '../../../bus-management/pages/bus-routes/servi
 import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
 import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 import { BookingService } from '../../service/booking.service';
+import { BOOKING_STATUS_CLASSES, BOOKING_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-booking',
@@ -47,17 +48,9 @@ export class BookingComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  bookingtatusClasses: { [key: string]: string } = {
-    reserved: 'border-yellow-500 bg-yellow-200 text-yellow-800',
-    paid: 'border-green-500 bg-green-200 text-green-800',
-    deposited: 'border-red-500 bg-red-200 text-red-800',
-  };
+  bookingtatusClasses = BOOKING_STATUS_CLASSES;
 
-  bookingStatuses: { [key: string]: string } = {
-    reserved: 'Đã đặt',
-    paid: 'Đã thanh toán',
-    deposited: 'Đã đặt cọc',
-  };
+  bookingStatuses = BOOKING_STATUS_LABELS;
 
   @Input() busRoutes: BusRoute[] = [];
   busRoute: BusRoute = null as any;

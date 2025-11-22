@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
+import { EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
 
 export interface Event {
   _id: string;
@@ -26,14 +27,9 @@ export class CalendarEventsComponent implements OnInit {
   isViewAllEvent: boolean = false;
   activePopover: Event[] | null = null;
 
-  statusClasses: { [key: string]: string } = {
-    un_published: 'border-gray-blue-500 bg-gray-200 text-gray-800',
-    scheduled: 'border-blue-500 bg-blue-200 text-blue-800',
-    cancelled: 'border-red-500 bg-red-200 text-red-800',
-    in_progress: 'border-indigo-500 bg-indigo-200 text-indigo-800',
-    completed: 'border-green-500 bg-green-200 text-green-800',
-    overdue: 'border-orange-500 bg-orange-200 text-orange-800',
-  };
+  minimumAllowedTime: Date = new Date(new Date().getTime() + 60 * 60 * 1000);
+
+  statusClasses = EVENT_STATUS_CLASSES;
 
   @Input() events: Event[] = [];
   @Input() isCloneEvent = false;
@@ -48,7 +44,12 @@ export class CalendarEventsComponent implements OnInit {
 
   constructor(public utils: Utils, private utilsModal: UtilsModal) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Update minimumAllowedTime every minute
+    setInterval(() => {
+      this.minimumAllowedTime = new Date(new Date().getTime() + 60 * 60 * 1000);
+    }, 60000);
+  }
 
   get weekDays(): string[] {
     return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -298,6 +299,12 @@ export class CalendarEventsComponent implements OnInit {
     return item.name + item.startDate.toISOString();
   }
 
+  isSlotDisabled(slot: string, day?: Date): boolean {
+    const baseDate = day || new Date();
+    const slotDate = this.convertSlotToDate(slot, baseDate);
+    return slotDate < this.minimumAllowedTime;
+  }
+
   visibleChange(visible: boolean, events: Event[]) {
     this.activePopover = visible ? events : [];
   }
@@ -325,6 +332,16 @@ export class CalendarEventsComponent implements OnInit {
     // Use the day if provided; otherwise, use the current date
     const baseDate = day || new Date();
     const startDate = this.convertSlotToDate(slot, baseDate);
+
+    // Check if the selected time is less than current time + 1 hour
+    if (startDate < this.minimumAllowedTime) {
+      this.utilsModal.openModalAlert(
+        'Không thể tạo sự kiện',
+        'Không thể tạo sự kiện trong quá khứ hoặc trong vòng 1 giờ tới. Vui lòng chọn thời gian khác.',
+        'warning'
+      );
+      return;
+    }
 
     // Emit the startDate
     this.createEventEmit.emit(startDate);

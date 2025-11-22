@@ -12,6 +12,7 @@ import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/b
 import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 import { SeatType } from '../../../bus-management/pages/seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../bus-management/pages/seat-types/service/seat-types.servive';
+import { BOOKING_STATUS_CLASSES, BOOKING_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 
 interface DepartureDestination {
   value: string;
@@ -49,17 +50,9 @@ export class BookingDetailComponent implements OnInit {
     dropped_off: 'Đã trả khách',
   };
 
-  bookingStatuses: { [key: string]: string } = {
-    reserved: 'Đã đặt',
-    paid: 'Đã thanh toán',
-    deposited: 'Đã đặt cọc',
-  };
+  bookingStatuses = BOOKING_STATUS_LABELS;
 
-  bookingtatusClasses: { [key: string]: string } = {
-    reserved: 'border-yellow-500 bg-yellow-200 text-yellow-800',
-    paid: 'border-green-500 bg-green-200 text-green-800',
-    deposited: 'border-red-500 bg-red-200 text-red-800',
-  };
+  bookingtatusClasses = BOOKING_STATUS_CLASSES;
 
   @Output() bookingChange = new EventEmitter<any>();
 

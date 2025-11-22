@@ -13,6 +13,7 @@ import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { async, combineLatest, tap } from 'rxjs';
+import { GOODS_STATUS, GOODS_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 import { Goods, Goods2Create, Goods2Update } from '../../model/goods.model';
 import { GoodsCategory } from '../../model/goods-category.model';
 import { GoodsService } from '../../service/goods.servive';
@@ -49,39 +50,18 @@ export class GoodsDetailComponent implements OnInit {
 
   busRoutes: BusRoute[] = [];
 
-  goodsImageFile!: File;
-  goodsImage!: string;
+  goodsImageFiles: File[] = [];
+  goodsImages: string[] = [];
+  existingImageIds: string[] = []; // ImageIds từ database
 
   defaultImage = 'assets/images/goods-deail.png';
 
   mode: 'create' | 'update' = 'create';
 
-  goodsStatuses = [
-    {
-      value: 'new',
-      label: 'Mới tạo',
-    },
-    {
-      value: 'pending',
-      label: 'Nhập hàng',
-    },
-    {
-      value: 'completed',
-      label: 'Hoàn thành',
-    },
-    {
-      value: 'on_board',
-      label: 'Đang trên đường',
-    },
-    {
-      value: 'dropped_off',
-      label: 'Đã Tới',
-    },
-    {
-      value: 'cancelled',
-      label: 'Đã hủy',
-    },
-  ];
+  goodsStatuses = Object.entries(GOODS_STATUS).map(([key, value]) => ({
+    value,
+    label: GOODS_STATUS_LABELS[value],
+  }));
 
   paidByList = [
     { value: 'sender', label: 'Người gửi' },
@@ -89,6 +69,8 @@ export class GoodsDetailComponent implements OnInit {
   ];
 
   searchKeywordBusSchedule: string = '';
+
+  isLoaded: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -119,16 +101,18 @@ export class GoodsDetailComponent implements OnInit {
   }
 
   async initData() {
+    this.isLoaded = false;
     // const getBusSchedules = this.busSchedulesService.findAllAvailable(); // lấy tất cả các chuyến xe có thể chọn
     const getBusSchedules = this.busSchedulesService.findAll(); // lấy data to test
     const getGoodsCategories = this.goodsCategoriesService.findAll();
     const getBusRoutes = this.busRoutesService.findAll();
     combineLatest([getBusSchedules, getGoodsCategories, getBusRoutes]).subscribe({
-      next: ([busSchedules, goodsCategories, busRoutes]) => {
+      next: async ([busSchedules, goodsCategories, busRoutes]) => {
         this.busSchedules = busSchedules;
         this.goodsCategories = goodsCategories;
         this.busRoutes = busRoutes;
-        this.initForm();
+        await this.initForm();
+        this.isLoaded = true;
       },
       error: (error: any) => this.utils.handleRequestError(error),
     });
@@ -182,7 +166,7 @@ export class GoodsDetailComponent implements OnInit {
 
   async initForm() {
     const {
-      image = '',
+      images = [],
       name = 'Iphone 15 Pro Max',
       goodsNumber = '',
       senderName = 'Nguyen Van A',
@@ -207,9 +191,19 @@ export class GoodsDetailComponent implements OnInit {
       paidBy = 'sender',
     } = this.goods || {};
 
-    this.goodsImage = image ? image : this.defaultImage;
+    // Initialize images array from existing image
+    if (images && images.length > 0) {
+      this.goodsImages = [...images];
+    } else {
+      this.goodsImages = [];
+    }
+
+    // Lưu lại imageIds gốc
+    if (this.goods && this.goods.imageIds) {
+      this.existingImageIds = [...this.goods.imageIds];
+    }
     this.mainForm = this.fb.group({
-      image: [image],
+      images: [images, []],
       name: [name, [Validators.required]],
       categories: [categories, []],
       busScheduleId: [busScheduleId, []],
@@ -237,10 +231,11 @@ export class GoodsDetailComponent implements OnInit {
     });
 
     this.busSchedule =
-      this.busSchedules.find((busSchedule) => busSchedule._id == this.mainForm.get('busScheduleId')?.value) ||
+      (await this.busSchedules.find((busSchedule) => busSchedule._id == this.mainForm.get('busScheduleId')?.value)) ||
       new BusSchedule();
     this.busRoute =
-      this.busRoutes.find((busRoute) => busRoute._id == this.mainForm.get('busRouteId')?.value) || new BusRoute();
+      (await this.busRoutes.find((busRoute) => busRoute._id == this.mainForm.get('busRouteId')?.value)) ||
+      new BusRoute();
 
     this.filterBusSchedules();
   }
@@ -286,12 +281,52 @@ export class GoodsDetailComponent implements OnInit {
   onFileChange(event: any) {
     const files: FileList = event.target.files;
     if (!files || files.length === 0) return;
-    const file = files[0];
-    this.goodsImageFile = file;
 
-    if (file) {
-      this.readAndSetImage(file);
+    const MAX_IMAGES = 5;
+    const availableSlots = MAX_IMAGES - this.goodsImages.length;
+
+    // Check if already at max capacity
+    if (availableSlots <= 0) {
+      toast.warning(`Đã đủ ${MAX_IMAGES} ảnh. Vui lòng xóa ảnh cũ trước khi thêm mới.`);
+      event.target.value = '';
+      return;
     }
+
+    let addedCount = 0;
+    let duplicateCount = 0;
+    let exceededCount = 0;
+
+    // Add selected files with validation
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Check if we still have available slots
+      if (addedCount >= availableSlots) {
+        exceededCount = files.length - i;
+        break;
+      }
+
+      // Check for duplicate files (by name and size)
+      const isDuplicate = this.goodsImageFiles.some(
+        (existingFile) => existingFile.name === file.name && existingFile.size === file.size,
+      );
+
+      if (isDuplicate) {
+        duplicateCount++;
+        continue;
+      }
+
+      this.goodsImageFiles.push(file);
+      this.readAndSetImage(file);
+      addedCount++;
+    }
+
+    if (exceededCount > 0) {
+      toast.warning(`${exceededCount} ảnh vượt quá giới hạn ${MAX_IMAGES} ảnh`);
+    }
+
+    // Clear input để có thể chọn lại cùng file
+    event.target.value = '';
   }
 
   private readAndSetImage(file: File): void {
@@ -300,27 +335,48 @@ export class GoodsDetailComponent implements OnInit {
       // Tạo một Blob từ ArrayBuffer
       const arrayBuffer = event.target.result as ArrayBuffer;
       const blob = new Blob([arrayBuffer], { type: file.type });
-      this.goodsImage = URL.createObjectURL(blob);
+      const imageUrl = URL.createObjectURL(blob);
+      this.goodsImages.push(imageUrl);
     };
     reader.readAsArrayBuffer(file); // Đọc file dưới dạng ArrayBuffer
   }
 
+  removeImage(index: number) {
+    const numExistingImages = this.existingImageIds.length;
+
+    // Nếu xóa existing image (index < số lượng existing)
+    if (index < numExistingImages) {
+      this.existingImageIds.splice(index, 1);
+    } else {
+      // Xóa new image file
+      const fileIndex = index - numExistingImages;
+      this.goodsImageFiles.splice(fileIndex, 1);
+    }
+
+    // Xóa khỏi goodsImages
+    this.goodsImages.splice(index, 1);
+
+    toast.success('Đã xóa ảnh');
+  }
+
   removeFileImage() {
-    this.goodsImage = '';
-    this.mainForm.patchValue({ avatar: '' });
+    this.goodsImages = [];
+    this.goodsImageFiles = [];
+    this.existingImageIds = [];
+    this.mainForm.patchValue({ images: [] });
   }
 
   openFilesCenterDialog() {}
 
   setDefaultValues2Create(data: any) {
-    data.shippingCost = 0;
-    data.cod = 0;
-    data.goodsValue = 0;
-    data.weight = 0;
-    data.length = 0;
-    data.width = 0;
-    data.height = 0;
-    data.address = 'Nhận tại trạm';
+    data.shippingCost = data.shippingCost ? data.shippingCost : 0;
+    data.cod = data.cod ? data.cod : 0;
+    data.goodsValue = data.goodsValue ? data.goodsValue : 0;
+    data.weight = data.weight ? data.weight : 0;
+    data.length = data.length ? data.length : 0;
+    data.width = data.width ? data.width : 0;
+    data.height = data.height ? data.height : 0;
+    data.customerAddress = 'Nhận tại trạm';
   }
 
   onSubmit() {
@@ -333,26 +389,30 @@ export class GoodsDetailComponent implements OnInit {
 
     this.setDefaultValues2Create(data);
 
-    const Goods2Create: Goods2Create = {
+    const goods2Create: Goods2Create = {
       ...data,
+      categoriesIds: data.categories,
     };
+
     let dataTransfer = new DataTransfer();
-    if (this.goodsImageFile) {
-      dataTransfer.items.add(this.goodsImageFile);
+    // Add all image files to DataTransfer
+    for (const file of this.goodsImageFiles) {
+      dataTransfer.items.add(file);
     }
     const files: FileList = dataTransfer.files;
 
     let request = [];
     let actionName = 'create';
     if (this.mode == 'update') {
-      const Goods2Update = {
-        ...Goods2Create,
-        _id: this.goods._id, // Thêm thuộc tính _id
+      const goods2Update: Goods2Update = {
+        ...goods2Create,
+        _id: this.goods._id,
+        imageIds: this.existingImageIds,
       };
       actionName = 'update';
-      request.push(this.updateGoods(files, Goods2Update));
+      request.push(this.updateGoods(files, goods2Update));
     } else {
-      request.push(this.createGoods(files, Goods2Create));
+      request.push(this.createGoods(files, goods2Create));
     }
 
     combineLatest(request).subscribe({

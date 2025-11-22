@@ -13,7 +13,8 @@ export class Goods {
   busScheduleId: string = '';
   busSchedule: BusSchedule = new BusSchedule();
   name: string = '';
-  image: string = '';
+  images: string[] = [];
+  imageIds: string[] = [];
   goodsNumber: string = '';
 
   senderName: string = '';
@@ -44,7 +45,8 @@ export class Goods {
   isEditing: boolean = false;
 }
 
-export interface Goods2Create extends Omit<Goods, '_id' | 'selected' | 'categories'> {}
+export interface Goods2Create
+  extends Omit<Goods, '_id' | 'selected' | 'categories' | 'images' | 'busSchedule' | 'isEditing'> {}
 export class Goods2Create {}
 
 export class Goods2Update extends Goods2Create {
