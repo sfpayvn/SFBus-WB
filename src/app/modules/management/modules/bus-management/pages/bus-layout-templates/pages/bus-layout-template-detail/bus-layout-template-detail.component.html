@@ -1,14 +1,19 @@
 <div class="mb-4 flex justify-end">
   <div class="inline-block space-x-4">
     <button
-      class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
       (click)="backPage()">
       Back
     </button>
   </div>
 </div>
 
-<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+  <span class="mb-5 text-xl font-bold">{{
+    defaultFlagService.isDefault(busLayoutTemplate) ? 'Chi Tiết' : busLayoutTemplate ? 'Chỉnh sửa' : 'Thêm mới'
+  }}</span>
+
   <form [formGroup]="busTemplateDetailForm" nz-form *ngIf="busTemplateDetailForm">
     <div class="mb-5 w-full">
       <nz-form-item>
@@ -22,12 +27,14 @@
             <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
           </nz-input-group>
           <ng-template #busTemplateDetailNameClearTpl>
+            @if(f['name'].value && !defaultFlagService.isDefault(busLayoutTemplate)) {
             <span
               nz-icon
               class="ant-input-clear-icon"
               nzTheme="fill"
               nzType="close-circle"
-              (click)="busTemplateDetailForm.controls['name'].patchValue('')"></span>
+              (click)="clearFormValue('name', busTemplateDetailForm)"></span>
+            }
           </ng-template>
           <ng-template #busTemplateDetailNameErrorTpl let-control>
             <span class="mt-1 !text-xs text-red-500">
@@ -43,6 +50,7 @@
         nzType="editable-card"
         (nzAdd)="addLayout()"
         [nzAddIcon]="nzAddIcon"
+        [nzHideAdd]="defaultFlagService.isDefault(busLayoutTemplate)"
         (nzClose)="closeTab($event)">
         <nz-tab
           nzClosable
@@ -58,12 +66,14 @@
                 <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
               </nz-input-group>
               <ng-template #busTemplateLayoutNameClearTpl>
+                @if(layout.get('name')?.value && !defaultFlagService.isDefault(busLayoutTemplate)) {
                 <span
                   nz-icon
                   class="ant-input-clear-icon"
                   nzTheme="fill"
                   nzType="close-circle"
-                  (click)="layout.get('name')?.patchValue('')"></span>
+                  (click)="clearFormValue('name', layout)"></span>
+                }
               </ng-template>
               <ng-template #busTemplateLayoutNameErrorTpl let-control>
                 <span class="mt-1 !text-xs text-red-500">
@@ -72,6 +82,7 @@
               </ng-template>
             </nz-form-control>
           </nz-form-item>
+          @if(!defaultFlagService.isDefault(busLayoutTemplate)) {
 
           <div class="flex flex-col pt-5">
             <div class="flex justify-between">
@@ -96,10 +107,12 @@
                 nzType="default"
                 *ngFor="let seatType of seatTypes"
                 (click)="selectSeatType(seatType._id)">
-                <svg-icon [src]="seatType.iconLink" [svgClass]="'h-8 w-8 seat-icon'"> </svg-icon>
+                <svg-icon [src]="seatType.icon" [svgClass]="'h-8 w-8 seat-icon'"> </svg-icon>
               </button>
             </div>
           </div>
+          }
+
           <div class="matrix justify-center pt-10">
             <div *ngFor="let row of layout.get('seats')?.value; let i = index" class="row">
               <div
@@ -149,6 +162,7 @@
         </div>
       </ng-template>
     </div>
+    @if(!defaultFlagService.isDefault(busLayoutTemplate)) {
     <div class="my-5 flex w-full justify-end">
       <button
         class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
@@ -158,5 +172,6 @@
         SAVE
       </button>
     </div>
+    }
   </form>
 </div>

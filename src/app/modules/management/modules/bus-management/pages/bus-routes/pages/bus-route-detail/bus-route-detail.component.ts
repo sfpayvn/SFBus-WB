@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BusRoute, BusRoute2Create, BusRoute2Update } from '../../model/bus-route.model';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
 import { combineLatest } from 'rxjs';
 import { Router } from '@angular/router';
 import { toast } from 'ngx-sonner';
@@ -12,15 +12,16 @@ import { BusStationsService } from '../../../bus-stations/service/bus-stations.s
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { BusProvincesService } from '../../../bus-provices/service/bus-provinces.servive';
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 @Component({
   selector: 'app-bus-route-detail',
   templateUrl: './bus-route-detail.component.html',
   styleUrl: './bus-route-detail.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class BusRouteDetailComponent implements OnInit {
-
   busRouteDetailForm!: FormGroup;
 
   busRoute!: BusRoute;
@@ -29,6 +30,7 @@ export class BusRouteDetailComponent implements OnInit {
   busProvinces: BusProvince[] = [];
 
   filteredProvinces: any[] = [];
+  private initialFormValue: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -38,19 +40,19 @@ export class BusRouteDetailComponent implements OnInit {
     private busStationsService: BusStationsService,
     private busProvincesService: BusProvincesService,
     private router: Router,
-  ) { }
+    public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
     this.initData();
   }
 
-
   async getQueryParams() {
     const params = history.state;
     if (params) {
-      this.busRoute = params["busRoute"] ? JSON.parse(params["busRoute"]) : null;
-      console.log("🚀 ~ BusRouteDetailComponent ~ getQueryParams ~ this.busRoute:", this.busRoute)
+      this.busRoute = params['busRoute'] ? JSON.parse(params['busRoute']) : null;
     }
   }
 
@@ -71,19 +73,39 @@ export class BusRouteDetailComponent implements OnInit {
     const { name = '', distance = 0, distanceTime = '', breakPoints = [] } = this.busRoute || {};
 
     this.busRouteDetailForm = this.fb.group({
-      name: [name, [Validators.required]],
-      distance: [distance, [Validators.required]],
-      distanceTime: [distanceTime, [Validators.required]],
-      breakPoints: this.fb.array(breakPoints.length > 0
-        ? breakPoints.map(bp => this.createBreakPoint(bp.busStationId))
-        : [this.createBreakPoint(), this.createBreakPoint()] // Add 2 default breakpoints if none exist
-      )
+      name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busRoute) }, [Validators.required]],
+      distance: [
+        { value: distance, disabled: this.defaultFlagService.isDefault(this.busRoute) },
+        [Validators.required],
+      ],
+      distanceTime: [
+        { value: distanceTime, disabled: this.defaultFlagService.isDefault(this.busRoute) },
+        [Validators.required],
+      ],
+      breakPoints: this.fb.array(
+        breakPoints.length > 0
+          ? breakPoints.map((bp) => this.createBreakPoint(bp.busStationId))
+          : [this.createBreakPoint(), this.createBreakPoint()], // Add 2 default breakpoints if none exist
+      ),
     });
+    this.initialFormValue = this.busRouteDetailForm.getRawValue();
+  }
+
+  get f() {
+    return this.busRouteDetailForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busRouteDetailForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   createBreakPoint(busStationId: string = ''): FormGroup {
     return this.fb.group({
-      busStationId: [busStationId, Validators.required],
+      busStationId: [
+        { value: busStationId, disabled: this.defaultFlagService.isDefault(this.busRoute) },
+        Validators.required,
+      ],
     });
   }
 
@@ -94,18 +116,17 @@ export class BusRouteDetailComponent implements OnInit {
   filterProvinces() {
     this.filteredProvinces = this.busProvinces
       // Lọc bỏ các tỉnh không có bus station
-      .filter((province) =>
-        this.busStations.some((busStation: any) => busStation.provinceId === province._id)
-      )
+      .filter((province) => this.busStations.some((busStation: any) => busStation.provinceId === province._id))
       .map((province) => {
         const matchingBusStations = this.busStations.filter(
-          (busStation: any) => busStation.provinceId === province._id
+          (busStation: any) => busStation.provinceId === province._id,
         );
         return {
           ...province,
           busStations: matchingBusStations, // Không lặp lại
         };
       });
+    console.log('🚀 ~ BusRouteDetailComponent ~ filterProvinces ~ this.filteredProvinces:', this.filteredProvinces);
   }
 
   removeBreakPoint(index: number): void {
@@ -117,7 +138,6 @@ export class BusRouteDetailComponent implements OnInit {
       console.warn(`Invalid index ${index}. Cannot remove breakpoint.`);
     }
   }
-
 
   get breakPoints(): FormArray {
     return this.busRouteDetailForm.get('breakPoints') as FormArray;
@@ -131,20 +151,42 @@ export class BusRouteDetailComponent implements OnInit {
   checkBreakPointsDuplicateErrors(): boolean {
     const breakPoints = this.busRouteDetailForm?.get('breakPoints') as FormArray;
     const busStationIds = breakPoints?.controls
-      .map(control => control.get('busStationId')?.value)
-      .filter(id => id && id.trim() !== ''); // Filter out empty or invalid values
+      .map((control) => control.get('busStationId')?.value)
+      .filter((id) => id && id.trim() !== ''); // Filter out empty or invalid values
 
     return busStationIds.some((id, index) => busStationIds.indexOf(id) !== index);
   }
 
   backPage() {
-    this.location.back();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   drop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.breakPoints.controls, event.previousIndex, event.currentIndex);
   }
 
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.busRoute)) return;
+
+    const control = this.busRouteDetailForm.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
+  }
 
   onSubmit() {
     if (!this.busRouteDetailForm.valid) {
@@ -152,11 +194,15 @@ export class BusRouteDetailComponent implements OnInit {
       return;
     }
 
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      return;
+    }
+
     const data = this.busRouteDetailForm.getRawValue();
     const busRoute2Create: BusRoute2Create = {
-      ...data
-    }
-    console.log("🚀 ~ BusRouteDetailComponent ~ onSubmit ~ busRoute2Create:", busRoute2Create)
+      ...data,
+    };
     if (this.busRoute) {
       const busRoute2Update = {
         ...busRoute2Create,
@@ -177,6 +223,7 @@ export class BusRouteDetailComponent implements OnInit {
           const updatedState = { ...history.state, busRoute: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus Route update successfully');
+          this.initialFormValue = this.busRouteDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -188,6 +235,11 @@ export class BusRouteDetailComponent implements OnInit {
       next: (res: BusRoute) => {
         if (res) {
           toast.success('Bus Route added successfully');
+          this.busRoute = res;
+          const updatedState = { ...history.state, busRoute: JSON.stringify(res) };
+          window.history.replaceState(updatedState, '', window.location.href);
+          this.router.navigate([], { queryParams: { id: res._id } });
+          this.initialFormValue = this.busRouteDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

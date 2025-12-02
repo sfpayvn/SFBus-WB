@@ -5,28 +5,31 @@ import { CredentialService } from '../services/credential.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-    constructor(private credentialService: CredentialService) { }
+  constructor(private credentialService: CredentialService) {}
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return new Observable(observer => {
-            this.credentialService.getToken().then(token => {
-                if (token) {
-                    const cloned = req.clone({
-                        headers: req.headers.set('Authorization', `Bearer ${token}`)
-                    });
-                    next.handle(cloned).subscribe({
-                        next: event => observer.next(event),
-                        error: err => observer.error(err),
-                        complete: () => observer.complete()
-                    });
-                } else {
-                    next.handle(req).subscribe({
-                        next: event => observer.next(event),
-                        error: err => observer.error(err),
-                        complete: () => observer.complete()
-                    });
-                }
-            }).catch(err => observer.error(err));
-        });
-    }
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return new Observable((observer) => {
+      this.credentialService
+        .getToken()
+        .then((token) => {
+          if (token) {
+            const cloned = req.clone({
+              headers: req.headers.set('Authorization', `Bearer ${token}`),
+            });
+            next.handle(cloned).subscribe({
+              next: (event) => observer.next(event),
+              error: (err) => observer.error(err),
+              complete: () => observer.complete(),
+            });
+          } else {
+            next.handle(req).subscribe({
+              next: (event) => observer.next(event),
+              error: (err) => observer.error(err),
+              complete: () => observer.complete(),
+            });
+          }
+        })
+        .catch((err) => observer.error(err));
+    });
+  }
 }

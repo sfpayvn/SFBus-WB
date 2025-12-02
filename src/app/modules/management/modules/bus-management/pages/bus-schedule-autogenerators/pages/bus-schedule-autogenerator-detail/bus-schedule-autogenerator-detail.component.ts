@@ -1,41 +1,72 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { BusScheduleAutoGeneratorsService } from '../../service/bus-schedule-autogenerators.servive';
-import { BusScheduleAutoGenerator, BusScheduleAutoGenerator2Create, BusScheduleAutoGenerator2Update, SpecificTimeSlot, SpecificTimeSlot2Create } from '../../model/bus-schedule-autogenerator.model';
+import {
+  BusScheduleAutoGenerator,
+  BusScheduleAutoGenerator2Create,
+  BusScheduleAutoGenerator2Update,
+  SpecificTimeSlot,
+  SpecificTimeSlot2Create,
+} from '../../model/bus-schedule-autogenerator.model';
 import { combineLatest } from 'rxjs';
 import { BusScheduleTemplatesService } from '../../../bus-schedule-templates/service/bus-schedule-templates.servive';
 import { BusScheduleTemplate } from '../../../bus-schedule-templates/model/bus-schedule-template.model';
 import moment from 'moment';
 
-
 @Component({
   selector: 'app-bus-schedule-autogenerator-detail',
   templateUrl: './bus-schedule-autogenerator-detail.component.html',
   styleUrl: './bus-schedule-autogenerator-detail.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
-
   busScheduleAutoGeneratorDetailForm!: FormGroup;
 
-  busScheduleAutoGenerator!: BusScheduleAutoGenerator;
+  @Input() busScheduleAutoGenerator!: BusScheduleAutoGenerator;
+  @Input() startDate?: Date;
+  @Input() isDialog: boolean = false;
 
-  daysOfWeek: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  daysOfWeek: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  busScheduleAutoGeneratorStatuses = [
+    {
+      value: 'un_published',
+      label: 'Chưa xuất bản',
+    },
+    {
+      value: 'scheduled',
+      label: 'Đã lên lịch',
+    },
+    {
+      value: 'cancelled',
+      label: 'Đã hủy',
+    },
+    {
+      value: 'in_progress',
+      label: 'Đang diễn ra',
+    },
+    {
+      value: 'completed',
+      label: 'Đã hoàn thành',
+    },
+  ];
 
   busScheduleTemplates: BusScheduleTemplate[] = [];
 
   isNonEndDate: boolean = false;
+
+  @Output() saveScheduleEvent = new EventEmitter<BusScheduleAutoGenerator>();
+
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
     private location: Location,
     private busScheduleAutoGeneratorsService: BusScheduleAutoGeneratorsService,
     private busScheduleTemplatesService: BusScheduleTemplatesService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
@@ -43,9 +74,12 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   }
 
   async getQueryParams() {
-    const params = history.state;
-    if (params) {
-      this.busScheduleAutoGenerator = params["busScheduleAutoGenerator"] ? JSON.parse(params["busScheduleAutoGenerator"]) : null;
+    // Chỉ lấy từ history.state nếu không có giá trị từ @Input()
+    if (!this.busScheduleAutoGenerator) {
+      const params = history.state;
+      if (params && params['busScheduleAutoGenerator']) {
+        this.busScheduleAutoGenerator = JSON.parse(params['busScheduleAutoGenerator']);
+      }
     }
   }
 
@@ -60,14 +94,25 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   }
 
   async initForm() {
-
     const currentDate = new Date().toISOString(); // Format as 'YYYY-MM-DD'
 
-    const { name = '', busScheduleTemplateId = '', startDate = currentDate, endDate = '', repeatType = 'days', specificTimeSlots = [], repeatInterval = 1, repeatDaysPerWeek = [], preGenerateDays = 0 } = this.busScheduleAutoGenerator || {};
-    console.log("🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ specificTimeSlots:", specificTimeSlots)
+    const {
+      name = '',
+      busScheduleTemplateId = '',
+      startDate = currentDate,
+      endDate = '',
+      repeatType = 'days',
+      specificTimeSlots = [],
+      repeatInterval = 1,
+      repeatDaysPerWeek = [],
+      preGenerateDays = 0,
+      status = 'un_published',
+    } = this.busScheduleAutoGenerator || {};
+    console.log('🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ preGenerateDays:', preGenerateDays);
 
     this.busScheduleAutoGeneratorDetailForm = this.fb.group({
       name: [name, [Validators.required]],
+      status: [status, [Validators.required]],
       busScheduleTemplateId: [busScheduleTemplateId, [Validators.required]],
       startDate: [startDate, [Validators.required]],
       endDate: [endDate, endDate ? [Validators.required] : []],
@@ -75,13 +120,13 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
       repeatInterval: [repeatInterval],
       specificTimeSlots: this.fb.array([
         this.fb.group({
-          timeSlot: [currentDate, Validators.required]
-        })
+          timeSlot: [currentDate, Validators.required],
+        }),
       ]),
       repeatDaysPerWeek: [repeatDaysPerWeek, repeatType == 'weeks' ? [Validators.required] : []],
       preGenerateDays: [preGenerateDays],
     });
-    console.log("🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ repeatDaysPerWeek:", repeatDaysPerWeek)
+    console.log('🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ repeatDaysPerWeek:', repeatDaysPerWeek);
 
     if (specificTimeSlots && specificTimeSlots.length > 0) {
       this.specificTimeSlots.clear();
@@ -107,12 +152,9 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   changeRepeatType(repeatType: string) {
     const form = this.busScheduleAutoGeneratorDetailForm;
     const daysControl = form.get('repeatDaysPerWeek');
-    repeatType === 'weeks'
-      ? daysControl?.setValidators(Validators.required)
-      : daysControl?.clearAsyncValidators();
+    repeatType === 'weeks' ? daysControl?.setValidators(Validators.required) : daysControl?.clearAsyncValidators();
     form.get('endDate')?.updateValueAndValidity();
   }
-
 
   chooseDayOfWeek(day: string): void {
     const control = this.busScheduleAutoGeneratorDetailForm.get('repeatDaysPerWeek');
@@ -122,7 +164,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
 
     // Toggle the day: if it exists, remove it; if not, add it.
     if (currentDays.includes(day)) {
-      currentDays = currentDays.filter(d => d !== day);
+      currentDays = currentDays.filter((d) => d !== day);
     } else {
       currentDays.push(day);
     }
@@ -130,7 +172,6 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     control.setValue(currentDays);
     control.updateValueAndValidity();
   }
-
 
   createSpecificTimeSlot(timeSlot?: string): FormGroup {
     // Lấy FormArray chứa các specific time slots
@@ -142,7 +183,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     defaultTime.setMinutes(minutes);
     defaultTime.setSeconds(seconds);
 
-    console.log("🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ createSpecificTimeSlot ~ defaultTime:", defaultTime)
+    console.log('🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ createSpecificTimeSlot ~ defaultTime:', defaultTime);
 
     if (!timeSlot && specificTimeSlots && specificTimeSlots.length > 0) {
       // Lấy phần tử cuối cùng trong FormArray
@@ -156,10 +197,9 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     }
 
     return this.fb.group({
-      timeSlot: [defaultTime, Validators.required]
+      timeSlot: [defaultTime, Validators.required],
     });
   }
-
 
   addSpecificTimeSlot() {
     this.specificTimeSlots.push(this.createSpecificTimeSlot());
@@ -213,9 +253,9 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   }
 
   checkTimeDisableTime(idx: number): {
-    nzDisabledHours: () => number[],
-    nzDisabledMinutes: (selectedHour: number) => number[],
-    nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => number[]
+    nzDisabledHours: () => number[];
+    nzDisabledMinutes: (selectedHour: number) => number[];
+    nzDisabledSeconds: (selectedHour: number, selectedMinute: number) => number[];
   } {
     if (idx === 0) {
       const now = new Date();
@@ -241,7 +281,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
             return Array.from({ length: currentSecond }, (_, i) => i);
           }
           return [];
-        }
+        },
       };
     } else {
       // Lấy FormArray chứa các specificTimeSlots (đã có trong form của bạn)
@@ -275,7 +315,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
             return Array.from({ length: baseSecond }, (_, i) => i);
           }
           return [];
-        }
+        },
       };
     }
   }
@@ -306,29 +346,28 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log("🚀 ~ onSubmit ~ this.busScheduleAutoGeneratorDetailForm:", this.busScheduleAutoGeneratorDetailForm)
+    console.log('🚀 ~ onSubmit ~ this.busScheduleAutoGeneratorDetailForm:', this.busScheduleAutoGeneratorDetailForm);
     if (!this.busScheduleAutoGeneratorDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busScheduleAutoGeneratorDetailForm);
       return;
     }
 
     const data = this.busScheduleAutoGeneratorDetailForm.getRawValue() as BusScheduleAutoGenerator2Create;
-    data.endDate = this.isNonEndDate ? '' : data.endDate
+    data.endDate = this.isNonEndDate ? '' : data.endDate;
 
     const busScheduleAutoGenerator2Create: BusScheduleAutoGenerator2Create = {
       ...data,
       specificTimeSlots: data.specificTimeSlots.map((specificTimeSlot: SpecificTimeSlot2Create) => {
-
         const timeSlotDate = new Date(specificTimeSlot.timeSlot);
 
         const hour = timeSlotDate.getHours().toString().padStart(2, '0');
         const minutes = timeSlotDate.getMinutes().toString().padStart(2, '0');
         const seconds = timeSlotDate.getSeconds().toString().padStart(2, '0');
 
-        const timeSlot = `${hour}:${minutes}:${seconds}`
+        const timeSlot = `${hour}:${minutes}:${seconds}`;
 
         return {
-          timeSlot: timeSlot
+          timeSlot: timeSlot,
         };
       }) as SpecificTimeSlot2Create[],
     };
@@ -369,4 +408,3 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     });
   }
 }
-

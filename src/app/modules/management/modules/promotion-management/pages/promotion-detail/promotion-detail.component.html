@@ -1,0 +1,255 @@
+<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
+      (click)="backPage()">
+      Back
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 flex min-w-full flex-col rounded-xl border bg-white p-2">
+  <div class="flex justify-center p-2">
+    <label class="text-xl font-semibold">
+      <span *ngIf="mode == 'update'"> Sửa Promotion </span>
+      <span *ngIf="mode == 'create'"> Thêm Promotion </span>
+    </label>
+  </div>
+  <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+    <form [formGroup]="mainForm" nz-form *ngIf="mainForm" (ngSubmit)="onSubmit()">
+      <div class="flex gap-4">
+        <div class="flex h-full w-3/12 flex-col">
+          <div class="flex flex-col gap-2">
+            <nz-form-label [nzNoColon]="true" nzFor="image" class="!flex !items-center !justify-start !font-medium"
+              >Hình ảnh</nz-form-label
+            >
+            @if(!promotionImage){
+            <div class="flex flex-col items-center">
+              <div
+                nz-popover
+                [nzPopoverContent]="contentIconTemplate"
+                class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500"
+                [ngClass]="{'border-red-500' : mainForm.controls['imageId'].errors?.['required']
+            && mainForm.controls['imageId'].touched}">
+                <div class="mx-auto-8 left-0 m-auto flex h-full w-full flex-wrap content-center items-center px-4">
+                  <div class="flex w-full flex-wrap justify-center pb-5 text-center">
+                    <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
+                    <p class="w-full pt-1 text-sm">Tải ảnh lên</p>
+                  </div>
+                </div>
+              </div>
+              <ng-template #contentIconTemplate>
+                <div class="grap-2 grid w-96 cursor-pointer grid-cols-2">
+                  <div class="relative flex h-12 cursor-pointer flex-wrap items-center justify-center px-2">
+                    <input
+                      formControlName="imageId"
+                      type="file"
+                      accept=".svg"
+                      class="z-50 block h-full w-full cursor-pointer opacity-0"
+                      (change)="onFileChange($event)" />
+                    <div
+                      class="absolute top-0 right-0 left-0 m-auto flex h-full w-full cursor-pointer flex-wrap content-center items-center justify-center">
+                      <svg-icon svgClass="w-7 h-7" src="assets/icons/upload.svg"></svg-icon>
+                      <p class="w-full pt-1 text-center text-xs">Tập tin cục bộ</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex h-12 cursor-pointer flex-wrap items-center justify-center px-2"
+                    (click)="openFilesCenterDialog()">
+                    <svg-icon svgClass="w-7 h-7" src="assets/icons/media.svg"></svg-icon>
+                    <p class="w-full pt-1 text-center text-xs">Trung tâm phương tiện</p>
+                  </div>
+                </div>
+              </ng-template>
+              <p
+                class="animate-fade-in-down mt-1 text-xs text-red-500"
+                *ngIf="mainForm.controls['imageId'].errors?.['required'] && mainForm.controls['imageId'].touched">
+                Vui lòng upload ảnh cho trường này
+              </p>
+            </div>
+            } @else {
+            <div class="flex w-full justify-center">
+              <div class="relative h-32 w-32 select-none rounded border border-gray-200">
+                <div class="flex h-full w-full cursor-pointer items-center justify-center p-2">
+                  <img class="w-full" [src]="promotionImage" />
+                  <div
+                    class="action-preview-img absolute top-0 right-0 flex h-full w-full items-center justify-center opacity-0">
+                    <button (click)="removeFileImage()">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-4 text-white">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        <div class="flex h-full w-9/12 flex-col gap-4">
+          <div class="flex w-full gap-4">
+            <div class="flex w-full flex-col">
+              <nz-form-item class="!mb-0 !flex !flex-col">
+                <nz-form-label [nzNoColon]="true" nzFor="name" class="!flex !items-center !justify-start !font-medium"
+                  >Tên Promotion</nz-form-label
+                >
+                <nz-form-control [nzErrorTip]="mainFormNameErrorTpl" class="!flex flex-col">
+                  <nz-input-group [nzSuffix]="mainFormNameClearTpl" class="custom-nz-input-group">
+                    <input type="text" nz-input formControlName="name" placeholder="Nhập tên Promotion" />
+                  </nz-input-group>
+                  <ng-template #mainFormNameClearTpl>
+                    <span
+                      *ngIf="mainForm.controls['name'].value"
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      (click)="clearFormValue('name')"></span>
+                  </ng-template>
+                  <ng-template #mainFormNameErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.controls['name'].errors?.['required']) { Vui lòng nhập tên Promotion }
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="flex w-full flex-col">
+              <nz-form-item class="!mb-0 !flex !flex-col">
+                <nz-form-label [nzNoColon]="true" nzFor="code" class="!flex !items-center !justify-start !font-medium"
+                  >Promotion Code</nz-form-label
+                >
+                <nz-form-control [nzErrorTip]="mainFormCodeErrorTpl" class="!flex flex-col">
+                  <nz-input-group [nzSuffix]="mainFormCodeClearTpl" class="custom-nz-input-group">
+                    <input type="text" nz-input formControlName="code" placeholder="Nhập Promotion Code" />
+                  </nz-input-group>
+                  <ng-template #mainFormCodeClearTpl>
+                    <span
+                      *ngIf="mainForm.controls['code'].value"
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      (click)="clearFormValue('code')"></span>
+                  </ng-template>
+                  <ng-template #mainFormCodeErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.controls['code'].errors?.['required']) { Vui lòng nhập Promotion Code }
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            @if(mode == 'update') {
+            <div class="flex flex-col">
+              <nz-form-item class="!mb-0 !flex !flex-col">
+                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                  >Status</nz-form-label
+                >
+                <nz-form-control class="!flex !max-h-[42px] flex-col">
+                  <nz-select
+                    class="custom-nz-select height-large !mt-0 !mb-0 !w-full promotion-status-{{
+                      mainForm.get('status')?.value
+                    }}"
+                    formControlName="status">
+                    @for (status of promotionStatuses; track status) {
+                    <nz-option [nzLabel]="status.label" [nzValue]="status.value"></nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            }
+          </div>
+          <div class="flex w-full gap-4">
+            <div class="block w-1/3">
+              <nz-form-item class="!mb-0 !flex !flex-col">
+                <nz-form-label
+                  [nzNoColon]="true"
+                  nzFor="discountType"
+                  class="!flex !items-center !justify-start !font-medium"
+                  >Tình Trạng Tenant</nz-form-label
+                >
+                <nz-form-control class="!flex !max-h-[42px] flex-col">
+                  <nz-select class="custom-nz-select height-large !mt-0 !mb-0 !w-full" formControlName="discountType">
+                    @for (discountType of promotionsDiscountTypes; track discountType) {
+                    <nz-option [nzLabel]="discountType.label" [nzValue]="discountType.value"></nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="block w-1/3">
+              <nz-form-item class="!mb-0 !flex !flex-col">
+                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                  >Discount Value</nz-form-label
+                >
+                <nz-form-control [nzErrorTip]="mainFormDiscountValueErrorTpl" class="!flex flex-col">
+                  <nz-input-group [nzSuffix]="mainFormDiscountValueClearTpl" class="custom-nz-input-group">
+                    <input type="text" nz-input formControlName="discountValue" placeholder="Nhập Discount Value" />
+                  </nz-input-group>
+                  <ng-template #mainFormDiscountValueClearTpl>
+                    <span
+                      *ngIf="mainForm.controls['discountValue'].value"
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      (click)="clearFormValue('discountValue')"></span>
+                  </ng-template>
+                  <ng-template #mainFormDiscountValueErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.controls['discountValue'].errors?.['required']) { Vui lòng nhập Discount Value }
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="block w-1/3">
+              <nz-form-item class="!w-full">
+                <nz-form-label nzFor="name" class="!flex !items-center !justify-start !text-sm"
+                  >Expire Date</nz-form-label
+                >
+                <nz-form-control [nzErrorTip]="mainFormExpireDateErrorTpl" class="!flex !w-full flex-col">
+                  <nz-date-picker
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
+                    formControlName="expireDate"
+                    class="!flex h-[36px] !w-full !rounded border-gray-200"></nz-date-picker>
+                  <ng-template #mainFormExpireDateErrorTpl let-control>
+                    <span class="mt-1 !text-xs text-red-500">
+                      @if (mainForm.get('expireDate')?.errors?.['required']) { Vui lòng nhập vào trường này }
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-5 flex w-full justify-end">
+        <button
+          class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+          nz-button
+          capCheck
+          [capModule]="'promotion'"
+          [capFunction]="'create'"
+          nzType="default"
+          type="submit">
+          SAVE
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

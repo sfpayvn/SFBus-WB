@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { Bus, SearchBus } from './model/bus.model';
+import { Bus, Bus2Create, SearchBus } from './model/bus.model';
 import { BusesService } from './service/buses.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
@@ -11,11 +11,14 @@ import { Router } from '@angular/router';
   selector: 'app-buses',
   templateUrl: './buses.component.html',
   styleUrls: ['./buses.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusesComponent implements OnInit {
   searchBus: SearchBus = new SearchBus();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   pageIdx: number = 1;
   pageSize: number = 5;
@@ -31,7 +34,7 @@ export class BusesComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -43,7 +46,7 @@ export class BusesComponent implements OnInit {
       next: (res: SearchBus) => {
         if (res) {
           this.searchBus = res;
-          console.log("🚀 ~ BusesComponent ~ this.busesService.searchBus ~ this.searchBus:", this.searchBus)
+          console.log('🚀 ~ BusesComponent ~ this.busesService.searchBus ~ this.searchBus:', this.searchBus);
           this.totalItem = this.searchBus.totalItem;
           this.totalPage = this.searchBus.totalPage;
         }
@@ -56,23 +59,41 @@ export class BusesComponent implements OnInit {
     });
   }
 
-  toggleBus(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBus.buses = this.searchBus.buses.map((bus: Bus) => ({
-      ...bus,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const buses = event as readonly Bus[];
+    this.searchBus.buses = [...buses];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBus.buses.some((bus) => !bus.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBus.buses;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBus.buses.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBus(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete Bus',
         content:
@@ -80,13 +101,13 @@ export class BusesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -107,11 +128,27 @@ export class BusesComponent implements OnInit {
 
   editBus(bus: Bus): void {
     const params = { bus: JSON.stringify(bus) };
-    this.router.navigateByUrl('/bus-management/buses/bus-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/buses/bus-detail', { state: params });
   }
 
   addBus(): void {
-    this.router.navigate(['/bus-management/buses/bus-detail']);
+    this.router.navigate(['/management/bus-management/buses/bus-detail']);
+  }
+
+  cloneData(bus: Bus): void {
+    delete (bus as any)._id;
+    let bus2Create = new Bus2Create();
+    bus2Create = { ...bus2Create, ...bus };
+
+    this.busesService.createBus(bus2Create).subscribe({
+      next: (res: Bus) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
   }
 
   reloadBusPage(data: any): void {
@@ -138,7 +175,7 @@ export class BusesComponent implements OnInit {
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
-        onClick: () => { },
+        onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });

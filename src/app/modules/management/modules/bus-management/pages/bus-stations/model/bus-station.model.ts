@@ -11,13 +11,14 @@ export class BusStation {
   detailAddress: string = '';
   location: string = '';
   provinceId: string = '';
-  selected: boolean = false;
+  isDefault: boolean = false;
 }
 
 export class BusStation2Create {
   icon!: string;
   name: string = '';
   detailAddress: string = '';
+  location: string = '';
   provinceId: string = '';
 }
 

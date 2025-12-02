@@ -2,76 +2,110 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { BusLayoutTemplate, SearchBusLayoutTemplate } from './model/bus-layout-templates.model';
+import {
+  BusLayoutTemplate,
+  BusLayoutTemplate2Create,
+  SearchBusLayoutTemplate,
+} from './model/bus-layout-templates.model';
 import { BusLayoutTemplatesService } from './service/bus-layout-templates.servive';
 import { Router } from '@angular/router';
 import { Utils } from 'src/app/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-bus-layout-templates',
   templateUrl: './bus-layout-templates.component.html',
   styleUrls: ['./bus-layout-templates.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusLayoutTemplatesComponent implements OnInit {
   searchBusLayoutTemplate: SearchBusLayoutTemplate = new SearchBusLayoutTemplate();
-  selectAll: boolean = false;
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
+
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingBusLayoutTemplate: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
-    private busTemplateService: BusLayoutTemplatesService,
+    private busLayoutTemplatesService: BusLayoutTemplatesService,
     private dialog: MatDialog,
     private router: Router,
-    private utils: Utils
-  ) { }
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
   }
 
   loadData(): void {
-    this.isLoadingBusLayoutTemplate = true;
-    this.busTemplateService.searchBusLayoutTemplate(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.isLoading = true;
+    this.busLayoutTemplatesService.searchBusLayoutTemplate(this.searchParams).subscribe({
       next: (res: SearchBusLayoutTemplate) => {
         if (res) {
           this.searchBusLayoutTemplate = res;
           this.totalItem = this.searchBusLayoutTemplate.totalItem;
           this.totalPage = this.searchBusLayoutTemplate.totalPage;
         }
-        this.isLoadingBusLayoutTemplate = false;
+        this.isLoading = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingBusLayoutTemplate = false;
+        this.isLoading = false;
       },
     });
   }
 
-  toggleBusLayoutTemplate(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusLayoutTemplate.busLayoutTemplates = this.searchBusLayoutTemplate.busLayoutTemplates.map((busTemplate: BusLayoutTemplate) => ({
-      ...busTemplate,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const busLayoutTemplates = event as readonly BusLayoutTemplate[];
+    this.searchBusLayoutTemplate.busLayoutTemplates = [...busLayoutTemplates];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusLayoutTemplate.busLayoutTemplates.some((busLayoutTemplate) => !busLayoutTemplate.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusLayoutTemplate.busLayoutTemplates;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
   }
 
-  deleteBusLayoutTemplate(id: string): void {
+  onAllChecked(checked: boolean): void {
+    this.searchBusLayoutTemplate.busLayoutTemplates.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  deleteBusLayoutTemplate(busLayoutTemplate: BusLayoutTemplate): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete BusLayoutTemplate',
         content:
@@ -79,22 +113,24 @@ export class BusLayoutTemplatesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.busTemplateService.deleteBusLayoutTemplate(id).subscribe({
+        this.busLayoutTemplatesService.deleteBusLayoutTemplate(busLayoutTemplate._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchBusLayoutTemplate.busLayoutTemplates = this.searchBusLayoutTemplate.busLayoutTemplates.filter((busLayoutTemplate) => busLayoutTemplate._id !== id);
+              this.searchBusLayoutTemplate.busLayoutTemplates = this.searchBusLayoutTemplate.busLayoutTemplates.filter(
+                (blt) => blt._id !== busLayoutTemplate._id,
+              );
               toast.success('BusLayoutTemplate deleted successfully');
             }
           },
@@ -106,27 +142,52 @@ export class BusLayoutTemplatesComponent implements OnInit {
 
   editBusLayoutTemplate(busLayoutTemplate: BusLayoutTemplate): void {
     const params = { busLayoutTemplate: JSON.stringify(busLayoutTemplate) };
-    this.router.navigateByUrl('/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
+      state: params,
+    });
   }
 
   addBusLayoutTemplate(): void {
-    this.router.navigate(['/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail']);
+    this.router.navigate(['/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail']);
   }
 
-  reloadBusLayoutTemplatePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  cloneData(busLayoutTemplate: BusLayoutTemplate): void {
+    delete (busLayoutTemplate as any)._id;
+    let busLayoutTemplate2Create = new BusLayoutTemplate2Create();
+    busLayoutTemplate2Create = { ...busLayoutTemplate2Create, ...busLayoutTemplate };
+
+    this.busLayoutTemplatesService.createBusLayoutTemplate(busLayoutTemplate2Create).subscribe({
+      next: (res: BusLayoutTemplate) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
+  }
+
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchBusLayoutTemplatePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortBusLayoutTemplatePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
   }
 }

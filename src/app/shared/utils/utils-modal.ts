@@ -9,44 +9,61 @@ import { MaterialDialogComponent } from '../components/material-dialog/material-
 export class UtilsModal {
   ref: ComponentRef<any> | undefined;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog) {}
 
   openModalConfirm(title: string, content: string, type?: string, btns?: any) {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: type || 'success'
+          type: type || 'success',
         },
         title: title,
         content: content,
         btn: btns || [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
+      },
+    });
+    return dialogRef.afterClosed();
+  }
+
+  openModalAlert(title: string, content: string, type?: string, btnLabel?: string) {
+    const dialogRef = this.dialog.open(MaterialDialogComponent, {
+      data: {
+        icon: {
+          type: type || 'info',
+        },
+        title: title,
+        content: content,
+        btn: [
+          {
+            label: btnLabel || 'OK',
+            type: 'submit',
+          },
+        ],
       },
     });
     return dialogRef.afterClosed();
   }
 
   openModal(component: any, data: any, size: string = 'small') {
-
     let height = '';
-    let width = ''
+    let width = '';
     if (size == 'small') {
-      height = width = '40%'
+      height = width = '40%';
     } else if (size == 'medium') {
-      height = width = '60%'
+      height = width = '60%';
     } else if (size == 'large') {
-      height = width = '80%'
-    }
-    else if (size == 'full') {
-      height = width = '100%'
+      height = width = '80%';
+    } else if (size == 'full') {
+      height = width = '100%';
     }
 
     const dialogRef = this.dialog.open(component, {
@@ -54,8 +71,35 @@ export class UtilsModal {
       width: width,
       maxWidth: width,
       panelClass: 'custom-dialog',
-      data: data
+      data: data,
     });
+    return dialogRef.afterClosed();
+  }
+
+  openContextModal(component: any, dataInput: any, event: any, id: string) {
+    const parentElement = (event.currentTarget as HTMLElement).closest(id);
+    if (!parentElement) return;
+
+    const rect = parentElement.getBoundingClientRect();
+
+    // Tính toán vị trí context modal
+    const position = {
+      top: `${rect.top}px`,
+      left: `${rect.left}px`,
+    };
+
+    const dialogRef = this.dialog.open(component, {
+      data: dataInput,
+      position: position,
+      panelClass: 'custom-context-modal',
+      backdropClass: 'custom-context-backdrop',
+      hasBackdrop: true,
+      disableClose: false,
+      width: `${rect.width}px`,
+      height: 'auto',
+      autoFocus: false,
+    });
+
     return dialogRef.afterClosed();
   }
 }

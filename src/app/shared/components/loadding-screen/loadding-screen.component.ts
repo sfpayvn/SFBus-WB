@@ -8,7 +8,7 @@ import { LoadingService } from '../../services/loading.service';
   selector: 'app-loadding-screen',
   templateUrl: './loadding-screen.component.html',
   styleUrl: './loadding-screen.component.scss',
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class LoaddingScreenComponent implements OnInit {
   @Input()
@@ -32,7 +32,7 @@ export class LoaddingScreenComponent implements OnInit {
             } else if (event instanceof RouteConfigLoadEnd) {
               this.loadingService.loadingOff();
             }
-          })
+          }),
         )
         .subscribe();
     }

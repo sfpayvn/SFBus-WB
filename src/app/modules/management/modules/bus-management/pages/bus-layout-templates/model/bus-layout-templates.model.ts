@@ -23,11 +23,11 @@ export class BusLayoutTemplate {
   name: string = '';
   seatLayouts: BusSeatLayoutTemplate[] = [];
   selected: boolean = false;
+  isDefault: boolean = false;
 }
 
-export interface BusLayoutTemplate2Create extends Omit<BusLayoutTemplate, '_id' | 'selected'> { }
-export class BusLayoutTemplate2Create {
-}
+export interface BusLayoutTemplate2Create extends Omit<BusLayoutTemplate, '_id' | 'selected'> {}
+export class BusLayoutTemplate2Create {}
 
 export class BusLayoutTemplate2Update extends BusLayoutTemplate2Create {
   _id: string = '';

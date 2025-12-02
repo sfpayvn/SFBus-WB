@@ -35,27 +35,23 @@ const routes: Routes = [
         path: 'buses/bus-detail',
         component: BusDetailComponent,
       },
-
-    ]
-  }, {
+    ],
+  },
+  {
     path: 'bus-schedule',
     component: BusManagementComponent,
     children: [
       {
         path: 'bus-schedules',
-        component: BusSchedulesComponent,
+        children: [
+          { path: 'calendar', component: BusSchedulesComponent, data: { view: 'calendar' } },
+          { path: 'scheduler', component: BusSchedulesComponent, data: { view: 'scheduler' } },
+          { path: '', pathMatch: 'full', redirectTo: 'calendar' },
+        ],
       },
       {
         path: 'bus-schedules/bus-schedule-detail',
         component: BusScheduleDetailComponent,
-      },
-      {
-        path: 'bus-schedule-templates',
-        component: BusScheduleTemplatesComponent,
-      },
-      {
-        path: 'bus-schedule-templates/bus-schedule-template-detail',
-        component: BusScheduleTemplateDetailComponent,
       },
       {
         path: 'bus-schedule-autogenerators',
@@ -65,7 +61,7 @@ const routes: Routes = [
         path: 'bus-schedule-autogenerators/bus-schedule-autogenerator-detail',
         component: BusScheduleAutoGeneratorDetailComponent,
       },
-    ]
+    ],
   },
   {
     path: 'bus-design',
@@ -78,6 +74,14 @@ const routes: Routes = [
       {
         path: 'bus-templates/bus-template-detail',
         component: BusTemplateDetailComponent,
+      },
+      {
+        path: 'bus-schedule-templates',
+        component: BusScheduleTemplatesComponent,
+      },
+      {
+        path: 'bus-schedule-templates/bus-schedule-template-detail',
+        component: BusScheduleTemplateDetailComponent,
       },
       {
         path: 'bus-routes',
@@ -95,10 +99,10 @@ const routes: Routes = [
         path: 'bus-layout-templates/bus-layout-template-detail',
         component: BusLayoutTemplateDetailComponent,
       },
-    ]
+    ],
   },
   {
-    path: 'bus-design',
+    path: 'bus-setting',
     component: BusManagementComponent,
     children: [
       {
@@ -121,15 +125,13 @@ const routes: Routes = [
         path: 'seat-type',
         component: SeatTypesComponent,
       },
-
-    ]
+    ],
   },
   { path: '**', redirectTo: 'errors/404' },
-
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class BusManagementRoutingModule { }
+export class BusManagementRoutingModule {}

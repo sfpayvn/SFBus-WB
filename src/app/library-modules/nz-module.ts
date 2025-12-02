@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule } from '@angular/core';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -15,39 +15,51 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzTableModule } from 'ng-zorro-antd/table';
 import { EyeInvisibleOutline } from '@ant-design/icons-angular/icons';
+import { NzAffixModule } from 'ng-zorro-antd/affix';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzCarouselModule } from 'ng-zorro-antd/carousel';
+import { NzQRCodeModule } from 'ng-zorro-antd/qr-code';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 
 @NgModule({
-    imports: [NzIconModule.forRoot([EyeInvisibleOutline])],
-    exports: [
-        NzSelectModule,
-        NzSwitchModule,
-        NzCheckboxModule,
-        NzTreeViewModule,
-        NzPipesModule,
-        NzAutocompleteModule,
-        NzDropDownModule,
-        NzTabsModule,
-        NzButtonModule,
-        NzToolTipModule,
-        NzInputModule,
-        NzFormModule,
-        NzPopoverModule,
-        NzRadioModule,
-        NzModalModule,
-        NzIconModule,
-        NzSkeletonModule,
-        NzDatePickerModule,
-        NzTimePickerModule,
-        NzSpinModule,
-        NzAvatarModule,
-        NzTableModule
-    ]
+  imports: [NzIconModule.forRoot([EyeInvisibleOutline])],
+  exports: [
+    NzSelectModule,
+    NzSwitchModule,
+    NzCheckboxModule,
+    NzTreeViewModule,
+    NzPipesModule,
+    NzAutocompleteModule,
+    NzDropDownModule,
+    NzTabsModule,
+    NzButtonModule,
+    NzToolTipModule,
+    NzInputModule,
+    NzFormModule,
+    NzPopoverModule,
+    NzRadioModule,
+    NzModalModule,
+    NzIconModule,
+    NzAffixModule,
+    NzDividerModule,
+    NzSpinModule,
+    NzDatePickerModule,
+    NzTableModule,
+    NzCollapseModule,
+    NzCarouselModule,
+    NzQRCodeModule,
+    NzSkeletonModule,
+    NzGridModule,
+    NzTagModule,
+    NzTimePickerModule,
+  ],
 })
-export class NZModule { }
+export class NZModule {}

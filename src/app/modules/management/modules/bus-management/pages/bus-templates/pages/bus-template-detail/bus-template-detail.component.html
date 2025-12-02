@@ -1,14 +1,19 @@
 <div class="mb-4 flex justify-end">
   <div class="inline-block space-x-4">
     <button
-      class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
       (click)="backPage()">
       Back
     </button>
   </div>
 </div>
 
-<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border px-6 py-2">
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+  <span class="mb-5 mt-2 text-xl font-bold">{{
+    defaultFlagService.isDefault(busTemplate) ? 'Chi Tiết' : busTemplate ? 'Chỉnh sửa' : 'Thêm mới'
+  }}</span>
+
   <form [formGroup]="busTemplateDetailForm" nz-form *ngIf="busTemplateDetailForm" (ngSubmit)="onSubmit()">
     <div class="flex gap-4">
       <div class="flex w-6/12">
@@ -21,12 +26,14 @@
               <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
             </nz-input-group>
             <ng-template #busTemplateDetailNameClearTpl>
+              @if(f['name'].value && !defaultFlagService.isDefault(busTemplate)) {
               <span
                 nz-icon
                 class="ant-input-clear-icon"
                 nzTheme="fill"
                 nzType="close-circle"
-                (click)="busTemplateDetailForm.controls['name'].patchValue('')"></span>
+                (click)="clearFormValue('name')"></span>
+              }
             </ng-template>
             <ng-template #busTemplateDetailNameErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
@@ -44,11 +51,14 @@
           <nz-form-control [nzErrorTip]="busTemplateDetailBusServiceIdsErrorTpl">
             <nz-select formControlName="busServiceIds" nzMode="multiple" nzPlaceHolder="Chọn Bus Services">
               @for (busService of busServices; track busService) {
-              <nz-option nzCustomContent [nzLabel]="busService.name" [nzValue]="busService._id">
+              <nz-option
+                nzCustomContent
+                [nzLabel]="busService.name + defaultFlagService.defaultTextFlag(busService)"
+                [nzValue]="busService._id">
                 <div class="flex items-center">
-                  <svg-icon [src]="busService.icon" [svgClass]="'h-5 w-5'"> </svg-icon>
+                  <svg-icon [src]="busService.iconId" [svgClass]="'h-5 w-5'"> </svg-icon>
                   <span class="pl-4 !font-medium">
-                    {{ busService.name }}
+                    {{ busService.name }} {{ defaultFlagService.defaultTextFlag(busService) }}
                   </span>
                 </div>
               </nz-option>
@@ -71,11 +81,14 @@
           >
           <nz-form-control [nzErrorTip]="busTemplateDetailBusTypeIdErrorTpl">
             <nz-select formControlName="busTypeId" nzPlaceHolder="Chọn Bus Type">
-              @for (busTypes of busTypes; track busTypes) {
-              <nz-option nzCustomContent [nzLabel]="busTypes.name" [nzValue]="busTypes._id">
+              @for (busType of busTypes; track busTypes) {
+              <nz-option
+                nzCustomContent
+                [nzLabel]="busType.name + defaultFlagService.defaultTextFlag(busType)"
+                [nzValue]="busType._id">
                 <div class="flex items-center">
                   <span class="pl-4 !font-medium">
-                    {{ busTypes.name }}
+                    {{ busType.name }} {{ defaultFlagService.defaultTextFlag(busType) }}
                   </span>
                 </div>
               </nz-option>
@@ -100,10 +113,13 @@
               nzPlaceHolder="Chọn Bus Layout Tempate"
               (ngModelChange)="chooseBusTemplate($event)">
               @for (busLayoutTemplate of busLayoutTemplates; track busLayoutTemplate) {
-              <nz-option nzCustomContent [nzLabel]="busLayoutTemplate.name" [nzValue]="busLayoutTemplate._id">
+              <nz-option
+                nzCustomContent
+                [nzLabel]="busLayoutTemplate.name + defaultFlagService.defaultTextFlag(busLayoutTemplate)"
+                [nzValue]="busLayoutTemplate._id">
                 <div class="flex items-center">
                   <span class="pl-4 !font-medium">
-                    {{ busLayoutTemplate.name }}
+                    {{ busLayoutTemplate.name }} {{ defaultFlagService.defaultTextFlag(busLayoutTemplate) }}
                   </span>
                 </div>
               </nz-option>
@@ -123,17 +139,19 @@
       <div class="flex justify-between">
         <label>Bus Layout Tempalte Review</label>
         <button
-          class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+          class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
           nz-button
           nzType="default"
-          (click)="editBusTempate()">
-          Edit Layout BusTempate
+          (click)="editBusLayoutTempate()">
+          {{ defaultFlagService.isDefault(busLayoutTemplateReview) ? 'Chi Tiết' : 'Chỉnh Sửa ' }}
+          Layout BusTemplate
         </button>
       </div>
       <ng-container *ngIf="busLayoutTemplateReview">
         <app-layout-matrix [busLayoutsMatrix]="busLayoutTemplateReview" [seatTypes]="seatTypes"></app-layout-matrix>
       </ng-container>
     </div>
+    @if(!defaultFlagService.isDefault(busTemplate)) {
     <div class="my-5 flex w-full justify-end">
       <button
         class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
@@ -143,5 +161,6 @@
         SAVE
       </button>
     </div>
+    }
   </form>
 </div>

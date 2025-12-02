@@ -5,36 +5,53 @@ import { MaterialDialogComponent } from 'src/app/shared/components/material-dial
 import { BusSchedulesService } from './service/bus-schedules.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
-import { BusSchedule, SearchBusSchedule } from './model/bus-schedule.model';
+import { BusSchedule, BusSchedule2Create, SearchBusSchedule } from './model/bus-schedule.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { BusScheduleDetailDialogComponent } from './components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
+import { EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
 
 @Component({
   selector: 'app-bus-schedules',
   templateUrl: './bus-schedules.component.html',
   styleUrls: ['./bus-schedules.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BusSchedulesComponent implements OnInit {
   searchBusSchedule: SearchBusSchedule = new SearchBusSchedule();
-  selectAll: boolean = false;
+
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
 
   searchParams = {
     pageIdx: 1,
-    startDate: '' as Date | '',
-    endDate: '' as Date | '',
     pageSize: 5,
     keyword: '',
-    sortBy: ''
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
   };
-
 
   totalPage: number = 0;
   totalItem: number = 0;
 
-  viewMode: string = 'calendar'
+  viewDisplayMode: string = 'calendar';
+  viewMode: 'list' | 'day' | 'week' | 'month' = 'week';
 
   isLoadingBusSchedule: boolean = false;
+
+  statusClasses = EVENT_STATUS_CLASSES;
+
+  busScheduleStatuses: { [key: string]: string } = {
+    un_published: 'Chưa xuất bản',
+    scheduled: 'Đã lên lịch',
+    cancelled: 'Đã hủy',
+    in_progress: 'Đang diễn ra',
+    completed: 'Đã hoàn thành',
+    overdue: 'Quá hạn',
+  };
 
   constructor(
     private busSchedulesService: BusSchedulesService,
@@ -42,20 +59,26 @@ export class BusSchedulesComponent implements OnInit {
     private utils: Utils,
     private utilsModal: UtilsModal,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
+    this.viewDisplayMode = this.pickModeFromUrl(this.router.url);
     this.setParamsToSearch();
     this.loadData();
   }
 
+  private pickModeFromUrl(url: string): string {
+    const path = url.split('?')[0].split('#')[0]; // bỏ query/hash
+    const last = path.split('/').filter(Boolean).pop() ?? '';
+    return last === 'scheduler' || last === 'schedule' ? 'table' : 'calendar';
+  }
+
   loadData(): void {
     this.isLoadingBusSchedule = true;
-    this.busSchedulesService.searchBusSchedule(this.searchParams).subscribe({
+    this.busSchedulesService.searchBusSchedule(this.searchParams, this.viewDisplayMode).subscribe({
       next: (res: SearchBusSchedule) => {
         if (res) {
           this.searchBusSchedule = res;
-          console.log("🚀 ~ BusesComponent ~ this.busSchedulesService.searchBus ~ this.searchBusSchedule:", this.searchBusSchedule)
           this.totalItem = this.searchBusSchedule.totalItem;
           this.totalPage = this.searchBusSchedule.totalPage;
         }
@@ -69,11 +92,27 @@ export class BusSchedulesComponent implements OnInit {
   }
 
   setParamsToSearch() {
-    if (this.viewMode === 'calendar') {
+    if (this.viewDisplayMode === 'calendar') {
       this.searchParams.pageSize = 999999999;
-      const currentDate = new Date(); // Lấy ngày hiện tại
-      const dayOfWeek = currentDate.getDay(); // 0 = Chủ nhật, 1 = Thứ hai, ...
+      this.calcStartEndDate();
+    } else {
+      this.searchParams = {
+        pageIdx: 1,
+        pageSize: 5,
+        keyword: '',
+        sortBy: {
+          key: 'createdAt',
+          value: 'descend',
+        },
+        filters: [] as any[],
+      };
+    }
+  }
 
+  calcStartEndDate() {
+    const currentDate = new Date(); // Lấy ngày hiện tại
+    if (this.viewMode === 'week') {
+      const dayOfWeek = currentDate.getDay(); // 0 = Chủ nhật, 1 = Thứ hai, ...
       // Tính ngày đầu tuần (Thứ hai)
       const startOfWeek = new Date(currentDate);
       startOfWeek.setDate(currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Điều chỉnh Chủ nhật về Thứ hai trước đó
@@ -82,38 +121,76 @@ export class BusSchedulesComponent implements OnInit {
       endOfWeek.setDate(startOfWeek.getDate() + 6); // Thêm 6 ngày để đến Chủ nhật cuối tuần
       endOfWeek.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
       startOfWeek.setHours(0, 0, 0, 0);
-      // Gán giá trị cho searchParams
-      this.searchParams.startDate = startOfWeek;
-      this.searchParams.endDate = endOfWeek;
-    } else {
-      this.searchParams = {
-        pageIdx: 1,
-        startDate: '',
-        endDate: '',
-        pageSize: 5,
-        keyword: '',
-        sortBy: ''
-      };
+
+      this.addOrReplaceFilters({ key: 'startDate', value: startOfWeek });
+      this.addOrReplaceFilters({ key: 'endDate', value: endOfWeek });
+    } else if (this.viewMode === 'month') {
+      // Tính ngày đầu tháng
+      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      // Tính ngày cuối tháng
+      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999); // Set thời gian cuối ngày
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      this.addOrReplaceFilters({ key: 'startDate', value: startOfMonth });
+      this.addOrReplaceFilters({ key: 'endDate', value: endOfMonth });
+    } else if (this.viewMode === 'day') {
+      // Tính toán cho chế độ ngày
+
+      const dayRange = this.getDayRange(currentDate);
+      this.addOrReplaceFilters({ key: 'startDate', value: dayRange.startOfDay });
+      this.addOrReplaceFilters({ key: 'endDate', value: dayRange.endOfDay });
     }
   }
 
-  toggleBusSchedule(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchBusSchedule.busSchedules = this.searchBusSchedule.busSchedules.map((busSchedule: BusSchedule) => ({
-      ...busSchedule,
-      selected: checked,
-    }));
+  getDayRange(date: Date) {
+    const startOfDay = new Date(date);
+    const endOfDay = new Date(date);
+
+    startOfDay.setHours(0, 0, 0, 0); // Đặt thời gian đầu ngày
+    endOfDay.setHours(23, 59, 59, 999); // Đặt thời gian cuối ngày
+
+    return {
+      startOfDay,
+      endOfDay,
+    };
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchBusSchedule.busSchedules.some((busSchedule) => !busSchedule.selected);
+  onCurrentPageDataChange(event: any): void {
+    const busSchedules = event as readonly BusSchedule[];
+    this.searchBusSchedule.busSchedules = [...busSchedules];
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchBusSchedule.busSchedules;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.searchBusSchedule.busSchedules.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
   }
 
   deleteBusSchedule(id: string): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete Bus',
         content:
@@ -121,13 +198,13 @@ export class BusSchedulesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
@@ -147,34 +224,59 @@ export class BusSchedulesComponent implements OnInit {
   }
 
   editBusSchedule(busSchedule: any): void {
-    if (this.viewMode == 'calendar') {
+    if (this.viewDisplayMode == 'calendar') {
       const busSchedule2Edit = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
-      this.utilsModal.openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large').subscribe((busSchedule: BusSchedule) => {
-        if (!busSchedule) return;
-        this.loadData();
-      });
-      return
+      this.utilsModal
+        .openModal(BusScheduleDetailDialogComponent, { busSchedule: busSchedule2Edit }, 'large')
+        .subscribe((isReloadData: boolean) => {
+          if (!isReloadData) return;
+          this.loadData();
+        });
+      return;
     }
     const params = { busSchedule: JSON.stringify(busSchedule) };
-    this.router.navigateByUrl('/bus-management/bus-schedule/bus-schedules/bus-schedule-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail', {
+      state: params,
+    });
   }
 
   addBusSchedule(startDate?: Date): void {
-    if (this.viewMode == 'calendar') {
-      this.utilsModal.openModal(BusScheduleDetailDialogComponent, { startDate }, 'large').subscribe((busSchedule: BusSchedule) => {
-        if (!busSchedule) return;
-        this.loadData();
-      });
-      return
+    if (this.viewDisplayMode == 'calendar') {
+      this.utilsModal
+        .openModal(BusScheduleDetailDialogComponent, { startDate }, 'large')
+        .subscribe((isReloadData: boolean) => {
+          if (!isReloadData) return;
+          this.loadData();
+        });
+      return;
     }
-    this.router.navigate(['/bus-management/bus-schedule/bus-schedules/bus-schedule-detail']);
+    this.router.navigate(['/management/bus-management/bus-schedule/bus-schedules/bus-schedule-detail']);
+  }
+
+  cloneData(busSchedule: any): void {
+    const busSchedule2Clone = this.searchBusSchedule.busSchedules.find((b: BusSchedule) => b._id == busSchedule._id);
+
+    delete (busSchedule2Clone as any)._id;
+    let busSchedule2Create = new BusSchedule2Create();
+    busSchedule2Create = { ...busSchedule2Create, ...busSchedule2Clone };
+    busSchedule2Create.status = 'un_published';
+
+    this.busSchedulesService.createBusSchedule(busSchedule2Create).subscribe({
+      next: (res: BusSchedule) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
   }
 
   reloadBusSchedulePage(data: any): void {
     this.searchParams = {
       ...this.searchParams,
-      ...data
-    }
+      ...data,
+    };
     this.loadData();
   }
 
@@ -182,29 +284,29 @@ export class BusSchedulesComponent implements OnInit {
     this.searchParams = {
       ...this.searchParams,
       pageIdx: 1,
-      keyword
-    }
+      keyword,
+    };
     this.loadData();
   }
 
-  sortBusSchedulePage(sortBy: string) {
+  sortBusSchedulePage(sortBy: { key: string; value: string }) {
     this.searchParams = {
       ...this.searchParams,
-      sortBy
-    }
+      sortBy,
+    };
     this.loadData();
   }
 
   reLoadDataEvent(params: { startDate: Date; endDate: Date }): void {
-    this.searchParams = {
-      ...this.searchParams,
-      ...params
-    }
+    this.addOrReplaceFilters({ key: 'startDate', value: params.startDate });
+    this.addOrReplaceFilters({ key: 'endDate', value: params.endDate });
     // Xử lý logic theo khoảng thời gian startDate và endDate
     this.loadData();
   }
 
-  convertToCalendarEventData(busSchedules: BusSchedule[]): { _id: string, name: string; startDate: Date, status: string }[] {
+  convertToCalendarEventData(
+    busSchedules: BusSchedule[],
+  ): { _id: string; name: string; startDate: Date; status: string }[] {
     // Kiểm tra xem busSchedules có dữ liệu hay không
     if (!busSchedules || busSchedules.length === 0) {
       return [];
@@ -213,17 +315,29 @@ export class BusSchedulesComponent implements OnInit {
     const events = busSchedules.map((schedule: any) => {
       return {
         _id: schedule._id,
-        name: schedule.name || "Unnamed Event",
+        name: schedule.name || 'Unnamed Event',
         startDate: new Date(schedule.startDate),
-        status: schedule.status
+        status: schedule.status,
       };
     });
     return events;
   }
 
-  changeViewMode(viewMode: string) {
-    this.viewMode = viewMode;
+  changeViewDisplayMode(viewDisplayMode: string) {
+    this.viewDisplayMode = viewDisplayMode;
     this.setParamsToSearch();
     this.loadData();
+  }
+
+  addOrReplaceFilters(newItem: { key: string; value: any }): void {
+    const idx = this.searchParams.filters.findIndex((i) => i.key === newItem.key && i.value === newItem.value);
+
+    if (idx > -1) {
+      // Thay thế phần tử cũ
+      this.searchParams.filters[idx] = newItem;
+    } else {
+      // Thêm mới
+      this.searchParams.filters.push(newItem);
+    }
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BusTemplate, BusTemplate2Create, BusTemplate2Update } from '../../model/bus-template.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
 import { BusService } from '../../../bus-services/model/bus-service.model';
 import { BusServicesService } from '../../../bus-services/service/bus-services.servive';
 import { combineLatest } from 'rxjs';
@@ -15,6 +15,8 @@ import { toast } from 'ngx-sonner';
 import { BusTemplatesService } from '../../service/bus-templates.servive';
 import { BusLayoutTemplate } from '../../../bus-layout-templates/model/bus-layout-templates.model';
 import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service/bus-layout-templates.servive';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -23,10 +25,9 @@ interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   selector: 'app-bus-template-detail',
   templateUrl: './bus-template-detail.component.html',
   styleUrl: './bus-template-detail.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class BusTemplateDetailComponent implements OnInit {
-
   busTemplateDetailForm!: FormGroup;
 
   busServices: BusService[] = [];
@@ -41,6 +42,8 @@ export class BusTemplateDetailComponent implements OnInit {
 
   busTemplate!: BusTemplate;
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
@@ -51,18 +54,19 @@ export class BusTemplateDetailComponent implements OnInit {
     private seatTypesService: SeatTypesService,
     private busTemplatesService: BusTemplatesService,
     private router: Router,
-  ) { }
+    public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
+  ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
     this.initData();
   }
 
-
   async getQueryParams() {
     const params = history.state;
     if (params) {
-      this.busTemplate = params["busTemplate"] ? JSON.parse(params["busTemplate"]) : null;
+      this.busTemplate = params['busTemplate'] ? JSON.parse(params['busTemplate']) : null;
     }
   }
 
@@ -84,43 +88,87 @@ export class BusTemplateDetailComponent implements OnInit {
   }
 
   private async initForm() {
-
     const { name = '', busServiceIds = [], busTypeId = '', busLayoutTemplateId = '' } = this.busTemplate || {};
 
     this.busTemplateDetailForm = this.fb.group({
-      name: [name, [Validators.required]],
-      busServiceIds: [busServiceIds ?? [], [Validators.required]],
-      busTypeId: [busTypeId, [Validators.required]],
-      busLayoutTemplateId: [busLayoutTemplateId, [Validators.required]],
+      name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busTemplate) }, [Validators.required]],
+      busServiceIds: [
+        { value: busServiceIds ?? [], disabled: this.defaultFlagService.isDefault(this.busTemplate) },
+        [Validators.required],
+      ],
+      busTypeId: [
+        { value: busTypeId, disabled: this.defaultFlagService.isDefault(this.busTemplate) },
+        [Validators.required],
+      ],
+      busLayoutTemplateId: [
+        { value: busLayoutTemplateId, disabled: this.defaultFlagService.isDefault(this.busTemplate) },
+        [Validators.required],
+      ],
     });
-
 
     if (this.busTemplateDetailForm.get('busLayoutTemplateId')?.value) {
       this.chooseBusTemplate(this.busTemplateDetailForm.get('busLayoutTemplateId')?.value);
     }
+
+    this.initialFormValue = this.busTemplateDetailForm.getRawValue();
+  }
+
+  get f() {
+    return this.busTemplateDetailForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = this.busTemplateDetailForm.getRawValue();
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   async chooseBusTemplate(busLayoutTemplateId: string) {
-    this.busLayoutTemplateReview = this.busLayoutTemplates.find((busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === busLayoutTemplateId) as BusTemplateWithLayoutsMatrix;
+    this.busLayoutTemplateReview = this.busLayoutTemplates.find(
+      (busLayoutTemplate: BusLayoutTemplate) => busLayoutTemplate._id === busLayoutTemplateId,
+    ) as BusTemplateWithLayoutsMatrix;
   }
 
   backPage() {
-    this.location.back();
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
-  editBusTempate() {
-    const allowedKeys = ["_id", "name", "seatLayouts"]; // Danh sách các thuộc tính trong BusTemplate
+  editBusLayoutTempate() {
+    const allowedKeys = ['_id', 'name', 'seatLayouts', 'isDefault']; // Danh sách các thuộc tính trong BusTemplate
     const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
-      Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key))
+      Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key)),
     ) as BusLayoutTemplate;
 
     // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
-    const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
+    const params = { busLayoutTemplate: JSON.stringify(combinedBusTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
+      state: params,
+    });
   }
 
+  clearFormValue(controlName: string) {
+    if (this.defaultFlagService.isDefault(this.busTemplate)) return;
+
+    const control = this.busTemplateDetailForm.get(controlName);
+    if (control) {
+      control.setValue('');
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
+  }
 
   onSubmit() {
     if (!this.busTemplateDetailForm.valid) {
@@ -128,10 +176,15 @@ export class BusTemplateDetailComponent implements OnInit {
       return;
     }
 
+    // Check if there are any changes
+    if (!this.hasFormChanged()) {
+      return;
+    }
+
     const data = this.busTemplateDetailForm.getRawValue();
     const busTemplate2Create: BusTemplate2Create = {
-      ...data
-    }
+      ...data,
+    };
 
     if (this.busTemplate) {
       const busTemplate2Update = {
@@ -153,6 +206,7 @@ export class BusTemplateDetailComponent implements OnInit {
           const updatedState = { ...history.state, busTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus update successfully');
+          this.initialFormValue = this.busTemplateDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -163,7 +217,12 @@ export class BusTemplateDetailComponent implements OnInit {
     this.busTemplatesService.createBusTemplate(busTemplate2Create).subscribe({
       next: (res: BusTemplate) => {
         if (res) {
+          this.busTemplate = res;
+          const updatedState = { ...history.state, busTemplate: JSON.stringify(res) };
+          window.history.replaceState(updatedState, '', window.location.href);
+          this.router.navigate([], { queryParams: { id: res._id } });
           toast.success('Bus added successfully');
+          this.initialFormValue = this.busTemplateDetailForm.getRawValue();
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

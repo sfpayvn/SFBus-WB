@@ -1,0 +1,25 @@
+@if(currentUser){
+<form class="my-10 space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-2 text-center">
+    <h2 class="text-foreground mb-1 text-3xl font-semibold">Phone Number Verification</h2>
+    <div>
+      <p class="text-muted-foreground text-sm">Enter the verification code we sent to</p>
+      <div class="text-muted-foreground text-lg">{{ currentUser.phoneNumber }}</div>
+    </div>
+    <label class="text-muted-foreground cursor-pointer font-medium underline" (click)="onResendOtp()"
+      >Re-Sent OTP</label
+    >
+  </div>
+
+  <div class="flex w-full">
+    <nz-input-otp
+      formControlName="otp"
+      [nzStatus]="form.get('otp')?.touched ? (form.get('otp')?.invalid ? 'error' : '') : ''"></nz-input-otp>
+  </div>
+
+  <!-- Submit Button -->
+  <div>
+    <app-button full impact="bold" tone="primary" shape="rounded" size="medium"> Submit </app-button>
+  </div>
+</form>
+}

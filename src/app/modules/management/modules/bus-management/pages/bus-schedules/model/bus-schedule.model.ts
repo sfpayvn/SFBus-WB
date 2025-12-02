@@ -1,9 +1,12 @@
-import { BusLayoutTemplate } from "../../bus-layout-templates/model/bus-layout-templates.model";
-import { BusProvince } from "../../bus-provices/model/bus-province.model";
-import { BusRoute, BusRouteBreakPoints } from "../../bus-routes/model/bus-route.model";
-import { BusRouteScheduleTemplateBreakPoints, BusScheduleTemplateRoute } from "../../bus-schedule-templates/model/bus-schedule-template.model";
-import { BusTemplate } from "../../bus-templates/model/bus-template.model";
-import { Bus } from "../../buses/model/bus.model";
+import { BusLayoutTemplate } from '../../bus-layout-templates/model/bus-layout-templates.model';
+import { BusProvince } from '../../bus-provices/model/bus-province.model';
+import { BusRoute, BusRouteBreakPoints } from '../../bus-routes/model/bus-route.model';
+import {
+  BusRouteScheduleTemplateBreakPoints,
+  BusScheduleTemplateRoute,
+} from '../../bus-schedule-templates/model/bus-schedule-template.model';
+import { BusTemplate } from '../../bus-templates/model/bus-template.model';
+import { Bus } from '../../buses/model/bus.model';
 
 export class SearchBusSchedule {
   busSchedules: BusSchedule[] = [];
@@ -25,6 +28,12 @@ export class BusRouteScheduleBreakPoints extends BusRouteScheduleTemplateBreakPo
   location: string = '';
 }
 
+export class BusSeatPrices {
+  seatTypeId: string = '';
+  seatTypeName: string = '';
+  price: number = 0;
+}
+
 export class BusSchedule {
   _id: string = '';
   name: string = '';
@@ -39,6 +48,7 @@ export class BusSchedule {
   busLayoutTemplate: BusLayoutTemplate | undefined;
   busScheduleLayoutId: string = '';
   busSeatLayoutBlockIds: string[] = [];
+  busSeatPrices: BusSeatPrices[] = [];
   busDriverIds: string[] = [];
   price: number = 0;
   status: string = '';
@@ -47,9 +57,8 @@ export class BusSchedule {
   selected: boolean = false;
 }
 
-export interface BusSchedule2Create extends Omit<BusSchedule, '_id' | 'selected'> { }
-export class BusSchedule2Create {
-}
+export interface BusSchedule2Create extends Omit<BusSchedule, '_id' | 'selected'> {}
+export class BusSchedule2Create {}
 
 export class BusSchedule2Update extends BusSchedule2Create {
   _id: string = '';

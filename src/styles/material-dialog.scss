@@ -1,39 +1,50 @@
 .mdc-dialog__surface {
-    overflow: hidden;
-    padding: 15px;
-    border-radius: 8px !important;
+  overflow: hidden;
+  padding: 15px;
+  border-radius: 8px !important;
 }
 
 .custom-back-drop-view-image {
-    background-color: rgba(29, 41, 57, 0.8);
-    backdrop-filter: blur(10px);
-
+  background-color: rgba(29, 41, 57, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .custom-dialog-view-image {
-    .mat-mdc-dialog-surface {
-        background-color: transparent;
-    }
+  .mat-mdc-dialog-surface {
+    background-color: transparent;
+  }
 }
 
 .custom-dialog {
-    .mat-mdc-dialog-container {
-        max-width: 100%;
+  .mat-mdc-dialog-container {
+    max-width: 100%;
 
-        .mat-mdc-dialog-inner-container {
-            max-width: 100%;
-        }
-
+    .mat-mdc-dialog-inner-container {
+      max-width: 100%;
     }
+  }
 
-    mat-dialog-content {
-        overflow: hidden;
-    }
+  mat-dialog-content {
+    overflow: hidden;
+  }
 
-    .mat-mdc-dialog-surface {
-        max-width: 100%;
-        padding: 0;
+  .mat-mdc-dialog-surface {
+    max-width: 100%;
+    padding: 0;
+  }
+}
 
+.dialog-large {
+  width: 80vw !important;
+  max-width: 100vw !important;
+}
 
-    }
+.dialog-medium {
+  width: 60vw !important;
+  max-width: 100vw !important;
+}
+
+.dialog-small {
+  width: 40vw !important;
+  max-width: 100vw !important;
 }

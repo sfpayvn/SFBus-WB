@@ -1,0 +1,27 @@
+/* Context Modal Styles */
+.custom-context-modal {
+  .mat-mdc-dialog-container {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 0;
+    
+    .mat-mdc-dialog-surface {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  }
+}
+
+.custom-context-backdrop {
+  background-color: transparent;
+}
+
+/* Responsive context modal */
+@media (max-width: 768px) {
+  .custom-context-modal {
+    .mat-mdc-dialog-container {
+      margin: 16px;
+      max-width: calc(100vw - 32px);
+    }
+  }
+}

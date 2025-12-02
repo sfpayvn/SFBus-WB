@@ -1,14 +1,17 @@
-<mat-dialog-content class="flex h-full !max-h-full w-full justify-center rounded-xl bg-white !p-4">
-  <app-bus-schedule-detail
-    class="flex h-full w-full"
-    [busSchedule]="data.busSchedule"
-    [startDate]="data.startDate"
-    (saveScheduleEvent)="closeDialog($event)"
-    [isDialog]="true"></app-bus-schedule-detail>
-  <div class="absolute right-[15px] top-[15px] flex">
+<div class="relative flex h-full w-full flex-col">
+  <div class="static flex w-full justify-end bg-orange-200">
     <button class="m-0 rounded-lg p-2 hover:bg-gray-700">
       <svg-icon src="./assets/icons/close.svg" [svgClass]="'h-6 w-6 cursor-pointer '" (click)="closeDialog()">
       </svg-icon>
     </button>
   </div>
-</mat-dialog-content>
+  <mat-dialog-content class="flex h-full !max-h-full w-full justify-center !overflow-y-scroll rounded-xl bg-white !p-4">
+    <app-bus-schedule-detail
+      class="flex h-full w-full"
+      [busSchedule]="data.busSchedule"
+      [startDate]="data.startDate"
+      (createScheduleEvent)="closeDialogWithReloadData()"
+      (saveScheduleEvent)="saveSchedule()"
+      [isDialog]="true"></app-bus-schedule-detail>
+  </mat-dialog-content>
+</div>

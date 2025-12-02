@@ -2,19 +2,15 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { OptionsComponent } from './pages/options/pages/options/options.component';
-import { OptionsValueComponent } from './pages/options/pages/options-value/options-value.component';
-import { CreateEditOptionDialogComponent } from './pages/options/component/create-edit-option-dialog/create-edit-option-dialog.component';
-import { CreateEditBusTypeDialogComponent } from './pages/bus-types/component/create-edit-bus-type-dialog/create-bus-type-dialog.component';
+import { BusTypeDetailDialogComponent } from './pages/bus-types/component/bus-type-detail-dialog/bus-type-detail-dialog.component';
 import { BusTypesComponent } from './pages/bus-types/bus-types.component';
-import { CreateEditBusServiceDialogComponent } from './pages/bus-services/component/create-edit-bus-service-dialog/create-bus-service-dialog.component';
+import { BusServiceDetailDialogComponent } from './pages/bus-services/component/bus-service-detail-dialog/bus-service-detail-dialog.component';
 import { BusServicesComponent } from './pages/bus-services/bus-services.component';
-import { CreateEditBusProvinceDialogComponent } from './pages/bus-provices/component/create-edit-bus-province-dialog/create-bus-province-dialog.component';
+import { BusProvinceDetailDialogComponent } from './pages/bus-provices/component/bus-province-detail-dialog/bus-province-detail-dialog.component';
 import { BusProvincesComponent } from './pages/bus-provices/bus-provinces.component';
 import { BusStationsComponent } from './pages/bus-stations/bus-stations.component';
-import { CreateEditBusStationDialogComponent } from './pages/bus-stations/component/create-edit-bus-station-dialog/create-bus-station-dialog.component';
 import { BusesComponent } from './pages/buses/buses.component';
-import { CreateEditSeatTypeDialogComponent } from './pages/seat-types/component/create-edit-seat-types-dialog/create-seat-type-dialog.component';
+import { SeatTypesDetailDialogComponent } from './pages/seat-types/component/seat-types-detail-dialog/seat-types-detail-dialog.component';
 import { SeatTypesComponent } from './pages/seat-types/seat-types.component';
 import { BusDetailComponent } from './pages/buses/pages/bus-detail/bus-detail.component';
 import { BusRoutesComponent } from './pages/bus-routes/bus-routes.component';
@@ -30,26 +26,25 @@ import { BusTemplatesComponent } from './pages/bus-templates/bus-templates.compo
 import { BusTemplateDetailComponent } from './pages/bus-templates/pages/bus-template-detail/bus-template-detail.component';
 import { BusScheduleAutoGeneratorsComponent } from './pages/bus-schedule-autogenerators/bus-schedule-autogenerator.component';
 import { BusScheduleAutoGeneratorDetailComponent } from './pages/bus-schedule-autogenerators/pages/bus-schedule-autogenerator-detail/bus-schedule-autogenerator-detail.component';
-import { BusScheduleDetailDialogComponent } from './pages/bus-schedules/components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
 import { BusManagementRoutingModule } from './bus-management-routing.module';
-import { MangementModule } from '../../management.module';
+import { BusStationDetailDialogComponent } from './pages/bus-stations/component/bus-station-detail-dialog/bus-station-detail-dialog.component';
+import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
+import { BusScheduleDetailDialogComponent } from './pages/bus-schedules/components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
+import { BusScheduleAutogeneratorsDetailDialogComponent } from './pages/bus-schedule-autogenerators/components/bus-schedule-autogenerators-detail-dialog/bus-schedule-autogenerators-detail-dialog.component';
+import { ManagementSharedModule } from '../../management-share.module';
 
 @NgModule({
   declarations: [
-    OptionsComponent,
-    OptionsValueComponent,
-    CreateEditOptionDialogComponent,
-
-    CreateEditBusTypeDialogComponent,
+    BusTypeDetailDialogComponent,
     BusTypesComponent,
 
-    CreateEditBusServiceDialogComponent,
+    BusServiceDetailDialogComponent,
     BusServicesComponent,
 
-    CreateEditBusProvinceDialogComponent,
+    BusProvinceDetailDialogComponent,
     BusProvincesComponent,
 
-    CreateEditBusStationDialogComponent,
+    BusStationDetailDialogComponent,
     BusStationsComponent,
 
     BusDetailComponent,
@@ -58,7 +53,7 @@ import { MangementModule } from '../../management.module';
     BusTemplateDetailComponent,
     BusTemplatesComponent,
 
-    CreateEditSeatTypeDialogComponent,
+    SeatTypesDetailDialogComponent,
     SeatTypesComponent,
 
     BusLayoutTemplatesComponent,
@@ -74,6 +69,7 @@ import { MangementModule } from '../../management.module';
     BusScheduleTemplatesComponent,
     BusScheduleTemplateDetailComponent,
 
+    BusScheduleAutogeneratorsDetailDialogComponent,
     BusScheduleAutoGeneratorDetailComponent,
     BusScheduleAutoGeneratorsComponent,
   ],
@@ -82,15 +78,11 @@ import { MangementModule } from '../../management.module';
     FormsModule,
     ReactiveFormsModule,
     BusManagementRoutingModule,
-    MangementModule,
+    ManagementSharedModule,
+    FilesCenterManagementModule,
   ],
-  exports: [
-  ],
-  providers: [
-    provideNgxMask()
-  ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  exports: [],
+  providers: [provideNgxMask()],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class BusMangementModule { }
+export class BusManagementModule {}

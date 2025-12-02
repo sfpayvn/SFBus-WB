@@ -1,0 +1,922 @@
+<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
+      (click)="backPage()">
+      Back
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 flex min-w-full flex-col rounded-xl border bg-white p-2">
+  <div class="flex justify-center p-2">
+    <label class="text-xl font-semibold">
+      <span *ngIf="mode == 'update'"> Sửa Hàng hóa </span>
+      <span *ngIf="mode == 'create'"> Thêm Hàng hóa </span>
+    </label>
+  </div>
+  <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+    <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="{ rows: 10 }" [nzTitle]="{ width: '100%' }" [nzActive]="true">
+    </nz-skeleton>
+    <form [formGroup]="mainForm" nz-form *ngIf="mainForm" (ngSubmit)="onSubmit()">
+      <div class="flex gap-4">
+        <div class="flex h-full w-4/12 flex-col">
+          <nz-form-label [nzNoColon]="true" nzFor="image" class="!flex !items-center !justify-start !font-medium"
+            >Images ({{ goodsImages.length }}/5)</nz-form-label
+          >
+          <div class="flex h-full w-full flex-col items-center justify-start gap-2">
+            <!-- Image Grid -->
+            <div class="flex w-full flex-wrap justify-center gap-2" *ngIf="goodsImages.length > 0">
+              <div
+                *ngFor="let image of goodsImages; let i = index"
+                class="group relative flex h-28 w-32 items-center justify-center overflow-hidden rounded-sm border border-dashed border-blue-500">
+                <img alt="goods image {{ i + 1 }}" [src]="image" class="h-full w-full cursor-pointer object-cover" />
+                <div
+                  class="absolute top-1 right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity hover:bg-red-600 group-hover:opacity-100"
+                  (click)="removeImage(i)">
+                  <span nz-icon nzType="close" nzTheme="outline" class="text-xs"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Default Image when no images -->
+            <div
+              *ngIf="goodsImages.length === 0"
+              class="flex h-28 w-32 items-center justify-center overflow-hidden rounded-sm border border-dashed border-gray-300">
+              <img alt="goods avatar" [src]="defaultImage" class="w-full cursor-pointer" />
+            </div>
+
+            <!-- Upload Button -->
+            <div class="flex w-full justify-center gap-4">
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  class="!hidden"
+                  #fileInput
+                  (change)="onFileChange($event)" />
+                <button
+                  type="button"
+                  class="!min-w-24 !flex !h-max !justify-center !rounded-lg !border !border-blue-500 !bg-white !py-2 !px-3 !text-blue-500 hover:!border-blue-600 hover:!bg-blue-50"
+                  [disabled]="goodsImages.length >= 5"
+                  [class.!opacity-50]="goodsImages.length >= 5"
+                  [class.!cursor-not-allowed]="goodsImages.length >= 5"
+                  (click)="fileInput.click()">
+                  <span>{{ goodsImages.length >= 5 ? 'Đã đủ 5 ảnh' : 'Thêm ảnh' }}</span>
+                </button>
+              </div>
+              <!-- Clear All Button -->
+              <button
+                *ngIf="goodsImages.length > 0"
+                class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+                nz-button
+                type="button"
+                nzType="default"
+                (click)="removeFileImage()">
+                <span>Xóa tất cả</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex w-8/12 flex-wrap">
+          <div class="flex w-full gap-4 p-2" *ngIf="goods">
+            <div class="block w-6/12">
+              <nz-form-label
+                [nzNoColon]="true"
+                nzFor="goodsNumber"
+                class="!flex !items-center !justify-start !font-medium"
+                >Mã Hàng Hóa</nz-form-label
+              >
+              <div># {{ goods.goodsNumber }}</div>
+            </div>
+            <div class="block w-6/12">
+              <nz-form-item class="!mb-0 !flex !flex-col">
+                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                  >Tình Trạng Hàng Hóa</nz-form-label
+                >
+                <nz-form-control class="!flex !max-h-[42px] flex-col">
+                  <nz-select
+                    class="custom-nz-select custom-nz-select-goods-status height-large !mt-0 !mb-0 !w-full custom-nz-select-goods-status-{{
+                      mainForm.get('status')?.value
+                    }}"
+                    formControlName="status">
+                    @for (goodsStatus of goodsStatuses; track goodsStatus) {
+                    <nz-option [nzLabel]="goodsStatus.label" [nzValue]="goodsStatus.value"></nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div
+            class="mt-4 w-full rounded-lg border border-dashed border-gray-300"
+            [ngClass]="{
+                'border-red-500': mainForm.controls['customerPhoneNumber'].errors?.['required'] 
+                || mainForm.controls['customerPhoneNumber'].errors?.['pattern'] 
+                || mainForm.controls['customerName'].errors?.['required']
+                || mainForm.controls['senderPhoneNumber'].errors?.['required']
+                || mainForm.controls['senderPhoneNumber'].errors?.['pattern'] 
+                || mainForm.controls['senderName'].errors?.['required'],
+              }">
+            <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+              <nz-collapse-panel [nzHeader]="collapseHeaderGoodsCustomerInfo" [nzActive]="true">
+                <div class="flex flex-col">
+                  <label class="text-base font-semibold">Thông tin người gửi</label>
+                  <div class="flex w-full gap-4 p-2">
+                    <div class="block w-6/12">
+                      <nz-form-item class="!mb-0 !flex !flex-col">
+                        <nz-form-label
+                          [nzNoColon]="true"
+                          nzFor="senderPhoneNumber"
+                          class="!flex !items-center !justify-start !font-medium"
+                          >Số điện thoại</nz-form-label
+                        >
+                        <nz-form-control
+                          [nzErrorTip]="goodsFormSenderPhoneNumberErrorTpl"
+                          class="nz-form-control-required !flex flex-col">
+                          <nz-input-group
+                            [nzSuffix]="goodsFormSenderPhoneNumberClearTpl"
+                            class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                            <input
+                              type="text"
+                              nz-input
+                              formControlName="senderPhoneNumber"
+                              mask="0000 000 000"
+                              placeholder="Nhập số điện thoại" />
+                          </nz-input-group>
+                          <ng-template #goodsFormSenderPhoneNumberClearTpl>
+                            <span
+                              *ngIf="mainForm.controls['senderPhoneNumber'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('senderPhoneNumber')"></span>
+                          </ng-template>
+                          <ng-template #goodsFormSenderPhoneNumberErrorTpl let-control>
+                            <span class="mt-1 !text-xs text-red-500">
+                              @if (mainForm.controls['senderPhoneNumber'].errors?.['required']) { Vui lòng nhập số điện
+                              thoại } @if(mainForm.controls['senderPhoneNumber'].errors?.['pattern']) { Vui lòng nhập
+                              đúng số điện thoại }
+                            </span>
+                          </ng-template>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="block w-6/12">
+                      <nz-form-item class="!mb-0 !flex !flex-col">
+                        <nz-form-label
+                          [nzNoColon]="true"
+                          nzFor="customerName"
+                          class="!flex !items-center !justify-start !font-medium"
+                          >Tên khách hàng</nz-form-label
+                        >
+                        <nz-form-control
+                          [nzErrorTip]="goodsFormSenderNameErrorTpl"
+                          class="nz-form-control-required !flex flex-col">
+                          <nz-input-group
+                            [nzSuffix]="goodsFormSenderNameClearTpl"
+                            class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                            <input
+                              type="text"
+                              nz-input
+                              formControlName="senderName"
+                              placeholder="Nhập tên khách hàng" />
+                          </nz-input-group>
+                          <ng-template #goodsFormSenderNameClearTpl>
+                            <span
+                              *ngIf="mainForm.controls['senderName'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('senderName')"></span>
+                          </ng-template>
+                          <ng-template #goodsFormSenderNameErrorTpl let-control>
+                            <span class="mt-1 !text-xs text-red-500">
+                              @if (mainForm.controls['senderName'].errors?.['required']) { Vui lòng nhập trường này }
+                            </span>
+                          </ng-template>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div class="flex w-full gap-4 p-2">
+                    <div class="block w-full">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="customerAddress"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Địa chỉ khách hàng</nz-form-label
+                      >
+                      <nz-input-group
+                        [nzSuffix]="goodsFormCustomerAddressClearTpl"
+                        class="custom-nz-textarea-group !mt-0 !mb-0 !rounded border-gray-200">
+                        <textarea
+                          nz-input
+                          formControlName="senderAddress"
+                          placeholder="Nhập địa chỉ khách hàng"></textarea>
+                      </nz-input-group>
+                      <ng-template #goodsFormSenderAddressClearTpl>
+                        <span
+                          *ngIf="mainForm.controls['senderAddress'].value"
+                          nz-icon
+                          class="ant-input-clear-icon"
+                          nzTheme="fill"
+                          nzType="close-circle"
+                          (click)="clearFormValue('senderAddress')"></span>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-col">
+                  <label class="text-base font-semibold">Thông tin người nhận</label>
+                  <div class="flex w-full gap-4 p-2">
+                    <div class="block w-6/12">
+                      <nz-form-item class="!mb-0 !flex !flex-col">
+                        <nz-form-label
+                          [nzNoColon]="true"
+                          nzFor="customerPhoneNumber"
+                          class="!flex !items-center !justify-start !font-medium"
+                          >Số điện thoại</nz-form-label
+                        >
+                        <nz-form-control
+                          [nzErrorTip]="goodsFormCustomerPhoneNumberErrorTpl"
+                          class="nz-form-control-required !flex flex-col">
+                          <nz-input-group
+                            [nzSuffix]="goodsFormCustomerPhoneNumberClearTpl"
+                            class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                            <input
+                              type="text"
+                              nz-input
+                              formControlName="customerPhoneNumber"
+                              mask="0000 000 000"
+                              placeholder="Nhập số điện thoại" />
+                          </nz-input-group>
+                          <ng-template #goodsFormCustomerPhoneNumberClearTpl>
+                            <span
+                              *ngIf="mainForm.controls['customerPhoneNumber'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('customerPhoneNumber')"></span>
+                          </ng-template>
+                          <ng-template #goodsFormCustomerPhoneNumberErrorTpl let-control>
+                            <span class="mt-1 !text-xs text-red-500">
+                              @if (mainForm.controls['customerPhoneNumber'].errors?.['required']) { Vui lòng nhập số
+                              điện thoại } @if(mainForm.controls['customerPhoneNumber'].errors?.['pattern']) { Vui lòng
+                              nhập đúng số điện thoại }
+                            </span>
+                          </ng-template>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="block w-6/12">
+                      <nz-form-item class="!mb-0 !flex !flex-col">
+                        <nz-form-label
+                          [nzNoColon]="true"
+                          nzFor="customerName"
+                          class="!flex !items-center !justify-start !font-medium"
+                          >Tên khách hàng</nz-form-label
+                        >
+                        <nz-form-control
+                          [nzErrorTip]="goodsFormCustomerNameErrorTpl"
+                          class="nz-form-control-required !flex flex-col">
+                          <nz-input-group
+                            [nzSuffix]="goodsFormCustomerNameClearTpl"
+                            class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                            <input
+                              type="text"
+                              nz-input
+                              formControlName="customerName"
+                              placeholder="Nhập tên khách hàng" />
+                          </nz-input-group>
+                          <ng-template #goodsFormCustomerNameClearTpl>
+                            <span
+                              *ngIf="mainForm.controls['customerName'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('customerName')"></span>
+                          </ng-template>
+                          <ng-template #goodsFormCustomerNameErrorTpl let-control>
+                            <span class="mt-1 !text-xs text-red-500">
+                              @if (mainForm.controls['customerName'].errors?.['required']) { Vui lòng nhập trường này }
+                            </span>
+                          </ng-template>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div class="flex w-full gap-4 p-2">
+                    <div class="block w-full">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="customerAddress"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Địa chỉ khách hàng</nz-form-label
+                      >
+                      <nz-input-group
+                        [nzSuffix]="goodsFormCustomerAddressClearTpl"
+                        class="custom-nz-textarea-group !mt-0 !mb-0 !rounded border-gray-200">
+                        <textarea
+                          nz-input
+                          formControlName="customerAddress"
+                          placeholder="Nhập địa chỉ khách hàng"></textarea>
+                      </nz-input-group>
+                      <ng-template #goodsFormCustomerAddressClearTpl>
+                        <span
+                          *ngIf="mainForm.controls['customerAddress'].value"
+                          nz-icon
+                          class="ant-input-clear-icon"
+                          nzTheme="fill"
+                          nzType="close-circle"
+                          (click)="clearFormValue('customerAddress')"></span>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+              </nz-collapse-panel>
+              <ng-template #collapseHeaderGoodsCustomerInfo>
+                <label
+                  class="text-base font-semibold text-blue-500"
+                  [ngClass]="{
+                'text-red-500': mainForm.controls['customerPhoneNumber'].errors?.['required'] 
+                || mainForm.controls['customerPhoneNumber'].errors?.['pattern'] 
+                || mainForm.controls['customerName'].errors?.['required']
+                || mainForm.controls['senderPhoneNumber'].errors?.['required']
+                || mainForm.controls['senderPhoneNumber'].errors?.['pattern'] 
+                || mainForm.controls['senderName'].errors?.['required'],
+              }"
+                  >Thông tin khách hàng</label
+                >
+              </ng-template>
+            </nz-collapse>
+          </div>
+
+          <div class="mt-4 w-full rounded-lg border border-dashed border-gray-300">
+            <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+              <nz-collapse-panel [nzHeader]="collapseHeaderGoodsInfo" [nzActive]="true">
+                <div class="flex w-full gap-4 p-2">
+                  <div class="block w-5/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="name"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Name</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormNameErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormNameClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+                        </nz-input-group>
+                        <ng-template #goodsFormNameClearTpl>
+                          <span
+                            *ngIf="mainForm.controls['name'].value"
+                            nz-icon
+                            class="ant-input-clear-icon"
+                            nzTheme="fill"
+                            nzType="close-circle"
+                            (click)="clearFormValue('name')"></span>
+                        </ng-template>
+                        <ng-template #goodsFormNameErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="block w-2/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="quantity"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Quantity</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormQuantityErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormQuantityClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input type="number" nz-input formControlName="quantity" placeholder="Nhập Quantity" />
+                        </nz-input-group>
+                        <ng-template #goodsFormQuantityClearTpl>
+                          <span
+                            *ngIf="mainForm.controls['quantity'].value"
+                            nz-icon
+                            class="ant-input-clear-icon"
+                            nzTheme="fill"
+                            nzType="close-circle"
+                            (click)="clearFormValue('quantity')"></span>
+                        </ng-template>
+                        <ng-template #goodsFormQuantityErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['quantity'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="block w-5/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="quantity"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Phân loại</nz-form-label
+                      >
+                      <nz-form-control>
+                        <nz-select
+                          class="custom-nz-select height-large !mt-0 !mb-0"
+                          formControlName="categories"
+                          nzPlaceHolder="Chọn Phân loại"
+                          nzSize="large"
+                          nzMode="multiple"
+                          [nzCustomTemplate]="defaultTemplateSelectGoodsCategory">
+                          @for (goodsCategory of goodsCategories; track goodsCategory) {
+                          <nz-option nzCustomContent [nzLabel]="goodsCategory.name" [nzValue]="goodsCategory._id">
+                            <div class="flex items-center gap-2">
+                              <ion-icon [src]="goodsCategory.icon"></ion-icon>
+                              <span>{{ goodsCategory.name }}</span>
+                            </div>
+                          </nz-option>
+                          }
+                        </nz-select>
+                        <ng-template #defaultTemplateSelectGoodsCategory let-selected>
+                          <div class="flex items-center gap-2" *ngIf="goodsCategory">
+                            <ion-icon [src]="goodsCategory.icon"></ion-icon>
+                            <span>{{ goodsCategory.name }}</span>
+                          </div>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </nz-collapse-panel>
+              <ng-template #collapseHeaderGoodsInfo>
+                <label class="text-base font-semibold text-blue-500">Thông tin hàng hóa</label>
+              </ng-template>
+            </nz-collapse>
+          </div>
+
+          <div class="mt-4 w-full rounded-lg border border-dashed border-gray-300">
+            <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+              <nz-collapse-panel [nzHeader]="collapseHeaderGoodsPrice" [nzActive]="true">
+                <div class="flex w-full gap-4 p-2">
+                  <div class="block w-6/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="shippingCost"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Phí vận chuyển</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormshippingCostErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormshippingCostClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input
+                            type="text"
+                            nz-input
+                            formControlName="shippingCost"
+                            placeholder="Nhập số tiền"
+                            mask="separator.0"
+                            thousandSeparator="," />
+                        </nz-input-group>
+                        <ng-template #goodsFormshippingCostClearTpl>
+                          <div class="min-w-[25px]">
+                            <span
+                              *ngIf="mainForm.controls['shippingCost'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('shippingCost')"></span>
+                            <span class="pl-1 text-sm">₫</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #goodsFormshippingCostErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['shippingCost'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="block w-6/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="cod"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >COD</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormCodErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormCodClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input
+                            type="text"
+                            nz-input
+                            formControlName="cod"
+                            placeholder="Nhập số tiền"
+                            mask="separator.0"
+                            thousandSeparator="," />
+                        </nz-input-group>
+                        <ng-template #goodsFormCodClearTpl>
+                          <div class="min-w-[25px]">
+                            <span
+                              *ngIf="mainForm.controls['cod'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('cod')"></span>
+                            <span class="pl-1 text-sm">₫</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #goodsFormCodErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['cod'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+                <div class="flex w-full gap-4 p-2">
+                  <div class="block w-6/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="goodsValue"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Giá trị hàng hóa</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormGoodsValueErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormGoodsValueClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input
+                            type="text"
+                            nz-input
+                            formControlName="goodsValue"
+                            placeholder="Nhập số tiền"
+                            mask="separator.0"
+                            thousandSeparator="," />
+                        </nz-input-group>
+                        <ng-template #goodsFormGoodsValueClearTpl>
+                          <div class="min-w-[25px]">
+                            <span
+                              *ngIf="mainForm.controls['goodsValue'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('goodsValue')"></span>
+                            <span class="pl-1 text-sm">₫</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #goodsFormGoodsValueErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['goodsValue'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="block w-6/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label nzFor="paidBy" class="!flex !items-center !justify-start !font-medium"
+                        >Người thanh toán</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormPaidByErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-select
+                          class="custom-nz-select height-large !mt-0 !mb-0"
+                          formControlName="paidBy"
+                          nzPlaceHolder="Chọn người thanh toán"
+                          nzSize="large">
+                          @for (paidBy of paidByList; track paidBy) {
+                          <nz-option nzCustomContent [nzLabel]="paidBy.label" [nzValue]="paidBy.value">
+                            <div class="flex flex-col">
+                              <span>{{ paidBy.label }}</span>
+                            </div>
+                          </nz-option>
+                          }
+                        </nz-select>
+                        <ng-template #goodsFormPaidByErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['paidBy'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </nz-collapse-panel>
+              <ng-template #collapseHeaderGoodsPrice>
+                <label class="text-base font-semibold text-blue-500">Thông tin phí</label>
+              </ng-template>
+            </nz-collapse>
+          </div>
+
+          <div class="mt-4 w-full rounded-lg border border-dashed border-gray-300">
+            <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+              <nz-collapse-panel [nzHeader]="collapseHeaderGoodsSize" [nzActive]="true">
+                <div class="flex w-full gap-4 p-2">
+                  <div class="block w-4/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="weight"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Weight</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormWeightErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormWeightClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input type="number" nz-input formControlName="weight" placeholder="Nhập Weight" />
+                        </nz-input-group>
+                        <ng-template #goodsFormWeightClearTpl>
+                          <div class="min-w-[25px]">
+                            <span
+                              *ngIf="mainForm.controls['weight'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('weight')"></span>
+                            <span class="pl-1 text-sm">kg</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #goodsFormWeightErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['weight'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="w-3/8 block">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="length"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Dài</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormLengthErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormLengthClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input
+                            type="text"
+                            nz-input
+                            formControlName="length"
+                            placeholder="Nhập Length"
+                            [dropSpecialCharacters]="false"
+                            mask="separator.0"
+                            thousandSeparator="," />
+                        </nz-input-group>
+                        <ng-template #goodsFormLengthClearTpl>
+                          <div class="min-w-[25px]">
+                            <span
+                              *ngIf="mainForm.controls['length'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('length')"></span>
+                            <span class="pl-1 text-sm">cm</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #goodsFormLengthErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['length'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="w-3/8 block">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="width"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Rộng</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormWidthErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormWidthClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input type="number" nz-input formControlName="width" placeholder="Nhập Width" />
+                        </nz-input-group>
+                        <ng-template #goodsFormWidthClearTpl>
+                          <div class="min-w-[25px]">
+                            <span
+                              *ngIf="mainForm.controls['width'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('width')"></span>
+                            <span class="pl-1 text-sm">cm</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #goodsFormWidthErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['width'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="w-3/8 block">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label
+                        [nzNoColon]="true"
+                        nzFor="height"
+                        class="!flex !items-center !justify-start !font-medium"
+                        >Cao</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormHeightErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-input-group
+                          [nzSuffix]="goodsFormHeightClearTpl"
+                          class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
+                          <input type="number" nz-input formControlName="height" placeholder="Nhập Height" />
+                        </nz-input-group>
+                        <ng-template #goodsFormHeightClearTpl>
+                          <div class="min-w-[25px]">
+                            <span
+                              *ngIf="mainForm.controls['height'].value"
+                              nz-icon
+                              class="ant-input-clear-icon"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="clearFormValue('height')"></span>
+                            <span class="pl-1 text-sm">cm</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #goodsFormHeightErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['height'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </nz-collapse-panel>
+              <ng-template #collapseHeaderGoodsSize>
+                <label class="text-base font-semibold text-blue-500">Thông tin kích thước</label>
+              </ng-template>
+            </nz-collapse>
+          </div>
+
+          <div class="mt-4 w-full rounded-lg border border-dashed border-gray-300">
+            <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+              <nz-collapse-panel [nzHeader]="collapseHeaderGoodsSchedule" [nzActive]="true">
+                <div class="flex w-full gap-4 p-2">
+                  <div class="block w-6/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label nzFor="busScheduleId" class="!flex !items-center !justify-start !font-medium"
+                        >Bus Route</nz-form-label
+                      >
+                      <nz-form-control
+                        [nzErrorTip]="goodsFormBusRouteIdErrorTpl"
+                        class="nz-form-control-required !flex flex-col">
+                        <nz-select
+                          class="custom-nz-select height-large !mt-0 !mb-0"
+                          formControlName="busRouteId"
+                          nzPlaceHolder="Chọn Bus Route"
+                          nzAllowClear
+                          nzSize="large"
+                          (ngModelChange)="chooseBusRoute($event)">
+                          @for (busRoute of busRoutes; track busRoute) {
+                          <nz-option
+                            nzCustomContent
+                            [nzLabel]="busRoute.name + defaultFlagService.defaultTextFlag(busRoute)"
+                            [nzValue]="busRoute._id">
+                            <div class="flex flex-col">
+                              <span>{{ busRoute.name }} {{ defaultFlagService.defaultTextFlag(busRoute) }}</span>
+                            </div>
+                          </nz-option>
+                          }
+                        </nz-select>
+                        <ng-template #goodsFormBusRouteIdErrorTpl let-control>
+                          <span class="mt-1 !text-xs text-red-500">
+                            @if (mainForm.controls['busRouteId'].errors?.['required']) { Vui lòng nhập trường này }
+                          </span>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="block w-6/12">
+                    <nz-form-item class="!mb-0 !flex !flex-col">
+                      <nz-form-label nzFor="busScheduleId" class="!flex !items-center !justify-start !font-medium"
+                        >Bus Schedule</nz-form-label
+                      >
+                      <nz-form-control class="nz-form-control-required !flex flex-col">
+                        <nz-select
+                          class="custom-nz-select bus-goods-detail height-large !mt-0 !mb-0"
+                          formControlName="busScheduleId"
+                          nzPlaceHolder="Chọn Bus Schedule"
+                          nzSize="large"
+                          nzShowSearch
+                          nzServerSearch
+                          nzAllowClear
+                          (nzOnSearch)="onSearch($event)"
+                          (ngModelChange)="chooseBusSchedule($event)"
+                          [nzCustomTemplate]="defaultTemplateSelectBusSchedule"
+                          [nzDisabled]="!mainForm.get('busRouteId')?.value">
+                          @for (busSchedule of busSchedulesFiltered; track busSchedule) {
+                          <nz-option nzCustomContent [nzLabel]="busSchedule.name" [nzValue]="busSchedule._id">
+                            <div class="flex flex-col">
+                              <span class="flex w-full justify-between">
+                                <span>
+                                  {{ busSchedule.bus?.name || 'Chưa có xe' }}
+                                </span>
+                                <span>
+                                  {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }}
+                                </span>
+                              </span>
+                              <span class="flex w-full justify-end">
+                                <span>
+                                  {{ formatTime(busSchedule.endDate) }} - {{ formatDate(busSchedule.endDate) }}
+                                </span>
+                              </span>
+                            </div>
+                          </nz-option>
+                          }
+                        </nz-select>
+                        <ng-template #defaultTemplateSelectBusSchedule let-selected>
+                          <div class="flex justify-between" *ngIf="busSchedule">
+                            <span class="flex w-full text-left leading-[26px]">
+                              <span>
+                                {{ busSchedule.bus?.name || 'Chưa có xe' }}
+                              </span>
+                            </span>
+                            <span class="flex w-full flex-col text-right leading-[26px]">
+                              <span>
+                                {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }}
+                              </span>
+                              <span>
+                                {{ formatTime(busSchedule.endDate) }} - {{ formatDate(busSchedule.endDate) }}
+                              </span>
+                            </span>
+                          </div>
+                        </ng-template>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </nz-collapse-panel>
+              <ng-template #collapseHeaderGoodsSchedule>
+                <label class="text-base font-semibold text-blue-500">Thông tin lịch trình</label>
+              </ng-template>
+            </nz-collapse>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-5 flex w-full justify-end">
+        <button
+          class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+          nz-button
+          nzType="default"
+          type="submit">
+          SAVE
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

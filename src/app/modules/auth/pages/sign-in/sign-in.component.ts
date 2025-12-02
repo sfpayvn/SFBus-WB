@@ -1,24 +1,34 @@
-import { NgClass, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
+import { Utils } from '@rsApp/shared/utils/utils';
+import { CustomCommonModule } from '@rsApp/library-modules/custom-common-module';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.css'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, NgIf, ButtonComponent, NgClass],
+  imports: [CustomCommonModule, NgxMaskDirective],
+  providers: [provideNgxMask()],
 })
 export class SignInComponent implements OnInit {
   form!: FormGroup;
-  submitted = false;
-  passwordTextType!: boolean;
+  passwordVisible: boolean = false;
 
-  constructor(private readonly _formBuilder: FormBuilder, private readonly _router: Router, private authService: AuthService) { }
+  maskConfig = {
+    dropSpecialCharacters: true,
+    showMaskTyped: true,
+  };
+
+  constructor(
+    private readonly _formBuilder: FormBuilder,
+    private readonly _router: Router,
+    private authService: AuthService,
+    private utils: Utils,
+  ) {}
 
   onClick() {
     console.log('Button clicked');
@@ -26,8 +36,13 @@ export class SignInComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this._formBuilder.group({
-      phoneNumber: ['0961090433', [Validators.required, Validators.pattern(/(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/g)]],
-      password: ['@Qa0939631640', Validators.required],
+      phoneNumber: [
+        '0961090433',
+        [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)], // KHÔNG dùng /.../g
+      ],
+      tenantCode: ['sf', [Validators.required]],
+      password: ['@Solid2023', Validators.required],
+      rememberMe: [false],
     });
   }
 
@@ -35,29 +50,31 @@ export class SignInComponent implements OnInit {
     return this.form.controls;
   }
 
-  togglePasswordTextType() {
-    this.passwordTextType = !this.passwordTextType;
-  }
-
   onSubmit() {
-    this.submitted = true;
-    const { phoneNumber, password } = this.form.value;
-
-    // stop here if form is invalid
-    if (this.form.invalid) {
+    if (!this.form.valid) {
+      this.utils.markFormGroupTouched(this.form);
       return;
     }
+    const { phoneNumber, password, tenantCode } = this.form.value;
 
-    this.login(phoneNumber, password)
+    this.login(phoneNumber, password, tenantCode);
   }
 
-  login(phoneNumber: string, password: string) {
-    this.authService.login(phoneNumber, password).subscribe(async (res: any) => {
-      if (res.error) {
-        toast.success('res.message');
-        return;
-      }
-      this._router.navigate(['/']);
-    });
+  login(phoneNumber: string, password: string, tenantCode: string) {
+    this.authService.login(phoneNumber, password, tenantCode).subscribe(
+      async (res: any) => {
+        if (res.error) {
+          toast.error(res.error.message || res.message);
+          return;
+        }
+        this._router.navigate(['/']);
+      },
+      (error) => {
+        if (error && error.error && error.error.message) {
+          toast.error(error.error.message);
+          return;
+        }
+      },
+    );
   }
 }

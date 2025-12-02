@@ -8,8 +8,8 @@ export class SearchSeatType {
 export class SeatType {
   _id: string = '';
   name: string = '';
+  icon: string = '';
   iconId: string = '';
-  iconLink: string = '';
   selected: boolean = false;
   isEnv: boolean = false;
 }

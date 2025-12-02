@@ -1,0 +1,31 @@
+﻿<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
+      (click)="backPage()">
+      Back
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+  <nz-tabset nzType="card">
+    <nz-tab nzTitle="Thông tin cơ bản">
+      <app-user-info
+        [user]="user"
+        [addresses]="addresses"
+        (rolesChange)="onRolesChange($event)"
+        (createUserEvent)="onCreateUser($event)">
+      </app-user-info>
+    </nz-tab>
+
+    <nz-tab nzTitle="Mật khẩu" *ngIf="user">
+      <app-user-password [userId]="user._id"></app-user-password>
+    </nz-tab>
+
+    <nz-tab nzTitle="Thông tin Driver" *ngIf="showDriverTab && user && user._id">
+      <app-user-driver-info [userId]="user._id"> </app-user-driver-info>
+    </nz-tab>
+  </nz-tabset>
+</div>

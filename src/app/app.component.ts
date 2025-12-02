@@ -14,5 +14,5 @@ export class AppComponent {
   protected readonly toast = toast;
   title = 'Angular Tailwind';
 
-  constructor(public themeService: ThemeService) { }
+  constructor(public themeService: ThemeService) {}
 }

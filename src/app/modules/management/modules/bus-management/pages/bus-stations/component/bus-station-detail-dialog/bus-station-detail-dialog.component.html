@@ -1,0 +1,135 @@
+<mat-dialog-title class="text-center">
+  <span class="text-xl font-bold">{{ defaultFlagService.isDefault(busStation) ? 'Chi Tiết' : data.title }}</span>
+  <button class="absolute right-3" (click)="closeDialog()">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+      <path
+        fill-rule="evenodd"
+        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd" />
+    </svg>
+  </button>
+</mat-dialog-title>
+<mat-dialog-content class="pb-5 pt-3">
+  <form
+    class="sm:min-w-36 md:min-w-96 mx-auto flex flex-col gap-1"
+    [formGroup]="busStationForm"
+    nz-form
+    (ngSubmit)="onSubmit()">
+    <nz-form-item class="!w-full">
+      <nz-form-label nzFor="name" class="!flex !items-center !justify-start">Tên</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationNameErrorTpl" class="!flex flex-col">
+        <nz-input-group [nzSuffix]="busStationNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+          <input type="text" nz-input formControlName="name" placeholder="Nhập Tên" [disabled]="f['name'].disabled" />
+        </nz-input-group>
+
+        <ng-template #busStationNameClearTpl>
+          @if(f['name'].value && !defaultFlagService.isDefault(busStation)) {
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            (click)="clearFormValue('name')"></span>
+          }
+        </ng-template>
+        <ng-template #busStationNameErrorTpl let-control>
+          <span class="mt-1 !text-xs text-red-500">
+            @if (busStationForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+          </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="!w-full">
+      <nz-form-label nzFor="detailAddress" class="!flex !items-center !justify-start">Địa chỉ</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationDetailAddressErrorTpl" class="!flex flex-col">
+        <nz-input-group [nzSuffix]="busStationDetailAddressClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+          <input
+            type="text"
+            nz-input
+            formControlName="detailAddress"
+            placeholder="Nhập Địa Chỉ"
+            [disabled]="f['detailAddress'].disabled" />
+        </nz-input-group>
+        <ng-template #busStationDetailAddressClearTpl>
+          @if(f['detailAddress'].value && !defaultFlagService.isDefault(busStation)) {
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            (click)="clearFormValue('detailAddress')"></span>
+          }
+        </ng-template>
+        <ng-template #busStationDetailAddressErrorTpl let-control>
+          <span class="mt-1 !text-xs text-red-500">
+            @if (busStationForm.controls['detailAddress'].errors?.['required']) { Vui lòng nhập trường này }
+          </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="!w-full">
+      <nz-form-label nzFor="location" class="!flex !items-center !justify-start">Location</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationDetailLocationErrorTpl" class="!flex flex-col">
+        <nz-input-group [nzSuffix]="busStationDetailLocationClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+          <input type="text" nz-input formControlName="location" placeholder="Nhập Location" />
+        </nz-input-group>
+        <ng-template #busStationDetailLocationClearTpl>
+          @if(f['location'].value && !defaultFlagService.isDefault(busStation)) {
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            (click)="clearFormValue('location')"></span>
+          }
+        </ng-template>
+        <ng-template #busStationDetailLocationErrorTpl let-control>
+          <span class="mt-1 !text-xs text-red-500">
+            @if (busStationForm.controls['location'].errors?.['required']) { Vui lòng nhập trường này }
+          </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="!w-full">
+      <nz-form-label nzFor="busProviceId" class="!flex !items-center !justify-start">Tỉnh/Thành Phố</nz-form-label>
+      <nz-form-control [nzErrorTip]="busStationNameBusProviceIdErrorTpl">
+        <nz-select
+          formControlName="busProviceId"
+          nzPlaceHolder="Chọn Tỉnh/Thành Phố"
+          nzShowSearch
+          nzAllowClear
+          nzNotFoundContent="Không tìm thấy">
+          @for (busProvice of busProvices; track busProvice) {
+          <nz-option
+            nzCustomContent
+            [nzLabel]="busProvice.name + defaultFlagService.defaultTextFlag(busProvice)"
+            [nzValue]="busProvice._id">
+            <div class="flex items-center">
+              <svg-icon [src]="busProvice.icon" [svgClass]="'h-5 w-5'"> </svg-icon>
+              <span class="pl-4 !font-medium">
+                {{ busProvice.name }} {{ defaultFlagService.defaultTextFlag(busProvice) }}
+              </span>
+            </div>
+          </nz-option>
+          }
+        </nz-select>
+        <ng-template #busStationNameBusProviceIdErrorTpl let-control>
+          <span class="mt-1 !text-xs text-red-500">
+            @if (busStationForm.controls['busProviceId'].errors?.['required']) { Vui lòng chọn Bus Services}
+          </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</mat-dialog-content>
+@if(!defaultFlagService.isDefault(busStation)){
+<mat-dialog-actions class="line-block space-x-4 text-center">
+  <button
+    class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+    nz-button
+    (click)="onSubmit()"
+    type="button">
+    SAVE
+  </button>
+</mat-dialog-actions>
+}

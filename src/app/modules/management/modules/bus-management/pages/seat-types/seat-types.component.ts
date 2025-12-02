@@ -3,74 +3,104 @@ import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { SeatType, SeatType2Create, SearchSeatType } from './model/seat-type.model';
-import { CreateEditSeatTypeDialogComponent } from './component/create-edit-seat-types-dialog/create-seat-type-dialog.component';
+import { SeatTypesDetailDialogComponent } from './component/seat-types-detail-dialog/seat-types-detail-dialog.component';
 import { SeatTypesService } from './service/seat-types.servive';
 import { Utils } from 'src/app/shared/utils/utils';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 @Component({
   selector: 'app-seat-types',
   templateUrl: './seat-types.component.html',
   styleUrls: ['./seat-types.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class SeatTypesComponent implements OnInit {
   searchSeatType: SearchSeatType = new SearchSeatType();
-  selectAll: boolean = false;
 
-  pageIdx: number = 1;
-  pageSize: number = 5;
+  indeterminate = false;
+  checked = false;
+  setOfCheckedId = new Set<string>();
+
   totalPage: number = 0;
   totalItem: number = 0;
-  keyword: string = '';
-  sortBy: string = '';
 
-  isLoadingSeatType: boolean = false;
+  searchParams = {
+    pageIdx: 1,
+    pageSize: 5,
+    keyword: '',
+    sortBy: {
+      key: 'createdAt',
+      value: 'descend',
+    },
+    filters: [] as any[],
+  };
+
+  isLoading: boolean = false;
 
   constructor(
     private seatTypesService: SeatTypesService,
     private dialog: MatDialog,
-    private utils: Utils
-  ) { }
+    private utils: Utils,
+    public defaultFlagService: DefaultFlagService,
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
   }
 
   loadData(): void {
-    this.isLoadingSeatType = true;
-    this.seatTypesService.searchSeatType(this.pageIdx, this.pageSize, this.keyword, this.sortBy).subscribe({
+    this.isLoading = true;
+    this.seatTypesService.searchSeatType(this.searchParams).subscribe({
       next: (res: SearchSeatType) => {
         if (res) {
           this.searchSeatType = res;
           this.totalItem = this.searchSeatType.totalItem;
           this.totalPage = this.searchSeatType.totalPage;
         }
-        this.isLoadingSeatType = false;
+        this.isLoading = false;
       },
       error: (error: any) => {
         this.utils.handleRequestError(error);
-        this.isLoadingSeatType = false;
+        this.isLoading = false;
       },
     });
   }
 
-  toggleSeatType(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.searchSeatType.seatTypes = this.searchSeatType.seatTypes.map((seatType: SeatType) => ({
-      ...seatType,
-      selected: checked,
-    }));
+  onCurrentPageDataChange(event: any): void {
+    const seatTypes = event as readonly SeatType[];
+    this.searchSeatType.seatTypes = [...seatTypes];
+    this.refreshCheckedStatus();
   }
 
-  checkSelectAll(): void {
-    this.selectAll = !this.searchSeatType.seatTypes.some((seatType) => !seatType.selected);
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.searchSeatType.seatTypes;
+    this.checked = listOfEnabledData.every(({ _id }) => this.setOfCheckedId.has(_id));
+    this.indeterminate = listOfEnabledData.some(({ _id }) => this.setOfCheckedId.has(_id)) && !this.checked;
   }
 
-  deleteSeatType(id: string): void {
+  onAllChecked(checked: boolean): void {
+    this.searchSeatType.seatTypes.forEach(({ _id }) => this.updateCheckedSet(_id, checked));
+    this.refreshCheckedStatus();
+  }
+
+  updateCheckedSet(_id: string, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(_id);
+    } else {
+      this.setOfCheckedId.delete(_id);
+    }
+  }
+
+  onItemChecked(_id: string, checked: boolean): void {
+    this.updateCheckedSet(_id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  deleteSeatType(seatType: SeatType): void {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
       data: {
         icon: {
-          type: 'dangerous'
+          type: 'dangerous',
         },
         title: 'Delete SeatType',
         content:
@@ -78,22 +108,22 @@ export class SeatTypesComponent implements OnInit {
         btn: [
           {
             label: 'NO',
-            type: 'cancel'
+            type: 'cancel',
           },
           {
             label: 'YES',
-            type: 'submit'
+            type: 'submit',
           },
-        ]
+        ],
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.seatTypesService.deleteSeatType(id).subscribe({
+        this.seatTypesService.deleteSeatType(seatType._id).subscribe({
           next: (res: any) => {
             if (res) {
-              this.searchSeatType.seatTypes = this.searchSeatType.seatTypes.filter((seatType) => seatType._id !== id);
+              this.searchSeatType.seatTypes = this.searchSeatType.seatTypes.filter((st) => st._id !== seatType._id);
               toast.success('SeatType deleted successfully');
             }
           },
@@ -104,7 +134,7 @@ export class SeatTypesComponent implements OnInit {
   }
 
   editSeatType(seatType: SeatType): void {
-    const dialogRef = this.dialog.open(CreateEditSeatTypeDialogComponent, {
+    const dialogRef = this.dialog.open(SeatTypesDetailDialogComponent, {
       data: {
         title: 'Edit SeatType',
         seatType: { ...seatType },
@@ -117,7 +147,7 @@ export class SeatTypesComponent implements OnInit {
           ...seatType,
           name: result.name,
           isEnv: result.isEnv,
-          iconId: result.icon,
+          iconId: result.iconId,
         };
         this.seatTypesService.processUpdateSeatType(result.files, seatType2Update).subscribe({
           next: (res: SeatType) => {
@@ -135,7 +165,7 @@ export class SeatTypesComponent implements OnInit {
   }
 
   addSeatType(): void {
-    const dialogRef = this.dialog.open(CreateEditSeatTypeDialogComponent, {
+    const dialogRef = this.dialog.open(SeatTypesDetailDialogComponent, {
       data: {
         title: 'Add New SeatType',
       },
@@ -143,12 +173,12 @@ export class SeatTypesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-
         const seatType2Create = new SeatType2Create();
         seatType2Create.name = result.name;
         seatType2Create.isEnv = result.isEnv;
+        seatType2Create.iconId = result.iconId;
 
-        this.seatTypesService.createSeatType(result.files, seatType2Create).subscribe({
+        this.seatTypesService.processCreateBusService(result.files, seatType2Create).subscribe({
           next: (res: SeatType) => {
             if (res) {
               this.loadData();
@@ -161,20 +191,43 @@ export class SeatTypesComponent implements OnInit {
     });
   }
 
-  reloadSeatTypePage(data: any): void {
-    this.pageIdx = data.pageIdx;
-    this.pageSize = data.pageSize;
+  cloneData(seatType: SeatType): void {
+    delete (seatType as any)._id;
+    let seatType2Create = new SeatType2Create();
+    seatType2Create = { ...seatType2Create, ...seatType };
+
+    this.seatTypesService.createSeatType(seatType2Create).subscribe({
+      next: (res: SeatType) => {
+        if (res) {
+          this.loadData();
+          toast.success('Nhân bản thành công');
+        }
+      },
+      error: (error: any) => this.utils.handleRequestError(error),
+    });
+  }
+
+  reloadPage(data: any): void {
+    this.searchParams = {
+      ...this.searchParams,
+      ...data,
+    };
     this.loadData();
   }
 
-  searchSeatTypePage(keyword: string) {
-    this.pageIdx = 1;
-    this.keyword = keyword;
-    this.loadData();
+  searchPage(keyword: string) {
+    this.searchParams = {
+      ...this.searchParams,
+      pageIdx: 1,
+      keyword,
+    };
   }
 
-  sortSeatTypePage(sortBy: string) {
-    this.sortBy = sortBy;
+  sortPage(sortBy: { key: string; value: string }) {
+    this.searchParams = {
+      ...this.searchParams,
+      sortBy,
+    };
     this.loadData();
   }
 }

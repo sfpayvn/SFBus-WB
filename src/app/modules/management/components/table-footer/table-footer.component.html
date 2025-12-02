@@ -1,4 +1,4 @@
-<div class="flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-xs text-muted-foreground">
+<div class="text-muted-foreground flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-xs">
   <div class="order-2 flex items-center gap-2 md:order-1">
     <span>Show</span>
     <select class="!w-16 p-2" (change)="changePerPage($event)">
@@ -16,6 +16,7 @@
     <span> {{ startItems }}-{{ endItems }} of {{ totalItem }} </span>
     <div class="inline-flex items-center gap-1">
       <button
+        type="button"
         (click)="previousPage()"
         [ngClass]="{ 'disabled:opacity-50': pageIdx <= 1 }"
         [disabled]="pageIdx <= 1"
@@ -25,17 +26,19 @@
       </button>
       <ng-container *ngFor="let pagPage of pagination; let i = index">
         <button
+          type="button"
           [ngClass]="{ 'bg-muted-foreground/10': pagPage === pageIdx }"
           (click)="goToPage(pagPage)"
-          class="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-sm hover:bg-muted-foreground/10">
+          class="hover:bg-muted-foreground/10 inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-sm">
           {{ pagPage }}
         </button>
       </ng-container>
       <button
+        type="button"
         (click)="nextPage()"
         [ngClass]="{ 'disabled:opacity-50': pageIdx >= totalPage }"
         [disabled]="pageIdx >= totalPage"
-        class="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-sm hover:bg-muted-foreground/10">
+        class="hover:bg-muted-foreground/10 inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-sm">
         <svg-icon src="./assets/icons/heroicons/outline/arrow-long-right.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
       </button>
     </div>

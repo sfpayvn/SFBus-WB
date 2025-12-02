@@ -1,0 +1,49 @@
+:host ::ng-deep {
+  .custom-nz-select.custom-nz-select-goods-status-new {
+    nz-select-top-control {
+      background-color: var(--color-blue-200) !important;
+      color: var(--color-blue-800) !important;
+      border: 1px solid var(--color-blue-500) !important;
+    }
+  }
+
+  .custom-nz-select.custom-nz-select-goods-status-pending {
+    nz-select-top-control {
+      background-color: var(--color-teal-200) !important;
+      color: var(--color-teal-800) !important;
+      border: 1px solid var(--color-teal-500) !important;
+    }
+  }
+
+  .custom-nz-select.custom-nz-select-goods-status-on_board {
+    nz-select-top-control {
+      background-color: var(--color-indigo-200) !important;
+      color: var(--color-indigo-800) !important;
+      border: 1px solid var(--color-indigo-500) !important;
+    }
+  }
+
+  .custom-nz-select.custom-nz-select-goods-status-dropped_off {
+    nz-select-top-control {
+      background-color: var(--color-orange-200) !important;
+      color: var(--color-orange-800) !important;
+      border: 1px solid var(--color-orange-500) !important;
+    }
+  }
+
+  .custom-nz-select.custom-nz-select-goods-status-completed {
+    nz-select-top-control {
+      background-color: var(--color-green-200) !important;
+      color: var(--color-green-800) !important;
+      border: 1px solid var(--color-green-500) !important;
+    }
+  }
+
+  .custom-nz-select.custom-nz-select-goods-status-cancelled {
+    nz-select-top-control {
+      background-color: var(--color-red-200) !important;
+      color: var(--color-red-800) !important;
+      border: 1px solid var(--color-red-500) !important;
+    }
+  }
+}
