@@ -4,14 +4,9 @@ import { SeatType, SeatType2Create } from '../../model/seat-type.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-<<<<<<<< HEAD:src/app/modules/management/modules/bus-management/pages/seat-types/component/create-edit-seat-types-dialog/create-seat-type-dialog.component.ts
-import { FilesCenterDialogComponent } from 'src/app/modules/management/pages/files-center/components/files-center-dialog/files-center-dialog.component';
-import { FileDto } from 'src/app/modules/management/pages/files-center/model/file-center.model';
-========
 import { FileDto } from 'src/app/modules/management/modules/files-center-management/model/file-center.model';
 import { FilesCenterDialogComponent } from 'src/app/modules/management/modules/files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
->>>>>>>> main:src/app/modules/management/modules/bus-management/pages/seat-types/component/seat-types-detail-dialog/seat-types-detail-dialog.component.ts
 
 export interface DialogData {
   title: string;

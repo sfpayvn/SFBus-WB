@@ -1,7 +1,6 @@
 import { BusLayoutTemplate } from '../../bus-layout-templates/model/bus-layout-templates.model';
 import { BusProvince } from '../../bus-provices/model/bus-province.model';
 import { BusRoute, BusRouteBreakPoints } from '../../bus-routes/model/bus-route.model';
-import { SeatType } from '../../../../../../../../../.history/src/app/modules/management/modules/bus-management/pages/seat-types/model/seat-type.model_20250518141530';
 import { BusSeatPrices } from '../../bus-schedules/model/bus-schedule.model';
 
 export class SearchBusScheduleTemplate {
