@@ -252,7 +252,7 @@ export class FilesComponent implements OnInit {
 
   uploadFile(files2Upload: FileList): void {
     const folderId = this.getActiveFolderId();
-    this.fileService.uploadFiles(files2Upload, folderId).subscribe({
+    this.fileService.uploadFiles2Media(files2Upload, folderId).subscribe({
       next: (res: File) => {
         if (res) {
           this.loadFiles();
@@ -264,7 +264,7 @@ export class FilesComponent implements OnInit {
   }
 
   updateFile(item: FileDto) {
-    this.fileService.updateFile(item).subscribe((res: any) => {
+    this.fileService.updateFileMedia(item).subscribe((res: any) => {
       if (!res) {
         toast.error('Cập nhập thư mục không thành công');
         return;
@@ -274,7 +274,7 @@ export class FilesComponent implements OnInit {
   }
 
   updateFiles2Folder(files: FileDto[], fileFolderId: string) {
-    this.fileService.updateFiles2Folder(files, fileFolderId).subscribe((res: any) => {
+    this.fileService.updateFilesMedia2Folder(files, fileFolderId).subscribe((res: any) => {
       if (!res) {
         toast.error('Cập nhập thư mục không thành công');
         return;

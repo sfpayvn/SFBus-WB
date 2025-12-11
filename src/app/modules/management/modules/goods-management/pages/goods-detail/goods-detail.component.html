@@ -31,7 +31,11 @@
               <div
                 *ngFor="let image of goodsImages; let i = index"
                 class="group relative flex h-28 w-32 items-center justify-center overflow-hidden rounded-sm border border-dashed border-blue-500">
-                <img alt="goods image {{ i + 1 }}" [src]="image" class="h-full w-full cursor-pointer object-cover" />
+                <img
+                  (click)="utilsModal.viewImage($event, image)"
+                  alt="goods image {{ i + 1 }}"
+                  [src]="image"
+                  class="h-full w-full cursor-pointer object-cover" />
                 <div
                   class="absolute top-1 right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity hover:bg-red-600 group-hover:opacity-100"
                   (click)="removeImage(i)">

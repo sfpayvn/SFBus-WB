@@ -33,6 +33,9 @@ export class ApiGatewayService {
     let headers = new HttpHeaders();
     let context = new HttpContext().set(SkipLoading, skipLoading);
 
+    const timeZoneOffsetMs = -new Date().getTimezoneOffset() * 60 * 1000;
+    headers = headers.set('x-timezone-offset', timeZoneOffsetMs.toString());
+
     if (feature?.module) {
       headers = headers.set('X-Feature-Module', feature.module);
       if (feature.function) {

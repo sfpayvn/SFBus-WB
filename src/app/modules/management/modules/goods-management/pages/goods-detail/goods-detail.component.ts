@@ -72,12 +72,14 @@ export class GoodsDetailComponent implements OnInit {
 
   isLoaded: boolean = false;
 
+  private initialFormValue: any = null;
+
   constructor(
     private fb: FormBuilder,
     public utils: Utils,
     private location: Location,
     private goodsService: GoodsService,
-    private utilsModal: UtilsModal,
+    public utilsModal: UtilsModal,
     private busSchedulesService: BusSchedulesService,
     private goodsCategoriesService: GoodsCategoriesService,
     private busRoutesService: BusRoutesService,
@@ -238,6 +240,23 @@ export class GoodsDetailComponent implements OnInit {
       new BusRoute();
 
     this.filterBusSchedules();
+
+    this.initialFormValue = {
+      formValue: this.mainForm.getRawValue(),
+      images: [...this.goodsImages],
+    };
+  }
+
+  get f() {
+    return this.mainForm.controls;
+  }
+
+  hasFormChanged(): boolean {
+    const currentFormValue = {
+      formValue: this.mainForm.getRawValue(),
+      images: [...this.goodsImages],
+    };
+    return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
   optionalValidator(validator: ValidatorFn): ValidatorFn {
@@ -265,8 +284,20 @@ export class GoodsDetailComponent implements OnInit {
     this.busSchedule = this.busSchedules.find((busSchedule) => busSchedule._id == busScheduleId) || new BusSchedule();
   }
 
-  backPage() {
-    this.location.back();
+  backPage(): void {
+    if (this.hasFormChanged()) {
+      this.utilsModal
+        .openModalConfirm('Lưu ý', 'Bạn có thay đổi chưa lưu, bạn có chắc muốn đóng không?', 'warning')
+        .subscribe((result) => {
+          if (result) {
+            this.location.back();
+
+            return;
+          }
+        });
+    } else {
+      this.location.back();
+    }
   }
 
   checkDisableDateTime = (current: Date): boolean => {
@@ -385,6 +416,10 @@ export class GoodsDetailComponent implements OnInit {
       return;
     }
 
+    if (!this.hasFormChanged()) {
+      return;
+    }
+
     const data = this.mainForm.getRawValue();
 
     this.setDefaultValues2Create(data);
@@ -424,6 +459,10 @@ export class GoodsDetailComponent implements OnInit {
           const updatedState = { ...history.state, goods: res[0] };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Goods update successfully');
+          this.initialFormValue = {
+            formValue: this.mainForm.getRawValue(),
+            images: [...this.goodsImages],
+          };
           return;
         }
         toast.success('Goods added successfully');

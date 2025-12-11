@@ -2,6 +2,7 @@ import { ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef } 
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialDialogComponent } from '../components/material-dialog/material-dialog.component';
+import { ViewImageDialogComponent } from '@rsApp/modules/management/modules/files-center-management/components/view-image-dialog/view-image-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -101,5 +102,19 @@ export class UtilsModal {
     });
 
     return dialogRef.afterClosed();
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    const dialogRef = this.dialog.open(ViewImageDialogComponent, {
+      height: 'max-content',
+      width: 'max-content',
+      maxWidth: 'max-content',
+      panelClass: 'custom-dialog-view-image',
+      backdropClass: 'custom-back-drop-view-image',
+      data: {
+        image: image,
+      },
+    });
   }
 }
