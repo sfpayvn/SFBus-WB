@@ -123,9 +123,16 @@ export const COMMON_STATUS_CLASSES: { [key: string]: string } = {
   [COMMON_STATUS.EXPIRED]: 'border-gray-500 bg-gray-200 text-gray-800',
 };
 
+// payment-method uses common status constants
+export const PAYMENT_METHOD_TYPES = {
+  card: 'Card',
+  banking: 'Banking',
+  cash: 'Cash',
+} as const;
+
 // Type definitions
-export type BookingStatusType = (typeof BOOKING_STATUS)[keyof typeof BOOKING_STATUS];
-export type EventStatusType = (typeof EVENT_STATUS)[keyof typeof EVENT_STATUS];
-export type GoodsStatusType = (typeof GOODS_STATUS)[keyof typeof GOODS_STATUS];
-export type SeatStatusType = (typeof SEAT_STATUS)[keyof typeof SEAT_STATUS];
-export type CommonStatusType = (typeof COMMON_STATUS)[keyof typeof COMMON_STATUS];
+export type BookingStatusType = typeof BOOKING_STATUS[keyof typeof BOOKING_STATUS];
+export type EventStatusType = typeof EVENT_STATUS[keyof typeof EVENT_STATUS];
+export type GoodsStatusType = typeof GOODS_STATUS[keyof typeof GOODS_STATUS];
+export type SeatStatusType = typeof SEAT_STATUS[keyof typeof SEAT_STATUS];
+export type CommonStatusType = typeof COMMON_STATUS[keyof typeof COMMON_STATUS];

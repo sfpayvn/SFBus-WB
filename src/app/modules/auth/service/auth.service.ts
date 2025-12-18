@@ -43,7 +43,7 @@ export class AuthService {
 
   login(phoneNumber: string, password: string, tenantCode: string) {
     const body = { phoneNumber, password, tenantCode };
-    const url = `/auth/login?phoneNumber=${encodeURIComponent(phoneNumber)}`;
+    const url = `/admin/auth/login?phoneNumber=${encodeURIComponent(phoneNumber)}`;
 
     return this.apiGatewayService.post(url, body).pipe(
       map((res: any) => res?.access_token),

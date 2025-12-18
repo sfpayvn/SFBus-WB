@@ -166,6 +166,7 @@ export class MenuTenant {
           icon: 'assets/icons/heroicons/outline/cog.svg',
           label: 'Settings',
           route: '/settings',
+          children: [{ label: 'Theme setting', route: '/settings/theme-setting' }],
         },
         {
           icon: 'assets/icons/heroicons/outline/bell.svg',

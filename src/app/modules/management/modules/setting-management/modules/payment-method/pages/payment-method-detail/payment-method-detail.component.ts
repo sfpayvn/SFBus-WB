@@ -10,6 +10,11 @@ import { PaymentMethodService } from '../../service/payment-method.service';
 import { FilesCenterDialogComponent } from '@rsApp/modules/management/modules/files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from '@rsApp/modules/management/modules/files-center-management/model/file-center.model';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import {
+  COMMON_STATUS_CLASSES,
+  COMMON_STATUS_LABELS,
+  PAYMENT_METHOD_TYPES,
+} from '@rsApp/core/constants/status.constants';
 
 @Component({
   selector: 'app-payment-method-detail',
@@ -28,22 +33,17 @@ export class PaymentMethodDetailComponent implements OnInit {
 
   mode: 'create' | 'update' = 'create';
 
-  paymentMethodStatuses = [
-    {
-      value: 'active',
-      label: 'Đang hoạt động',
-    },
-    {
-      value: 'inactive',
-      label: 'Ngừng hoạt động',
-    },
-  ];
+  statusClasses = COMMON_STATUS_CLASSES;
 
-  paymentMethodsTypes = [
-    { value: 'card', label: 'Thẻ Tín Dụng' },
-    { value: 'banking', label: 'Ngân Hàng' },
-    { value: 'cash', label: 'Tiền Mặt' },
-  ];
+  paymentMethodStatuses = Object.entries(COMMON_STATUS_LABELS).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
+
+  paymentMethodsTypes = Object.entries(PAYMENT_METHOD_TYPES).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
 
   private initialFormValue: any = null;
 

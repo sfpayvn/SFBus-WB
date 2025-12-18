@@ -1,12 +1,12 @@
 <mat-dialog-content class="flex h-full w-full justify-center rounded-xl border border-white">
   @if(data){
-  <img class="cursor-pointer object-contain p-2" [src]="data.file.link" />
+  <img class="cursor-pointer object-contain p-2" [src]="data.image" />
   <div class="fixed right-[15px] top-[15px] flex">
-    <button class="m-0 rounded-lg p-2 hover:bg-gray-700" (click)="downloadFile(data.file.link)">
-      <svg-icon src="./assets/icons/download-outline-white.svg" [svgClass]="'h-8 w-8 cursor-pointer'"> </svg-icon>
+    <button class="m-0 rounded-lg p-2 hover:bg-gray-700" (click)="downloadFile(data.image)">
+      <img src="./assets/icons/download-outline-white.svg" class="h-8 w-8 cursor-pointer" />
     </button>
     <button class="m-0 rounded-lg p-2 hover:bg-gray-700" (click)="closeDialog()">
-      <svg-icon src="./assets/icons/close-white.svg" [svgClass]="'h-8 w-8 cursor-pointer '"> </svg-icon>
+      <img src="./assets/icons/close-white.svg" class="h-8 w-8 cursor-pointer" />
     </button>
   </div>
   }
