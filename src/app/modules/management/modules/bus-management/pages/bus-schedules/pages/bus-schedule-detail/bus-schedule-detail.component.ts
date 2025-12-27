@@ -647,11 +647,11 @@ export class BusScheduleDetailComponent implements OnInit {
         _id: this.busSchedule._id, // Thêm thuộc tính _id
       };
 
-      this.updateBus(busSchedule2Update);
+      this.updateBusSchedule(busSchedule2Update);
       return;
     }
 
-    this.createBus(busSchedule2Create);
+    this.createBusSchedule(busSchedule2Create);
   }
 
   getSeatTypeById(id: string): SeatType | undefined {
@@ -674,7 +674,7 @@ export class BusScheduleDetailComponent implements OnInit {
     return blockIds; // Return the array of block IDs
   }
 
-  updateBus(busSchedule2Update: BusSchedule2Update) {
+  updateBusSchedule(busSchedule2Update: BusSchedule2Update) {
     this.busSchedulesService.updateBusSchedule(busSchedule2Update).subscribe({
       next: (res: BusSchedule) => {
         if (res) {
@@ -690,7 +690,7 @@ export class BusScheduleDetailComponent implements OnInit {
     });
   }
 
-  createBus(busSchedule2Create: BusSchedule2Create) {
+  createBusSchedule(busSchedule2Create: BusSchedule2Create) {
     this.busSchedulesService.createBusSchedule(busSchedule2Create).subscribe({
       next: (res: BusSchedule) => {
         if (res) {

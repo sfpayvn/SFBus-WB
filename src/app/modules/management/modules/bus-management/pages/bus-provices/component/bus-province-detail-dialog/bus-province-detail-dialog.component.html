@@ -107,15 +107,18 @@
             [cdkDropListDisabled]="defaultFlagService.isDefault(busProvince)"
             class="drag-drop-list"
             (cdkDropListDropped)="drop($event)">
-            @for (busStation of filteredBusStations; track busStation) {
-            <div
-              class="drag-drop-box"
-              (click)="toggleBusStation(busStation)"
-              cdkDrag
-              [ngClass]="{ 'drag-drop-box-selected': isStationSelected(busStation) }">
-              {{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
-            </div>
-            }
+            <nz-skeleton [nzLoading]="isLoaddedBusStations" [nzParagraph]="{ rows: 5}" [nzTitle]="false" [nzActive]="true">
+              @for (busStation of filteredBusStations; track busStation) {
+
+              <div
+                class="drag-drop-box"
+                (click)="toggleBusStation(busStation)"
+                cdkDrag
+                [ngClass]="{ 'drag-drop-box-selected': isStationSelected(busStation) }">
+                {{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
+              </div>
+              }
+            </nz-skeleton>
           </div>
         </div>
       </diV>

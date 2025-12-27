@@ -13,6 +13,7 @@ export class BusProvince {
   icon: string = '';
   isDefault: boolean = false;
   selected: boolean = false;
+  busStations: BusStation[] = [];
 }
 
 export class BusProvince2Create {

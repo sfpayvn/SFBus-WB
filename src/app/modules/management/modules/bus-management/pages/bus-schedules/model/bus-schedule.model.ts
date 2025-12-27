@@ -36,6 +36,7 @@ export class BusSeatPrices {
 
 export class BusSchedule {
   _id: string = '';
+  busScheduleNumber: string = '';
   name: string = '';
   busId: string = '';
   bus: Bus | undefined;

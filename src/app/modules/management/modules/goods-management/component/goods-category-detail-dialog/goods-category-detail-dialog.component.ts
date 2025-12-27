@@ -42,7 +42,7 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
   private async initForm() {
     this.goodsCategoryForm = this.fb.group({
       name: [this.goodsCategory.name, [Validators.required]],
-      icon: [this.goodsCategory.icon, Validators.required],
+      iconId: [this.goodsCategory.icon, Validators.required],
     });
 
     this.initialFormValue = this.goodsCategoryForm.getRawValue();
@@ -103,14 +103,14 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
 
   removeFileImage() {
     this.goodsCategoryIcon = '';
-    this.goodsCategoryForm.patchValue({ icon: '' });
+    this.goodsCategoryForm.patchValue({ iconId: '' });
   }
 
   openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
       this.goodsCategoryIcon = files[0].link;
-      this.goodsCategoryForm.patchValue({ icon: files[0].link });
+      this.goodsCategoryForm.patchValue({ iconId: files[0]._id });
     });
   }
 
@@ -125,7 +125,7 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
       return;
     }
 
-    const { name, icon } = this.goodsCategoryForm.getRawValue();
+    const { name, iconId } = this.goodsCategoryForm.getRawValue();
 
     let dataTransfer = new DataTransfer();
 
@@ -137,7 +137,7 @@ export class GoodsCategoryDetailDialogComponent implements OnInit {
 
     const data = {
       name,
-      icon,
+      iconId,
       files: files,
     };
     this.dialogRef.close(data);

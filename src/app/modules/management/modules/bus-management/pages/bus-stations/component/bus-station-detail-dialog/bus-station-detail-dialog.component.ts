@@ -60,7 +60,8 @@ export class BusStationDetailDialogComponent implements OnInit {
   private async initForm() {
     const busProvice = await this.busProvices.find((busProvice) => busProvice._id === this.busStation.provinceId);
 
-    const { name, detailAddress, location } = this.busStation;
+    const { name, detailAddress = '', location = '' } = this.busStation;
+    console.log("🚀 ~ BusStationDetailDialogComponent ~ initForm ~ this.busStation:", this.busStation)
 
     this.busStationForm = this.fb.group({
       name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busStation) }, [Validators.required]],

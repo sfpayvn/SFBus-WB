@@ -77,10 +77,13 @@
               nzPlaceHolder="Chọn Bus Tempate"
               (ngModelChange)="chooseBusTemplate($event)">
               @for (busTemplate of busTemplates; track busTemplate) {
-              <nz-option nzCustomContent [nzLabel]="busTemplate.name" [nzValue]="busTemplate._id">
+              <nz-option
+                nzCustomContent
+                [nzLabel]="busTemplate.name + ' ' + defaultFlagService.defaultTextFlag(busTemplate)"
+                [nzValue]="busTemplate._id">
                 <div class="flex items-center">
                   <span class="pl-4 !font-medium">
-                    {{ busTemplate.name }}
+                    {{ busTemplate.name }} - {{ defaultFlagService.defaultTextFlag(busTemplate) }}
                   </span>
                 </div>
               </nz-option>
