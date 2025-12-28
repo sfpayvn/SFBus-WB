@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Setting } from '../model/setting.model';
+import { SearchSettings, Setting, Setting2Update } from '../model/setting.model';
 import { ApiGatewayService } from '@rsApp/api-gateway/api-gateaway.service';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class SettingService {
   }
 
   /** Create or update multiple settings. */
-  createOrUpdates(items: Setting[]): Observable<Setting[]> {
+  createOrUpdates(items: Setting2Update[]): Observable<Setting2Update[]> {
     return this.api.post(`${this.baseUrl}/create-or-updates`, items);
   }
 
@@ -29,6 +29,10 @@ export class SettingService {
 
   getSettingByGroupName(groupName: string): Observable<Setting[]> {
     return this.api.get(`${this.baseUrl}/group/${encodeURIComponent(groupName)}`);
+  }
+
+  search(params: any): Observable<SearchSettings> {
+    return this.api.post(`${this.baseUrl}/search`, params);
   }
 
   getAll(): Observable<Setting[]> {

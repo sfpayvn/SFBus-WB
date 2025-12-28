@@ -1,5 +1,5 @@
 <mat-dialog-title class="text-center">
-  <span class="text-xl font-bold">{{ defaultFlagService.isDefault(busType) ? 'Chi Tiết' : data.title }}</span>
+  <span class="text-xl font-medium">{{ defaultFlagService.isDefault(busType) ? 'Chi Tiết' : data.title }}</span>
   <button class="absolute right-3" (click)="closeDialog()">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
       <path
@@ -13,7 +13,13 @@
   <form class="sm:min-w-36 md:min-w-96 mx-auto" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="mb-5">
       <nz-form-item class="!flex !w-full !flex-col">
-        <nz-form-label nzFor="name" class="!flex !items-center !justify-start !text-sm">Loại Xe</nz-form-label>
+        <nz-form-label
+          nzFor="name"
+          [nzNoColon]="true"
+          [nzRequired]="true"
+          class="!flex !items-center !justify-start !text-sm"
+          >Loại Xe</nz-form-label
+        >
         <nz-form-control [nzErrorTip]="busTypeNameErrorTpl" class="!flex flex-col">
           <nz-input-group [nzSuffix]="busTypeNameClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
             <input type="text" nz-input formControlName="name" placeholder="Nhập Tên Loại Xe" />

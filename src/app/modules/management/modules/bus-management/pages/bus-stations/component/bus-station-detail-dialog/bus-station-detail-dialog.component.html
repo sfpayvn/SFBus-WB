@@ -1,5 +1,5 @@
 <mat-dialog-title class="text-center">
-  <span class="text-xl font-bold">{{ defaultFlagService.isDefault(busStation) ? 'Chi Tiết' : data.title }}</span>
+  <span class="text-xl font-medium">{{ defaultFlagService.isDefault(busStation) ? 'Chi Tiết' : data.title }}</span>
   <button class="absolute right-3" (click)="closeDialog()">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
       <path
@@ -16,7 +16,9 @@
     nz-form
     (ngSubmit)="onSubmit()">
     <nz-form-item class="!w-full">
-      <nz-form-label nzFor="name" class="!flex !items-center !justify-start">Tên</nz-form-label>
+      <nz-form-label nzFor="name" [nzNoColon]="true" [nzRequired]="true" class="!flex !items-center !justify-start"
+        >Tên</nz-form-label
+      >
       <nz-form-control [nzErrorTip]="busStationNameErrorTpl" class="!flex flex-col">
         <nz-input-group [nzSuffix]="busStationNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
           <input type="text" nz-input formControlName="name" placeholder="Nhập Tên" [disabled]="f['name'].disabled" />
@@ -40,7 +42,9 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item class="!w-full">
-      <nz-form-label nzFor="detailAddress" class="!flex !items-center !justify-start">Địa chỉ</nz-form-label>
+      <nz-form-label nzFor="detailAddress" [nzNoColon]="true" class="!flex !items-center !justify-start"
+        >Địa chỉ</nz-form-label
+      >
       <nz-form-control [nzErrorTip]="busStationDetailAddressErrorTpl" class="!flex flex-col">
         <nz-input-group [nzSuffix]="busStationDetailAddressClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
           <input
@@ -68,7 +72,9 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item class="!w-full">
-      <nz-form-label nzFor="location" class="!flex !items-center !justify-start">Location</nz-form-label>
+      <nz-form-label nzFor="location" [nzNoColon]="true" class="!flex !items-center !justify-start"
+        >Location</nz-form-label
+      >
       <nz-form-control [nzErrorTip]="busStationDetailLocationErrorTpl" class="!flex flex-col">
         <nz-input-group [nzSuffix]="busStationDetailLocationClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
           <input type="text" nz-input formControlName="location" placeholder="Nhập Location" />
@@ -91,7 +97,9 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item class="!w-full">
-      <nz-form-label nzFor="busProviceId" class="!flex !items-center !justify-start">Tỉnh/Thành Phố</nz-form-label>
+      <nz-form-label nzFor="busProviceId" [nzNoColon]="true" class="!flex !items-center !justify-start"
+        >Tỉnh/Thành Phố</nz-form-label
+      >
       <nz-form-control [nzErrorTip]="busStationNameBusProviceIdErrorTpl">
         <nz-select
           formControlName="busProviceId"

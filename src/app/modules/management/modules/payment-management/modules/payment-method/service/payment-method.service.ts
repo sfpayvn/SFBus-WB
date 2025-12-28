@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { PaymentMethod2Create, PaymentMethod2Update } from '../model/payment-method.model';
 import { FilesService } from '@rsApp/modules/management/modules/files-center-management/service/files-center.servive';
@@ -12,6 +12,19 @@ export class PaymentMethodService {
 
   constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
 
+  findPaymentMethods() {
+    return this.apiGatewayService.get(this.url).pipe(
+      tap((res: any) => {}),
+      map((res: any) => {
+        return res;
+      }),
+      catchError((error) => {
+        //write log
+        return of([]);
+      }),
+    );
+  }
+
   findAll() {
     const url = `${this.url}/find-all`;
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
@@ -21,6 +34,7 @@ export class PaymentMethodService {
     const url = `${this.url}/find-all/${role}`;
     return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
   }
+
   findOne(_id: string, skipLoading?: boolean) {
     const url = `${this.url}/${_id}`;
     return this.apiGatewayService.get(url, skipLoading).pipe(tap((res: any) => {}));

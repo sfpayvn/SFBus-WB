@@ -102,14 +102,9 @@ export class MenuAdmin {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Setting',
-          route: '/management/setting-management',
-          children: [
-            {
-              label: 'Payment Method',
-              route: '/management/setting-management/payment-method',
-            },
-          ],
+          label: 'Payment Management',
+          route: '/management/payment-management',
+          children: [{ label: 'Payment Methods', route: '/management/payment-management/payment-method' }],
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
@@ -148,6 +143,7 @@ export class MenuAdmin {
           icon: 'assets/icons/heroicons/outline/cog.svg',
           label: 'Settings',
           route: '/settings',
+          children: [{ label: 'Default setting', route: '/settings/default-setting' }],
         },
         {
           icon: 'assets/icons/heroicons/outline/bell.svg',

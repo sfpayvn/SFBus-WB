@@ -12,6 +12,18 @@ const routes: Routes = [
         loadChildren: () => import('./pages/theme-setting/theme-setting.module').then((m) => m.ThemeSettingModule),
       },
       {
+        path: 'bus-schedule-setting',
+        loadChildren: () => import('./pages/bus-schedule-setting/bus-schedule-setting.module').then((m) => m.BusScheduleSettingModule),
+      },
+      {
+        path: 'organization-setting',
+        loadChildren: () => import('./pages/organization-setting/organization-setting.module').then((m) => m.OrganizationSettingModule),
+      },
+      {
+        path: 'default-setting',
+        loadChildren: () => import('./pages/default-setting/default-setting.module').then((m) => m.DefaultSettingModule),
+      },
+      {
         path: '',
         redirectTo: 'theme-setting',
         pathMatch: 'full',

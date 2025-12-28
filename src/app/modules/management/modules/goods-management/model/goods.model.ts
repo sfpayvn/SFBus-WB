@@ -38,17 +38,26 @@ export class Goods {
   height: number = 0;
   note: string = '';
   status: string = '';
-
+  paymentStatus: string = '';
   paidBy: string = 'sender'; // "sender" or "customer"
+
+  paymentAmount?: number;
+  paymentPaidAmount?: number;
+
+  createdAt: Date = new Date();
 
   selected: boolean = false;
   isEditing: boolean = false;
 }
 
-export interface Goods2Create
-  extends Omit<Goods, '_id' | 'selected' | 'categories' | 'images' | 'busSchedule' | 'isEditing'> {}
+export interface Goods2Create extends Omit<Goods, '_id' | 'selected' | 'categories'> {}
 export class Goods2Create {}
 
 export class Goods2Update extends Goods2Create {
   _id: string = '';
+}
+
+export class RequestUpdateGoodsScheduleAssignments {
+  busScheduleId: string = '';
+  goodId: string = '';
 }

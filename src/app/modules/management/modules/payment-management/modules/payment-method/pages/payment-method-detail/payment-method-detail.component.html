@@ -19,7 +19,11 @@
       <div class="flex gap-4">
         <div class="flex h-full w-3/12 flex-col">
           <div class="flex flex-col gap-2">
-            <nz-form-label [nzNoColon]="true" nzFor="image" class="!flex !items-center !justify-start !font-medium"
+            <nz-form-label
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              nzFor="image"
+              class="!flex !items-center !justify-start !font-medium"
               >Hình ảnh</nz-form-label
             >
             @if(!paymentMethodImage){
@@ -98,7 +102,11 @@
           <div class="flex w-full gap-4">
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label
+                  [nzNoColon]="true"
+                  [nzRequired]="true"
+                  nzFor="status"
+                  class="!flex !items-center !justify-start !font-medium"
                   >Tên PaymentMethod</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="mainFormNameErrorTpl" class="!flex flex-col">
@@ -142,7 +150,11 @@
             @if(mode == 'update') {
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label
+                  [nzNoColon]="true"
+                  [nzRequired]="true"
+                  nzFor="status"
+                  class="!flex !items-center !justify-start !font-medium"
                   >Status</nz-form-label
                 >
                 <nz-form-control class="!flex !max-h-[42px] flex-col">
@@ -172,7 +184,11 @@
             @if(mainForm.get('token')) {
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label
+                  [nzNoColon]="true"
+                  [nzRequired]="true"
+                  nzFor="status"
+                  class="!flex !items-center !justify-start !font-medium"
                   >Token</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="mainFormTokenErrorTpl" class="!flex flex-col">
@@ -199,7 +215,11 @@
             } @if(mainForm.get('providerId')) {
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label
+                  [nzNoColon]="true"
+                  [nzRequired]="true"
+                  nzFor="status"
+                  class="!flex !items-center !justify-start !font-medium"
                   >Provider Id</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="mainFormProviderIdErrorTpl" class="!flex flex-col">
@@ -229,7 +249,11 @@
             @if(mainForm.get('bankName')) {
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label
+                  [nzNoColon]="true"
+                  [nzRequired]="true"
+                  nzFor="status"
+                  class="!flex !items-center !justify-start !font-medium"
                   >Bank Name</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="mainFormBankNameErrorTpl" class="!flex flex-col">
@@ -256,7 +280,11 @@
             } @if(mainForm.get('accountName')) {
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label
+                  [nzNoColon]="true"
+                  [nzRequired]="true"
+                  nzFor="status"
+                  class="!flex !items-center !justify-start !font-medium"
                   >Account Name</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="mainFormAccountNameErrorTpl" class="!flex flex-col">
@@ -283,7 +311,11 @@
             } @if(mainForm.get('accountNumber')) {
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label
+                  [nzNoColon]="true"
+                  [nzRequired]="true"
+                  nzFor="status"
+                  class="!flex !items-center !justify-start !font-medium"
                   >Account Number</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="mainFormAccountNumberErrorTpl" class="!flex flex-col">
@@ -313,7 +345,7 @@
           <div class="flex w-full gap-4">
             <div class="flex w-full flex-col">
               <nz-form-item class="!mb-0 !flex !flex-col">
-                <nz-form-label [nzNoColon]="true" nzFor="status" class="!flex !items-center !justify-start !font-medium"
+                <nz-form-label [nzNoColon]="true" nzFor="notee" class="!flex !items-center !justify-start !font-medium"
                   >Note</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="mainFormNoteErrorTpl" class="!flex flex-col">

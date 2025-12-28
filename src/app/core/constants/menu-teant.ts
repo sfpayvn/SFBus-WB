@@ -125,9 +125,9 @@ export class MenuTenant {
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
-          label: 'Setting',
-          route: '/management/setting-management',
-          children: [{ label: 'Payment Methods', route: '/management/setting-management/payment-method' }],
+          label: 'Payment Management',
+          route: '/management/payment-management',
+          children: [{ label: 'Payment Methods', route: '/management/payment-management/payment-method' }],
         },
         {
           icon: 'assets/icons/heroicons/outline/cube.svg',
@@ -166,7 +166,11 @@ export class MenuTenant {
           icon: 'assets/icons/heroicons/outline/cog.svg',
           label: 'Settings',
           route: '/settings',
-          children: [{ label: 'Theme setting', route: '/settings/theme-setting' }],
+          children: [
+            { label: 'Theme setting', route: '/settings/theme-setting' },
+            { label: 'Bus Schedule Setting', route: '/settings/bus-schedule-setting' },
+            { label: 'Organization setting', route: '/settings/organization-setting' },
+          ],
         },
         {
           icon: 'assets/icons/heroicons/outline/bell.svg',

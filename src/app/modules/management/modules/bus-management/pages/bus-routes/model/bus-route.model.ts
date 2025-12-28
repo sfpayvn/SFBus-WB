@@ -1,3 +1,5 @@
+import { BusStation } from '../../bus-stations/model/bus-station.model';
+
 export class SearchBusRoute {
   busRoutes: BusRoute[] = [];
   pageIdx: number = 0;
@@ -7,6 +9,7 @@ export class SearchBusRoute {
 
 export class BusRouteBreakPoints {
   busStationId: string = '';
+  busStation: BusStation = new BusStation();
 }
 
 export class BusRoute {

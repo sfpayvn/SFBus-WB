@@ -60,23 +60,15 @@ export class ThemeSettingComponent implements OnInit {
 
   async loadCurrentSettings() {
     this.isLoaded = false;
-    const savedSettings = await firstValueFrom(this.settingCacheService.getSettingByGroupName('theme'));
-    if (!savedSettings || savedSettings.length === 0) {
-      // Load current theme settings from localStorage or API
-      this.settingService.getSettingByGroupName('theme').subscribe({
-        next: (settings: Setting[]) => {
-          this.settings = settings;
-          this.settingCacheService.createOrUpdates(settings).subscribe();
-          this.loadDataToForm();
-          this.isLoaded = true;
-        },
-        error: (err) => {},
-      });
-    } else {
-      this.settings = savedSettings;
-      this.loadDataToForm();
-      this.isLoaded = true;
-    }
+    this.settingService.getSettingByGroupName('theme').subscribe({
+      next: (settings: Setting[]) => {
+        this.settings = settings;
+        this.settingCacheService.createOrUpdates(settings).subscribe();
+        this.loadDataToForm();
+        this.isLoaded = true;
+      },
+      error: (err) => {},
+    });
   }
 
   loadDataToForm() {
@@ -257,9 +249,9 @@ export class ThemeSettingComponent implements OnInit {
   }
 
   applyThemeColors(primaryColor: string, secondaryColor: string) {
-    const root = document.documentElement;
-    root.style.setProperty('--color-primary', primaryColor);
-    root.style.setProperty('--color-secondary', secondaryColor);
+    // const root = document.documentElement;
+    // root.style.setProperty('--color-primary', primaryColor);
+    // root.style.setProperty('--color-secondary', secondaryColor);
   }
 
   previewColors() {

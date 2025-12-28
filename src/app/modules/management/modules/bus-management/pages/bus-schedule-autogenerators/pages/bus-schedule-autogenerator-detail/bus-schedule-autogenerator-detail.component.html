@@ -14,7 +14,13 @@
     <div class="flex gap-4">
       <div class="flex w-5/12">
         <nz-form-item class="!min-h-[96px] !w-full">
-          <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start !text-sm">Name</nz-form-label>
+          <nz-form-label
+            nzFor="name"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !h-[36px] !items-center !justify-start !text-sm"
+            >Name</nz-form-label
+          >
           <nz-form-control [nzErrorTip]="busScheduleAutoGeneratorDetailNameErrorTpl" class="!flex flex-col">
             <nz-input-group
               [nzSuffix]="busScheduleAutoGeneratorDetailNameClearTpl"
@@ -41,7 +47,11 @@
       <div class="flex w-7/12 gap-4">
         <div class="flex w-full flex-col">
           <nz-form-item class="!min-h-[98px] !w-full">
-            <nz-form-label nzFor="busScheduleTemplateId" class="!flex !h-[36px] !items-center !justify-start"
+            <nz-form-label
+              nzFor="busScheduleTemplateId"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !h-[36px] !items-center !justify-start"
               >Bus Schedule Template
             </nz-form-label>
             <nz-form-control
@@ -69,7 +79,13 @@
         </div>
         <div class="flex min-w-[150px]">
           <nz-form-item class="!mb-0 !flex w-full !flex-col">
-            <nz-form-label nzFor="status" class="!flex !items-center !justify-start">Status</nz-form-label>
+            <nz-form-label
+              nzFor="status"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !items-center !justify-start"
+              >Status</nz-form-label
+            >
             <nz-form-control class="!flex !max-h-[42px] flex-col">
               <nz-select
                 class="custom-nz-select height-large !mt-0 !mb-0 !w-full busSchedule-status-{{
@@ -89,7 +105,11 @@
       <div class="flex w-5/12 gap-4">
         <div class="flex w-4/12">
           <nz-form-item class="!min-h-[96px] !w-full">
-            <nz-form-label nzFor="repeatInterval" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+            <nz-form-label
+              nzFor="repeatInterval"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !h-[36px] !items-center !justify-start !text-sm"
               >Run rule every</nz-form-label
             >
             <nz-form-control
@@ -119,7 +139,11 @@
         </div>
         <div class="flex w-4/12">
           <nz-form-item class="!min-h-[98px] !w-full">
-            <nz-form-label nzFor="repeatType" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+            <nz-form-label
+              nzFor="repeatType"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !h-[36px] !items-center !justify-start !text-sm"
               >Repeat Types</nz-form-label
             >
             <nz-form-control>
@@ -143,7 +167,11 @@
         </div>
         <div class="flex w-4/12">
           <nz-form-item class="!min-h-[96px] !w-full">
-            <nz-form-label nzFor="preGenerateDays" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+            <nz-form-label
+              nzFor="preGenerateDays"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !h-[36px] !items-center !justify-start !text-sm"
               >PreGenerate Days</nz-form-label
             >
             <nz-form-control
@@ -175,7 +203,11 @@
       <div class="flex w-7/12 gap-4">
         <div class="flex w-5/12">
           <nz-form-item class="!min-h-[96px] !w-full">
-            <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+            <nz-form-label
+              nzFor="name"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !h-[36px] !items-center !justify-start !text-sm"
               >Start Date</nz-form-label
             >
             <nz-form-control
@@ -198,7 +230,11 @@
         </div>
         <div class="flex w-7/12">
           <nz-form-item class="!min-h-[96px] !w-full">
-            <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+            <nz-form-label
+              nzFor="name"
+              [nzNoColon]="true"
+              [nzRequired]="!this.isNonEndDate"
+              class="!flex !h-[36px] !items-center !justify-start !text-sm"
               >End Date</nz-form-label
             >
             <div class="flex flex-row items-start gap-2">
@@ -234,7 +270,11 @@
     <div class="flex justify-between gap-4">
       <ng-container *ngIf="repeatType?.value === 'weeks'">
         <div class="flex w-5/12 flex-col">
-          <nz-form-label nzFor="preGenerateDays" class="!flex !h-[36px] !items-center !justify-start !text-sm"
+          <nz-form-label
+            nzFor="preGenerateDays"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !h-[36px] !items-center !justify-start !text-sm"
             >On
           </nz-form-label>
           <nz-form-control
@@ -268,7 +308,11 @@
 
       <div class="flex w-5/12 flex-col">
         <div class="flex flex-col">
-          <nz-form-label nzFor="busScheduleTemplateId" class="!flex !h-[36px] !items-center !justify-start"
+          <nz-form-label
+            nzFor="busScheduleTemplateId"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !h-[36px] !items-center !justify-start"
             >At
           </nz-form-label>
           <div formArrayName="specificTimeSlots" class="flex w-full flex-col gap-4">

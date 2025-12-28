@@ -72,7 +72,7 @@ export class Booking {
 
   totalPrice: number = 0;
 
-  discountTotalAmout?: number = 0;
+  discountTotalAmount?: number = 0;
 
   afterDiscountTotalPrice: number = 0;
 

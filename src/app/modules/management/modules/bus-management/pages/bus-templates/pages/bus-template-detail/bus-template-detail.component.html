@@ -15,152 +15,173 @@
   }}</span>
 
   <form [formGroup]="busTemplateDetailForm" nz-form *ngIf="busTemplateDetailForm" (ngSubmit)="onSubmit()">
-    <div class="flex gap-4">
-      <div class="flex w-6/12">
-        <nz-form-item class="!w-full">
-          <nz-form-label nzFor="name" class="!flex !h-[36px] !items-center !justify-start">Name</nz-form-label>
-          <nz-form-control [nzErrorTip]="busTemplateDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
-            <nz-input-group
-              [nzSuffix]="busTemplateDetailNameClearTpl"
-              class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
-              <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
-            </nz-input-group>
-            <ng-template #busTemplateDetailNameClearTpl>
-              @if(f['name'].value && !defaultFlagService.isDefault(busTemplate)) {
-              <span
-                nz-icon
-                class="ant-input-clear-icon"
-                nzTheme="fill"
-                nzType="close-circle"
-                (click)="clearFormValue('name')"></span>
-              }
-            </ng-template>
-            <ng-template #busTemplateDetailNameErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busTemplateDetailForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
+    <div class="flex flex-col gap-4">
+      <div class="flex gap-4">
+        <div class="flex w-6/12">
+          <nz-form-item class="!w-full">
+            <nz-form-label
+              nzFor="name"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !h-[36px] !items-center !justify-start"
+              >Name</nz-form-label
+            >
+            <nz-form-control [nzErrorTip]="busTemplateDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
+              <nz-input-group
+                [nzSuffix]="busTemplateDetailNameClearTpl"
+                class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+                <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+              </nz-input-group>
+              <ng-template #busTemplateDetailNameClearTpl>
+                @if(f['name'].value && !defaultFlagService.isDefault(busTemplate)) {
+                <span
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  (click)="clearFormValue('name')"></span>
+                }
+              </ng-template>
+              <ng-template #busTemplateDetailNameErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busTemplateDetailForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="flex w-6/12">
+          <nz-form-item class="!w-full">
+            <nz-form-label
+              nzFor="busServiceIds"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !h-[36px] !items-center !justify-start"
+              >Bus Services</nz-form-label
+            >
+            <nz-form-control [nzErrorTip]="busTemplateDetailBusServiceIdsErrorTpl">
+              <nz-select formControlName="busServiceIds" nzMode="multiple" nzPlaceHolder="Chọn Bus Services">
+                @for (busService of busServices; track busService) {
+                <nz-option
+                  nzCustomContent
+                  [nzLabel]="busService.name + defaultFlagService.defaultTextFlag(busService)"
+                  [nzValue]="busService._id">
+                  <div class="flex items-center">
+                    <svg-icon [src]="busService.iconId" [svgClass]="'h-5 w-5'"> </svg-icon>
+                    <span class="pl-4 !font-medium">
+                      {{ busService.name }} {{ defaultFlagService.defaultTextFlag(busService) }}
+                    </span>
+                  </div>
+                </nz-option>
+                }
+              </nz-select>
+              <ng-template #busTemplateDetailBusServiceIdsErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busTemplateDetailForm.controls['busServiceIds'].errors?.['required']) { Vui lòng chọn Bus
+                  Services}
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
-      <div class="flex w-6/12">
-        <nz-form-item class="!w-full">
-          <nz-form-label nzFor="busServiceIds" class="!flex !h-[36px] !items-center !justify-start"
-            >Bus Services</nz-form-label
-          >
-          <nz-form-control [nzErrorTip]="busTemplateDetailBusServiceIdsErrorTpl">
-            <nz-select formControlName="busServiceIds" nzMode="multiple" nzPlaceHolder="Chọn Bus Services">
-              @for (busService of busServices; track busService) {
-              <nz-option
-                nzCustomContent
-                [nzLabel]="busService.name + defaultFlagService.defaultTextFlag(busService)"
-                [nzValue]="busService._id">
-                <div class="flex items-center">
-                  <svg-icon [src]="busService.iconId" [svgClass]="'h-5 w-5'"> </svg-icon>
-                  <span class="pl-4 !font-medium">
-                    {{ busService.name }} {{ defaultFlagService.defaultTextFlag(busService) }}
-                  </span>
-                </div>
-              </nz-option>
-              }
-            </nz-select>
-            <ng-template #busTemplateDetailBusServiceIdsErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busTemplateDetailForm.controls['busServiceIds'].errors?.['required']) { Vui lòng chọn Bus Services}
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
+      <div class="flex gap-4">
+        <div class="flex w-6/12">
+          <nz-form-item class="!w-full">
+            <nz-form-label
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              nzFor="busTypeId"
+              class="!flex !h-[36px] !items-center !justify-start"
+              >Bus Types</nz-form-label
+            >
+            <nz-form-control [nzErrorTip]="busTemplateDetailBusTypeIdErrorTpl">
+              <nz-select formControlName="busTypeId" nzPlaceHolder="Chọn Bus Type">
+                @for (busType of busTypes; track busTypes) {
+                <nz-option
+                  nzCustomContent
+                  [nzLabel]="busType.name + defaultFlagService.defaultTextFlag(busType)"
+                  [nzValue]="busType._id">
+                  <div class="flex items-center">
+                    <span class="pl-4 !font-medium">
+                      {{ busType.name }} {{ defaultFlagService.defaultTextFlag(busType) }}
+                    </span>
+                  </div>
+                </nz-option>
+                }
+              </nz-select>
+              <ng-template #busTemplateDetailBusTypeIdErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busTemplateDetailForm.controls['busTypeId'].errors?.['required']) { Vui lòng chọn Bus Type}
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="flex w-6/12">
+          <nz-form-item class="!w-full">
+            <nz-form-label
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              nzFor="busLayoutTemplateId"
+              class="!flex !h-[36px] !items-center !justify-start"
+              >Bus Layout Template</nz-form-label
+            >
+            <nz-form-control [nzErrorTip]="busTemplateDetailbusLayoutTemplateIdErrorTpl">
+              <nz-select
+                formControlName="busLayoutTemplateId"
+                nzPlaceHolder="Chọn Bus Layout Tempate"
+                (ngModelChange)="chooseBusTemplate($event)">
+                @for (busLayoutTemplate of busLayoutTemplates; track busLayoutTemplate) {
+                <nz-option
+                  nzCustomContent
+                  [nzLabel]="busLayoutTemplate.name + defaultFlagService.defaultTextFlag(busLayoutTemplate)"
+                  [nzValue]="busLayoutTemplate._id">
+                  <div class="flex items-center">
+                    <span class="pl-4 !font-medium">
+                      {{ busLayoutTemplate.name }} {{ defaultFlagService.defaultTextFlag(busLayoutTemplate) }}
+                    </span>
+                  </div>
+                </nz-option>
+                }
+              </nz-select>
+              <ng-template #busTemplateDetailbusLayoutTemplateIdErrorTpl let-control>
+                <span class="mt-1 !text-xs text-red-500">
+                  @if (busTemplateDetailForm.controls['busLayoutTemplateId'].errors?.['required']) { Vui lòng chọn Bus
+                  Layout Tempate}
+                </span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
-    </div>
-    <div class="flex gap-4">
-      <div class="flex w-6/12">
-        <nz-form-item class="!w-full">
-          <nz-form-label [nzSpan]="6" nzFor="busTypeId" class="!flex !h-[36px] !items-center !justify-start"
-            >Bus Types</nz-form-label
-          >
-          <nz-form-control [nzErrorTip]="busTemplateDetailBusTypeIdErrorTpl">
-            <nz-select formControlName="busTypeId" nzPlaceHolder="Chọn Bus Type">
-              @for (busType of busTypes; track busTypes) {
-              <nz-option
-                nzCustomContent
-                [nzLabel]="busType.name + defaultFlagService.defaultTextFlag(busType)"
-                [nzValue]="busType._id">
-                <div class="flex items-center">
-                  <span class="pl-4 !font-medium">
-                    {{ busType.name }} {{ defaultFlagService.defaultTextFlag(busType) }}
-                  </span>
-                </div>
-              </nz-option>
-              }
-            </nz-select>
-            <ng-template #busTemplateDetailBusTypeIdErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busTemplateDetailForm.controls['busTypeId'].errors?.['required']) { Vui lòng chọn Bus Type}
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
+      <div class="flex flex-col gap-4 pt-5" *ngIf="busTemplateDetailForm.controls['busLayoutTemplateId'].value">
+        <div class="flex justify-between">
+          <label class="font-medium">Bus Layout Tempalte Review</label>
+          <button
+            class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+            nz-button
+            nzType="default"
+            (click)="editBusLayoutTempate()">
+            {{ defaultFlagService.isDefault(busLayoutTemplateReview) ? 'Chi Tiết' : 'Chỉnh Sửa ' }}
+            Layout BusTemplate
+          </button>
+        </div>
+        <ng-container *ngIf="busLayoutTemplateReview">
+          <app-layout-matrix [busLayoutsMatrix]="busLayoutTemplateReview" [seatTypes]="seatTypes"></app-layout-matrix>
+        </ng-container>
       </div>
-      <div class="flex w-6/12">
-        <nz-form-item class="!w-full">
-          <nz-form-label [nzSpan]="6" nzFor="busLayoutTemplateId" class="!flex !h-[36px] !items-center !justify-start"
-            >Bus Layout Template</nz-form-label
-          >
-          <nz-form-control [nzErrorTip]="busTemplateDetailbusLayoutTemplateIdErrorTpl">
-            <nz-select
-              formControlName="busLayoutTemplateId"
-              nzPlaceHolder="Chọn Bus Layout Tempate"
-              (ngModelChange)="chooseBusTemplate($event)">
-              @for (busLayoutTemplate of busLayoutTemplates; track busLayoutTemplate) {
-              <nz-option
-                nzCustomContent
-                [nzLabel]="busLayoutTemplate.name + defaultFlagService.defaultTextFlag(busLayoutTemplate)"
-                [nzValue]="busLayoutTemplate._id">
-                <div class="flex items-center">
-                  <span class="pl-4 !font-medium">
-                    {{ busLayoutTemplate.name }} {{ defaultFlagService.defaultTextFlag(busLayoutTemplate) }}
-                  </span>
-                </div>
-              </nz-option>
-              }
-            </nz-select>
-            <ng-template #busTemplateDetailbusLayoutTemplateIdErrorTpl let-control>
-              <span class="mt-1 !text-xs text-red-500">
-                @if (busTemplateDetailForm.controls['busLayoutTemplateId'].errors?.['required']) { Vui lòng chọn Bus
-                Layout Tempate}
-              </span>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </div>
-    <div class="flex flex-col gap-4 pt-5" *ngIf="busTemplateDetailForm.controls['busLayoutTemplateId'].value">
-      <div class="flex justify-between">
-        <label>Bus Layout Tempalte Review</label>
+      @if(!defaultFlagService.isDefault(busTemplate)) {
+      <div class="my-5 flex w-full justify-end">
         <button
-          class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+          class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
           nz-button
           nzType="default"
-          (click)="editBusLayoutTempate()">
-          {{ defaultFlagService.isDefault(busLayoutTemplateReview) ? 'Chi Tiết' : 'Chỉnh Sửa ' }}
-          Layout BusTemplate
+          type="submit">
+          SAVE
         </button>
       </div>
-      <ng-container *ngIf="busLayoutTemplateReview">
-        <app-layout-matrix [busLayoutsMatrix]="busLayoutTemplateReview" [seatTypes]="seatTypes"></app-layout-matrix>
-      </ng-container>
+      }
     </div>
-    @if(!defaultFlagService.isDefault(busTemplate)) {
-    <div class="my-5 flex w-full justify-end">
-      <button
-        class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
-        nz-button
-        nzType="default"
-        type="submit">
-        SAVE
-      </button>
-    </div>
-    }
   </form>
 </div>

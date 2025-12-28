@@ -1,0 +1,381 @@
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Cài đặt lịch chuyến</h1>
+  <div class="inline-block space-x-4">
+    <button
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !px-3 !py-2 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
+      (click)="resetToDefault()">
+      Reset Default
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 flex min-w-full flex-col rounded-xl border bg-white p-2">
+  <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+    <form [formGroup]="mainForm" nz-form *ngIf="mainForm && isLoaded" (ngSubmit)="onSubmit()">
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapseTransitPolicy" [nzActive]="false">
+            <!-- Transit Policy -->
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="changePolicyMode('transit_policy', 'editor')"
+                  [class.bg-primary]="policyModes['transit_policy'] === 'editor'"
+                  [class.text-white]="policyModes['transit_policy'] === 'editor'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  (click)="changePolicyMode('transit_policy', 'json')"
+                  [class.bg-primary]="policyModes['transit_policy'] === 'json'"
+                  [class.text-white]="policyModes['transit_policy'] === 'json'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  JSON
+                </button>
+              </div>
+              <nz-form-control class="!flex flex-col">
+                @if(policyModes['transit_policy'] === 'editor') {
+                <quill-editor
+                  formControlName="transit_policy"
+                  [modules]="editorModules"
+                  class="w-full rounded border border-gray-300 bg-white"
+                  placeholder="Nhập chính sách vận chuyển...">
+                </quill-editor>
+                } @else {
+                <textarea
+                  formControlName="transit_policy"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapseTransitPolicy>
+            <label class="text-base font-semibold text-blue-500">Chính sách trung chuyển</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Booking Cancellation Policy -->
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapseBookingPolicy" [nzActive]="false">
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="changePolicyMode('booking_cancellation_policy', 'editor')"
+                  [class.bg-primary]="policyModes['booking_cancellation_policy'] === 'editor'"
+                  [class.text-white]="policyModes['booking_cancellation_policy'] === 'editor'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  (click)="changePolicyMode('booking_cancellation_policy', 'json')"
+                  [class.bg-primary]="policyModes['booking_cancellation_policy'] === 'json'"
+                  [class.text-white]="policyModes['booking_cancellation_policy'] === 'json'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  JSON
+                </button>
+              </div>
+              <nz-form-control class="!flex flex-col">
+                @if(policyModes['booking_cancellation_policy'] === 'editor') {
+                <quill-editor
+                  formControlName="booking_cancellation_policy"
+                  [modules]="editorModules"
+                  placeholder="Nhập chính sách hủy vé..."
+                  class="w-full rounded border border-gray-300 bg-white">
+                </quill-editor>
+                } @else {
+                <textarea
+                  formControlName="booking_cancellation_policy"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapseBookingPolicy>
+            <label class="text-base font-semibold text-blue-500">Chính sách hủy vé</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Boarding Requirements -->
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapseBoardingPolicy" [nzActive]="false">
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="changePolicyMode('boarding_requirements_policy', 'editor')"
+                  [class.bg-primary]="policyModes['boarding_requirements_policy'] === 'editor'"
+                  [class.text-white]="policyModes['boarding_requirements_policy'] === 'editor'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  (click)="changePolicyMode('boarding_requirements_policy', 'json')"
+                  [class.bg-primary]="policyModes['boarding_requirements_policy'] === 'json'"
+                  [class.text-white]="policyModes['boarding_requirements_policy'] === 'json'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  JSON
+                </button>
+              </div>
+              <nz-form-control class="!flex flex-col">
+                @if(policyModes['boarding_requirements_policy'] === 'editor') {
+                <quill-editor
+                  formControlName="boarding_requirements_policy"
+                  [modules]="editorModules"
+                  placeholder="Nhập yêu cầu lên xe..."
+                  class="w-full rounded border border-gray-300 bg-white">
+                </quill-editor>
+                } @else {
+                <textarea
+                  formControlName="boarding_requirements_policy"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapseBoardingPolicy>
+            <label class="text-base font-semibold text-blue-500">Chính sách yêu cầu lên xe</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Carry On Baggage Policy -->
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapseBaggagePolicy" [nzActive]="false">
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="changePolicyMode('carry_on_baggage_policy', 'editor')"
+                  [class.bg-primary]="policyModes['carry_on_baggage_policy'] === 'editor'"
+                  [class.text-white]="policyModes['carry_on_baggage_policy'] === 'editor'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  (click)="changePolicyMode('carry_on_baggage_policy', 'json')"
+                  [class.bg-primary]="policyModes['carry_on_baggage_policy'] === 'json'"
+                  [class.text-white]="policyModes['carry_on_baggage_policy'] === 'json'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  JSON
+                </button>
+              </div>
+              <nz-form-control class="!flex flex-col">
+                @if(policyModes['carry_on_baggage_policy'] === 'editor') {
+                <quill-editor
+                  formControlName="carry_on_baggage_policy"
+                  [modules]="editorModules"
+                  placeholder="Nhập chính sách hành lý xách tay..."
+                  class="w-full rounded border border-gray-300 bg-white">
+                </quill-editor>
+                } @else {
+                <textarea
+                  formControlName="carry_on_baggage_policy"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapseBaggagePolicy>
+            <label class="text-base font-semibold text-blue-500">Chính sách hành lý xách tay</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Child and Pregnancy Policy -->
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapsePregnancyPolicy" [nzActive]="false">
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="changePolicyMode('child_and_pregnancy_policy', 'editor')"
+                  [class.bg-primary]="policyModes['child_and_pregnancy_policy'] === 'editor'"
+                  [class.text-white]="policyModes['child_and_pregnancy_policy'] === 'editor'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  (click)="changePolicyMode('child_and_pregnancy_policy', 'json')"
+                  [class.bg-primary]="policyModes['child_and_pregnancy_policy'] === 'json'"
+                  [class.text-white]="policyModes['child_and_pregnancy_policy'] === 'json'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  JSON
+                </button>
+              </div>
+              <nz-form-control class="!flex flex-col">
+                @if(policyModes['child_and_pregnancy_policy'] === 'editor') {
+                <quill-editor
+                  formControlName="child_and_pregnancy_policy"
+                  [modules]="editorModules"
+                  placeholder="Nhập chính sách trẻ em và mang thai..."
+                  class="w-full rounded border border-gray-300 bg-white">
+                </quill-editor>
+                } @else {
+                <textarea
+                  formControlName="child_and_pregnancy_policy"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapsePregnancyPolicy>
+            <label class="text-base font-semibold text-blue-500">Chính sách trẻ em và mang thai</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Roadside Pickup Policy -->
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapsePickupPolicy" [nzActive]="false">
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="changePolicyMode('roadside_pickup_policy', 'editor')"
+                  [class.bg-primary]="policyModes['roadside_pickup_policy'] === 'editor'"
+                  [class.text-white]="policyModes['roadside_pickup_policy'] === 'editor'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  (click)="changePolicyMode('roadside_pickup_policy', 'json')"
+                  [class.bg-primary]="policyModes['roadside_pickup_policy'] === 'json'"
+                  [class.text-white]="policyModes['roadside_pickup_policy'] === 'json'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  JSON
+                </button>
+              </div>
+              <nz-form-control class="!flex flex-col">
+                @if(policyModes['roadside_pickup_policy'] === 'editor') {
+                <quill-editor
+                  formControlName="roadside_pickup_policy"
+                  [modules]="editorModules"
+                  placeholder="Nhập chính sách nhận xe bên đường..."
+                  class="w-full rounded border border-gray-300 bg-white">
+                </quill-editor>
+                } @else {
+                <textarea
+                  formControlName="roadside_pickup_policy"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapsePickupPolicy>
+            <label class="text-base font-semibold text-blue-500">Chính sách nhận xe bên đường</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Other Policy -->
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapseOtherPolicy" [nzActive]="false">
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="changePolicyMode('other_policy', 'editor')"
+                  [class.bg-primary]="policyModes['other_policy'] === 'editor'"
+                  [class.text-white]="policyModes['other_policy'] === 'editor'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  (click)="changePolicyMode('other_policy', 'json')"
+                  [class.bg-primary]="policyModes['other_policy'] === 'json'"
+                  [class.text-white]="policyModes['other_policy'] === 'json'"
+                  class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
+                  JSON
+                </button>
+              </div>
+              <nz-form-control class="!flex flex-col">
+                @if(policyModes['other_policy'] === 'editor') {
+                <quill-editor
+                  formControlName="other_policy"
+                  [modules]="editorModules"
+                  placeholder="Nhập chính sách khác..."
+                  class="w-full rounded border border-gray-300 bg-white">
+                </quill-editor>
+                } @else {
+                <textarea
+                  formControlName="other_policy"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapseOtherPolicy>
+            <label class="text-base font-semibold text-blue-500">Chính sách khác</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Bus Schedule Availability Cutoff -->
+      <div class="mt-6 w-full rounded-lg border border-dashed border-gray-300 shadow-sm">
+        <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+          <nz-collapse-panel [nzHeader]="collapseCutoffPolicy" [nzActive]="false">
+            <nz-form-item class="mb-6 flex !w-full flex-col gap-2">
+              <nz-form-control class="!flex flex-col">
+                <textarea
+                  formControlName="bus_schedule_availability_cutoff"
+                  placeholder="Nhập JSON"
+                  rows="10"
+                  class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-collapse-panel>
+          <ng-template #collapseCutoffPolicy>
+            <label class="text-base font-semibold text-blue-500">Thời hạn cắt tính khả dụng</label>
+          </ng-template>
+        </nz-collapse>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-6 flex justify-end gap-4">
+        <button
+          class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+          nz-button
+          nzType="default"
+          type="submit">
+          SAVE
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="!isLoaded" class="flex items-center justify-center py-20">
+      <nz-spin nzSimple></nz-spin>
+    </div>
+  </div>
+</div>

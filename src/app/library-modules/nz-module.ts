@@ -28,6 +28,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzColorPickerModule } from 'ng-zorro-antd/color-picker';
 
 @NgModule({
   imports: [NzIconModule.forRoot([EyeInvisibleOutline])],
@@ -60,6 +61,7 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
     NzGridModule,
     NzTagModule,
     NzTimePickerModule,
+    NzColorPickerModule,
   ],
 })
 export class NZModule {}

@@ -1,5 +1,5 @@
 <div class="mb-4 flex items-center justify-between">
-  <h1 class="text-2xl font-bold">Theme Settings</h1>
+  <h1 class="text-2xl font-bold">Cài đặt giao diện</h1>
   <div class="inline-block space-x-4">
     <button
       class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !px-3 !py-2 hover:!border-gray-300 hover:!bg-gray-300"
@@ -12,8 +12,6 @@
 
 <div class="border-muted/20 flex min-w-full flex-col rounded-xl border bg-white p-2">
   <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
-    <span class="mb-5 text-xl font-bold">Cài đặt giao diện</span>
-
     <form [formGroup]="mainForm" nz-form *ngIf="mainForm" (ngSubmit)="onSubmit()">
       <div class="flex gap-6">
         <!-- Logo Section -->
@@ -97,6 +95,7 @@
             <nz-form-item class="!mb-0 !flex !flex-col">
               <nz-form-label
                 [nzNoColon]="true"
+                [nzRequired]="true"
                 nzFor="tenantName"
                 class="!flex !items-center !justify-start !font-medium"
                 >Tên doanh nghiệp</nz-form-label
@@ -139,19 +138,7 @@
                 <nz-form-control class="!flex flex-col">
                   <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzActive]="true">
                     <div class="flex items-center gap-3">
-                      <input
-                        type="color"
-                        formControlName="primaryColor"
-                        class="h-11 w-16 cursor-pointer rounded !border-0"
-                        (change)="onPrimaryColorChange($any($event.target).value)" />
-                      <nz-input-group class="custom-nz-input-group flex-1">
-                        <input
-                          type="text"
-                          nz-input
-                          formControlName="primaryColor"
-                          placeholder="#3b82f6"
-                          class="uppercase" />
-                      </nz-input-group>
+                      <nz-color-picker formControlName="primaryColor" nzShowText></nz-color-picker>
                     </div>
                   </nz-skeleton>
                 </nz-form-control>
@@ -170,19 +157,7 @@
                 <nz-form-control class="!flex flex-col">
                   <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzActive]="true">
                     <div class="flex items-center gap-3">
-                      <input
-                        type="color"
-                        formControlName="secondaryColor"
-                        class="h-11 w-16 cursor-pointer rounded !border-0"
-                        (change)="onSecondaryColorChange($any($event.target).value)" />
-                      <nz-input-group class="custom-nz-input-group flex-1">
-                        <input
-                          type="text"
-                          nz-input
-                          formControlName="secondaryColor"
-                          placeholder="#8b5cf6"
-                          class="uppercase" />
-                      </nz-input-group>
+                      <nz-color-picker formControlName="secondaryColor" nzShowText></nz-color-picker>
                     </div>
                   </nz-skeleton>
                 </nz-form-control>
@@ -192,13 +167,6 @@
 
           <!-- Action Buttons -->
           <div class="my-5 flex w-full justify-end gap-3">
-            <button
-              class="!min-w-24 !flex !h-max !justify-center !rounded-lg border border-blue-500 !bg-blue-100 !px-3 !py-2 !text-blue-600 hover:!bg-blue-200"
-              nz-button
-              type="button"
-              (click)="previewColors()">
-              Preview
-            </button>
             <button
               class="!bg-primary !min-w-24 !flex !h-max !justify-center !rounded-lg !px-3 !py-2 !text-white hover:!border-green-500 hover:!bg-green-500"
               nz-button

@@ -46,9 +46,9 @@ const routes: Routes = [
           import('./modules/promotion-management/promotion-management.module').then((m) => m.PromotionManagementModule),
       },
       {
-        path: 'setting-management',
+        path: 'payment-management',
         loadChildren: () =>
-          import('./modules/setting-management/setting-management.module').then((m) => m.SettingManagementModule),
+          import('./modules/payment-management/payment-management.module').then((m) => m.PaymentManagementModule),
       },
       {
         path: 'booking-management',

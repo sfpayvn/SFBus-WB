@@ -161,11 +161,11 @@ export class PaymentMethodComponent implements OnInit {
   }
 
   addPaymentMethod() {
-    this.router.navigate(['/management/setting-management/payment-method/detail']);
+    this.router.navigate(['/management/payment-management/payment-method/detail']);
   }
 
   editPaymentMethod(paymentMethod: PaymentMethod) {
-    this.router.navigate(['/management/setting-management/payment-method/detail'], { state: { paymentMethod } });
+    this.router.navigate(['/management/payment-management/payment-method/detail'], { state: { paymentMethod } });
   }
 
   deletePaymentMethod(paymentMethod: PaymentMethod): void {

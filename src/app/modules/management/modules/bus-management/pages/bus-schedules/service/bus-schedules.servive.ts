@@ -37,7 +37,7 @@ export class BusSchedulesService {
       },
       filters: [] as any[],
     },
-    viewDisplayMode: string,
+    viewDisplayMode: string = 'table',
   ) {
     const url = `${this.url}/search`;
 

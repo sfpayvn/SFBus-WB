@@ -1,5 +1,5 @@
 <mat-dialog-title class="pt-3 text-center">
-  <span class="text-xl font-bold">{{ defaultFlagService.isDefault(busProvince) ? 'Chi Tiết' : data.title }}</span>
+  <span class="text-xl font-medium">{{ defaultFlagService.isDefault(busProvince) ? 'Chi Tiết' : data.title }}</span>
   <button class="absolute right-3" (click)="closeDialog()">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
       <path
@@ -17,7 +17,13 @@
     (ngSubmit)="onSubmit()">
     <div class="mb-5">
       <nz-form-item class="!flex !w-full !flex-col">
-        <nz-form-label nzFor="name" class="!flex !items-center !justify-start !text-sm">Tỉnh/Thành Phố</nz-form-label>
+        <nz-form-label
+          nzFor="name"
+          [nzNoColon]="true"
+          [nzRequired]="true"
+          class="!flex !items-center !justify-start !text-sm"
+          >Tỉnh/Thành Phố</nz-form-label
+        >
         <nz-form-control [nzErrorTip]="busProvinceNameErrorTpl" class="!flex flex-col">
           <nz-input-group [nzSuffix]="busProvinceNameClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
             <input type="text" nz-input formControlName="name" placeholder="Nhập Tên Tỉnh/Thành Phố" />
@@ -107,7 +113,11 @@
             [cdkDropListDisabled]="defaultFlagService.isDefault(busProvince)"
             class="drag-drop-list"
             (cdkDropListDropped)="drop($event)">
-            <nz-skeleton [nzLoading]="isLoaddedBusStations" [nzParagraph]="{ rows: 5}" [nzTitle]="false" [nzActive]="true">
+            <nz-skeleton
+              [nzLoading]="isLoaddedBusStations"
+              [nzParagraph]="{ rows: 5 }"
+              [nzTitle]="false"
+              [nzActive]="true">
               @for (busStation of filteredBusStations; track busStation) {
 
               <div

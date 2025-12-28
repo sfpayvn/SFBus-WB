@@ -346,14 +346,16 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('🚀 ~ onSubmit ~ this.busScheduleAutoGeneratorDetailForm:', this.busScheduleAutoGeneratorDetailForm);
     if (!this.busScheduleAutoGeneratorDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busScheduleAutoGeneratorDetailForm);
       return;
     }
 
     const data = this.busScheduleAutoGeneratorDetailForm.getRawValue() as BusScheduleAutoGenerator2Create;
-    data.endDate = this.isNonEndDate ? '' : data.endDate;
+
+    if (this.isNonEndDate) {
+      data.endDate = null;
+    }
 
     const busScheduleAutoGenerator2Create: BusScheduleAutoGenerator2Create = {
       ...data,

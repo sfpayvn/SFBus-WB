@@ -18,7 +18,9 @@
     <div class="mb-5 flex w-full flex-row items-start gap-4">
       <div class="flex w-full flex-col">
         <nz-form-item>
-          <nz-form-label [nzSpan]="6" nzFor="name" class="!flex !items-center !justify-start">Name</nz-form-label>
+          <nz-form-label [nzNoColon]="true" [nzRequired]="true" nzFor="name" class="!flex !items-center !justify-start"
+            >Name</nz-form-label
+          >
           <nz-form-control [nzErrorTip]="seatTypeNameErrorTpl" class="!flex flex-col">
             <nz-input-group [nzSuffix]="seatTypeNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
               <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
@@ -43,7 +45,13 @@
     <div class="flex flex-row gap-2">
       <div class="flex w-full flex-col">
         <div>
-          <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Hình ảnh</label>
+          <nz-form-label
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            nzFor=""
+            class="!flex !items-center !justify-start font-medium"
+            >Hình Ảnh</nz-form-label
+          >
         </div>
         @if(!goodsCategoryIcon){
         <div

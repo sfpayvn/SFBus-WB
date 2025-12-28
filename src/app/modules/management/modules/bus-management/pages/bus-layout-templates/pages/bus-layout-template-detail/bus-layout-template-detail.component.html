@@ -17,13 +17,11 @@
   <form [formGroup]="busTemplateDetailForm" nz-form *ngIf="busTemplateDetailForm">
     <div class="mb-5 w-full">
       <nz-form-item>
-        <nz-form-label [nzSpan]="6" nzFor="name" class="!flex !h-[36px] !items-center !justify-start"
+        <nz-form-label [nzNoColon]="true" [nzRequired]="true" nzFor="name" class="!flex !items-center !justify-start"
           >Name</nz-form-label
         >
         <nz-form-control [nzErrorTip]="busTemplateDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
-          <nz-input-group
-            [nzSuffix]="busTemplateDetailNameClearTpl"
-            class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+          <nz-input-group [nzSuffix]="busTemplateDetailNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
             <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
           </nz-input-group>
           <ng-template #busTemplateDetailNameClearTpl>
@@ -58,11 +56,15 @@
           [formGroupName]="i"
           [nzTitle]="layout.get('name')?.value">
           <nz-form-item>
-            <nz-form-label [nzSpan]="6" nzFor="name" class="!flex !h-[36px] !items-center !justify-start !font-medium"
+            <nz-form-label
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              nzFor="name"
+              class="!flex !items-center !justify-start !font-medium"
               >Layout Name</nz-form-label
             >
             <nz-form-control [nzErrorTip]="busTemplateLayoutNameErrorTpl" class="!flex !h-[56px] flex-col !pt-2">
-              <nz-input-group [nzSuffix]="busTemplateLayoutNameClearTpl" class="!mt-0 !mb-0 !h-[36px]">
+              <nz-input-group [nzSuffix]="busTemplateLayoutNameClearTpl" class="!mt-0 !mb-0">
                 <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
               </nz-input-group>
               <ng-template #busTemplateLayoutNameClearTpl>

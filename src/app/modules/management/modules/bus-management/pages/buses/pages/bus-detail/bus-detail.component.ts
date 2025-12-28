@@ -65,7 +65,7 @@ export class BusDetailComponent implements OnInit {
     private busesService: BusesService,
     private busTemplatesService: BusTemplatesService,
     private router: Router,
-    public defaultFlagService: DefaultFlagService
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -251,7 +251,7 @@ export class BusDetailComponent implements OnInit {
     const params = { busTemplate: JSON.stringify(busTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/management/bus-templates/bus-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-templates/bus-template-detail', { state: params });
   }
 
   editBusLayoutTemplate() {

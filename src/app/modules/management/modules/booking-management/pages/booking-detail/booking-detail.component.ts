@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { Utils } from '@rsApp/shared/utils/utils';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { toast } from 'ngx-sonner';
-import { combineLatest, Subscription } from 'rxjs';
+import { combineLatest, firstValueFrom, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SafeResourceUrl } from '@angular/platform-browser';
@@ -12,15 +12,23 @@ import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/b
 import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 import { SeatType } from '../../../bus-management/pages/seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../bus-management/pages/seat-types/service/seat-types.servive';
-import { BOOKING_STATUS_CLASSES, BOOKING_STATUS_LABELS } from 'src/app/core/constants/status.constants';
+import {
+  BOOKING_STATUS,
+  BOOKING_STATUS_CLASSES,
+  BOOKING_STATUS_LABELS,
+  SEAT_STATUS_CLASSES,
+  SEAT_STATUS_LABELS,
+} from 'src/app/core/constants/status.constants';
+import { Payment } from '@rsApp/shared/models/payment.model';
+import { PaymentMethod } from '../../../payment-management/modules/payment-method/model/payment-method.model';
+import { PaymentService } from '@rsApp/shared/services/payment/payment-service';
+import { PaymentMethodService } from '../../../payment-management/modules/payment-method/service/payment-method.service';
 
-interface DepartureDestination {
-  value: string;
-  label: string;
-  color: string;
-  disabledd: boolean;
-  selected: boolean;
+interface BookingDeteail extends Booking {
+  paymentPaidAmount?: number;
+  paymentAmount?: number;
 }
+
 @Component({
   selector: 'app-booking-detail',
   standalone: false,
@@ -28,31 +36,23 @@ interface DepartureDestination {
   styleUrl: './booking-detail.component.scss',
 })
 export class BookingDetailComponent implements OnInit {
-  @Input() booking: Booking = new Booking();
+  @Input() booking: BookingDeteail = new Booking();
   @Input() isDialog: boolean = false;
 
   seatTypes: SeatType[] = [];
-  private seatTypeCache: Map<string, SeatType | undefined> = new Map();
-
   busSchedule: BusSchedule = new BusSchedule();
+  paymentMethods: PaymentMethod[] = [];
+  payments: Payment[] = [];
 
-  statusClasses: { [key: string]: string } = {
-    not_picked_up: 'bg-yellow-100 border-yellow-300',
-    picked_up: 'bg-blue-100 border-blue-300 ',
-    on_board: 'bg-green-100 border-green-300 ',
-    dropped_off: 'bg-purple-100 border-purple-300 ',
-  };
+  private seatTypeCache: Map<string, SeatType | undefined> = new Map();
+  private paymentMethodCache = new Map<string, PaymentMethod>();
 
-  seatStatuses: { [key: string]: string } = {
-    not_picked_up: 'Chưa đón',
-    picked_up: 'Đã đón',
-    on_board: 'Đã lên xe',
-    dropped_off: 'Đã trả khách',
-  };
+  bookingStatus = BOOKING_STATUS;
+  bookingStatusLabels = BOOKING_STATUS_LABELS;
+  bookingStatusClasses = BOOKING_STATUS_CLASSES;
 
-  bookingStatuses = BOOKING_STATUS_LABELS;
-
-  bookingtatusClasses = BOOKING_STATUS_CLASSES;
+  seatStatusClasses = SEAT_STATUS_CLASSES;
+  seatStatuses = SEAT_STATUS_LABELS;
 
   @Output() bookingChange = new EventEmitter<any>();
 
@@ -70,6 +70,8 @@ export class BookingDetailComponent implements OnInit {
     private location: Location,
     private router: Router,
     private loadingService: LoadingService,
+    private paymentService: PaymentService,
+    private paymentMethodService: PaymentMethodService,
   ) {
     this.eventSubscription = [];
   }
@@ -77,18 +79,6 @@ export class BookingDetailComponent implements OnInit {
   // Thêm các helper methods
   getSeatStatusLabel(status: string): string {
     return this.seatStatuses[status] || 'Không xác định';
-  }
-
-  getSeatStatusClass(status: string): string {
-    return this.statusClasses[status] || 'bg-gray-100 text-gray-800';
-  }
-
-  getBookingStatusLabel(status: string): string {
-    return this.bookingStatuses[status] || 'Không xác định';
-  }
-
-  getBookingStatusClass(status: string): string {
-    return this.bookingtatusClasses[status] || 'border-gray-300 bg-gray-100 text-gray-800';
   }
 
   async ngOnInit(): Promise<void> {
@@ -129,6 +119,70 @@ export class BookingDetailComponent implements OnInit {
       // Clear cache when seatTypes change
       this.seatTypeCache.clear();
     });
+
+    await this.loadPayment(this.booking._id || '');
+  }
+
+  async setBookingPaymentAmount() {
+    const paymentAmount = await this.calcPaymentAmount();
+
+    const paymentPaidAmount = await this.calcPaymentPaidAmount();
+
+    this.booking.paymentAmount = paymentAmount;
+    this.booking.paymentPaidAmount = paymentPaidAmount;
+  }
+
+  async calcPaymentAmount() {
+    let paymentAmount = this.booking.afterDiscountTotalPrice;
+
+    const payments = this.payments;
+    if (!payments || !Array.isArray(payments) || payments.length === 0) {
+      return paymentAmount;
+    }
+
+    await Promise.all(
+      payments.map(async (payment: Payment) => {
+        paymentAmount -= payment.chargedAmount;
+      }),
+    );
+    return paymentAmount;
+  }
+
+  async calcPaymentPaidAmount() {
+    let paymentPaidAmount = 0;
+
+    const payments = this.payments;
+    if (!payments || !Array.isArray(payments) || payments.length === 0) {
+      return paymentPaidAmount;
+    }
+
+    await Promise.all(
+      payments.map(async (payment: Payment) => {
+        paymentPaidAmount += payment.chargedAmount;
+      }),
+    );
+    return paymentPaidAmount;
+  }
+
+  async loadPayment(bookingId: string) {
+    await this.loadPaymentMethods();
+
+    this.paymentService.findAllByReferrentId(bookingId, true).subscribe({
+      next: async (payments) => {
+        this.payments = payments || [];
+        this.setBookingPaymentAmount();
+      },
+      error: (error) => {
+        console.error('Error loading payments:', error);
+      },
+    });
+  }
+
+  async loadPaymentMethods() {
+    if (this.paymentMethods.length === 0) {
+      const findAllPaymentMethods = this.paymentMethodService.findPaymentMethods();
+      this.paymentMethods = await firstValueFrom(findAllPaymentMethods);
+    }
   }
 
   getTypeOfSeat(cell: any) {
@@ -139,10 +193,10 @@ export class BookingDetailComponent implements OnInit {
 
     // Tìm loại ghế tương ứng dựa trên type
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
-    
+
     // Cache the result
     this.seatTypeCache.set(cell.typeId, selectedType);
-    
+
     return selectedType;
   }
 
