@@ -313,4 +313,25 @@ export class Utils {
     }
     return String(hash);
   }
+
+  parseTimeHmToMilliseconds(value: string): number {
+    if (!value) return 60 * 60 * 1000; // Default: 1 hour
+
+    const trimmed = value.trim().toLowerCase();
+
+    // Match number with optional unit
+    const match = trimmed.match(/^(\d+(?:\.\d+)?)?([hm])?$/);
+    if (!match) return 60 * 60 * 1000; // Default if invalid format
+
+    const number = match[1] ? parseFloat(match[1]) : 1; // Default number is 1
+    const unit = match[2] || 'h'; // Default unit is 'h' (hours)
+
+    if (unit === 'h') {
+      return number * 60 * 60 * 1000; // Convert hours to milliseconds
+    } else if (unit === 'm') {
+      return number * 60 * 1000; // Convert minutes to milliseconds
+    }
+
+    return 60 * 60 * 1000; // Default: 1 hour
+  }
 }

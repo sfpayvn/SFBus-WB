@@ -8,6 +8,7 @@ import { Setting } from '../../model/setting.model';
 import { SettingService } from '../../services/setting.service';
 import { SettingCacheService } from '../../services/setting-cache.service';
 import { firstValueFrom } from 'rxjs';
+import { SETTING_CONSTANTS, SETTING_CONSTANTS_GROUPS } from '@rsApp/core/constants/setting.constants';
 
 @Component({
   selector: 'app-bus-schedule-setting',
@@ -78,13 +79,13 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
 
     // Initialize policy modes
     [
-      'transit_policy',
-      'booking_cancellation_policy',
-      'boarding_requirements_policy',
-      'carry_on_baggage_policy',
-      'child_and_pregnancy_policy',
-      'roadside_pickup_policy',
-      'other_policy',
+      SETTING_CONSTANTS.TRANSIT_POLICY,
+      SETTING_CONSTANTS.BOOKING_CANCELLATION_POLICY,
+      SETTING_CONSTANTS.BOARDING_REQUIREMENTS_POLICY,
+      SETTING_CONSTANTS.CARRY_ON_BAGGAGE_POLICY,
+      SETTING_CONSTANTS.CHILD_AND_PREGNANCY_POLICY,
+      SETTING_CONSTANTS.ROADSIDE_PICKUP_POLICY,
+      SETTING_CONSTANTS.OTHER_POLICY,
     ].forEach((field) => {
       this.policyModes[field] = 'editor';
     });
@@ -94,7 +95,7 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
 
   async loadCurrentSettings() {
     this.isLoaded = false;
-    this.settingService.getSettingByGroupName('bus_schedule').subscribe({
+    this.settingService.getSettingByGroupName(SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE).subscribe({
       next: (settings: Setting[]) => {
         this.settings = settings;
         this.settingCacheService.createOrUpdates(settings).subscribe();
@@ -116,20 +117,14 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
       const name = setting.name;
       const value = setting.value ?? '';
       switch (name) {
-        case 'commonTransferPolicy':
-          this.mainForm.patchValue({ commonTransferPolicy: value });
-          break;
-        case 'commonPolicy':
-          this.mainForm.patchValue({ commonPolicy: value });
-          break;
-        case 'transit_policy':
-        case 'booking_cancellation_policy':
-        case 'boarding_requirements_policy':
-        case 'carry_on_baggage_policy':
-        case 'child_and_pregnancy_policy':
-        case 'roadside_pickup_policy':
-        case 'other_policy':
-        case 'bus_schedule_availability_cutoff':
+        case SETTING_CONSTANTS.TRANSIT_POLICY:
+        case SETTING_CONSTANTS.BOOKING_CANCELLATION_POLICY:
+        case SETTING_CONSTANTS.BOARDING_REQUIREMENTS_POLICY:
+        case SETTING_CONSTANTS.CARRY_ON_BAGGAGE_POLICY:
+        case SETTING_CONSTANTS.CHILD_AND_PREGNANCY_POLICY:
+        case SETTING_CONSTANTS.ROADSIDE_PICKUP_POLICY:
+        case SETTING_CONSTANTS.OTHER_POLICY:
+        case SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF:
           this.mainForm.patchValue({ [name]: value });
           if (value) {
             this.policyModes[name] = this.detectContentMode(value);
@@ -150,13 +145,13 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
    */
   setQuillContent(): void {
     const editorFields = [
-      'transit_policy',
-      'booking_cancellation_policy',
-      'boarding_requirements_policy',
-      'carry_on_baggage_policy',
-      'child_and_pregnancy_policy',
-      'roadside_pickup_policy',
-      'other_policy',
+      SETTING_CONSTANTS.TRANSIT_POLICY,
+      SETTING_CONSTANTS.BOOKING_CANCELLATION_POLICY,
+      SETTING_CONSTANTS.BOARDING_REQUIREMENTS_POLICY,
+      SETTING_CONSTANTS.CARRY_ON_BAGGAGE_POLICY,
+      SETTING_CONSTANTS.CHILD_AND_PREGNANCY_POLICY,
+      SETTING_CONSTANTS.ROADSIDE_PICKUP_POLICY,
+      SETTING_CONSTANTS.OTHER_POLICY,
     ];
 
     const editors = this.quillEditors.toArray();
@@ -232,44 +227,44 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
 
     const settingsToUpdate: Setting[] = [
       {
-        name: 'transit_policy',
+        name: SETTING_CONSTANTS.TRANSIT_POLICY,
         value: formValue.transit_policy,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
       {
-        name: 'booking_cancellation_policy',
+        name: SETTING_CONSTANTS.BOOKING_CANCELLATION_POLICY,
         value: formValue.booking_cancellation_policy,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
       {
-        name: 'boarding_requirements_policy',
+        name: SETTING_CONSTANTS.BOARDING_REQUIREMENTS_POLICY,
         value: formValue.boarding_requirements_policy,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
       {
-        name: 'carry_on_baggage_policy',
+        name: SETTING_CONSTANTS.CARRY_ON_BAGGAGE_POLICY,
         value: formValue.carry_on_baggage_policy,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
       {
-        name: 'child_and_pregnancy_policy',
+        name: SETTING_CONSTANTS.CHILD_AND_PREGNANCY_POLICY,
         value: formValue.child_and_pregnancy_policy,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
       {
-        name: 'roadside_pickup_policy',
+        name: SETTING_CONSTANTS.ROADSIDE_PICKUP_POLICY,
         value: formValue.roadside_pickup_policy,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
       {
-        name: 'other_policy',
+        name: SETTING_CONSTANTS.OTHER_POLICY,
         value: formValue.other_policy,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
       {
-        name: 'bus_schedule_availability_cutoff',
+        name: SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF,
         value: formValue.bus_schedule_availability_cutoff,
-        groupName: 'bus_schedule',
+        groupName: SETTING_CONSTANTS_GROUPS.BUS_SCHEDULE,
       },
     ];
 

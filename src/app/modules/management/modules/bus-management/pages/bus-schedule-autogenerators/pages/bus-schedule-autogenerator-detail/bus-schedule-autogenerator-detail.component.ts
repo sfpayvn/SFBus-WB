@@ -11,10 +11,13 @@ import {
   SpecificTimeSlot,
   SpecificTimeSlot2Create,
 } from '../../model/bus-schedule-autogenerator.model';
-import { combineLatest } from 'rxjs';
+import { combineLatest, EMPTY, switchMap, tap, of, map, catchError } from 'rxjs';
 import { BusScheduleTemplatesService } from '../../../bus-schedule-templates/service/bus-schedule-templates.servive';
 import { BusScheduleTemplate } from '../../../bus-schedule-templates/model/bus-schedule-template.model';
 import moment from 'moment';
+import { SETTING_CONSTANTS } from '@rsApp/core/constants/setting.constants';
+import { SettingCacheService } from '@rsApp/modules/settings/services/setting-cache.service';
+import { SettingService } from '@rsApp/modules/settings/services/setting.service';
 
 @Component({
   selector: 'app-bus-schedule-autogenerator-detail',
@@ -58,6 +61,8 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
 
   isNonEndDate: boolean = false;
 
+  minimumAllowedTime: Date = new Date(new Date().getTime() + 60 * 60 * 1000);
+
   @Output() saveScheduleEvent = new EventEmitter<BusScheduleAutoGenerator>();
 
   constructor(
@@ -66,6 +71,8 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     private location: Location,
     private busScheduleAutoGeneratorsService: BusScheduleAutoGeneratorsService,
     private busScheduleTemplatesService: BusScheduleTemplatesService,
+    private settingCacheService: SettingCacheService,
+    private settingService: SettingService,
   ) {}
 
   ngOnInit(): void {
@@ -89,17 +96,53 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     let request = [findAllBusScheduleTemplates];
     combineLatest(request).subscribe(async ([busScheduleTemplates]) => {
       this.busScheduleTemplates = busScheduleTemplates;
-      this.initForm();
+      this.loadSettings();
     });
   }
 
-  async initForm() {
-    const currentDate = new Date().toISOString(); // Format as 'YYYY-MM-DD'
+  loadSettings() {
+    this.settingCacheService
+      .getSettingByName(SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF)
+      .pipe(
+        switchMap((cached) => {
+          if (cached?.value != null) {
+            return of(cached.value);
+          }
+          return this.settingService.getSettingByName(SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF).pipe(
+            tap((setting) => {
+              if (setting?.value != null) {
+                // cache the value for subsequent reads
+                this.settingCacheService.createOrUpdate(setting).subscribe({ error: () => {} });
+              }
+            }),
+            map((setting) => setting?.value ?? null),
+            catchError(() => of(null)),
+          );
+        }),
+        catchError(() => of(null)),
+      )
+      .subscribe({
+        next: (cutoffValue) => this.applyCutoff(cutoffValue),
+        error: () => this.initForm(),
+      });
+  }
 
+  private applyCutoff(cutoffValue: string | null | undefined) {
+    if (cutoffValue != null) {
+      this.minimumAllowedTime = new Date(new Date().getTime() + this.utils.parseTimeHmToMilliseconds(cutoffValue));
+      console.log(
+        '🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ applyCutoff ~ this.minimumAllowedTime:',
+        this.minimumAllowedTime,
+      );
+    }
+    this.initForm();
+  }
+
+  async initForm() {
     const {
       name = '',
       busScheduleTemplateId = '',
-      startDate = currentDate,
+      startDate = this.minimumAllowedTime.toISOString(),
       endDate = '',
       repeatType = 'days',
       specificTimeSlots = [],
@@ -108,7 +151,6 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
       preGenerateDays = 0,
       status = 'un_published',
     } = this.busScheduleAutoGenerator || {};
-    console.log('🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ preGenerateDays:', preGenerateDays);
 
     this.busScheduleAutoGeneratorDetailForm = this.fb.group({
       name: [name, [Validators.required]],
@@ -120,13 +162,12 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
       repeatInterval: [repeatInterval],
       specificTimeSlots: this.fb.array([
         this.fb.group({
-          timeSlot: [currentDate, Validators.required],
+          timeSlot: [this.minimumAllowedTime.toISOString(), Validators.required],
         }),
       ]),
       repeatDaysPerWeek: [repeatDaysPerWeek, repeatType == 'weeks' ? [Validators.required] : []],
       preGenerateDays: [preGenerateDays],
     });
-    console.log('🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ initForm ~ repeatDaysPerWeek:', repeatDaysPerWeek);
 
     if (specificTimeSlots && specificTimeSlots.length > 0) {
       this.specificTimeSlots.clear();
@@ -176,14 +217,12 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   createSpecificTimeSlot(timeSlot?: string): FormGroup {
     // Lấy FormArray chứa các specific time slots
     const specificTimeSlots = this.busScheduleAutoGeneratorDetailForm.get('specificTimeSlots') as FormArray;
-    let defaultTime: Date = new Date();
+    let defaultTime: Date = this.minimumAllowedTime;
     const [hours, minutes, seconds] = (timeSlot ?? '00:00:00').split(':').map(Number);
 
     defaultTime.setHours(hours);
     defaultTime.setMinutes(minutes);
     defaultTime.setSeconds(seconds);
-
-    console.log('🚀 ~ BusScheduleAutoGeneratorDetailComponent ~ createSpecificTimeSlot ~ defaultTime:', defaultTime);
 
     if (!timeSlot && specificTimeSlots && specificTimeSlots.length > 0) {
       // Lấy phần tử cuối cùng trong FormArray
@@ -392,6 +431,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
         if (res) {
           const updatedState = { ...history.state, busScheduleAutoGenerator: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
+          this.busScheduleAutoGenerator = res;
           toast.success('Bus Route update successfully');
         }
       },
@@ -403,6 +443,9 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
     this.busScheduleAutoGeneratorsService.createBusScheduleAutoGenerator(busScheduleAutoGenerator2Create).subscribe({
       next: (res: BusScheduleAutoGenerator) => {
         if (res) {
+          this.busScheduleAutoGenerator = res;
+          const updatedState = { ...history.state, busScheduleAutoGenerator: JSON.stringify(res) };
+          window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus Route added successfully');
         }
       },

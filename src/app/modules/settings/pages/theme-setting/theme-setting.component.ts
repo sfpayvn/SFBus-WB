@@ -15,6 +15,7 @@ import { SettingService } from '../../services/setting.service';
 import { SettingCacheService } from '../../services/setting-cache.service';
 import { firstValueFrom } from 'rxjs';
 import { FilesService } from '@rsApp/modules/management/modules/files-center-management/service/files-center.servive';
+import { SETTING_CONSTANTS, SETTING_CONSTANTS_GROUPS } from '@rsApp/core/constants/setting.constants';
 
 @Component({
   selector: 'app-theme-setting',
@@ -60,7 +61,7 @@ export class ThemeSettingComponent implements OnInit {
 
   async loadCurrentSettings() {
     this.isLoaded = false;
-    this.settingService.getSettingByGroupName('theme').subscribe({
+    this.settingService.getSettingByGroupName(SETTING_CONSTANTS_GROUPS.THEME).subscribe({
       next: (settings: Setting[]) => {
         this.settings = settings;
         this.settingCacheService.createOrUpdates(settings).subscribe();
@@ -76,16 +77,16 @@ export class ThemeSettingComponent implements OnInit {
       const name = setting.name;
       const value = setting.value ?? '';
       switch (name) {
-        case 'tenantName':
+        case SETTING_CONSTANTS.TENANT_NAME:
           this.mainForm.patchValue({ tenantName: value });
           break;
-        case 'primaryColor':
+        case SETTING_CONSTANTS.PRIMARY_COLOR:
           this.mainForm.patchValue({ primaryColor: value });
           break;
-        case 'secondaryColor':
+        case SETTING_CONSTANTS.SECONDARY_COLOR:
           this.mainForm.patchValue({ secondaryColor: value });
           break;
-        case 'tenantLogo':
+        case SETTING_CONSTANTS.TENANT_LOGO:
           this.logoImage = value || '';
           break;
         default:
@@ -97,7 +98,6 @@ export class ThemeSettingComponent implements OnInit {
 
   onFileChange(event: any) {
     const files: FileList = event.target.files;
-    console.log('🚀 ~ ThemeSettingComponent ~ onFileChange ~ files:', files);
     if (!files || files.length === 0) return;
 
     const file = files[0];
@@ -123,7 +123,6 @@ export class ThemeSettingComponent implements OnInit {
       const blob = new Blob([arrayBuffer], { type: file.type });
       const blobUrl = URL.createObjectURL(blob);
       this.logoImage = blobUrl;
-      console.log('🚀 ~ ThemeSettingComponent ~ readAndSetImage ~ this.logoImage:', this.logoImage);
     };
     reader.readAsArrayBuffer(file); // Đọc file dưới dạng ArrayBuffer
   }
@@ -204,10 +203,22 @@ export class ThemeSettingComponent implements OnInit {
 
     const saveSettings = (logoLink?: string, logoId?: string) => {
       const settingsToSave: Setting[] = [
-        { name: 'tenantName', value: formData.tenantName, groupName: 'theme' },
-        { name: 'primaryColor', value: formData.primaryColor, groupName: 'theme' },
-        { name: 'secondaryColor', value: formData.secondaryColor, groupName: 'theme' },
-        { name: 'tenantLogo', value: logoLink ?? this.logoImage, groupName: 'theme' },
+        { name: SETTING_CONSTANTS.TENANT_NAME, value: formData.tenantName, groupName: SETTING_CONSTANTS_GROUPS.THEME },
+        {
+          name: SETTING_CONSTANTS.PRIMARY_COLOR,
+          value: formData.primaryColor,
+          groupName: SETTING_CONSTANTS_GROUPS.THEME,
+        },
+        {
+          name: SETTING_CONSTANTS.SECONDARY_COLOR,
+          value: formData.secondaryColor,
+          groupName: SETTING_CONSTANTS_GROUPS.THEME,
+        },
+        {
+          name: SETTING_CONSTANTS.TENANT_LOGO,
+          value: logoLink ?? this.logoImage,
+          groupName: SETTING_CONSTANTS_GROUPS.THEME,
+        },
       ];
 
       // Send to API then update local cache

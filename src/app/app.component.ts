@@ -11,11 +11,13 @@ import { ThemeService } from './core/services/theme.service';
   styleUrls: ['./app.component.scss'],
   imports: [RouterOutlet, ResponsiveHelperComponent, NgxSonnerToaster, LoaddingScreenComponent],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   protected readonly toast = toast;
   title = 'Angular Tailwind';
 
-  constructor(
-    public themeService: ThemeService,
-  ) {}
+  constructor(public themeService: ThemeService, private settingCacheService: SettingCacheService) {}
+
+  ngOnInit(): void {
+    this.settingCacheService.whenReady();
+  }
 }

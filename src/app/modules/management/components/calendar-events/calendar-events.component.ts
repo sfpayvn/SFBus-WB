@@ -1,7 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
+import { SettingService } from '@rsApp/modules/settings/services/setting.service';
+import { SettingCacheService } from '@rsApp/modules/settings/services/setting-cache.service';
+import { EMPTY, firstValueFrom, switchMap, tap } from 'rxjs';
+import { SETTING_CONSTANTS } from '@rsApp/core/constants/setting.constants';
 
 export interface Event {
   _id: string;
@@ -16,7 +20,7 @@ export interface Event {
   styleUrls: ['./calendar-events.component.scss'],
   standalone: false,
 })
-export class CalendarEventsComponent implements OnInit {
+export class CalendarEventsComponent implements OnInit, OnDestroy {
   viewMode: 'list' | 'day' | 'week' | 'month' = 'week';
 
   currentDate = new Date();
@@ -31,6 +35,9 @@ export class CalendarEventsComponent implements OnInit {
 
   statusClasses = EVENT_STATUS_CLASSES;
 
+  eventAvailabilityCutoff: string = '1h';
+  private minimumInterval: any = null;
+
   @Input() events: Event[] = [];
   @Input() isCloneEvent = false;
 
@@ -42,13 +49,69 @@ export class CalendarEventsComponent implements OnInit {
   @Output() reLoadEventEmit = new EventEmitter<{ startDate: Date; endDate: Date }>();
   @Output() createEventEmit = new EventEmitter<Date>();
 
-  constructor(public utils: Utils, private utilsModal: UtilsModal) {}
+  constructor(
+    public utils: Utils,
+    private utilsModal: UtilsModal,
+    private settingService: SettingService,
+    private settingCacheService: SettingCacheService,
+  ) {}
 
-  ngOnInit(): void {
-    // Update minimumAllowedTime every minute
-    setInterval(() => {
-      this.minimumAllowedTime = new Date(new Date().getTime() + 60 * 60 * 1000);
-    }, 60000);
+  async ngOnInit(): Promise<void> {
+    this.loadSettings();
+  }
+
+  loadSettings() {
+    this.settingCacheService
+      .getSettingByName(SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF)
+      .pipe(
+        switchMap((cached) => {
+          if (cached?.value != null) {
+            this.setupMinimumAllowedTime(cached.value);
+            return EMPTY;
+          }
+          return this.settingService.getSettingByName(SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF).pipe(
+            tap((setting) => {
+              if (setting?.value != null) {
+                this.setupMinimumAllowedTime(setting.value);
+                this.settingCacheService.createOrUpdate(setting).subscribe({ error: () => {} });
+              }
+            }),
+          );
+        }),
+      )
+      .subscribe({
+        error: (err) => {
+          console.error('Error loading transit policy:', err);
+        },
+      });
+  }
+
+  private setupMinimumAllowedTime(cutoffValue?: string) {
+    this.eventAvailabilityCutoff = cutoffValue || this.eventAvailabilityCutoff;
+    this.updateMinimumAllowedTime();
+    this.startMinimumInterval();
+  }
+
+  private updateMinimumAllowedTime() {
+    this.minimumAllowedTime = new Date(
+      new Date().getTime() + this.utils.parseTimeHmToMilliseconds(this.eventAvailabilityCutoff),
+    );
+  }
+
+  private startMinimumInterval() {
+    this.stopMinimumInterval();
+    this.minimumInterval = setInterval(() => this.updateMinimumAllowedTime(), 60000);
+  }
+
+  private stopMinimumInterval() {
+    if (this.minimumInterval) {
+      clearInterval(this.minimumInterval);
+      this.minimumInterval = null;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopMinimumInterval();
   }
 
   get weekDays(): string[] {
@@ -338,7 +401,7 @@ export class CalendarEventsComponent implements OnInit {
       this.utilsModal.openModalAlert(
         'Không thể tạo sự kiện',
         'Không thể tạo sự kiện trong quá khứ hoặc trong vòng 1 giờ tới. Vui lòng chọn thời gian khác.',
-        'warning'
+        'warning',
       );
       return;
     }
