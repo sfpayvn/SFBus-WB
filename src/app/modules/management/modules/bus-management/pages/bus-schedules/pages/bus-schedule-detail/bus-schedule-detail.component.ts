@@ -1,12 +1,11 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
-import { combineLatest } from 'rxjs';
+import { combineLatest, EMPTY, switchMap, tap } from 'rxjs';
 import { toast } from 'ngx-sonner';
 import { BusStation } from '../../../bus-stations/model/bus-station.model';
 import { BusStationsService } from '../../../bus-stations/service/bus-stations.servive';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { BusRoute } from '../../../bus-routes/model/bus-route.model';
 import { BusRoutesService } from '../../../bus-routes/service/bus-routes.servive';
 import { Bus } from '../../../buses/model/bus.model';
@@ -37,9 +36,13 @@ import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
 import { Router } from '@angular/router';
 import { UserDriver } from 'src/app/modules/management/modules/user-management/model/driver.model';
-import { DriversService } from 'src/app/modules/management/modules/user-management/service/driver.servive';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { SettingCacheService } from '@rsApp/modules/settings/services/setting-cache.service';
+import { SETTING_CONSTANTS } from '@rsApp/core/constants/setting.constants';
+import { SettingService } from '@rsApp/modules/settings/services/setting.service';
+import { EVENT_STATUS, EVENT_STATUS_OPTIONS } from '@rsApp/core/constants/status.constants';
+import { DriversService } from '@rsApp/modules/management/modules/user-management/service/driver.servive';
 
 interface BusTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -91,34 +94,14 @@ export class BusScheduleDetailComponent implements OnInit {
 
   private initialFormValue: any = null;
 
-  busScheduleStatuses = [
-    {
-      value: 'un_published',
-      label: 'Chưa xuất bản',
-    },
-    {
-      value: 'scheduled',
-      label: 'Đã lên lịch',
-    },
-    {
-      value: 'cancelled',
-      label: 'Đã hủy',
-    },
-    {
-      value: 'in_progress',
-      label: 'Đang diễn ra',
-    },
-    {
-      value: 'completed',
-      label: 'Đã hoàn thành',
-    },
-    {
-      value: 'overdue',
-      label: 'Quá hạn',
-    },
-  ];
+  eventAvailabilityCutoff: string = '1h';
+  minimumAllowedTime: Date = new Date();
+
+  busScheduleStatuses = EVENT_STATUS_OPTIONS;
 
   busScheduleClasses: { [key: string]: string } = {};
+
+  isOverSchedule: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -141,11 +124,13 @@ export class BusScheduleDetailComponent implements OnInit {
     private renderer: Renderer2,
     public defaultFlagService: DefaultFlagService,
     private utilsModal: UtilsModal,
+    private settingCacheService: SettingCacheService,
+    private settingService: SettingService,
   ) {}
 
   ngOnInit(): void {
     this.getQueryParams();
-    this.initData();
+    this.loadSettings();
   }
 
   async getQueryParams() {
@@ -155,7 +140,53 @@ export class BusScheduleDetailComponent implements OnInit {
     }
   }
 
+  loadSettings() {
+    this.settingCacheService
+      .getSettingByName(SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF)
+      .pipe(
+        switchMap((cached) => {
+          if (cached?.value != null) {
+            this.setupMinimumAllowedTime(cached.value);
+            return EMPTY;
+          }
+          return this.settingService.getSettingByName(SETTING_CONSTANTS.BUS_SCHEDULE_AVAILABILITY_CUTOFF).pipe(
+            tap((setting) => {
+              if (setting?.value != null) {
+                this.setupMinimumAllowedTime(setting.value);
+                this.settingCacheService.createOrUpdate(setting).subscribe({ error: () => {} });
+              }
+            }),
+          );
+        }),
+      )
+      .subscribe({
+        error: (err) => {
+          console.error('Error loading transit policy:', err);
+        },
+      });
+  }
+
+  private setupMinimumAllowedTime(cutoffValue?: string) {
+    this.eventAvailabilityCutoff = cutoffValue || this.eventAvailabilityCutoff;
+    this.updateMinimumAllowedTime();
+    this.initData();
+  }
+
+  private updateMinimumAllowedTime() {
+    this.minimumAllowedTime = new Date(
+      new Date().getTime() + this.utils.parseTimeHmToMilliseconds(this.eventAvailabilityCutoff),
+    );
+  }
+
   initData() {
+    this.isOverSchedule = false;
+
+    if (this.busSchedule) {
+      this.isOverSchedule =
+        this.busSchedule.status !== EVENT_STATUS.SCHEDULED && this.busSchedule.status !== EVENT_STATUS.UN_PUBLISHED;
+    }
+    this.disableFormIfNotOverSchedule(); // Disable form nếu isOverSchedule = false
+
     let findAllBusProvinces = this.busProvincesService.findAll();
     let findAllBusStations = this.busStationsService.findAll();
     let findAllBusRoutes = this.busRoutesService.findAll();
@@ -210,6 +241,40 @@ export class BusScheduleDetailComponent implements OnInit {
     );
   }
 
+  /**
+   * Disable tất cả inputs + buttons nếu isOverSchedule = false
+   * isOverSchedule = false meaning status !== SCHEDULED (đã được publish/started)
+   */
+  private disableFormIfNotOverSchedule(): void {
+    if (this.isOverSchedule && this.busScheduleDetailForm) {
+      // Disable recursively tất cả controls trong form
+      this.disableAllControls(this.busScheduleDetailForm);
+    }
+  }
+
+  /**
+   * Recursively disable tất cả controls trong FormGroup/FormArray
+   */
+  private disableAllControls(group: FormGroup | FormArray): void {
+    Object.keys(group.controls).forEach((key) => {
+      const control = group.get(key);
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.disableAllControls(control);
+      } else {
+        control?.disable({ emitEvent: false });
+      }
+    });
+    // Đảm bảo form bị disable
+    group.disable({ emitEvent: false });
+  }
+
+  /**
+   * Check xem form có bị disable không (dùng trong template để disable buttons)
+   */
+  isFormDisabled(): boolean {
+    return this.isOverSchedule;
+  }
+
   async initForm() {
     const {
       name = '',
@@ -244,17 +309,22 @@ export class BusScheduleDetailComponent implements OnInit {
     });
 
     if (busRoute) {
-      for (const breakPoint of busRoute.breakPoints) {
-        this.breakPoints.push(this.createBreakPoint(breakPoint));
+      for (let i = 0; i < busRoute.breakPoints.length; i++) {
+        this.breakPoints.push(this.createBreakPoint(busRoute.breakPoints[i], i));
       }
     }
+
+    this.busReview = bus as Bus;
 
     if (busTemplateId) {
       const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => (busTemplate._id = busTemplateId));
       if (!busTemplate) return;
-      this.setBusTemplateReview(busTemplate as BusTemplate);
+      // Đợi setBusTemplateReview hoàn thành xong mới tiếp tục
+      await this.setBusTemplateReview(busTemplate as BusTemplate);
     }
-    this.busReview = bus as Bus;
+
+    // Chỉ sau khi tất cả hàm lồng nhau hoàn thành mới disable form
+    this.disableFormIfNotOverSchedule();
   }
 
   hasFormChanged(): boolean {
@@ -262,24 +332,23 @@ export class BusScheduleDetailComponent implements OnInit {
     return JSON.stringify(this.initialFormValue) !== JSON.stringify(currentFormValue);
   }
 
-  async setupBusScheduleLayout(busTemplate: BusTemplate) {
+  async setupBusScheduleLayout(busTemplate: BusTemplate): Promise<void> {
+    if (this.isFormDisabled()) return; // Guard: không setup nếu form disabled
     try {
       const busLayoutTemplatePromise = this.busSchedule
         ? this.busSchedulesService.findScheduleLayoutById(this.busSchedule._id)
         : this.busLayoutTemplatesService.findOne(busTemplate.busLayoutTemplateId);
       const [busLayoutTemplateReview] = await Promise.all([busLayoutTemplatePromise]);
       this.busLayoutTemplateReview = (await busLayoutTemplateReview.toPromise()) as BusTemplateWithLayoutsMatrix | null;
-      console.log(
-        '🚀 ~ BusScheduleDetailComponent ~ setupBusScheduleLayout ~ this.busLayoutTemplateReview:',
-        this.busLayoutTemplateReview,
-      );
-      this.setupBusSeatPrices();
+      // Đợi setupBusSeatPrices hoàn thành xong
+      await this.setupBusSeatPrices();
     } catch (error) {
       console.error('Error setting up bus schedule layout:', error);
     }
   }
 
-  async setupBusSeatPrices() {
+  async setupBusSeatPrices(): Promise<void> {
+    if (this.isFormDisabled()) return; // Guard: không setup nếu form disabled
     const allIds = this.busLayoutTemplateReview?.seatLayouts.flatMap((layout: any) =>
       layout.seats.filter((s: any) => s.status === 'available').map((s: any) => s.typeId),
     );
@@ -329,7 +398,7 @@ export class BusScheduleDetailComponent implements OnInit {
     return this.busScheduleDetailForm.get('busSeatPrices') as FormArray;
   }
 
-  async setBusTemplateReview(busTemplate: BusTemplate) {
+  async setBusTemplateReview(busTemplate: BusTemplate): Promise<void> {
     this.busTemplateReview = busTemplate as BusTemplate;
     this.isLoaddingBusTemplateReview = true;
     this.filterdBuses = await this.buses.filter((bus: Bus) => bus.busTemplateId == busTemplate._id);
@@ -342,7 +411,8 @@ export class BusScheduleDetailComponent implements OnInit {
     this.busTemplateReview.busServices = serviceOfBus;
     this.busTemplateReview.busType = typeOfBus;
     this.isLoaddingBusTemplateReview = false;
-    this.setupBusScheduleLayout(busTemplate as BusTemplate);
+    // Đợi setupBusScheduleLayout hoàn thành xong
+    await this.setupBusScheduleLayout(busTemplate as BusTemplate);
   }
 
   get breakPoints(): FormArray {
@@ -350,6 +420,7 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   breakPointTimeChange(idx: number) {
+    if (this.isFormDisabled()) return; // Guard: không thay đổi nếu form disabled
     // Lấy control hiện tại tại vị trí idx
     const currentControl = this.breakPoints.at(idx);
     const currentTimeValue = currentControl.value.timeSchedule;
@@ -392,10 +463,10 @@ export class BusScheduleDetailComponent implements OnInit {
     // Determine the base time: use current time for the first picker, or the previous picker's value otherwise.
     let baseTime: Date;
     if (idx === 0) {
-      baseTime = new Date();
+      baseTime = new Date(this.minimumAllowedTime);
     } else {
       const previousDateValue = this.breakPoints.controls[idx - 1]?.value.timeSchedule;
-      baseTime = previousDateValue ? new Date(previousDateValue) : new Date();
+      baseTime = previousDateValue ? new Date(previousDateValue) : new Date(this.minimumAllowedTime);
     }
 
     // Disable date logic: prevent selecting dates earlier than `baseTime`.
@@ -463,30 +534,16 @@ export class BusScheduleDetailComponent implements OnInit {
       this.location.back();
     }
   }
-  editBusTempate() {
-    const allowedKeys = ['_id', 'name', 'seatLayouts', 'isDefault']; // Danh sách các thuộc tính trong BusTemplate
-    const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
-      this.busLayoutTemplateReview
-        ? Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key))
-        : [],
-    ) as unknown as BusLayoutTemplate;
-
-    // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
-    const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
-
-    // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
-      state: params,
-    });
-  }
 
   async chooseBus(busId: string) {
+    if (this.isOverSchedule) return; // Disable action nếu isOverSchedule = false
     const bus = (await this.buses.find((bus: Bus) => bus._id == busId)) as Bus;
     this.busScheduleDetailForm.get('bus')?.patchValue(bus);
     this.busReview = bus;
   }
 
   async chooseBusTemplate(busTemplateId: string) {
+    if (this.isOverSchedule) return; // Disable action nếu isOverSchedule = false
     const busTemplate = (await this.busTemplates.find(
       (busTemplate: BusTemplate) => busTemplate._id === busTemplateId,
     )) as BusTemplate;
@@ -498,6 +555,7 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   async chooseRoute(busRouteId: string) {
+    if (this.isOverSchedule) return; // Disable action nếu isOverSchedule = false
     const busRouteForm = this.busScheduleDetailForm.get('busRoute') as FormGroup;
 
     let busRoute: any;
@@ -515,13 +573,14 @@ export class BusScheduleDetailComponent implements OnInit {
 
     if (busRoute) {
       this.breakPoints.clear();
-      for (const breakPoint of busRoute.breakPoints) {
-        this.breakPoints.push(this.createBreakPoint(breakPoint));
+      for (let i = 0; i < busRoute.breakPoints.length; i++) {
+        this.breakPoints.push(this.createBreakPoint(busRoute.breakPoints[i], i));
       }
     }
   }
 
   async chooseBusScheduleTemplate(busScheduleTemplateId: string) {
+    if (this.isOverSchedule) return; // Disable action nếu isOverSchedule = false
     const busScheduleTemplate = (await this.busScheduleTemplates.find(
       (busScheduleTemplate: BusScheduleTemplate) => busScheduleTemplate._id === busScheduleTemplateId,
     )) as BusScheduleTemplate;
@@ -543,12 +602,31 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   resetBusScheduleTemplate() {
+    if (this.isOverSchedule) return; // Disable action nếu isOverSchedule = false
     const busScheduleDetailForm = this.busScheduleDetailForm as FormGroup;
     this.busLayoutTemplateReview = null;
     busScheduleDetailForm.reset();
   }
 
-  createBreakPoint(breakPoint: BusRouteScheduleBreakPoints): FormGroup {
+  editBusTempate() {
+    if (this.isOverSchedule) return; // Disable action nếu isOverSchedule = false
+    const allowedKeys = ['_id', 'name', 'seatLayouts', 'isDefault']; // Danh sách các thuộc tính trong BusTemplate
+    const combinedBusTemplate: BusLayoutTemplate = Object.fromEntries(
+      this.busLayoutTemplateReview
+        ? Object.entries(this.busLayoutTemplateReview).filter(([key]) => allowedKeys.includes(key))
+        : [],
+    ) as unknown as BusLayoutTemplate;
+
+    // Chuyển đổi đối tượng busTemplate thành chuỗi JSON
+    const params = { busTemplate: JSON.stringify(combinedBusTemplate) };
+
+    // Điều hướng đến trang chi tiết của bus template
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-layout-templates/bus-layout-template-detail', {
+      state: params,
+    });
+  }
+
+  createBreakPoint(breakPoint: BusRouteScheduleBreakPoints, index: number = 0): FormGroup {
     const {
       name = '',
       detailAddress = '',
@@ -566,6 +644,7 @@ export class BusScheduleDetailComponent implements OnInit {
 
     return this.fb.group({
       busStationId: [breakPoint.busStationId],
+      timeOffset: [breakPoint.timeOffset],
       timeSchedule: [timeSchedule, [Validators.required]],
       name: [name],
       detailAddress: [detailAddress],
@@ -576,7 +655,7 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   calculateTimeSchedule(offsetTime: string): string {
-    let currentDate = new Date(); // Thời gian hiện tại
+    let currentDate = new Date(this.minimumAllowedTime); // Thời gian hiện tại + minimum allowed time
     if (this.startDate) {
       currentDate = this.startDate;
     }
@@ -614,6 +693,12 @@ export class BusScheduleDetailComponent implements OnInit {
   }
 
   async onSubmit() {
+    // Nếu isOverSchedule = false, không cho phép submit
+    if (this.isOverSchedule) {
+      toast.error('Không thể cập nhật lịch trình đã được công bố');
+      return;
+    }
+
     if (!this.busScheduleDetailForm.valid) {
       this.utils.markFormGroupTouched(this.busScheduleDetailForm);
       return;

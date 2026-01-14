@@ -7,18 +7,21 @@
       Import CSV
     </button>
     <button
+      capCheck
+      [capModule]="capModule"
+      [capFunction]="capFunction"
       class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
       nz-button
       (click)="addUser()"
       type="button">
-      Add User
+      Thêm {{ userRoleLabel[userRole] }}
     </button>
   </div>
 </div>
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <div>
     <app-table-action
-      [title]="'User'"
+      [title]="userRoleLabel[userRole]"
       [totalItem]="totalItem"
       (sortDataEvent)="sortUserPage($event)"
       (searchDataEvent)="searchUserPage($event)"></app-table-action>
@@ -43,16 +46,7 @@
           <th class="min-w-[40px]">Avarta</th>
           <th class="min-w-[200px]">Name</th>
           <th class="min-w-[200px]">Phone Number</th>
-          <th
-            class="min-w-[200px]"
-            [nzFilterFn]="true"
-            [nzSortFn]="true"
-            [nzFilterMultiple]="true"
-            [nzFilters]="filterRoles"
-            (nzSortOrderChange)="sortRoleFn($event)"
-            (nzFilterChange)="filterRolesFn($event)">
-            Role
-          </th>
+          <th class="min-w-[200px]" [nzFilterFn]="true" [nzSortFn]="true" [nzFilterMultiple]="true">Role</th>
           <th class="min-w-[80px] !text-center">Actions</th>
         </tr>
       </thead>
@@ -110,8 +104,8 @@
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
               @for (role of user.roles; track role) {
-              <span class="mr-1 inline-block rounded-md px-2 py-1 text-xs font-semibold role-{{ role }}">
-                {{ role }}
+              <span class="mr-1 inline-block rounded-md px-2 py-1 text-xs font-semibold {{ roleClasses[role] }}">
+                {{ userRoleLabel[role] }}
               </span>
               }
             </nz-skeleton>

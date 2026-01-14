@@ -446,10 +446,11 @@
               [busLayoutsMatrix]="busLayoutTemplateReview"
               [seatTypes]="seatTypes"
               [busSeatLayoutBlockIds]="busSeatLayoutBlockIds"
-              [isEditStatus]="true"></app-layout-matrix>
+              [isEditStatus]="!isOverSchedule"></app-layout-matrix>
           </ng-container>
         </ng-container>
       </div>
+      @if(!isOverSchedule) {
       <div class="my-5 flex w-full justify-end">
         <button
           class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
@@ -459,6 +460,7 @@
           SAVE
         </button>
       </div>
+      }
     </form>
   </div>
 </div>

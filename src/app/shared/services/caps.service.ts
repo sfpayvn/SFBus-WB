@@ -7,7 +7,7 @@ import { ApiGatewayService } from '@rsApp/api-gateway/api-gateaway.service';
 export interface CapabilityItem {
   moduleKey: string;
   functionKey: string | null; // null = module-level
-  type: 'unlimited' | 'count'; // FE KHÔNG cần biết useFull, BE đã map sang 'unlimited'
+  type: 'unlimited' | 'count' | 'block'; // FE KHÔNG cần biết useFull, BE đã map sang 'unlimited'
   quota: number | null;
   remaining: number | null;
   resetAt: string | null; // ISO
@@ -27,6 +27,7 @@ export class CapsService {
   private subject = new BehaviorSubject<CapabilitiesRes | null>(null);
   caps$ = this.subject.asObservable();
 
+  private bootstrapped = false;
   private nextRefreshAt: number | null = null;
   private refreshTimer: any;
   items$: any;
@@ -35,6 +36,9 @@ export class CapsService {
 
   /** Gọi 1 lần sau login */
   async bootstrap(): Promise<void> {
+    // Nếu đã bootstrap rồi thì skip
+    if (this.bootstrapped) return;
+
     // 1) lấy cache từ cookie để UI hiển thị tức thì
     const cached = this.cookie.get(COOKIE_KEY) as unknown as CapabilitiesRes | null;
     if (cached) {
@@ -50,10 +54,13 @@ export class CapsService {
     } catch {
       // bỏ qua lỗi mạng: giữ cache cũ
     }
+
+    this.bootstrapped = true;
   }
 
   async clear() {
     this.subject.next(null);
+    this.bootstrapped = false;
     this.nextRefreshAt = null;
     if (this.refreshTimer) clearTimeout(this.refreshTimer);
     this.cookie.remove(COOKIE_KEY);
@@ -97,6 +104,35 @@ export class CapsService {
       (i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''),
     );
     return it?.remaining ?? null;
+  }
+
+  /** Kiểm tra xem module/function có bị block hay không
+   * Trả về true nếu có rule type='block' cho module/function đó
+   * Nếu chưa bootstrap thì trả về false (allow) để tránh block sớm
+   */
+  isBlocked(moduleKey: string, functionKey?: string | null): boolean {
+    const cur = this.subject.value;
+    // Nếu chưa load caps (chưa bootstrap) thì return false (không block, cho phép)
+    if (!cur) return false;
+
+    const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
+    return it ? (it as any).type === 'block' : false;
+  }
+
+  /** Kiểm tra xem quota tổng có được allow không
+   * Nếu defaultAction = 'block' và items rỗng => không có subscription hoặc hết hạn
+   * Nếu defaultAction = 'allow' => mặc định allow
+   * Nếu items không rỗng => có subscription active
+   */
+  isQuotaAllowed(): boolean {
+    const cur = this.subject.value;
+    if (!cur) return true; // Nếu chưa load caps thì cho phép
+
+    // Nếu defaultAction = 'allow' thì luôn được phép
+    if (cur.defaultAction === 'allow') return true;
+
+    // Nếu defaultAction = 'block' thì chỉ được phép nếu có items (subscription active)
+    return cur.items.length > 0;
   }
 
   // ===== internal =====

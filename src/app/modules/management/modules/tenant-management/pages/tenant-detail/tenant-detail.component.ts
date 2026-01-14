@@ -1,23 +1,11 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { async, combineLatest, tap } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { LoadingService } from '@rsApp/shared/services/loading.service';
-import { BusRoute } from '../../../bus-management/pages/bus-routes/model/bus-route.model';
-import { BusRoutesService } from '../../../bus-management/pages/bus-routes/service/bus-routes.servive';
-import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
-import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 import { Tenant, Tenant2Create, Tenant2Update } from '../../model/tenant.model';
 import { TenantService } from '../../service/tenant.service';
 import { SubscriptionService } from '../../../subscription-management/service/subscription.service';
@@ -26,6 +14,9 @@ import { ChooseSubscriptionDialogComponent } from '../../components/choose-subsc
 import { MatDialog } from '@angular/material/dialog';
 import { TenantSubscriptionService } from '../../service/tenant-subscription.service';
 import { TenantSubscriptionListComponent } from '../../components/tenant-subscription/tenant-subscription-list.component';
+import { COMMON_STATUS, COMMON_STATUS_OPTIONS } from '@rsApp/core/constants/status.constants';
+import { FilesCenterDialogComponent } from '../../../files-center-management/components/files-center-dialog/files-center-dialog.component';
+import { FileDto } from '../../../files-center-management/model/file-center.model';
 
 @Component({
   selector: 'app-tenant-detail',
@@ -45,36 +36,16 @@ export class TenantDetailComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
-  tenantImageFile!: File;
-  tenantImage!: string;
-
   defaultImage = 'assets/images/tenant-deail.png';
 
   mode: 'create' | 'update' = 'create';
 
-  tenantStatuses = [
-    {
-      value: 'active',
-      label: 'Đang hoạt động',
-    },
-    {
-      value: 'inactive',
-      label: 'Ngừng hoạt động',
-    },
-    {
-      value: 'blocked',
-      label: 'Đã chặn',
-    },
-    {
-      value: 'archived',
-      label: 'Đã lưu trữ',
-    },
-  ];
+  tenantStatuses = COMMON_STATUS_OPTIONS;
 
-  paidByList = [
-    { value: 'sender', label: 'Người gửi' },
-    { value: 'customer', label: 'Người nhận' },
-  ];
+  tenantAvartaFile!: File;
+  tenantAvarta!: string;
+
+  defaultAvatar = 'assets/icons/user.svg';
 
   searchKeywordBusSchedule: string = '';
 
@@ -124,6 +95,7 @@ export class TenantDetailComponent implements OnInit {
 
   async initForm() {
     const {
+      logoId = '',
       logo = '',
       name = '',
       code = '',
@@ -134,9 +106,9 @@ export class TenantDetailComponent implements OnInit {
       setting = new Tenant().setting,
     } = this.tenant || {};
 
-    this.tenantImage = logo ? logo : this.defaultImage;
+    this.tenantAvarta = logo ? logo : this.defaultAvatar;
     this.mainForm = this.fb.group({
-      logo: [logo],
+      logoId: [logoId],
       name: [name, [Validators.required]],
       code: [code, [Validators.required]],
       phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
@@ -149,6 +121,10 @@ export class TenantDetailComponent implements OnInit {
       }),
       subscriptionId: [this.tenant?.subscriptionId || ''],
     });
+  }
+
+  get f() {
+    return this.mainForm.controls;
   }
 
   optionalValidator(validator: ValidatorFn): ValidatorFn {
@@ -164,34 +140,31 @@ export class TenantDetailComponent implements OnInit {
     this.location.back();
   }
 
-  onFileChange(event: any) {
-    const files: FileList = event.target.files;
-    if (!files || files.length === 0) return;
-    const file = files[0];
-    this.tenantImageFile = file;
+  openFilesCenterDialog() {
+    this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
+      if (!files || files.length === 0) return;
+      const file = files[0];
+      this.tenantAvarta = file.link;
+      this.mainForm.patchValue({ logoId: file._id });
+    });
+  }
 
+  onFileChange(event: any) {
+    const file = event.target.files[0];
     if (file) {
-      this.readAndSetImage(file);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.tenantAvartaFile = file;
+        this.tenantAvarta = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  private readAndSetImage(file: File): void {
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      // Tạo một Blob từ ArrayBuffer
-      const arrayBuffer = event.target.result as ArrayBuffer;
-      const blob = new Blob([arrayBuffer], { type: file.type });
-      this.tenantImage = URL.createObjectURL(blob);
-    };
-    reader.readAsArrayBuffer(file); // Đọc file dưới dạng ArrayBuffer
-  }
-
   removeFileImage() {
-    this.tenantImage = '';
+    this.tenantAvarta = '';
     this.mainForm.patchValue({ avatar: '' });
   }
-
-  openFilesCenterDialog() {}
 
   setDefaultValues2Create(data: any) {}
 
@@ -243,8 +216,8 @@ export class TenantDetailComponent implements OnInit {
       ...data,
     };
     let dataTransfer = new DataTransfer();
-    if (this.tenantImageFile) {
-      dataTransfer.items.add(this.tenantImageFile);
+    if (this.tenantAvartaFile) {
+      dataTransfer.items.add(this.tenantAvartaFile);
     }
     const files: FileList = dataTransfer.files;
 

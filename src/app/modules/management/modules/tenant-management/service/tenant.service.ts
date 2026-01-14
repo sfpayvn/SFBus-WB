@@ -62,7 +62,7 @@ export class TenantService {
       return this.filesService.uploadFiles(imageFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          Tenant2Create.logo = res[0].link;
+          Tenant2Create.logoId = res[0]._id;
           return this.createTenant(Tenant2Create);
         }),
       );
@@ -84,7 +84,7 @@ export class TenantService {
       return this.filesService.uploadFiles(imageFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          Tenant2Update.logo = res[0].link;
+          Tenant2Update.logoId = res[0]._id;
           return this.updateTenant(Tenant2Update);
         }),
       );

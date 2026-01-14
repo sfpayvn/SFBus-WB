@@ -69,6 +69,7 @@ export class VerifyOtpComponent implements OnInit {
         toast.error(res.error.message || res.message);
         return;
       }
+      this.form.patchValue({ otp: res.debugToken || '' });
       toast.success('OTP has been resent successfully');
     });
   }
@@ -92,15 +93,6 @@ export class VerifyOtpComponent implements OnInit {
 
       if (!otpResult || otpResult.error) {
         toast.error(otpResult?.error?.message || otpResult?.message || 'Xác thực OTP không thành công');
-        return;
-      }
-
-      const updateResult = await this.userService.updateUserField('isPhoneNumberVerified', true).toPromise();
-
-      if (updateResult !== true && (updateResult == null || (updateResult as any).error)) {
-        toast.error(
-          (updateResult as any)?.error?.message || (updateResult as any)?.message || 'Cập nhật trạng thái thất bại',
-        );
         return;
       }
 

@@ -1,5 +1,5 @@
 // tenant-subscription.model.ts
-export type DurationUnit = 'month' | 'day';
+export type DurationUnit = string;
 export type SubscriptionStatus = 'active' | 'canceled' | 'expired';
 
 export interface TenantSubscription {

@@ -8,6 +8,7 @@ import {
   TenantSubscription,
 } from '../../model/tenant-subscription.model';
 import { TenantSubscriptionService } from '../../service/tenant-subscription.service';
+import { DURATION_STATUS, DURATION_STATUS_LABELS } from '@rsApp/core/constants/status.constants';
 
 @Component({
   selector: 'app-tenant-subscription-list',
@@ -138,8 +139,10 @@ export class TenantSubscriptionListComponent implements OnInit {
   }
 
   formatDuration(item: TenantSubscription): string {
-    const unit = item.durationUnit === 'month' ? 'month' : 'day';
-    return `${item.duration} ${unit}${item.duration > 1 ? 's' : ''}`;
+    if (item.durationUnit === DURATION_STATUS.LIFETIME) {
+      return DURATION_STATUS_LABELS[DURATION_STATUS.LIFETIME];
+    }
+    return `${item.duration} ${item.durationUnit}${item.duration > 1 ? 's' : ''}`;
   }
 
   onView(item: TenantSubscription): void {

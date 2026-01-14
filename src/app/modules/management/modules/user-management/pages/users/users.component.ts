@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { Utils } from 'src/app/shared/utils/utils';
 import { SearchUser, User } from '../../model/user.model';
-import { UsersService } from '../../service/user.servive';
 import { Router } from '@angular/router';
 import { DriversService } from '../../service/driver.servive';
+import { ROLE_CLASSES, ROLE_CONSTANTS, ROLE_LABELS } from '@rsApp/core/constants/roles.constants';
+import { UserManagementService } from '../../service/user.servive';
+import { FUNCTION_KEYS, MODULE_KEYS } from '@rsApp/core/constants/module-function-keys';
 
 @Component({
   selector: 'app-users',
@@ -38,30 +40,63 @@ export class UsersComponent implements OnInit {
   checked = false;
   setOfCheckedId = new Set<string>();
 
-  filterRoleSelected = [] as string[];
+  roleClasses: Record<string, string> = ROLE_CLASSES;
 
-  filterRoles = [
-    { text: 'Client', value: 'client' },
-    { text: 'Driver', value: 'driver' },
-    { text: 'Pos', value: 'pos' },
-    { text: 'Tenant', value: 'tenant' },
-  ];
+  capModule: string = MODULE_KEYS.USER_CLIENT;
+  capFunction: string = FUNCTION_KEYS.USER_CLIENT.CREATE;
+
+  userRole: string = ROLE_CONSTANTS.CLIENT;
+  userRoleLabel = ROLE_LABELS;
 
   constructor(
-    private usersService: UsersService,
     private dialog: MatDialog,
     public utils: Utils,
     private router: Router,
     private driversService: DriversService,
+    private userManagementService: UserManagementService,
   ) {}
 
   ngOnInit(): void {
+    this.initializeUserRole();
     this.loadData();
+  }
+
+  private initializeUserRole(): void {
+    switch (this.router.url) {
+      case '/management/users-management/users':
+        this.userRole = ROLE_CONSTANTS.CLIENT;
+        this.capModule = MODULE_KEYS.USER_CLIENT;
+        this.capFunction = FUNCTION_KEYS.USER_CLIENT.CREATE;
+        break;
+      case '/management/users-management/driver':
+        this.userRole = ROLE_CONSTANTS.DRIVER;
+        this.capModule = MODULE_KEYS.USER_DRIVER;
+        this.capFunction = FUNCTION_KEYS.USER_DRIVER.CREATE;
+        break;
+      case '/management/users-management/pos':
+        this.userRole = ROLE_CONSTANTS.POS;
+        this.capModule = MODULE_KEYS.USER_POS;
+        this.capFunction = FUNCTION_KEYS.USER_POS.CREATE;
+        break;
+      case '/management/users-management/tenant':
+        this.userRole = ROLE_CONSTANTS.TENANT;
+        this.capModule = MODULE_KEYS.USER_TENANT;
+        this.capFunction = FUNCTION_KEYS.USER_TENANT.CREATE;
+        break;
+      case '/management/users-management/tenant-operator':
+        this.userRole = ROLE_CONSTANTS.TENANT_OPERATOR;
+        this.capModule = MODULE_KEYS.USER_TENANT_OPERATOR;
+        this.capFunction = FUNCTION_KEYS.USER_TENANT_OPERATOR.CREATE;
+        break;
+      default:
+        this.userRole = ROLE_CONSTANTS.CLIENT;
+        break;
+    }
   }
 
   loadData(): void {
     this.isLoadingUser = true;
-    this.usersService.searchUser(this.searchParams).subscribe({
+    this.userManagementService.searchUser(this.userRole, this.searchParams).subscribe({
       next: (res: SearchUser) => {
         if (res) {
           this.searchUser = res;
@@ -77,23 +112,23 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  sortRoleFn(sortValue: any) {
-    this.searchParams.sortBy.key = 'roles';
-    this.searchParams.sortBy.value = sortValue;
-    this.loadData();
-  }
+  // sortRoleFn(sortValue: any) {
+  //   this.searchParams.sortBy.key = 'roles';
+  //   this.searchParams.sortBy.value = sortValue;
+  //   this.loadData();
+  // }
 
-  filterRolesFn(filterArr: any) {
-    if (filterArr.length === 0) {
-      // Xóa filter roles nếu không có giá trị nào được chọn
-      this.searchParams.filters = this.searchParams.filters.filter((f) => f.key !== 'roles');
-      this.loadData();
-      return;
-    }
+  // filterRolesFn(filterArr: any) {
+  //   if (filterArr.length === 0) {
+  //     // Xóa filter roles nếu không có giá trị nào được chọn
+  //     this.searchParams.filters = this.searchParams.filters.filter((f) => f.key !== 'roles');
+  //     this.loadData();
+  //     return;
+  //   }
 
-    this.addOrReplaceFilters({ key: 'roles', value: filterArr });
-    this.loadData();
-  }
+  //   this.addOrReplaceFilters({ key: 'roles', value: filterArr });
+  //   this.loadData();
+  // }
 
   toggleUser(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
@@ -127,7 +162,7 @@ export class UsersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.usersService.deleteUser(user._id).subscribe({
+        this.userManagementService.deleteUser(this.userRole, user._id).subscribe({
           next: (res: any) => {
             if (res) {
               this.searchUser.users = this.searchUser.users.filter((u) => u._id !== user._id);
@@ -144,12 +179,13 @@ export class UsersComponent implements OnInit {
   }
 
   editUser(user: User): void {
-    const params = { user: JSON.stringify(user) };
+    const params = { user: JSON.stringify(user), userRole: this.userRole };
     this.router.navigateByUrl('/management/users-management/users/detail', { state: params });
   }
 
   addUser(): void {
-    this.router.navigate(['/management/users-management/users/detail']);
+    const params = { userRole: this.userRole };
+    this.router.navigate(['/management/users-management/users/detail'], { state: params });
   }
 
   reloadUserPage(data: any): void {

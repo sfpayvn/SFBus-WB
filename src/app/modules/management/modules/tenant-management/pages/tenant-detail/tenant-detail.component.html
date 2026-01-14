@@ -19,21 +19,53 @@
       <form [formGroup]="mainForm" nz-form *ngIf="mainForm" (ngSubmit)="onSubmit()">
         <div class="flex gap-4">
           <div class="flex h-full w-4/12 flex-col">
-            <nz-form-label [nzNoColon]="true" nzFor="logo" class="!flex !items-center !justify-start !font-medium"
-              >Logo</nz-form-label
-            >
+            <nz-form-label nzFor="dvarta" class="!flex !h-[36px] !items-center !justify-start">Avatar</nz-form-label>
             <div class="flex h-full w-full flex-col items-center justify-center gap-2">
               <div
-                class="flex h-28 w-32 items-center justify-center overflow-hidden rounded-sm border border-dashed border-blue-500">
-                <img alt="tenant logo" [src]="tenantImage || defaultImage" [class]="'w-full cursor-pointer'" />
+                class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border border-dashed border-blue-500">
+                <img
+                  alt="user avatar"
+                  [src]="tenantAvarta || defaultAvatar"
+                  [class]="'w-full cursor-pointer'"
+                  [style]="
+                    tenant && tenant.logo
+                      ? {
+                          'background-color': utils.generateColorsFromId(tenant._id).bg,
+                          color: utils.generateColorsFromId(tenant._id).text
+                        }
+                      : ''
+                  " />
               </div>
-              <button
-                class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
-                nz-button
-                type="button"
-                nzType="default">
-                <span>Chụp ảnh</span>
-              </button>
+              <div nz-popover [nzPopoverContent]="userAvatarTemplate" class="relative">
+                <button
+                  class="!min-w-24 !flex !h-max !justify-center !rounded-lg !py-2 !px-3 hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+                  nz-button
+                  type="button"
+                  nzType="default">
+                  <span>Chọn ảnh</span>
+                </button>
+              </div>
+              <ng-template #userAvatarTemplate>
+                <div class="grap-2 grid w-96 cursor-pointer grid-cols-2">
+                  <div class="relative flex h-12 cursor-pointer flex-wrap items-center justify-center px-2">
+                    <input
+                      type="file"
+                      class="z-50 block h-full w-full cursor-pointer opacity-0"
+                      (change)="onFileChange($event)" />
+                    <div
+                      class="absolute top-0 right-0 left-0 m-auto flex h-full w-full cursor-pointer flex-wrap content-center items-center justify-center">
+                      <svg-icon svgClass="w-7 h-7" src="assets/icons/upload.svg"></svg-icon>
+                      <p class="w-full pt-1 text-center text-xs">Tập tin cục bộ</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex h-12 cursor-pointer flex-wrap items-center justify-center px-2"
+                    (click)="openFilesCenterDialog()">
+                    <svg-icon svgClass="w-7 h-7" src="assets/icons/media.svg"></svg-icon>
+                    <p class="w-full pt-1 text-center text-xs">Trung tâm phương tiện</p>
+                  </div>
+                </div>
+              </ng-template>
             </div>
           </div>
           <div class="flex w-8/12 flex-wrap">
@@ -60,9 +92,8 @@
                   >
                   <nz-form-control class="!flex !max-h-[42px] flex-col">
                     <nz-select
-                      class="custom-nz-select height-large !mt-0 !mb-0 !w-full tenant-status-{{
-                        mainForm.get('status')?.value
-                      }}"
+                      class="custom-nz-select height-large !mt-0 !mb-0 !w-full"
+                      [ngClass]="'common-status-' + (mainForm.get('status')?.value || '')"
                       formControlName="status">
                       @for (tenantStatus of tenantStatuses; track tenantStatus) {
                       <nz-option [nzLabel]="tenantStatus.label" [nzValue]="tenantStatus.value"></nz-option>
@@ -84,15 +115,19 @@
                 <nz-collapse-panel [nzHeader]="collapseHeaderTenantInfo" [nzActive]="true">
                   <div class="flex flex-col gap-2">
                     <div class="flex w-full gap-4">
-                      <div class="block w-6/12">
+                      <div class="block w-full">
                         <nz-form-item class="!mb-0 !flex !flex-col">
                           <nz-form-label
+                            [nzRequired]="true"
                             [nzNoColon]="true"
                             nzFor="phoneNumber"
                             class="!flex !items-center !justify-start !font-medium"
                             >Số điện thoại</nz-form-label
                           >
-                          <nz-form-control [nzErrorTip]="tenantFormPhoneNumberErrorTpl" class="!flex flex-col">
+                          <nz-form-control
+                            [nzRequired]="true"
+                            [nzErrorTip]="tenantFormPhoneNumberErrorTpl"
+                            class="!flex flex-col">
                             <nz-input-group [nzSuffix]="tenantFormPhoneNumberClearTpl" class="custom-nz-input-group">
                               <input
                                 type="text"
@@ -120,9 +155,10 @@
                           </nz-form-control>
                         </nz-form-item>
                       </div>
-                      <div class="block w-6/12">
+                      <div class="block w-full">
                         <nz-form-item class="!mb-0 !flex !flex-col">
                           <nz-form-label
+                            [nzRequired]="true"
                             [nzNoColon]="true"
                             nzFor="name"
                             class="!flex !items-center !justify-start !font-medium"
@@ -149,6 +185,41 @@
                           </nz-form-control>
                         </nz-form-item>
                       </div>
+                      @if(mode == 'create') {
+                      <div class="block w-3/12">
+                        <nz-form-item class="!flex !w-full !flex-col">
+                          <nz-form-label
+                            [nzRequired]="true"
+                            [nzNoColon]="true"
+                            nzFor="code"
+                            class="!flex !items-center !justify-start !text-sm"
+                            >Tenant Code</nz-form-label
+                          >
+                          <nz-form-control [nzErrorTip]="userFormTenantCodeErrorTpl" class="!flex flex-col">
+                            <nz-input-group
+                              [nzSuffix]="userFormTenantCodeClearTpl"
+                              class="!mt-0 !mb-0 !rounded border-gray-200">
+                              <input type="text" nz-input formControlName="code" placeholder="Nhập Tenant Code" />
+                            </nz-input-group>
+                            <ng-template #userFormTenantCodeClearTpl>
+                              @if(f['code'].value){
+                              <span
+                                nz-icon
+                                class="ant-input-clear-icon"
+                                nzTheme="fill"
+                                nzType="close-circle"
+                                (click)="f['code'].patchValue('')"></span>
+                              }
+                            </ng-template>
+                            <ng-template #userFormTenantCodeErrorTpl let-control>
+                              <span class="mt-1 !text-xs text-red-500">
+                                @if (f['code'].errors?.['required']) { Vui lòng nhập Tenant Code }
+                              </span>
+                            </ng-template>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                      }
                     </div>
                     <div class="flex w-full gap-4">
                       <div class="block w-full">
@@ -189,29 +260,10 @@
             </div>
           </div>
         </div>
-
+        @if(mode == 'update') {
         <div class="mt-4 w-full rounded-lg border border-dashed border-gray-300">
           <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
             <nz-collapse-panel [nzHeader]="collapseHeaderTenantSubscription" [nzActive]="true">
-              <!-- <div class="flex w-full gap-4">
-                <nz-form-item class="!mb-0 !flex !w-full !justify-between">
-                  <nz-form-label
-                    [nzNoColon]="true"
-                    nzFor="subscriptionId"
-                    class="!flex !items-center !justify-start !font-medium"
-                    >Gói thuê bao</nz-form-label
-                  >
-                  <nz-form-control class="!flex !max-h-[42px] flex-col">
-                    <nz-select
-                      class="custom-nz-select height-large !mt-0 !mb-0 !w-full"
-                      formControlName="subscriptionId">
-                      @for (sub of subscriptions; track sub) {
-                      <nz-option [nzLabel]="sub.name" [nzValue]="sub._id"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div> -->
               <div class="flex justify-end">
                 <button
                   class="!min-w-24 !flex !h-max !justify-center !rounded-lg !bg-blue-500 !py-2 !px-3 !text-white hover:!border-blue-500 hover:!bg-blue-200 hover:!text-blue-500"
@@ -234,6 +286,7 @@
             </ng-template>
           </nz-collapse>
         </div>
+        }
 
         <div class="my-5 flex w-full justify-end">
           <button

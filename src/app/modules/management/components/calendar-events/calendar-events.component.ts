@@ -21,6 +21,8 @@ export interface Event {
   standalone: false,
 })
 export class CalendarEventsComponent implements OnInit, OnDestroy {
+  @Input() capModule!: string;
+  @Input() capFunction!: string;
   viewMode: 'list' | 'day' | 'week' | 'month' = 'week';
 
   currentDate = new Date();

@@ -40,7 +40,6 @@
             <th class="min-w-[40px]">Code</th>
             <th class="min-w-[80px]">Name</th>
             <th class="min-w-[80px]">Phone Number</th>
-            <th class="min-w-[80px]">Email</th>
             <th class="min-w-[80px]">Status</th>
             <th class="min-w-[80px] !text-right">Actions</th>
           </tr>
@@ -77,15 +76,6 @@
                 [nzTitle]="{ width: '100%' }"
                 [nzActive]="true">
                 {{ tenant.phoneNumber }}
-              </nz-skeleton>
-            </td>
-            <td>
-              <nz-skeleton
-                [nzLoading]="isLoadingTenant"
-                [nzParagraph]="false"
-                [nzTitle]="{ width: '100%' }"
-                [nzActive]="true">
-                {{ tenant.email }}
               </nz-skeleton>
             </td>
             <td>

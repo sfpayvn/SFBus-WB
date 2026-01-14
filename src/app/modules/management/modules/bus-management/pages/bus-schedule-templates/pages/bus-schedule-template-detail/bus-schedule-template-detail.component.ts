@@ -31,9 +31,9 @@ import { SeatType } from '../../../seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
 import { Router } from '@angular/router';
 import { UserDriver } from 'src/app/modules/management/modules/user-management/model/driver.model';
-import { DriversService } from 'src/app/modules/management/modules/user-management/service/driver.servive';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { DriversService } from '@rsApp/modules/management/modules/user-management/service/driver.servive';
 
 interface BusTemplateReview extends BusTemplate {
   busServices: BusService[];

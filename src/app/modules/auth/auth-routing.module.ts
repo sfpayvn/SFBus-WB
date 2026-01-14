@@ -7,8 +7,8 @@ import { SignInComponent } from './pages/sign-in/sign-in.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
 import { TwoStepsComponent } from './pages/two-steps/two-steps.component';
 import { VerifyOtpComponent } from './pages/verify-otp/verify-otp.component';
-import { NoAuthGuard } from '@rsApp/auth/no-auth.guard';
-import { SetupAccountGuard } from '@rsApp/auth/setup-account.guard';
+import { NoAuthGuard } from '@rsApp/guards/no-auth.guard';
+import { SetupAccountGuard } from '@rsApp/guards/setup-account.guard';
 
 const routes: Routes = [
   {

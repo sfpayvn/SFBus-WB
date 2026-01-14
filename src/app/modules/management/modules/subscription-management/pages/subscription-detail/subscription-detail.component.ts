@@ -17,6 +17,7 @@ import { SubscriptionService } from '../../service/subscription.service';
 import { LoadingService } from '@rsApp/shared/services/loading.service';
 import { Subscription, Subscription2Create, Subscription2Update } from '../../model/subscription.model';
 import { combineLatest } from 'rxjs';
+import { COMMON_STATUS_OPTIONS, DURATION_STATUS, DURATION_STATUS_OPTIONS } from '@rsApp/core/constants/status.constants';
 
 @Component({
   selector: 'app-subscription-detail',
@@ -32,35 +33,9 @@ export class SubscriptionDetailComponent implements OnInit {
 
   mode: 'create' | 'update' = 'create';
 
-  subscriptionStatuses = [
-    {
-      value: 'active',
-      label: 'Đang hoạt động',
-    },
-    {
-      value: 'inactive',
-      label: 'Ngừng hoạt động',
-    },
-  ];
+  subscriptionStatuses = COMMON_STATUS_OPTIONS;
 
-  durationUnits = [
-    {
-      value: 'day',
-      label: 'Ngày',
-    },
-    {
-      value: 'week',
-      label: 'Tuần',
-    },
-    {
-      value: 'month',
-      label: 'Tháng',
-    },
-    {
-      value: 'year',
-      label: 'Năm',
-    },
-  ];
+  durationUnits = DURATION_STATUS_OPTIONS;
 
   constructor(
     private fb: FormBuilder,
@@ -99,6 +74,7 @@ export class SubscriptionDetailComponent implements OnInit {
       limitation = '',
       description = '',
       status = 'active',
+      popular = false,
     } = this.subscription || {};
 
     this.mainForm = this.fb.group({
@@ -109,7 +85,22 @@ export class SubscriptionDetailComponent implements OnInit {
       durationUnit: [durationUnit, [Validators.required]],
       limitation: [JSON.stringify(limitation, null, 2)],
       status: [status, [Validators.required]],
+      popular: [popular],
     });
+    this.onDurationUnitChange();
+  }
+
+  onDurationUnitChange() {
+    const durationUnitControl = this.mainForm.get('durationUnit');
+    const durationControl = this.mainForm.get('duration');
+
+    if (durationUnitControl?.value === DURATION_STATUS.LIFETIME) {
+      durationControl?.setValue(0);
+      durationControl?.disable();
+    } else {
+      durationControl?.enable();
+      durationControl?.setValue(1);
+    }
   }
 
   backPage() {
@@ -126,6 +117,7 @@ export class SubscriptionDetailComponent implements OnInit {
 
     const subscription2Create: Subscription2Create = {
       ...data,
+      limitation: data.limitation ? JSON.parse(data.limitation) : {},
     };
 
     let request = [];

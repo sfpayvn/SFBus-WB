@@ -82,7 +82,7 @@
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
               {{ paymentMethod.name }} {{ defaultFlagService.defaultTextFlag(paymentMethod) }}
-              {{ paymentMethod.isPaymentMethodDefault ? '- [Thanh Toán Mặc định]' : '' }}
+              {{ paymentMethod.isDefault ? '- [Thanh Toán Mặc định]' : '' }}
             </nz-skeleton>
           </td>
           <td>

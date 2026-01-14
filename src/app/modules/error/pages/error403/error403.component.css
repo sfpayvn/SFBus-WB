@@ -1,0 +1,31 @@
+/* 403 Error Page Styling */
+
+.error-container {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .error-container {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}

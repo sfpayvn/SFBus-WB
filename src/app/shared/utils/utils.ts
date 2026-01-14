@@ -47,7 +47,7 @@ export class Utils {
     const msg = 'Oh No! Some things wrong error';
     toast.error(msg, {
       position: 'bottom-right',
-      description: error.message || 'Please try again later',
+      description: error.error?.message || 'Please try again later',
       action: {
         label: 'Dismiss',
         onClick: () => {},

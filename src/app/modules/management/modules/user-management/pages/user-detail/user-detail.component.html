@@ -10,10 +10,16 @@
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+  <div class="flex w-full items-center justify-between pb-4">
+    <label class="text-base font-medium">
+      {{ userRoleLabel[userRole] }} - {{ user ? user.name : 'Tạo người dùng mới' }}
+    </label>
+  </div>
   <nz-tabset nzType="card">
     <nz-tab nzTitle="Thông tin cơ bản">
       <app-user-info
         [user]="user"
+        [userRole]="userRole"
         [addresses]="addresses"
         (rolesChange)="onRolesChange($event)"
         (createUserEvent)="onCreateUser($event)">
@@ -21,11 +27,11 @@
     </nz-tab>
 
     <nz-tab nzTitle="Mật khẩu" *ngIf="user">
-      <app-user-password [userId]="user._id"></app-user-password>
+      <app-user-password [userId]="user._id" [userRole]="userRole"></app-user-password>
     </nz-tab>
 
     <nz-tab nzTitle="Thông tin Driver" *ngIf="showDriverTab && user && user._id">
-      <app-user-driver-info [userId]="user._id"> </app-user-driver-info>
+      <app-user-driver-info [userId]="user._id" [userRole]="userRole"> </app-user-driver-info>
     </nz-tab>
   </nz-tabset>
 </div>

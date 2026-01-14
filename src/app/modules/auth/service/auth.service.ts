@@ -8,6 +8,7 @@ import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, Verify
 import { HttpErrorResponse } from '@angular/common/http';
 import { CapsService } from '@rsApp/shared/services/caps.service';
 import { MenuService } from '@rsApp/modules/layout/services/menu.service';
+import { RoleAccessService } from '@rsApp/core/services/role-access.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class AuthService {
     private credentialService: CredentialService,
     private capsService: CapsService,
     private menuService: MenuService,
+    private roleAccessService: RoleAccessService,
   ) {}
 
   async init(): Promise<void> {
@@ -31,8 +33,9 @@ export class AuthService {
         return;
       }
       const currentUser = await this.getCurrentUser().toPromise();
-      await this.capsService.bootstrap();
+      await this.capsService.bootstrap(); // chờ bootstrap hoàn tất
       this.credentialService.setCurrentUser(currentUser);
+      await this.menuService.reloadPagesAndExpand(); // rồi reload menu
     } catch {
       this.credentialService.removeCurrentUser();
       this.credentialService.removeToken();
@@ -68,10 +71,9 @@ export class AuthService {
         if (!user) return of(null);
         // đảm bảo setCurrentUser hoàn tất trước khi trả user
         return from(this.credentialService.setCurrentUser(user)).pipe(
-          tap(() => {
-            this.capsService.bootstrap();
-            this.menuService.reloadPagesAndExpand();
-          }), // <— refresh menu theo role mới
+          switchMap(() => from(this.capsService.bootstrap())), // chờ bootstrap hoàn tất
+          switchMap(() => from(this.roleAccessService.initializeUserRoles())), // init roles từ current user
+          switchMap(() => from(this.menuService.reloadPagesAndExpand())), // rồi reload menu
           map(() => user),
         );
       }),
@@ -104,6 +106,8 @@ export class AuthService {
     await this.credentialService.removeToken();
     await this.credentialService.removeCurrentUser();
     await this.capsService.clear();
+    // Clear RBAC cache
+    this.roleAccessService.clearCache();
   }
 
   getCurrentUser() {
