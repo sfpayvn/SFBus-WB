@@ -16,6 +16,11 @@ export class BusProvincesService {
     return this.apiGatewayService.get(url, null, { skipLoading }).pipe(tap((res: any) => {}));
   }
 
+  findAllAvailable(skipLoading?: boolean) {
+    const url = `${this.url}/find-all-available`;
+    return this.apiGatewayService.get(url, null, { skipLoading }).pipe(tap((res: any) => {}));
+  }
+
   searchBusProvince(
     searchParams = {
       pageIdx: 1,

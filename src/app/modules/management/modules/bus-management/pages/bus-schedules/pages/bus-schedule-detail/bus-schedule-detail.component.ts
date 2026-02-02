@@ -554,7 +554,7 @@ export class BusScheduleDetailComponent implements OnInit {
     this.setBusTemplateReview(busTemplate);
   }
 
-  async chooseRoute(busRouteId: string) {
+  async chooseBusRoute(busRouteId: string) {
     if (this.isOverSchedule) return; // Disable action nếu isOverSchedule = false
     const busRouteForm = this.busScheduleDetailForm.get('busRoute') as FormGroup;
 
@@ -565,7 +565,6 @@ export class BusScheduleDetailComponent implements OnInit {
     if (this.busScheduleTemplate && this.busScheduleTemplate.busRoute) {
       busRoute = this.busScheduleTemplate.busRoute;
     }
-
     busRouteForm.get('_id')?.patchValue(busRouteId);
     busRouteForm.get('name')?.patchValue(busRoute.name);
     busRouteForm.get('distance')?.patchValue(busRoute.distance);
@@ -632,6 +631,7 @@ export class BusScheduleDetailComponent implements OnInit {
       detailAddress = '',
       location = '',
       provinceId = '',
+      isOffice = false,
     } = this.busStations.find((busStation: BusStation) => busStation._id === breakPoint.busStationId) as BusStation;
     const province = this.busProvinces.find(
       (busProvince: BusProvince) => busProvince._id === provinceId,
@@ -651,6 +651,7 @@ export class BusScheduleDetailComponent implements OnInit {
       location: [location],
       provinceId: [provinceId],
       province: [province],
+      isOffice: [isOffice],
     });
   }
 
@@ -704,6 +705,11 @@ export class BusScheduleDetailComponent implements OnInit {
       return;
     }
 
+    // If editing an existing schedule and there are no changes, skip submit
+    if (this.busSchedule && !this.hasFormChanged()) {
+      return;
+    }
+
     const busSeatLayoutBlockIds = await this.getBusSeatLayoutTemplateBlock();
 
     const data = this.busScheduleDetailForm.getRawValue();
@@ -715,6 +721,7 @@ export class BusScheduleDetailComponent implements OnInit {
       busSeatLayoutBlockIds,
       startDate: data.busRoute.breakPoints[0].timeSchedule,
       endDate: data.busRoute.breakPoints.at(-1).timeSchedule,
+      currentStationId: data.busRoute.breakPoints[0].busStationId,
     };
 
     const busSeatPricesData = this.busSeatPricesForm.getRawValue();
@@ -730,6 +737,7 @@ export class BusScheduleDetailComponent implements OnInit {
         ...busSchedule2Create,
         busScheduleLayoutId: this.busSchedule.busScheduleLayoutId,
         _id: this.busSchedule._id, // Thêm thuộc tính _id
+        currentStationId: this.busSchedule.currentStationId,
       };
 
       this.updateBusSchedule(busSchedule2Update);

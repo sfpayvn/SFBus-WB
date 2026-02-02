@@ -15,6 +15,7 @@ export class UserManagementService {
     const urlMap: Record<string, string> = {
       client: '/admin/users/client',
       pos: '/admin/users/pos',
+      seller: '/admin/users/seller',
       tenant: '/admin/users/tenant',
       'tenant-operator': '/admin/users/tenant-operator',
       driver: '/admin/users/driver',
@@ -26,6 +27,7 @@ export class UserManagementService {
     const moduleKeyMap: Record<string, string> = {
       client: MODULE_KEYS.USER_CLIENT,
       pos: MODULE_KEYS.USER_POS,
+      seller: MODULE_KEYS.USER_SELLER,
       tenant: MODULE_KEYS.USER_TENANT,
       'tenant-operator': MODULE_KEYS.USER_TENANT_OPERATOR,
       driver: MODULE_KEYS.USER_DRIVER,
@@ -37,6 +39,7 @@ export class UserManagementService {
     const functionKeyMap: Record<string, string> = {
       client: FUNCTION_KEYS.USER_CLIENT.CREATE,
       pos: FUNCTION_KEYS.USER_POS.CREATE,
+      seller: FUNCTION_KEYS.USER_SELLER.CREATE,
       tenant: FUNCTION_KEYS.USER_TENANT.CREATE,
       'tenant-operator': FUNCTION_KEYS.USER_TENANT_OPERATOR.CREATE,
       driver: FUNCTION_KEYS.USER_DRIVER.CREATE,

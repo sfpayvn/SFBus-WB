@@ -77,6 +77,22 @@ const routes: Routes = [
         loadChildren: () =>
           import('./modules/booking-management/booking-management.module').then((m) => m.BookingManagementModule),
       },
+      {
+        path: 'notification-management/notification-schedule',
+        canActivate: [RoleAccessGuard],
+        data: { moduleKey: MODULE_KEYS.NOTIFICATION_MANAGEMENT },
+        loadChildren: () =>
+          import('./modules/notification-schedule/notification-schedule.module').then(
+            (m) => m.NotificationScheduleModule,
+          ),
+      },
+      {
+        path: 'content-management',
+        canActivate: [ModuleBlockGuard, RoleAccessGuard],
+        data: { moduleKey: MODULE_KEYS.CONTENT_MANAGEMENT },
+        loadChildren: () =>
+          import('./modules/content-management/content-management.module').then((m) => m.ContentManagementModule),
+      },
       { path: '**', redirectTo: 'errors/404' },
     ],
   },

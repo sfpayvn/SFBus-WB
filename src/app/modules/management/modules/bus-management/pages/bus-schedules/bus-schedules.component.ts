@@ -11,6 +11,7 @@ import { BusScheduleDetailDialogComponent } from './components/bus-schedule-deta
 import { EVENT_STATUS_CLASSES, EVENT_STATUS_LABELS } from 'src/app/core/constants/status.constants';
 import { CapsService } from '@rsApp/shared/services/caps.service';
 import { MODULE_KEYS, FUNCTION_KEYS } from '@rsApp/core/constants/module-function-keys';
+import { EventCalendar } from '@rsApp/shared/models/event-calendar.model';
 
 @Component({
   selector: 'app-bus-schedules',
@@ -302,19 +303,17 @@ export class BusSchedulesComponent implements OnInit {
     this.loadData();
   }
 
-  convertToCalendarEventData(
-    busSchedules: BusSchedule[],
-  ): { _id: string; name: string; startDate: Date; status: string }[] {
+  convertToCalendarEventData(busSchedules: BusSchedule[]): EventCalendar[] {
     // Kiểm tra xem busSchedules có dữ liệu hay không
     if (!busSchedules || busSchedules.length === 0) {
       return [];
     }
 
-    const events = busSchedules.map((schedule: any) => {
+    const events: EventCalendar[] = busSchedules.map((schedule: BusSchedule) => {
       return {
         _id: schedule._id,
         name: schedule.name || 'Unnamed Event',
-        startDate: new Date(schedule.startDate),
+        startDate: schedule.startDate || new Date(),
         status: schedule.status,
       };
     });

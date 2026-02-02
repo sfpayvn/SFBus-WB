@@ -2,14 +2,21 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
-import { combineLatest, of, Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { NavigationEnd } from '@angular/router';
 import { Booking, SearchBooking } from '../../model/booking.model';
+import {
+  BOOKING_STATUS_CLASSES,
+  BOOKING_STATUS_LABELS,
+  BOOKING_STATUS_OPTIONS,
+} from '@rsApp/core/constants/status.constants';
 import { BusRoute } from '../../../bus-management/pages/bus-routes/model/bus-route.model';
 import { BusRoutesService } from '../../../bus-management/pages/bus-routes/service/bus-routes.servive';
 import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
 import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 import { BookingService } from '../../service/booking.service';
-import { BOOKING_STATUS_CLASSES, BOOKING_STATUS_LABELS } from 'src/app/core/constants/status.constants';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-booking',
@@ -21,6 +28,7 @@ export class BookingComponent implements OnInit {
   eventSubscription!: Subscription[];
 
   searchBooking: SearchBooking = new SearchBooking();
+  filteredBookings: Booking[] = [];
 
   searchParams = {
     pageIdx: 1,
@@ -32,7 +40,7 @@ export class BookingComponent implements OnInit {
       key: 'createdAt',
       value: 'descend',
     },
-    filters: [{ key: '', value: '' }],
+    filters: [] as any[],
   };
 
   isLoaded: boolean = false;
@@ -48,9 +56,8 @@ export class BookingComponent implements OnInit {
   totalPage: number = 0;
   totalItem: number = 0;
 
-  bookingtatusClasses = BOOKING_STATUS_CLASSES;
-
-  bookingStatuses = BOOKING_STATUS_LABELS;
+  bookingStatusClasses = BOOKING_STATUS_CLASSES;
+  bookingStatusesLabel = BOOKING_STATUS_LABELS;
 
   @Input() busRoutes: BusRoute[] = [];
   busRoute: BusRoute = null as any;
@@ -61,37 +68,69 @@ export class BookingComponent implements OnInit {
   startTimeScheduleValueBusScheduleSearch: Date | null = null;
   endTimeScheduleValueBusScheduleSearch: Date | null = null;
 
+  filterBookingStatus: string = '';
+
+  get selectedIdsArray(): string[] {
+    try {
+      return Array.from(this.setOfCheckedId || []);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // Return ordered payment status counts according to BOOKING_STATUS_OPTIONS
+  get bookingStatusCounts() {
+    const counts: Record<string, number> = {};
+    const result: Array<{ key: string; label: string; value: number }> = [];
+
+    for (const opt of BOOKING_STATUS_OPTIONS) {
+      const key = opt.value as string;
+      const label = opt.label as string;
+      result.push({ key, label, value: counts[key] || 0 });
+    }
+
+    return result;
+  }
+
   constructor(
     public utils: Utils,
     private utilsModal: UtilsModal,
     private bookingService: BookingService,
     private router: Router,
-    private busRoutesService: BusRoutesService,
-    private busSchedulesService: BusSchedulesService,
   ) {
     this.eventSubscription = [];
   }
 
   async ngOnInit(): Promise<void> {
+    this.initializeData();
     this.initListenEvent();
   }
 
-  ngAfterViewInit() {
-    this.initializeData();
+  ionViewWillEnter() {
+    this.loadBooking();
   }
 
-  initListenEvent() {}
+  initListenEvent() {
+    const sub = this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
+      // re-initialize when returning to booking route
+      if (this.router.url && this.router.url.startsWith('/booking')) {
+        // this.loadBooking();
+      }
+    });
+    this.eventSubscription.push(sub as Subscription);
+  }
+
+  ngOnDestroy() {
+    this.eventSubscription.forEach((s) => s.unsubscribe());
+  }
 
   async initializeData() {
-    this.loadBooking();
-
-    const findBusRouteRequest = this.busRoutesService.findAll();
-    const findBusSchedulesRequest = this.busSchedulesService.findAll(); // lấy data to test
-
-    combineLatest([findBusRouteRequest, findBusSchedulesRequest]).subscribe(([busRoutes, busSchedules]) => {
-      this.busRoutes = busRoutes;
-      this.busSchedules = busSchedules;
-    });
+    // const findBusRouteRequest = this.busRoutesService.findAll();
+    // const findBusSchedulesRequest = this.busSchedulesService.findAll(); // lấy data to test
+    // combineLatest([findBusRouteRequest, findBusSchedulesRequest]).subscribe(([busRoutes, busSchedules]) => {
+    //   this.busRoutes = busRoutes;
+    //   this.busSchedules = busSchedules;
+    // });
   }
 
   loadBooking() {
@@ -102,6 +141,8 @@ export class BookingComponent implements OnInit {
           this.searchBooking = res;
           this.totalItem = this.searchBooking.totalItem;
           this.totalPage = this.searchBooking.totalPage;
+          this.filteredBookings = [...res.bookings];
+          console.log('🚀 ~ BookingComponent ~ loadBooking ~ this.filteredBookings:', this.filteredBookings);
         }
         this.isLoaded = true;
       },
@@ -113,21 +154,18 @@ export class BookingComponent implements OnInit {
   }
 
   loadDataFindBooking(event: any) {
+    const { filters, sortBy } = event;
     const fields = ['busRouteId', 'busScheduleId', 'startDate', 'endDate', 'status', 'phoneNumber'];
-    this.searchParams.keyword = event.keyword || '';
+    this.searchParams.keyword = filters.keyword || '';
     this.searchParams.filters = [];
-
     fields.forEach((key) => {
-      if (event[key]) {
-        const filter = {
-          key,
-          value: event[key],
-        };
-
-        this.searchParams.filters.push(filter);
+      if (filters[key]) {
+        this.searchParams.filters.push({ key, value: filters[key] });
       }
     });
-
+    if (sortBy && sortBy.key) {
+      this.searchParams.sortBy = sortBy;
+    }
     this.loadBooking();
   }
 
@@ -139,7 +177,7 @@ export class BookingComponent implements OnInit {
     this.loadBooking();
   }
 
-  searchGoodPage(keyword: any) {
+  searchBookingPage(keyword: any) {
     this.searchParams = {
       ...this.searchParams,
       pageIdx: 1,
@@ -148,7 +186,7 @@ export class BookingComponent implements OnInit {
     this.loadBooking();
   }
 
-  sortGoodPage(event: any) {
+  sortBookingPage(event: any) {
     const sortBy = event as { key: string; value: string };
     this.searchParams = {
       ...this.searchParams,
@@ -187,6 +225,10 @@ export class BookingComponent implements OnInit {
     this.refreshCheckedStatus();
   }
 
+  addBooking() {
+    this.router.navigate(['/management/booking-management/booking/detail']);
+  }
+
   editBooking(booking: Booking) {
     this.router.navigate(['/management/booking-management/booking/detail'], { state: { booking } });
   }
@@ -208,40 +250,47 @@ export class BookingComponent implements OnInit {
         type: 'confirm',
       },
     ];
-    // const res = await this.utilsModal.openDialogConfirm(ModalDialogComponent, header, content, btns, 'modal-backdrop');
-    // if (res) {
-    //   this.bookingService.deleteBooking(booking._id).subscribe((res: any) => {
-    //     if (res) {
-    //       this.utilsModal.presentCusToast('Xóa thành công', '', 'success');
-    //       this.loadBooking();
-    //     } else {
-    //       this.utilsModal.presentCusToast('Xóa thất bại', 'danger');
-    //     }
-    //   });
-    // }
+
+    this.utilsModal.openModalConfirm(header, content, 'dangerous', btns).subscribe((result) => {
+      if (result) {
+        this.bookingService.deleteBooking(booking._id).subscribe((res: any) => {
+          if (res) {
+            toast.success('Xóa vé thành công');
+            this.loadBooking();
+          } else {
+            toast.error('Xóa vé thất bại');
+          }
+        });
+      }
+    });
   }
 
-  ///////////////////////////////// Choose  Bus Route ////////////////////////////////////////////////////////
-  async openQuickUpdateDialog(event: MouseEvent) {
-    let data = await this.openModalQuickUpdateWeb(event, '#quick-update-booking');
-
-    return data;
+  filterBookingStatusChange(event: any) {
+    if (event === this.filterBookingStatus) {
+      return;
+    }
+    this.filterBookingStatus = event;
+    this.searchParams.filters = this.searchParams.filters.filter((filter) => filter.key !== 'status');
+    if (event === 'all') {
+      this.loadBooking();
+      return;
+    }
+    this.utils.addOrReplaceFilters({ key: 'status', value: event }, this.searchParams);
+    this.loadBooking();
   }
 
-  async openModalQuickUpdateWeb(event: MouseEvent, id: string) {
-    const dataInput = {
-      busRoutes: this.busRoutes,
-      busRoute: this.busRoute,
+  toggleBookingFilter(key: string) {
+    const newKey = this.filterBookingStatus === key ? 'all' : key;
+    this.filterBookingStatusChange(newKey);
+  }
 
-      busSchedules: this.busSchedules,
-      busSchedule: this.busSchedule,
-
-      startTimeScheduleValueBusScheduleSearch: this.startTimeScheduleValueBusScheduleSearch,
-      endTimeScheduleValueBusScheduleSearch: this.endTimeScheduleValueBusScheduleSearch,
-    };
-
-    // const data = await this.utilsModal.openContextModal(QuickUpdateBookingDialogComponent, dataInput, event, id);
-    // return data;
-    return of({ selectedData: null }).toPromise();
+  // sync selection from app-table (emits selected ids array)
+  onTableSelectionChange(ids: string[]) {
+    try {
+      this.setOfCheckedId = new Set(ids || []);
+    } catch (e) {
+      this.setOfCheckedId = new Set<string>();
+    }
+    this.refreshCheckedStatus();
   }
 }

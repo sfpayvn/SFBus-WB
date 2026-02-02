@@ -23,8 +23,9 @@ export const MODULE_KEYS = {
   PROMOTION_MANAGEMENT: 'promotion-management',
   PAYMENT_MANAGEMENT: 'payment-management',
   BOOKING_MANAGEMENT: 'booking-management',
-
   SETTING_MANAGEMENT: 'setting-management',
+  NOTIFICATION_MANAGEMENT: 'notification-management',
+  CONTENT_MANAGEMENT: 'content-management',
 
   //User Management sub-modules
   USER_CLIENT: 'user-client',
@@ -32,6 +33,7 @@ export const MODULE_KEYS = {
   USER_TENANT_OPERATOR: 'user-tenant-operator',
   USER_DRIVER: 'user-driver',
   USER_POS: 'user-pos',
+  USER_SELLER: 'user-seller',
 
   // Bus Management sub-modules
   BUS_SCHEDULE: 'bus-schedule',
@@ -59,6 +61,14 @@ export const MODULE_KEYS = {
   GOODS_CATEGORIES: 'goods-categories',
   BUSES: 'buses',
   BUS_SCHEDULES: 'bus-schedules',
+
+  // Notification Management sub-modules
+  NOTIFICATION_SCHEDULE: 'notification-schedule',
+
+  // Content Management sub-modules
+  CONTENT_LAYOUTS: 'content-layouts',
+
+  CONTENT_WIDGETS_BLOCK: 'content-widgets-block',
 } as const;
 
 export const FUNCTION_KEYS = {
@@ -70,6 +80,7 @@ export const FUNCTION_KEYS = {
   USER_CLIENT: CRUD_OPERATIONS,
   USER_DRIVER: CRUD_OPERATIONS,
   USER_POS: CRUD_OPERATIONS,
+  USER_SELLER: CRUD_OPERATIONS,
   USER_TENANT: CRUD_OPERATIONS,
   USER_TENANT_OPERATOR: CRUD_OPERATIONS,
 
@@ -115,6 +126,12 @@ export const FUNCTION_KEYS = {
 
   // Bus Setting functions
   BUS_SETTING: CRUD_OPERATIONS,
+
+  NOTIFICATION_SCHEDULE: CRUD_OPERATIONS,
+
+  // Content Management functions
+  CONTENT_LAYOUTS: CRUD_OPERATIONS,
+  CONTENT_WIDGETS_BLOCK: CRUD_OPERATIONS,
 } as const;
 
 /**

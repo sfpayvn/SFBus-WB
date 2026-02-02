@@ -25,3 +25,8 @@ export class RequestResetPassword {
   token: string = '';
   newPassword: string = '';
 }
+
+export interface UpdatePasswordUserRequest {
+  oldPassword: string;
+  password: string;
+}

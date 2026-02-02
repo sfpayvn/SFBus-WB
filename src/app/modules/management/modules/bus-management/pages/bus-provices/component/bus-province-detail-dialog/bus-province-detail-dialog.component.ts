@@ -59,9 +59,10 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   }
 
   private async initForm() {
-    const { name } = this.busProvince;
+    const { name, isActive } = this.busProvince;
     this.busProvinceForm = this.fb.group({
       name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busProvince) }, [Validators.required]],
+      isActive: [{ value: isActive, disabled: this.defaultFlagService.isDefault(this.busProvince) }],
     });
 
     // Store initial values after form is created
@@ -143,7 +144,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
       return;
     }
 
-    const { name } = this.busProvinceForm.getRawValue();
+    const { name, isActive } = this.busProvinceForm.getRawValue();
 
     // Các station mới được thêm vào province (không có trong initial)
     const busStationsAdded = this.filteredBusProvinceStations
@@ -164,6 +165,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     const busProvince2Update: BusProvince2Update = {
       ...this.busProvince,
       name,
+      isActive,
     };
 
     const data = {

@@ -1,0 +1,54 @@
+{
+  "sidebar": {
+    "Dashboard": "Bảng điều khiển",
+    "Users Management": "Quản lý người dùng",
+    "Client": "Khách hàng",
+    "Driver": "Tài xế",
+    "POS": "Quản lý",
+    "Operator": "Điều hành",
+
+    "Media Center": "Quang lý phương tiện",
+
+    "Goods Management": "Quản lý hàng hóa",
+    "Goods": "Hàng hóa",
+    "Goods Category": "Danh mục hàng hóa",
+
+    "Bus Management": "Quản lý xe",
+    "Buses": "Xe",
+
+    "Bus Schedule": "Lịch trình xe",
+    "Bus Schedules": "Lịch trình",
+    "Schedule Calendar": "Lịch biểu",
+    "Bus Schedules Auto": "Tạo lịch trình tự động",
+
+    "Bus Design": "Thiết kế tuyến xe",
+    "Bus Templates": "Mẫu tuyến xe",
+
+    "Bus Schedule Templates": "Mẫu lịch trình xe",
+
+    "Bus Routes": "Tuyến xe",
+    "Bus Layout Templates": "Mẫu bố trí xe",
+
+    "Bus Settings": "Cài đặt xe",
+    "Bus Provices": "Tỉnh thành",
+    "Bus Stations": "Trạm xe",
+    "Bus Types": "Loại xe",
+    "Bus Services": "Dịch vụ xe",
+    "Seat Types": "Loại ghế",
+
+    "Promotion Management": "Quản lý khuyến mãi",
+    "Booking Management": "Quản lý đặt vé",
+    "Payment Management": "Quản lý thanh toán",
+    "Payment Methods": "Phương thức thanh toán",
+    "Notification Management": "Quản lý thông báo",
+
+    "Content Management": "Quản lý nội dung",
+    "Layouts": "Bố cục",
+    "Widgets": "Tiện ích",
+
+    "Settings": "Cài đặt",
+    "Theme setting": "Giao diện",
+    "Bus schedule setting": "Chính sách lịch trình",
+    "Organization setting": "Tổ chức"
+  }
+}

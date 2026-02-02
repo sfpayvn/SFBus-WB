@@ -18,6 +18,7 @@ import { ManagementSharedModule } from '../../management-share.module';
     TenantSubscriptionListComponent,
     ChooseSubscriptionDialogComponent,
   ],
+  exports: [TenantSubscriptionListComponent],
   imports: [
     CommonModule,
     FormsModule,

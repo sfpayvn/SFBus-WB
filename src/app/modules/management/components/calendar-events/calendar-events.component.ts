@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  AfterViewInit,
+  Output,
+  OnDestroy,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+  SimpleChanges,
+} from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
@@ -6,21 +18,15 @@ import { SettingService } from '@rsApp/modules/settings/services/setting.service
 import { SettingCacheService } from '@rsApp/modules/settings/services/setting-cache.service';
 import { EMPTY, firstValueFrom, switchMap, tap } from 'rxjs';
 import { SETTING_CONSTANTS } from '@rsApp/core/constants/setting.constants';
+import { EventCalendar } from '@rsApp/shared/models/event-calendar.model';
 
-export interface Event {
-  _id: string;
-  name: string;
-  startDate: Date;
-  endDate?: Date;
-  status: string;
-}
 @Component({
   selector: 'app-calendar-events',
   templateUrl: './calendar-events.component.html',
   styleUrls: ['./calendar-events.component.scss'],
   standalone: false,
 })
-export class CalendarEventsComponent implements OnInit, OnDestroy {
+export class CalendarEventsComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() capModule!: string;
   @Input() capFunction!: string;
   viewMode: 'list' | 'day' | 'week' | 'month' = 'week';
@@ -31,7 +37,8 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
   currentMonthWiew: Date = new Date();
 
   isViewAllEvent: boolean = false;
-  activePopover: Event[] | null = null;
+  activePopover: EventCalendar[] | null = null;
+  eventSlotCache: Map<string, any[]> = new Map();
 
   minimumAllowedTime: Date = new Date(new Date().getTime() + 60 * 60 * 1000);
 
@@ -39,11 +46,17 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
 
   eventAvailabilityCutoff: string = '1h';
   private minimumInterval: any = null;
+  private currentTimeInterval: any = null;
+  currentTimePosition: number = 0; // Vị trí % của thời gian hiện tại
+  currentSlotPixelPosition: number = 0; // Vị trí pixel của thời gian hiện tại
 
-  @Input() events: Event[] = [];
+  @Input() selectedDate: Date = new Date();
+  @Input() events: EventCalendar[] = [];
   @Input() isCloneEvent = false;
 
   @Input() isLoadedEvent = false;
+
+  @ViewChildren('slotItem') slotItems!: QueryList<ElementRef>;
 
   @Output() viewDetailEventEmit = new EventEmitter<Event>();
   @Output() cloneDataEventEmit = new EventEmitter<Event>();
@@ -60,6 +73,24 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.loadSettings();
+  }
+
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
+    if (changes['selectedDate'] && !changes['selectedDate'].firstChange) {
+      this.currentDayView = this.selectedDate ?? this.selectedDate;
+      this.currentWeekWiew = this.selectedDate ?? this.selectedDate;
+      this.currentMonthWiew = this.selectedDate ?? this.selectedDate;
+    }
+    // Clear cache khi events thay đổi
+    if (changes['events']) {
+      this.eventSlotCache.clear();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Tính vị trí dòng đỏ sau khi view render xong
+    this.updateCurrentTimePosition();
+    this.startMinimumInterval();
   }
 
   loadSettings() {
@@ -91,7 +122,6 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
   private setupMinimumAllowedTime(cutoffValue?: string) {
     this.eventAvailabilityCutoff = cutoffValue || this.eventAvailabilityCutoff;
     this.updateMinimumAllowedTime();
-    this.startMinimumInterval();
   }
 
   private updateMinimumAllowedTime() {
@@ -103,6 +133,91 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
   private startMinimumInterval() {
     this.stopMinimumInterval();
     this.minimumInterval = setInterval(() => this.updateMinimumAllowedTime(), 60000);
+    this.startCurrentTimeInterval();
+  }
+
+  private startCurrentTimeInterval() {
+    this.stopCurrentTimeInterval();
+    this.updateCurrentTimePosition();
+    // Update position mỗi 10 giây để chính xác hơn
+    this.currentTimeInterval = setInterval(() => this.updateCurrentTimePosition(), 10000);
+  }
+
+  private stopCurrentTimeInterval() {
+    if (this.currentTimeInterval) {
+      clearInterval(this.currentTimeInterval);
+      this.currentTimeInterval = null;
+    }
+  }
+
+  private updateCurrentTimePosition(): void {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    // Mỗi slot là 1 giờ
+    // Tính vị trí % trong grid (24 slots trong ngày)
+    // Slot 0 = 0:00-1:00, Slot 5 = 5:00-6:00, etc.
+    const slotIndex = hours; // Slot hiện tại
+    const percentInSlot = (minutes / 60) * 100; // % trong slot hiện tại
+
+    // Tính tổng % từ đầu ngày
+    // Mỗi slot chiếm 1/24 = 4.1667% của ngày
+    const slotHeight = (1 / 24) * 100;
+    this.currentTimePosition = slotIndex * slotHeight + (percentInSlot * slotHeight) / 100;
+
+    // Cập nhật pixel position để tránh expression change error
+    this.currentSlotPixelPosition = this.getCurrentSlotPixelPosition();
+  }
+
+  getSlotPositionPercentage(): number {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
+
+    // Mỗi slot là 1 giờ = 60 phút
+    // Vị trí % trong slot hiện tại
+    return (minutes / 60) * 100;
+  }
+
+  getCurrentSlot(): string {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  getCurrentSlotPixelPosition(): number {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    // Tìm offset của slot hiện tại từ DOM
+    if (!this.slotItems || this.slotItems.length === 0) {
+      return 0;
+    }
+
+    let totalHeight = 0;
+    const currentSlotIndex = hours;
+
+    // Tính tổng height của tất cả slot trước slot hiện tại
+    for (let i = 0; i < currentSlotIndex && i < this.slotItems.length; i++) {
+      const slotElement = this.slotItems.get(i)?.nativeElement;
+      if (slotElement) {
+        totalHeight += slotElement.offsetHeight;
+      }
+    }
+
+    // Cộng thêm % của vị trí trong slot hiện tại
+    const currentSlotElement = this.slotItems.get(currentSlotIndex)?.nativeElement;
+    if (currentSlotElement) {
+      const slotHeight = currentSlotElement.offsetHeight;
+      const percentInSlot = minutes / 60;
+      totalHeight += slotHeight * percentInSlot;
+    }
+
+    return Math.floor(totalHeight);
   }
 
   private stopMinimumInterval() {
@@ -114,14 +229,15 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopMinimumInterval();
+    this.stopCurrentTimeInterval();
   }
 
   get weekDays(): string[] {
     return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   }
 
-  get monthDates(): { date: Date; isCurrentMonth: boolean; events: Event[] }[] {
-    const dates: { date: Date; isCurrentMonth: boolean; events: Event[] }[] = [];
+  get monthDates(): { date: Date; isCurrentMonth: boolean; events: EventCalendar[] }[] {
+    const dates: { date: Date; isCurrentMonth: boolean; events: EventCalendar[] }[] = [];
     const startOfMonth = new Date(this.currentMonthWiew.getFullYear(), this.currentMonthWiew.getMonth(), 1);
     const endOfMonth = new Date(this.currentMonthWiew.getFullYear(), this.currentMonthWiew.getMonth() + 1, 0);
 
@@ -213,7 +329,7 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
       });
   }
 
-  getEventsForDay(day: Date): Event[] {
+  getEventsForDay(day: Date): EventCalendar[] {
     const target = day.toDateString();
     return (this.events ?? [])
       .filter((event) => new Date(event.startDate).toDateString() === target)
@@ -222,20 +338,32 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
 
   // Hàm kiểm tra nếu cho slot cụ thể có event nào của bất kỳ ngày nào trong week không
   eventInSlot(slot: string): any[] {
-    if (this.viewMode === 'day') {
-      // Return all events in the slot for the current day
-      return this.getEventsForDayAndSlot(this.currentDayView, slot);
+    // Kiểm tra cache trước
+    const cacheKey = `${slot}-${this.viewMode}`;
+    if (this.eventSlotCache.has(cacheKey)) {
+      return this.eventSlotCache.get(cacheKey) || [];
     }
 
-    // Find the day with the most events in the slot
-    const dayWithMostEvents = this.weekDates.reduce((maxDay, currentDay) => {
-      const currentDayEvents = this.getEventsForDayAndSlot(currentDay, slot).length;
-      const maxDayEvents = this.getEventsForDayAndSlot(maxDay, slot).length;
-      return currentDayEvents > maxDayEvents ? currentDay : maxDay;
-    });
+    let result: any[] = [];
 
-    // Return the list of events for the day with the most events
-    return this.getEventsForDayAndSlot(dayWithMostEvents, slot);
+    if (this.viewMode === 'day') {
+      // Return all events in the slot for the current day
+      result = this.getEventsForDayAndSlot(this.currentDayView, slot);
+    } else {
+      // Find the day with the most events in the slot
+      const dayWithMostEvents = this.weekDates.reduce((maxDay, currentDay) => {
+        const currentDayEvents = this.getEventsForDayAndSlot(currentDay, slot).length;
+        const maxDayEvents = this.getEventsForDayAndSlot(maxDay, slot).length;
+        return currentDayEvents > maxDayEvents ? currentDay : maxDay;
+      });
+
+      // Return the list of events for the day with the most events
+      result = this.getEventsForDayAndSlot(dayWithMostEvents, slot);
+    }
+
+    // Lưu vào cache
+    this.eventSlotCache.set(cacheKey, result);
+    return result;
   }
 
   // Mảng các khung giờ (ví dụ từ 07:00 đến 12:00)
@@ -250,6 +378,8 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
 
   backToday() {
     this.currentMonthWiew = this.currentWeekWiew = this.currentDayView = this.utils.getCurrentDate();
+    this.eventSlotCache.clear();
+    this.emitReloadEvent();
   }
 
   // Chuyển đổi giữa các chế độ view
@@ -257,7 +387,11 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
     this.backToday(); // Đặt lại ngày hiện tại
     this.viewMode = mode;
 
+    this.eventSlotCache.clear();
     this.emitReloadEvent();
+    setTimeout(() => {
+      this.updateCurrentTimePosition();
+    }, 100);
   }
 
   emitReloadEvent() {
@@ -302,6 +436,7 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
       newMonthDate.setMonth(newMonthDate.getMonth() + delta);
       this.currentMonthWiew = newMonthDate;
     }
+    this.eventSlotCache.clear();
     this.emitReloadEvent();
   }
 
@@ -316,7 +451,7 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
   }
 
   // Kiểm tra sự kiện có nằm trong tuần hiện tại không
-  isEventInWeek(event: Event): boolean {
+  isEventInWeek(event: EventCalendar): boolean {
     const startDateString = event.startDate;
     if (!startDateString) {
       return false;
@@ -342,7 +477,7 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
     return eventDate >= weekStart && eventDate <= weekEnd;
   }
 
-  showPopover(events: Event[]): void {
+  showPopover(events: EventCalendar[]): void {
     this.activePopover = events;
   }
 
@@ -353,15 +488,19 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
 
   // Optimize *ngFor with trackBy
   trackByDate(index: number, item: { date: Date }): string {
-    return item.date.toISOString();
+    const dateStr = item instanceof Date ? item.toISOString() : new Date(item.date).toISOString();
+    return dateStr;
   }
 
   trackByDateWeek(index: number, item: Date) {
-    return item.toISOString();
+    const dateStr = item instanceof Date ? item.toISOString() : new Date(item).toISOString();
+    return dateStr;
   }
 
-  trackByEvent(index: number, item: Event): string {
-    return item.name + item.startDate.toISOString();
+  trackByEvent(index: number, item: EventCalendar): string {
+    const dateStr =
+      item.startDate instanceof Date ? item.startDate.toISOString() : new Date(item.startDate).toISOString();
+    return item.name + dateStr;
   }
 
   isSlotDisabled(slot: string, day?: Date): boolean {
@@ -370,7 +509,7 @@ export class CalendarEventsComponent implements OnInit, OnDestroy {
     return slotDate < this.minimumAllowedTime;
   }
 
-  visibleChange(visible: boolean, events: Event[]) {
+  visibleChange(visible: boolean, events: EventCalendar[]) {
     this.activePopover = visible ? events : [];
   }
 

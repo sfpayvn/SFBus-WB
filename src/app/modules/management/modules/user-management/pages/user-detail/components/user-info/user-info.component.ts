@@ -71,7 +71,7 @@ export class UserInfoComponent implements OnInit {
       name = '',
       email = '',
       phoneNumber = '',
-      gender = '',
+      gender = 'other',
       birthdate = twelveYearsAgo,
       addresses = [],
     } = this.user || {};
@@ -245,5 +245,10 @@ export class UserInfoComponent implements OnInit {
     } catch (err: any) {
       this.utils.handleRequestError(err.error);
     }
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
   }
 }

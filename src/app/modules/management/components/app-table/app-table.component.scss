@@ -1,0 +1,90 @@
+/* Styles for app-table component */
+.data-table-wrapper {
+  position: relative;
+}
+
+.data-table-wrapper.draggable-scroll {
+  cursor: grab;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.data-table-wrapper.draggable-scroll.dragging {
+  cursor: grabbing;
+}
+
+.data-table-wrapper .actions-cell {
+  border-left: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: #fff !important;
+}
+
+.data-table-wrapper .actions-cell.show-divider {
+  border-left: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: -8px 0 16px -8px rgba(0, 0, 0, 0.16) !important;
+}
+.data-table-wrapper th.actions-cell.show-divider {
+  z-index: 90;
+}
+
+.data-table-wrapper .left-divider-cell.show-divider {
+  border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 8px 0 16px -8px rgba(0, 0, 0, 0.16) !important;
+}
+.data-table-wrapper th.left-divider-cell.show-divider {
+  z-index: 90;
+}
+
+/* Sticky helpers for left/right pinned columns */
+.data-table-wrapper th.sticky {
+  position: sticky;
+  top: 0; /* keep header visible */
+  background: #fafafa !important;
+  z-index: 80;
+}
+
+.data-table-wrapper td.sticky {
+  position: sticky;
+  background: #fff;
+  z-index: 70;
+}
+
+/* Selection column (checkbox) should remain above other cells */
+.data-table-wrapper th.select-col,
+.data-table-wrapper td.select-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 200 !important;
+  width: 32px !important;
+  pointer-events: auto !important;
+  will-change: left;
+}
+
+/* Ensure other sticky columns sit behind the select column */
+.data-table-wrapper th.sticky:not(.select-col) {
+  z-index: 150;
+}
+.data-table-wrapper td.sticky:not(.select-col) {
+  z-index: 120;
+}
+
+/* also prevent other sticky columns from painting over during drag */
+.data-table-wrapper.dragging th.sticky:not(.select-col),
+.data-table-wrapper.dragging td.sticky:not(.select-col) {
+  z-index: 120 !important;
+}
+
+.data-table-wrapper td.actions-cell {
+  /* ensure actions column sits above other body cells */
+  z-index: 75;
+}
+
+.data-table-wrapper th.actions-cell {
+  z-index: 90;
+}
+
+.data-table-wrapper {
+  /* Use ::ng-deep so styles apply into the nz-spin child component's view */
+  ::ng-deep nz-spin {
+    display: contents !important;
+  }
+}

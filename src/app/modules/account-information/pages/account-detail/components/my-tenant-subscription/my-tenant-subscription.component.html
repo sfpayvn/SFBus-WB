@@ -1,0 +1,84 @@
+<!-- tenant-subscription-list.component.html -->
+<div class="toolbar">
+  <!-- <form nz-form [formGroup]="form" class="filter-form" (ngSubmit)="search()">
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzSpan]="8">
+        <nz-input-group class="custom-nz-input-group" nzSearch [nzAddOnAfter]="searchBtnTpl">
+          <input nz-input formControlName="keyword" placeholder="Search by name / _id / tenantId" />
+        </nz-input-group>
+        <ng-template #searchBtnTpl>
+          <button nz-button nzType="primary" [disabled]="loading" htmlType="submit">Search</button>
+        </ng-template>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-select style="width: 100%" nzAllowClear nzPlaceHolder="Filter by status" formControlName="status">
+          <nz-option *ngFor="let s of statusOptions" [nzLabel]="s.label" [nzValue]="s.value"></nz-option>
+        </nz-select>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-range-picker style="width: 100%" formControlName="dateRange"></nz-range-picker>
+      </div>
+      <div nz-col [nzSpan]="2" class="text-right">
+        <button nz-button nzType="default" (click)="reset()" [disabled]="loading">Reset</button>
+      </div>
+    </div>
+  </form> -->
+</div>
+
+<div>
+  <nz-table
+    nzBordered
+    [nzLoading]="loading"
+    [nzData]="searchResult.tenantSubscriptions"
+    [nzFrontPagination]="false"
+    nzShowPagination
+    nzShowSizeChanger
+    [nzFrontPagination]="false"
+    class="!w-full">
+    <thead>
+      <tr>
+        <th nzShowSort nzSortKey="name">Plan</th>
+        <th nzShowSort nzSortKey="price">Price</th>
+        <th>Duration</th>
+        <th nzShowSort nzSortKey="startAt">Start</th>
+        <th nzShowSort nzSortKey="endAt">End</th>
+        <th>Status</th>
+        <!-- <th class="w-130">Actions</th> -->
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (item of searchResult.tenantSubscriptions; track item) {
+      <tr>
+        <td>
+          <div class="plan">
+            <div class="name">{{ item.name }}</div>
+          </div>
+        </td>
+
+        <td>{{ item.price | currency: 'VND':'symbol':'1.0-0' }}</td>
+
+        <td>{{ formatDuration(item) }}</td>
+
+        <td>{{ item.startAt | date: 'mediumDate' }}</td>
+        <td>{{ item.endAt | date: 'mediumDate' }}</td>
+
+        <td>
+          <div class="px-2 py-1.5 rounded-md border {{ statusClasses[item.status] }}">
+            {{ statusLabels[item.status] }}
+          </div>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>
+
+<app-table-footer
+  [pageIdx]="searchParams.pageIdx"
+  [pageSize]="searchParams.pageSize"
+  [totalItem]="searchResult.totalItem"
+  [isLoading]="loading"
+  [totalPage]="searchResult.totalPage"
+  (reloadDataAndPageEvent)="reloadTenantSubscriptionPage($event)">
+</app-table-footer>

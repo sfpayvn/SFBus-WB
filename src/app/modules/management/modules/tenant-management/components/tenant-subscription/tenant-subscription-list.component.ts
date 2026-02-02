@@ -2,13 +2,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {
-  SearchTenantSubscription,
-  SubscriptionStatus,
-  TenantSubscription,
-} from '../../model/tenant-subscription.model';
+import { SearchTenantSubscription, TenantSubscription } from '../../model/tenant-subscription.model';
 import { TenantSubscriptionService } from '../../service/tenant-subscription.service';
-import { DURATION_STATUS, DURATION_STATUS_LABELS } from '@rsApp/core/constants/status.constants';
+import {
+  COMMON_STATUS_CLASSES,
+  COMMON_STATUS_LABELS,
+  COMMON_STATUS_OPTIONS,
+  DURATION_STATUS,
+  DURATION_STATUS_LABELS,
+} from '@rsApp/core/constants/status.constants';
 
 @Component({
   selector: 'app-tenant-subscription-list',
@@ -26,11 +28,9 @@ export class TenantSubscriptionListComponent implements OnInit {
 
   // table state
 
-  statusOptions: { label: string; value: SubscriptionStatus }[] = [
-    { label: 'Active', value: 'active' },
-    { label: 'Canceled', value: 'canceled' },
-    { label: 'Expired', value: 'expired' },
-  ];
+  statusOptions = COMMON_STATUS_OPTIONS;
+  statusClasses = COMMON_STATUS_CLASSES;
+  statusLabels = COMMON_STATUS_LABELS;
 
   searchParams: {
     pageIdx: number;
@@ -87,7 +87,7 @@ export class TenantSubscriptionListComponent implements OnInit {
     // Lấy filter
     const { keyword, status, dateRange } = this.form.value as {
       keyword: string;
-      status: SubscriptionStatus | null;
+      status: string | null;
       dateRange: Date[];
     };
 
@@ -122,20 +122,6 @@ export class TenantSubscriptionListComponent implements OnInit {
       ...data,
     };
     this.loadData();
-  }
-
-  // helpers
-  statusTag(status: SubscriptionStatus): { nzColor: string; text: string } | undefined {
-    switch (status) {
-      case 'active':
-        return { nzColor: 'green', text: 'Active' };
-      case 'canceled':
-        return { nzColor: 'red', text: 'Canceled' };
-      case 'expired':
-        return { nzColor: 'orange', text: 'Expired' };
-      default:
-        return undefined;
-    }
   }
 
   formatDuration(item: TenantSubscription): string {

@@ -59,7 +59,14 @@
               [nzTitle]="{ width: '100%' }"
               [nzActive]="true">
               <div class="h-8 w-8 overflow-hidden">
-                <img alt="driver avarta" [src]="goodsCategory.icon" />
+                <app-trigger-mask class="flex h-full w-full">
+                  <img alt="driver avarta" [src]="goodsCategory.icon" />
+                  <div triggerMaskContent class="trigger-mask-content flex h-full w-full justify-center text-white">
+                    <button (click)="viewImage($event, goodsCategory.icon)">
+                      <svg-icon svgClass="w-5 h-5" src="./assets/icons/zoom-outline-white.svg"></svg-icon>
+                    </button>
+                  </div>
+                </app-trigger-mask>
               </div>
             </nz-skeleton>
           </td>

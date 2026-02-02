@@ -1,0 +1,346 @@
+<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
+      nz-button
+      (click)="backPage()">
+      Back
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+  <div class="flex w-full gap-4">
+    <label class="mb-4 flex text-2xl font-semibold">
+      @if(this.contentLayout) { Edit Content Layout } @else { Create Content Layout }
+    </label>
+  </div>
+  <!-- Form Widget Block -->
+  <form [formGroup]="contentLayoutForm" nz-form *ngIf="contentLayoutForm" class="mb-6" (ngSubmit)="onSubmit()">
+    <!-- Image and Basic Info Row -->
+    <div class="mb-6 grid grid-cols-12 gap-6">
+      <!-- Image Upload Section -->
+      <div class="col-span-3">
+        <nz-form-label
+          [nzNoColon]="true"
+          [nzRequired]="true"
+          class="mb-2 !flex !items-center !justify-start font-medium"
+          >Hình ảnh</nz-form-label
+        >
+        <div class="flex items-center gap-2">
+          @if(!imageUrl) {
+          <div
+            nz-popover
+            [nzPopoverContent]="contentImageTemplate"
+            class="relative h-32 w-32 cursor-pointer select-none rounded border border-dashed border-gray-500 transition-colors hover:border-blue-500"
+            [ngClass]="{'border-red-500' : contentLayoutForm.controls['imageId'].errors?.['required']
+            && contentLayoutForm.controls['imageId'].touched}">
+            <div class="mx-auto-8 left-0 m-auto flex h-full w-full flex-wrap content-center items-center px-4">
+              <div class="flex w-full flex-wrap justify-center pb-5 text-center">
+                <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
+                <p class="w-full pt-1 text-sm">Tải ảnh lên</p>
+              </div>
+            </div>
+          </div>
+          <ng-template #contentImageTemplate>
+            <div class="grap-2 grid w-96 cursor-pointer grid-cols-2">
+              <div class="relative flex h-12 cursor-pointer flex-wrap items-center justify-center px-2">
+                <input
+                  formControlName="imageId"
+                  type="file"
+                  accept="*"
+                  class="z-50 block h-full w-full cursor-pointer opacity-0"
+                  (change)="onFileChange($event)" />
+                <div
+                  class="absolute top-0 right-0 left-0 m-auto flex h-full w-full cursor-pointer flex-wrap content-center items-center justify-center">
+                  <svg-icon svgClass="w-7 h-7" src="assets/icons/upload.svg"></svg-icon>
+                  <p class="w-full pt-1 text-center text-xs">Tập tin cục bộ</p>
+                </div>
+              </div>
+              <div
+                class="flex h-12 cursor-pointer flex-wrap items-center justify-center px-2"
+                (click)="openFilesCenterDialog()">
+                <svg-icon svgClass="w-7 h-7" src="assets/icons/media.svg"></svg-icon>
+                <p class="w-full pt-1 text-center text-xs">Trung tâm phương tiện</p>
+              </div>
+            </div>
+          </ng-template>
+          <p
+            class="animate-fade-in-down mt-1 text-xs text-red-500"
+            *ngIf="contentLayoutForm.controls['imageId'].errors?.['required'] && contentLayoutForm.controls['imageId'].touched">
+            Vui lòng upload ảnh cho trường này
+          </p>
+          }@else {
+          <div class="group relative h-32 w-32 select-none rounded border border-gray-200">
+            <div class="flex h-full w-full cursor-pointer items-center justify-center">
+              <img class="max-h-full max-w-full object-contain p-2" [src]="imageUrl" />
+              <div
+                class="action-preview-img absolute inset-0 flex items-center justify-center rounded bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                <button type="button" (click)="removeFileImage()" class="p-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 text-white transition-colors hover:text-red-400">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          }
+          <div
+            class="flex h-12 cursor-pointer flex-wrap items-center justify-center rounded border border-gray-300 px-2 hover:bg-blue-200"
+            (click)="pasteImageFromClipboard()">
+            <div class="text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="{1.5}"
+                stroke="currentColor"
+                class="mx-auto h-6 w-6 text-sm">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name and App Source Column -->
+      <div class="col-span-5 space-y-4">
+        <nz-form-item class="!mb-0 !w-full">
+          <nz-form-label
+            nzFor="name"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !items-center !justify-start !text-sm font-medium">
+            Name
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="nameErrorTpl" class="!flex flex-col">
+            <nz-input-group [nzSuffix]="nameClearTpl" class="!mt-2 !mb-0 !rounded border-gray-200">
+              <input type="text" nz-input formControlName="name" placeholder="Nhập tên widget block" />
+            </nz-input-group>
+            <ng-template #nameClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="contentLayoutForm.controls['name'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #nameErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (contentLayoutForm.controls['name'].errors?.['required']) { Vui lòng nhập tên widget block } @if
+                (contentLayoutForm.controls['name'].errors?.['minlength']) { Tên phải có ít nhất 3 ký tự }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="!mb-0 !w-full">
+          <nz-form-label
+            nzFor="appSource"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !items-center !justify-start !text-sm font-medium">
+            App Source
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="appSourceErrorTpl" class="!flex flex-col">
+            <nz-select formControlName="appSource" class="!mt-2" (ngModelChange)="onAppSourceChange($event)">
+              @for (appSource of appSources; track appSource.value) {
+              <nz-option [nzLabel]="appSource.label" [nzValue]="appSource.value"> </nz-option>
+              }
+            </nz-select>
+            <ng-template #appSourceErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (contentLayoutForm.controls['appSource'].errors?.['required']) { Vui lòng chọn App Source }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- Slug Column -->
+      <div class="col-span-4 space-y-4">
+        <nz-form-item class="!mb-0 !w-full">
+          <div class="flex items-center justify-between">
+            <nz-form-label
+              nzFor="slug"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !items-center !justify-start !text-sm font-medium">
+              Slug
+            </nz-form-label>
+            <label nz-checkbox [(ngModel)]="isPage" [ngModelOptions]="{ standalone: true }" class="min-w-24 text-sm">
+              Is Page
+            </label>
+          </div>
+
+          <nz-form-control [nzErrorTip]="slugErrorTpl" class="!flex flex-col">
+            <nz-input-group [nzSuffix]="slugClearTpl" class="!mt-2 !mb-0 !rounded border-gray-200">
+              <input type="text" nz-input formControlName="slug" placeholder="Nhập slug" />
+            </nz-input-group>
+            <ng-template #slugClearTpl>
+              <span
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="contentLayoutForm.controls['slug'].patchValue('')"></span>
+            </ng-template>
+            <ng-template #slugErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (contentLayoutForm.controls['slug'].errors?.['required']) { Vui lòng nhập slug } @if
+                (contentLayoutForm.controls['slug'].errors?.['minlength']) { Slug phải có ít nhất 3 ký tự } @if
+                (contentLayoutForm.controls['slug'].errors?.['invalidSlug']) { Slug phải có dạng /example-slug }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="!mb-0 !w-full">
+          <nz-form-label
+            nzFor="platform"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !items-center !justify-start !text-sm font-medium">
+            Platform
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="platformErrorTpl" class="!flex flex-col">
+            <nz-select formControlName="platform" class="!mt-2">
+              @for (platform of platforms; track platform.value) {
+              <nz-option [nzLabel]="platform.label" [nzValue]="platform.value"> </nz-option>
+              }
+            </nz-select>
+            <ng-template #platformErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (contentLayoutForm.controls['platform'].errors?.['required']) { Vui lòng chọn Platform }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <!-- Description Row -->
+    <div class="mb-6">
+      <nz-form-item class="!mb-0 !w-full">
+        <nz-form-label
+          nzFor="description"
+          [nzNoColon]="true"
+          class="!flex !items-center !justify-start !text-sm font-medium">
+          Description
+        </nz-form-label>
+        <nz-form-control class="!flex flex-col">
+          <nz-input-group
+            [nzSuffix]="descriptionClearTpl"
+            class="custom-nz-input-group !mt-2 !mb-0 !rounded border-gray-200">
+            <textarea
+              id="description"
+              rows="3"
+              formControlName="description"
+              nz-input
+              placeholder="Mô tả chi tiết về widget block"></textarea>
+          </nz-input-group>
+          <ng-template #descriptionClearTpl>
+            <span
+              nz-icon
+              class="ant-input-clear-icon"
+              nzTheme="fill"
+              nzType="close-circle"
+              (click)="contentLayoutForm.controls['description'].patchValue('')"></span>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <!-- Date Fields Row -->
+    <div class="mb-6 grid grid-cols-12 gap-6">
+      <!-- Start Date -->
+      <div class="col-span-6">
+        <nz-form-item class="!mb-0 !w-full">
+          <nz-form-label
+            nzFor="startDate"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !items-center !justify-start !text-sm font-medium">
+            Start Date
+          </nz-form-label>
+          <nz-form-control
+            [nzErrorTip]="busScheduleAutogeneratorDetailStartDateErrorTpl"
+            class="!flex !w-full flex-col">
+            <nz-date-picker
+              nzShowTime
+              nzFormat="yyyy-MM-dd HH:mm"
+              formControlName="startDate"
+              [nzDisabledDate]="checkDateDisableDate(0)"
+              class="!mt-2 !flex !w-full !rounded border-gray-200"
+              placeholder="Chọn ngày bắt đầu"></nz-date-picker>
+            <ng-template #busScheduleAutogeneratorDetailStartDateErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (contentLayoutForm.get('startDate')?.errors?.['required']) { Vui lòng nhập ngày bắt đầu }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- End Date with Checkbox -->
+      <div class="col-span-6">
+        <nz-form-item class="!mb-0 !w-full">
+          <div class="flex items-center justify-between">
+            <nz-form-label
+              nzFor="endDate"
+              [nzNoColon]="true"
+              [nzRequired]="!this.isNonEndDate"
+              class="!flex !items-center !justify-start !text-sm font-medium">
+              End Date
+            </nz-form-label>
+            <label
+              nz-checkbox
+              [(ngModel)]="isNonEndDate"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="selectIsEndDate()"
+              class="min-w-24 text-sm">
+              Never End
+            </label>
+          </div>
+          <nz-form-control [nzErrorTip]="busScheduleAutogeneratorDetailEndDateErrorTpl" class="!flex !w-full flex-col">
+            <nz-date-picker
+              nzShowTime
+              nzFormat="yyyy-MM-dd HH:mm"
+              [nzDisabled]="isNonEndDate"
+              [nzDisabledDate]="checkDateDisableDate(1)"
+              class="!mt-2 !flex !w-full !rounded border-gray-200"
+              placeholder="Chọn ngày kết thúc"
+              formControlName="endDate"></nz-date-picker>
+            <ng-template #busScheduleAutogeneratorDetailEndDateErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (contentLayoutForm.get('endDate')?.errors?.['required']) { Vui lòng nhập ngày kết thúc }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="my-5 flex w-full justify-end">
+      <button
+        class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+        nz-button
+        nzType="default"
+        type="submit">
+        SAVE
+      </button>
+    </div>
+  </form>
+  <div id="gjs"></div>
+</div>

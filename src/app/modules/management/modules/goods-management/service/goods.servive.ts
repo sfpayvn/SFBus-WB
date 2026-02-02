@@ -43,21 +43,20 @@ export class GoodsService {
     return this.apiGatewayService.get(url, skipLoading).pipe(tap((res: any) => {}));
   }
 
-  searchGoods(searchParams: {
-    pageIdx: number;
-    startDate: Date | '';
-    endDate: Date | '';
-    pageSize: number;
-    keyword: string;
-    sortBy: {
-      key: string;
-      value: string;
-    };
-    filters: {
-      key: string;
-      value: string[];
-    };
-  }) {
+  searchGoods(
+    searchParams = {
+      pageIdx: 1,
+      startDate: '' as Date | '',
+      endDate: '' as Date | '',
+      pageSize: 5,
+      keyword: '',
+      sortBy: {
+        key: 'createdAt',
+        value: 'descend',
+      },
+      filters: [] as any[],
+    },
+  ) {
     const url = `${this.url}/search`;
     const body = {
       pageIdx: searchParams.pageIdx,

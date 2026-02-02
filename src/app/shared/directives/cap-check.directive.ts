@@ -86,7 +86,8 @@ export class CapCheckDirective implements OnInit, OnDestroy {
   }
 
   private computeDisallowed(): boolean {
-    if (!this.moduleKey) return false;
+    if (!this.moduleKey) return true; // Không block nếu không có moduleKey
+    if (!this.functionKey) return true; // Không block nếu không có functionKey
     return !!this.caps.disabled(this.moduleKey, this.functionKey);
   }
 

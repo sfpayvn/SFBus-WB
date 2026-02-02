@@ -1,34 +1,36 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { Utils } from '@rsApp/shared/utils/utils';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { toast } from 'ngx-sonner';
-import { combineLatest, firstValueFrom, Subscription } from 'rxjs';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { Booking, Booking2Create } from '../../model/booking.model';
+import { Router } from '@angular/router';
+import {
+  SEAT_STATUS_CLASSES,
+  SEAT_STATUS_LABELS,
+  BOOKING_STATUS,
+  BOOKING_STATUS_LABELS,
+  BOOKING_STATUS_CLASSES,
+  PAYMENT_STATUS_LABELS,
+  PAYMENT_STATUS_CLASSES,
+} from '@rsApp/core/constants/status.constants';
+import { PaymentMethod } from '@rsApp/modules/dashboard/pages/report/models/report.model';
+import { Payment, RequestPaymentDto } from '@rsApp/shared/models/payment.model';
 import { LoadingService } from '@rsApp/shared/services/loading.service';
+import { PaymentService } from '@rsApp/shared/services/payment/payment-service';
+import { Utils } from '@rsApp/shared/utils/utils';
+import { toast } from 'ngx-sonner';
+import { Subscription, combineLatest, firstValueFrom } from 'rxjs';
 import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
 import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 import { SeatType } from '../../../bus-management/pages/seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../bus-management/pages/seat-types/service/seat-types.servive';
-import {
-  BOOKING_STATUS,
-  BOOKING_STATUS_CLASSES,
-  BOOKING_STATUS_LABELS,
-  SEAT_STATUS_CLASSES,
-  SEAT_STATUS_LABELS,
-} from 'src/app/core/constants/status.constants';
-import { Payment } from '@rsApp/shared/models/payment.model';
-import { PaymentMethod } from '../../../payment-management/modules/payment-method/model/payment-method.model';
-import { PaymentService } from '@rsApp/shared/services/payment/payment-service';
 import { PaymentMethodService } from '../../../payment-management/modules/payment-method/service/payment-method.service';
+import { Booking } from '../../model/booking.model';
+import { BookingService } from '../../service/booking.service';
+import { Location } from '@angular/common';
 
 interface BookingDeteail extends Booking {
   paymentPaidAmount?: number;
   paymentAmount?: number;
 }
-
 @Component({
   selector: 'app-booking-detail',
   standalone: false,
@@ -44,19 +46,25 @@ export class BookingDetailComponent implements OnInit {
   paymentMethods: PaymentMethod[] = [];
   payments: Payment[] = [];
 
-  private seatTypeCache: Map<string, SeatType | undefined> = new Map();
+  // Cache for seat types to avoid repeated computations
+  private seatTypeCache = new Map<string, SeatType | undefined>();
   private paymentMethodCache = new Map<string, PaymentMethod>();
+
+  seatStatusClasses = SEAT_STATUS_CLASSES;
+  seatStatuses = SEAT_STATUS_LABELS;
 
   bookingStatus = BOOKING_STATUS;
   bookingStatusLabels = BOOKING_STATUS_LABELS;
   bookingStatusClasses = BOOKING_STATUS_CLASSES;
 
-  seatStatusClasses = SEAT_STATUS_CLASSES;
-  seatStatuses = SEAT_STATUS_LABELS;
+  paymentStatuses = PAYMENT_STATUS_LABELS;
+  paymentStatusClasses = PAYMENT_STATUS_CLASSES;
 
   @Output() bookingChange = new EventEmitter<any>();
 
   selectedSeatIndex: number = 0;
+  isCreatePayment: boolean = false;
+  bookingForm!: FormGroup;
 
   eventSubscription!: Subscription[];
 
@@ -72,18 +80,14 @@ export class BookingDetailComponent implements OnInit {
     private loadingService: LoadingService,
     private paymentService: PaymentService,
     private paymentMethodService: PaymentMethodService,
+    private fb: FormBuilder,
+    private bookingService: BookingService,
   ) {
     this.eventSubscription = [];
   }
 
-  // Thêm các helper methods
-  getSeatStatusLabel(status: string): string {
-    return this.seatStatuses[status] || 'Không xác định';
-  }
-
   async ngOnInit(): Promise<void> {
     this.getQueryParams();
-    this.initListenEvent();
   }
 
   ngOnDestroy() {
@@ -116,8 +120,9 @@ export class BookingDetailComponent implements OnInit {
     combineLatest(request).subscribe(([busSchedule, seatTypes]) => {
       this.busSchedule = busSchedule;
       this.seatTypes = seatTypes;
-      // Clear cache when seatTypes change
+      // Clear cache when seat types change
       this.seatTypeCache.clear();
+      this.initListenEvent();
     });
 
     await this.loadPayment(this.booking._id || '');
@@ -185,19 +190,151 @@ export class BookingDetailComponent implements OnInit {
     }
   }
 
+  get createPaymentForm(): FormGroup | null {
+    return this.bookingForm?.get('createPaymentForm') as FormGroup;
+  }
+
+  async toggleCreatePaymentForm($event?: any) {
+    $event?.stopPropagation();
+    const currentIsCreatePaymentForm = this.isCreatePayment;
+
+    // Nếu đang ở chế độ create, chuyển về mode danh sách
+    if (currentIsCreatePaymentForm) {
+      if (this.bookingForm) {
+        this.bookingForm.removeControl('createPaymentForm', { emitEvent: false });
+      }
+    } else {
+      // Khởi tạo bookingForm nếu chưa có
+      if (!this.bookingForm) {
+        this.bookingForm = this.fb.group({
+          isCreatePayment: [false],
+        });
+      }
+
+      // Cập nhật lại paymentAmount trước
+      await this.setBookingPaymentAmount();
+
+      // Lấy giá trị paymentAmount từ booking
+      const paymentAmount = this.booking.paymentAmount || 0;
+      const defaultPaymentMethod = this.getDefaultPaymentMethod();
+
+      // Tạo form thanh toán
+      const createPaymentForm = this.fb.group({
+        paymentMethod: [defaultPaymentMethod ? defaultPaymentMethod : null],
+        maxPaymentAmount: [paymentAmount],
+        paymentAmount: [paymentAmount, [Validators.required, Validators.min(0), Validators.max(paymentAmount)]],
+      });
+
+      this.bookingForm.addControl('createPaymentForm', createPaymentForm, { emitEvent: false });
+    }
+
+    this.isCreatePayment = !this.isCreatePayment;
+  }
+
+  getDefaultPaymentMethod() {
+    return this.paymentMethods.find((method: any) => method.type === 'cash');
+  }
+
+  processPayment() {
+    const createPaymentForm = this.createPaymentForm;
+
+    if (!createPaymentForm || !createPaymentForm.valid) {
+      if (createPaymentForm) {
+        this.utils.markFormGroupTouched(createPaymentForm);
+      }
+      return;
+    }
+
+    const { paymentMethod, paymentAmount } = createPaymentForm.getRawValue() as {
+      paymentMethod: PaymentMethod;
+      paymentAmount: number;
+    };
+
+    if (!paymentMethod || !paymentAmount) {
+      return;
+    }
+
+    if (paymentAmount > 0) {
+      const requestPaymentDto: RequestPaymentDto = {
+        referrentGroupNumber: this.booking.bookingGroupNumber,
+        totalPrice: paymentAmount,
+        transactionId: paymentMethod._id,
+        paymentMethodId: paymentMethod._id,
+      };
+
+      this.paymentService.paymentBooking(requestPaymentDto).subscribe((payment2Result: Payment[]) => {
+        if (!payment2Result || payment2Result.length === 0) {
+          toast.error('Thanh toán không thành công');
+          return;
+        }
+
+        toast.success('Thanh toán thành công');
+        this.toggleCreatePaymentForm();
+
+        // Load lại danh sách payments
+        this.loadPayment(this.booking._id);
+
+        // Emit sự kiện booking đã thay đổi
+        this.bookingChange.emit(this.booking);
+      });
+    } else {
+      // Tạo mã QR với thông tin paymentNumber trong booking
+      toast.info('Chức năng thanh toán QR đang được phát triển');
+    }
+  }
+
+  // Thêm các helper methods
+  getSeatStatusLabel(status: string): string {
+    return this.seatStatuses[status] || 'Không xác định';
+  }
+
+  getSeatStatusClass(status: string): string {
+    return this.seatStatusClasses[status] || 'bg-gray-100 text-gray-800';
+  }
+
+  getBookingStatusLabel(status: string): string {
+    return this.bookingStatusLabels[status] || 'Không xác định';
+  }
+
+  getBookingStatusClass(status: string): string {
+    return this.bookingStatusClasses[status] || 'border-gray-300 bg-gray-100 text-gray-800';
+  }
+
   getTypeOfSeat(cell: any) {
+    if (!cell?.typeId) {
+      return undefined;
+    }
+
     // Check cache first
     if (this.seatTypeCache.has(cell.typeId)) {
       return this.seatTypeCache.get(cell.typeId);
     }
 
-    // Tìm loại ghế tương ứng dựa trên type
+    // Compute and cache the result
     const selectedType = this.seatTypes.find((t) => t._id === cell.typeId);
-
-    // Cache the result
     this.seatTypeCache.set(cell.typeId, selectedType);
 
     return selectedType;
+  }
+
+  getPaymentMethod(id: string) {
+    if (this.paymentMethodCache.has(id)) {
+      return this.paymentMethodCache.get(id);
+    }
+    const method = this.paymentMethods.find((method: PaymentMethod) => method._id === id);
+    if (method) {
+      this.paymentMethodCache.set(id, method);
+    }
+    return method;
+  }
+
+  viewBusScheduleDetails() {
+    this.router.navigate(['/bus-schedules/bus-schedule-detail'], {
+      state: {
+        busSchedule: this.busSchedule,
+        booking: this.booking,
+      },
+    });
   }
 
   backPage() {

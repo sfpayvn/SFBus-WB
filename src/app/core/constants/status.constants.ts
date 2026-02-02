@@ -20,7 +20,7 @@ export const COMMON_STATUS_CLASSES: { [key: string]: string } = {
   [COMMON_STATUS.EXPIRED]: 'border-gray-500 bg-gray-200',
 };
 
-export const COMMON_STATUS_OPTIONS: { value: string; label: string }[] = [
+export const COMMON_STATUS_OPTIONS = [
   { value: COMMON_STATUS.ACTIVE, label: COMMON_STATUS_LABELS[COMMON_STATUS.ACTIVE] },
   { value: COMMON_STATUS.INACTIVE, label: COMMON_STATUS_LABELS[COMMON_STATUS.INACTIVE] },
   { value: COMMON_STATUS.SUSPENDED, label: COMMON_STATUS_LABELS[COMMON_STATUS.SUSPENDED] },
@@ -100,6 +100,7 @@ export const SEAT_STATUS = {
   PICKED_UP: 'picked_up',
   ON_BOARD: 'on_board',
   DROPPED_OFF: 'dropped_off',
+  BLOCKED: 'blocked',
 } as const;
 
 export const SEAT_STATUS_LABELS: { [key: string]: string } = {
@@ -129,8 +130,10 @@ export type SeatStatusType = typeof SEAT_STATUS[keyof typeof SEAT_STATUS];
 export const GOODS_STATUS = {
   NEW: 'new',
   PENDING: 'pending',
-  ON_BOARD: 'on_board',
-  DROPPED_OFF: 'dropped_off',
+  ON_BOARD: 'on_board', // hàng đang trên xe (đang thuộc 1 schedule)
+  WAITING_CONTINUE_DELIVERY: 'waiting_continue_delivery', // bị drop tại station giữa đường, chờ chuyến khác
+  ARRIVED_FINAL_STATION: 'arrived_final_station', // đến destination station (hub cuối)
+  OUT_FOR_DELIVERY: 'out_for_delivery', // last-mile delivery
   COMPLETED: 'completed',
   CANCELLED: 'cancelled',
 } as const;
@@ -139,7 +142,9 @@ export const GOODS_STATUS_LABELS: { [key: string]: string } = {
   [GOODS_STATUS.NEW]: 'Nhập hàng',
   [GOODS_STATUS.PENDING]: 'Chờ vận chuyển',
   [GOODS_STATUS.ON_BOARD]: 'Đang vận chuyển',
-  [GOODS_STATUS.DROPPED_OFF]: 'Đã tới nơi',
+  [GOODS_STATUS.WAITING_CONTINUE_DELIVERY]: 'Chờ tiếp tục',
+  [GOODS_STATUS.ARRIVED_FINAL_STATION]: 'Đã tới trạm',
+  [GOODS_STATUS.OUT_FOR_DELIVERY]: 'Đang giao',
   [GOODS_STATUS.COMPLETED]: 'Hoàn thành',
   [GOODS_STATUS.CANCELLED]: 'Đã hủy',
 };
@@ -148,7 +153,9 @@ export const GOODS_STATUS_CLASSES: { [key: string]: string } = {
   [GOODS_STATUS.NEW]: 'border-orange-500 bg-orange-200',
   [GOODS_STATUS.PENDING]: 'border-yellow-500 bg-yellow-200 ',
   [GOODS_STATUS.ON_BOARD]: 'border-blue-500 bg-blue-200',
-  [GOODS_STATUS.DROPPED_OFF]: 'border-purple-500 bg-purple-200',
+  [GOODS_STATUS.WAITING_CONTINUE_DELIVERY]: 'border-indigo-500 bg-indigo-200',
+  [GOODS_STATUS.ARRIVED_FINAL_STATION]: 'border-purple-500 bg-purple-200',
+  [GOODS_STATUS.OUT_FOR_DELIVERY]: 'border-pink-500 bg-pink-200',
   [GOODS_STATUS.COMPLETED]: 'border-green-500 bg-green-200',
   [GOODS_STATUS.CANCELLED]: 'border-red-500 bg-red-200',
 };
@@ -157,7 +164,9 @@ export const GOODS_STATUS_LABELS_UPPERCASE: { [key: string]: string } = {
   [GOODS_STATUS.NEW]: 'NHẬP HÀNG',
   [GOODS_STATUS.PENDING]: 'CHỜ VẬN CHUYỂN',
   [GOODS_STATUS.ON_BOARD]: 'ĐANG TRÊN ĐƯỜNG',
-  [GOODS_STATUS.DROPPED_OFF]: 'ĐÃ TỚI NƠI',
+  [GOODS_STATUS.WAITING_CONTINUE_DELIVERY]: 'CHỜ TIẾP TỤC',
+  [GOODS_STATUS.ARRIVED_FINAL_STATION]: 'ĐÃ TỚI TRẠM',
+  [GOODS_STATUS.OUT_FOR_DELIVERY]: 'ĐANG GIAO',
   [GOODS_STATUS.COMPLETED]: 'HOÀN THÀNH',
   [GOODS_STATUS.CANCELLED]: 'ĐÃ HỦY',
 };
@@ -195,16 +204,50 @@ export const GOODS_PAYMENT_STATUS_OPTIONS = [
 ];
 
 export const GOODS_STATUS_OPTIONS = [
-  { value: GOODS_STATUS.NEW, label: GOODS_STATUS_LABELS_UPPERCASE[GOODS_STATUS.NEW] },
-  { value: GOODS_STATUS.PENDING, label: GOODS_STATUS_LABELS_UPPERCASE[GOODS_STATUS.PENDING] },
-  { value: GOODS_STATUS.ON_BOARD, label: GOODS_STATUS_LABELS_UPPERCASE[GOODS_STATUS.ON_BOARD] },
-  { value: GOODS_STATUS.DROPPED_OFF, label: GOODS_STATUS_LABELS_UPPERCASE[GOODS_STATUS.DROPPED_OFF] },
-  { value: GOODS_STATUS.COMPLETED, label: GOODS_STATUS_LABELS_UPPERCASE[GOODS_STATUS.COMPLETED] },
-  { value: GOODS_STATUS.CANCELLED, label: GOODS_STATUS_LABELS_UPPERCASE[GOODS_STATUS.CANCELLED] },
+  { value: GOODS_STATUS.NEW, label: GOODS_STATUS_LABELS[GOODS_STATUS.NEW] },
+  { value: GOODS_STATUS.PENDING, label: GOODS_STATUS_LABELS[GOODS_STATUS.PENDING] },
+  { value: GOODS_STATUS.ON_BOARD, label: GOODS_STATUS_LABELS[GOODS_STATUS.ON_BOARD] },
+  { value: GOODS_STATUS.WAITING_CONTINUE_DELIVERY, label: GOODS_STATUS_LABELS[GOODS_STATUS.WAITING_CONTINUE_DELIVERY] },
+  { value: GOODS_STATUS.ARRIVED_FINAL_STATION, label: GOODS_STATUS_LABELS[GOODS_STATUS.ARRIVED_FINAL_STATION] },
+  { value: GOODS_STATUS.OUT_FOR_DELIVERY, label: GOODS_STATUS_LABELS[GOODS_STATUS.OUT_FOR_DELIVERY] },
+  { value: GOODS_STATUS.COMPLETED, label: GOODS_STATUS_LABELS[GOODS_STATUS.COMPLETED] },
+  { value: GOODS_STATUS.CANCELLED, label: GOODS_STATUS_LABELS[GOODS_STATUS.CANCELLED] },
 ];
 
 export type GoodsStatusType = typeof GOODS_STATUS[keyof typeof GOODS_STATUS];
 
+// ==================== FULFILLMENT TYPE ====================
+export const DELIVERY_TYPE = {
+  STATION: 'STATION',
+  ADDRESS: 'ADDRESS',
+} as const;
+
+export const DELIVERY_TYPE_LABELS: { [key: string]: string } = {
+  [DELIVERY_TYPE.STATION]: 'Nhận tại trạm',
+  [DELIVERY_TYPE.ADDRESS]: 'Giao tận nơi',
+};
+
+export const DELIVERY_TYPE_OPTIONS = [
+  { value: DELIVERY_TYPE.STATION, label: DELIVERY_TYPE_LABELS[DELIVERY_TYPE.STATION] },
+  { value: DELIVERY_TYPE.ADDRESS, label: DELIVERY_TYPE_LABELS[DELIVERY_TYPE.ADDRESS] },
+];
+
+export type DeliveryTypeType = typeof DELIVERY_TYPE[keyof typeof DELIVERY_TYPE];
+
+export const FULFILLMENT_MODE = {
+  ROADSIDE: 'ROADSIDE',
+  STATION: 'STATION',
+} as const;
+
+export const FULFILLMENT_MODE_LABELS: { [key: string]: string } = {
+  [FULFILLMENT_MODE.ROADSIDE]: 'Dọc đường',
+  [FULFILLMENT_MODE.STATION]: 'Theo tuyến',
+};
+
+export const FULFILLMENT_MODE_OPTIONS = [
+  { value: FULFILLMENT_MODE.ROADSIDE, label: FULFILLMENT_MODE_LABELS[FULFILLMENT_MODE.ROADSIDE] },
+  { value: FULFILLMENT_MODE.STATION, label: FULFILLMENT_MODE_LABELS[FULFILLMENT_MODE.STATION] },
+];
 // ==================== EVENT STATUS ====================
 export const EVENT_STATUS = {
   UN_PUBLISHED: 'un_published',
@@ -234,7 +277,6 @@ export const EVENT_STATUS_CLASSES: { [key: string]: string } = {
 };
 
 export const EVENT_STATUS_OPTIONS = [
-  { value: EVENT_STATUS.UN_PUBLISHED, label: EVENT_STATUS_LABELS[EVENT_STATUS.UN_PUBLISHED] },
   { value: EVENT_STATUS.SCHEDULED, label: EVENT_STATUS_LABELS[EVENT_STATUS.SCHEDULED] },
   { value: EVENT_STATUS.IN_PROGRESS, label: EVENT_STATUS_LABELS[EVENT_STATUS.IN_PROGRESS] },
   { value: EVENT_STATUS.COMPLETED, label: EVENT_STATUS_LABELS[EVENT_STATUS.COMPLETED] },
@@ -258,6 +300,23 @@ export const PRIORITYCLASSES = {
   9: 'border-teal-500 bg-teal-200 text-teal-800',
   10: 'border-cyan-500 bg-cyan-200 text-cyan-800',
 };
+
+// ==================== BusSchedule LEVEL ====================
+
+export const BUS_SCHEDULE_DIRECTION = {
+  ARRIVAL: 'arrival',
+  DEPARTURE: 'departure',
+} as const;
+
+export const BUS_SCHEDULE_DIRECTION_LABELS: { [key: string]: string } = {
+  [BUS_SCHEDULE_DIRECTION.ARRIVAL]: 'Chiều đến',
+  [BUS_SCHEDULE_DIRECTION.DEPARTURE]: 'Chiều đi',
+};
+
+export const BUS_SCHEDULE_DIRECTION_OPTIONS = [
+  { value: BUS_SCHEDULE_DIRECTION.DEPARTURE, label: BUS_SCHEDULE_DIRECTION_LABELS[BUS_SCHEDULE_DIRECTION.DEPARTURE] },
+  { value: BUS_SCHEDULE_DIRECTION.ARRIVAL, label: BUS_SCHEDULE_DIRECTION_LABELS[BUS_SCHEDULE_DIRECTION.ARRIVAL] },
+];
 
 /// ==================== Duration Status ====================
 export const DURATION_STATUS = {

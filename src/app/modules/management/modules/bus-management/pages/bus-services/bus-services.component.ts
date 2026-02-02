@@ -7,6 +7,7 @@ import { BusServiceDetailDialogComponent } from './component/bus-service-detail-
 import { BusServicesService } from './service/bus-services.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 @Component({
   selector: 'app-bus-services',
@@ -41,6 +42,7 @@ export class BusServicesComponent implements OnInit {
     private busServicesService: BusServicesService,
     private dialog: MatDialog,
     private utils: Utils,
+    private utilsModal: UtilsModal,
     public defaultFlagService: DefaultFlagService,
   ) {}
 
@@ -242,5 +244,10 @@ export class BusServicesComponent implements OnInit {
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
     });
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
   }
 }

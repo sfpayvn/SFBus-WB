@@ -127,39 +127,60 @@
             cdkDropList
             (cdkDropListDropped)="drop($event)"
             [cdkDropListDisabled]="defaultFlagService.isDefault(busRoute)"
-            class="drag-drop-list flex w-full flex-col gap-4">
-            <nz-form-item cdkDrag *ngFor="let breakPoint of breakPoints.controls; let i = index" [formGroupName]="i">
-              <nz-form-control>
-                <nz-input-group class="!flex !items-center">
-                  <nz-select nzShowSearch nzAllowClear formControlName="busStationId" nzPlaceHolder="Chọn Bus Station">
-                    @for (busProvince of filteredProvinces; track busProvince) {
-                    <nz-option-group nzLabel="{{ busProvince.name }}">
-                      @for (busStation of busProvince.busStations; track busStation) {
-                      <nz-option
-                        nzCustomContent
-                        [nzLabel]="busStation.name + ' ' + defaultFlagService.defaultTextFlag(busStation)"
-                        [nzValue]="busStation._id">
-                        <div class="flex items-center">
-                          <span class="pl-4 !font-medium">
-                            {{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
-                          </span>
-                        </div>
-                      </nz-option>
-                      }
-                    </nz-option-group>
-                    }
-                  </nz-select>
-                  @if(!defaultFlagService.isDefault(busRoute)) {
-                  <svg-icon
-                    src="assets/icons/trash-red-outline.svg"
-                    [svgClass]="'h-5 w-5 ml-2 cursor-pointer'"
-                    (click)="removeBreakPoint(i)"
-                    *ngIf="breakPoints.controls.length > 2">
-                  </svg-icon>
+            class="drag-drop-list flex w-full flex-col gap-2">
+            <div
+              cdkDrag
+              *ngFor="let breakPoint of breakPoints.controls; let i = index"
+              [formGroupName]="i"
+              class="flex w-full items-center gap-2">
+              <nz-select
+                class="flex-1"
+                nzShowSearch
+                nzAllowClear
+                formControlName="busStationId"
+                nzPlaceHolder="Chọn Bus Station"
+                [nzCustomTemplate]="selectTemplate">
+                @for (busProvince of filteredProvinces; track busProvince) {
+                <nz-option-group nzLabel="{{ busProvince.name }}">
+                  @for (busStation of busProvince.busStations; track busStation) {
+                  <nz-option
+                    nzCustomContent
+                    [nzLabel]="busStation.name + ' ' + defaultFlagService.defaultTextFlag(busStation)"
+                    [nzValue]="busStation._id">
+                    <div class="flex items-center">
+                      <span class="pl-4 !font-medium">
+                        {{ busStation.name }}
+                        <svg-icon
+                          *ngIf="busStation.isOffice"
+                          src="assets/icons/heroicons/outline/home-modern.svg"
+                          [svgClass]="'inline h-4 w-4 ml-1 text-blue-500 ml-2'"
+                          title="Office"></svg-icon>
+                        {{ defaultFlagService.defaultTextFlag(busStation) }}
+                      </span>
+                    </div>
+                  </nz-option>
                   }
-                </nz-input-group>
-              </nz-form-control>
-            </nz-form-item>
+                </nz-option-group>
+                }
+              </nz-select>
+              <ng-template #selectTemplate let-selected>
+                <div class="contents">
+                  <span>{{ selected.nzLabel }}</span>
+                  <svg-icon
+                    *ngIf="getSelectedBusStation(selected.nzValue)?.isOffice"
+                    src="assets/icons/heroicons/outline/home-modern.svg"
+                    [svgClass]="'inline h-4 w-4 text-blue-500 ml-2'"
+                    title="Office"></svg-icon>
+                </div>
+              </ng-template>
+              @if(!defaultFlagService.isDefault(busRoute) && breakPoints.controls.length > 2) {
+              <svg-icon
+                src="assets/icons/trash-red-outline.svg"
+                [svgClass]="'h-5 w-5 cursor-pointer flex-shrink-0'"
+                (click)="removeBreakPoint(i)">
+              </svg-icon>
+              }
+            </div>
           </div>
           @if(!defaultFlagService.isDefault(busRoute)) {
           <div class="mt-4 flex justify-end gap-4">

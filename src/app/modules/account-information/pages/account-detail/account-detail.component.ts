@@ -18,11 +18,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private accountService: AccountInformationService,
-    private utils: Utils,
-    private authService: AuthService,
-  ) {}
+  constructor(private utils: Utils, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadCurrentUser();

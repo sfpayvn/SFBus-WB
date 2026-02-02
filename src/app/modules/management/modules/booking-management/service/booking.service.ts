@@ -77,13 +77,9 @@ export class BookingService {
       .pipe(tap((res: any) => {}));
   }
 
-  delete(_id: string) {
-    const url = `${this.url}/delete/${_id}`;
-    return this.apiGatewayService
-      .delete(url, {
-        feature: { module: 'booking-management', function: 'delete-booking' },
-      })
-      .pipe(tap((res: any) => {}));
+  deleteBooking(id: string) {
+    const deleteOptionUrl = this.url + `/${id}`;
+    return this.apiGatewayService.delete(deleteOptionUrl).pipe(tap((res: any) => {}));
   }
 
   deleteMultiple(_ids: string[]) {

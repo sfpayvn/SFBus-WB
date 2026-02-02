@@ -41,6 +41,7 @@
             nzLabel="Select all"
             (nzCheckedChange)="onAllChecked($event)"></th>
           <th class="min-w-[200px]">Name</th>
+          <th class="min-w-[200px]">Active</th>
           <th class="w-[100px] text-center">Actions</th>
         </tr>
       </thead>
@@ -65,6 +66,16 @@
                   >{{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
                 </span>
               </div>
+            </nz-skeleton>
+          </td>
+          <td>
+            <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
+              @if(busProvince.isActive) {
+              <svg-icon
+                src="assets/icons/heroicons/outline/check-circle.svg"
+                [svgClass]="'h-5 w-5 cursor-pointer text-green-500'">
+              </svg-icon>
+              }
             </nz-skeleton>
           </td>
           <td>

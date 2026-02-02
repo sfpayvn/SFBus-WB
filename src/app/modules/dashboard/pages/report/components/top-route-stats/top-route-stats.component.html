@@ -1,0 +1,27 @@
+<div class="bg-white rounded-lg shadow-sm p-6 w-full">
+  <h3 class="text-lg font-semibold text-gray-800 mb-4">Tuyến đường hiệu quả nhất</h3>
+  <nz-spin [nzSpinning]="isLoading">
+    <nz-table #topRoutesTable [nzData]="displayRoutes.data || []" [nzShowPagination]="false" [nzSize]="'small'">
+      <thead>
+        <tr>
+          <th>Tuyến đường</th>
+          <th>Số vé</th>
+          <th>Doanh thu</th>
+          <th>Tỷ lệ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let route of topRoutesTable.data">
+          <td>{{ route.routeName }}</td>
+          <td>{{ route.ticketCount }}</td>
+          <td>{{ formatCurrency(route.revenue) }}</td>
+          <td>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium text-gray-600">{{ route.percentage }}%</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>

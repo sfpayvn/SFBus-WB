@@ -1,0 +1,29 @@
+// Booking Report Component Styles
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Custom table styles
+::ng-deep {
+  .ant-table {
+    font-size: 14px;
+  }
+
+  .ant-table-thead > tr > th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background-color: #f1f5f9;
+  }
+}
+
+// Filter form responsive
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

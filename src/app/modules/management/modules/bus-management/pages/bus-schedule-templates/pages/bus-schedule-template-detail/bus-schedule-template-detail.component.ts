@@ -141,6 +141,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
 
         this.buses = buses;
         this.busTemplates = busTemplates;
+        console.log("🚀 ~ BusScheduleTemplateDetailComponent ~ initData ~ this.busTemplates:", this.busTemplates)
 
         this.busServices = busServices;
         this.busTypes = busTypes;
@@ -207,7 +208,7 @@ export class BusScheduleTemplateDetailComponent implements OnInit {
     }
 
     if (busTemplateId) {
-      const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => (busTemplate._id = busTemplateId));
+      const busTemplate = this.busTemplates.find((busTemplate: BusTemplate) => busTemplate._id === busTemplateId);
       if (!busTemplate) return;
       this.setBusTemplateReview(busTemplate as BusTemplate);
     }

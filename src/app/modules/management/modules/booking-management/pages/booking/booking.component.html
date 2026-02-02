@@ -1,128 +1,129 @@
-<div class="flex flex-col items-center justify-between">
-  <h1 class="text-2xl font-bold text-gray-800">Hàng Hóa</h1>
-  <div class="flex w-full items-center pt-2 pb-10">
-    <app-booking-search-form
-      class="w-full"
-      [busRoutes]="busRoutes"
-      [busSchedules]="busSchedules"
-      [isLoaded]="isLoaded"
-      (findBookingEvent)="loadDataFindBooking($event)"></app-booking-search-form>
+<app-sf-body>
+  <div class="flex flex-col items-center justify-between pt-6">
+    <h1 class="text-2xl font-bold text-gray-800">Dánh sách đặt vé</h1>
   </div>
-</div>
+  <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+</app-sf-body>
+<ng-template #contentTemplate>
+  <div class="py-6">
+    <div>
+      <app-booking-search-form
+        class="w-full"
+        [busRoutes]="busRoutes"
+        [busSchedules]="busSchedules"
+        [isLoaded]="isLoaded"
+        (findBookingEvent)="loadDataFindBooking($event)"></app-booking-search-form>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-1 rounded-t-sm bg-white">
+      <div class="flex w-full items-center justify-between gap-2">
+        <div class="mt-2 flex items-center gap-2">
+          @for (p of bookingStatusCounts; track p.key) {
+          <button
+            #filterBtn
+            nz-button
+            (click)="toggleBookingFilter(p.key)"
+            [ngClass]="{
+                '!border-primary !text-primary focus:!text-primary': filterBookingStatus === p.key,
+                '!text-muted-foreground !border-white': filterBookingStatus !== p.key,
+              }"
+            class="hover:!text-primary relative !h-12 cursor-pointer rounded-sm border !px-4 !py-2.5 uppercase transition-opacity"
+            [attr.aria-pressed]="filterBookingStatus === p.key">
+            {{ p.label }}
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
+      <app-table
+        [rows]="filteredBookings"
+        [isLoaded]="isLoaded"
+        [selectedIds]="selectedIdsArray"
+        (searchDataEvent)="searchBookingPage($event)"
+        (sortDataEvent)="sortBookingPage($event)"
+        (currentPageDataChange)="onCurrentPageDataChange($event)"
+        [showFooter]="true"
+        [showHeader]="false"
+        [pageIdx]="searchParams.pageIdx"
+        [pageSize]="searchParams.pageSize"
+        [totalItem]="totalItem"
+        [totalPage]="totalPage"
+        (reloadDataAndPageEvent)="reloadBookingPage($event)"
+        [tableActionTitle]="'Danh sách đặt vé'"
+        (selectionChange)="onTableSelectionChange($any($event))">
+        <app-table-column key="bookingNumber" label="#" [widthPx]="40" sticky="left">
+          <ng-template let-row>
+            <span class="flex items-center gap-1">
+              <span>{{ row.bookingNumber }}</span>
+            </span>
+          </ng-template>
+        </app-table-column>
 
-<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
-  <app-table-action
-    [title]="'Booking'"
-    [totalItem]="totalItem"
-    (sortDataEvent)="sortGoodPage($event)"
-    (searchDataEvent)="searchGoodPage($event)"></app-table-action>
-  <div class="overflow-x-auto">
-    <nz-table
-      #rowSelectionTable
-      nzShowPagination
-      nzShowSizeChanger
-      [nzFrontPagination]="false"
-      [nzData]="searchBooking.bookings"
-      [nzLoading]="!isLoaded"
-      class="!w-full"
-      (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
-      <thead>
-        <tr>
-          <th
-            [nzChecked]="checked"
-            [nzIndeterminate]="indeterminate"
-            nzLabel="Select all"
-            (nzCheckedChange)="onAllChecked($event)"></th>
-          <th class="min-w-[60px]">#</th>
-          <th class="min-w-[150px]">Tên</th>
-          <th class="min-w-[40px]">Sđt</th>
-          <th class="min-w-[80px]">Email</th>
-          <th class="min-w-[80px]">SL Vé</th>
-          <th class="min-w-[80px]">Tổng Tiền</th>
-          <th class="min-w-[80px]">Status</th>
-          <th class="min-w-[80px] !text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (booking of rowSelectionTable.data; track booking) {
-        <tr>
-          <td
-            [nzChecked]="setOfCheckedId.has(booking._id)"
-            [nzLabel]="booking._id"
-            (nzCheckedChange)="onItemChecked(booking._id, $event)"></td>
-          <td>
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              {{ booking.bookingNumber }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              {{ booking.userInfo.name }}
-            </nz-skeleton>
-          </td>
+        <app-table-column key="customerName" label="Khách hàng" [widthPx]="240">
+          <ng-template let-row>{{ row.userInfo.name || 'N/A' }}</ng-template>
+        </app-table-column>
 
-          <td>
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              {{ booking.userInfo.phoneNumber }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              {{ booking.userInfo.email }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              {{ booking.bookingItems.length }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              {{ booking.totalPrice | currency: 'VND' }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              <span class="p-2 uppercase rounded-md text-xs {{ bookingtatusClasses[booking.status] }}">
-                {{ bookingStatuses[booking.status] }}
-              </span>
-            </nz-skeleton>
-          </td>
-          <td class="text-right">
-            <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
+        <app-table-column key="customerPhone" label="Số điện thoại" [widthPx]="160">
+          <ng-template let-row>{{ row.userInfo.phoneNumber || 'N/A' }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="quantity" label="Số lượng vé" [widthPx]="140">
+          <ng-template let-row>{{ row.quantity || 'N/A' }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="startDate" label="Giờ đi" [widthPx]="180">
+          <ng-template let-row
+            >{{ utils.formatTime(row.startDate) }} - {{ utils.formatDate(row.startDate) }}</ng-template
+          >
+        </app-table-column>
+
+        <app-table-column key="totalPrice" label="Tổng tiền" [widthPx]="140">
+          <ng-template let-row>{{ utils.formatPriceToVND(row.totalPrice) }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="bookingDate" label="Ngày đặt" [widthPx]="180">
+          <ng-template let-row
+            >{{ utils.formatTime(row.createdAt) }} - {{ utils.formatDate(row.createdAt) }}</ng-template
+          >
+        </app-table-column>
+
+        <app-table-column key="status" label="Trạng thái" [widthPx]="120">
+          <ng-template let-row
+            ><span class="px-1 py-0.5 inline-block rounded {{ bookingStatusClasses[row.status] }}">
+              {{ bookingStatusesLabel[row.status] }}</span
+            ></ng-template
+          >
+        </app-table-column>
+
+        <app-table-column key="actions" label="Actions" [widthPx]="70" sticky="right">
+          <ng-template let-row>
+            <div class="flex justify-end gap-1">
               <button
-                (click)="editBooking(booking)"
-                class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md"
+                (click)="editBooking(row)"
+                class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-md"
                 aria-label="Edit user">
-                <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                <!-- edit svg -->
+                <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
                   <path
                     d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
                 </svg>
               </button>
               <button
-                (click)="deleteBooking(booking._id)"
-                class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md"
+                (click)="deleteBooking(row._id)"
+                class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-md"
                 aria-label="Delete user">
-                <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                <!-- delete svg -->
+                <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
                   <path
                     fill-rule="evenodd"
                     d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
                     clip-rule="evenodd" />
                 </svg>
               </button>
-            </nz-skeleton>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </nz-table>
+            </div>
+          </ng-template>
+        </app-table-column>
+      </app-table>
+    </div>
   </div>
-  <app-table-footer
-    [pageIdx]="searchParams.pageIdx"
-    [pageSize]="searchParams.pageSize"
-    [totalItem]="totalItem"
-    [isLoaded]="isLoaded"
-    [totalPage]="totalPage"
-    (reloadDataAndPageEvent)="reloadBookingPage($event)">
-  </app-table-footer>
-</div>
+</ng-template>

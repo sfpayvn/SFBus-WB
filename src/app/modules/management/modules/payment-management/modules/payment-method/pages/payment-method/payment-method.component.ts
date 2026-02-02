@@ -227,4 +227,9 @@ export class PaymentMethodComponent implements OnInit {
       error: (error: any) => this.utils.handleRequestError(error),
     });
   }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
+  }
 }

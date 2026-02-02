@@ -4,7 +4,14 @@ import { defer, from, of, throwError } from 'rxjs';
 import { catchError, concatMap, delay, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { CredentialService } from 'src/app/shared/services/credential.service';
-import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, VerifyAuthRescue } from '../model/auth.model';
+import {
+  AuthRescue,
+  RequestForgotPassword,
+  RequestResetPassword,
+  SignUp,
+  UpdatePasswordUserRequest,
+  VerifyAuthRescue,
+} from '../model/auth.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CapsService } from '@rsApp/shared/services/caps.service';
 import { MenuService } from '@rsApp/modules/layout/services/menu.service';
@@ -124,13 +131,9 @@ export class AuthService {
     );
   }
 
-  updatePassword(password: string) {
-    const user = {
-      password,
-      isTempPassWord: true,
-    };
+  updatePassword(updatePasswordUserRequest: UpdatePasswordUserRequest) {
     const url = `/admin/auth/update-password`;
-    return this.apiGatewayService.post(url, user).pipe(
+    return this.apiGatewayService.post(url, updatePasswordUserRequest).pipe(
       tap((res: any) => {}),
       map((res: any) => {
         return res;

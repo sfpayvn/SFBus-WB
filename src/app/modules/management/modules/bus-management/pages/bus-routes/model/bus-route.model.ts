@@ -9,7 +9,7 @@ export class SearchBusRoute {
 
 export class BusRouteBreakPoints {
   busStationId: string = '';
-  busStation: BusStation = new BusStation();
+  busStation!: BusStation;
 }
 
 export class BusRoute {

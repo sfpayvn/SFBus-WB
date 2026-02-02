@@ -9,6 +9,7 @@ import { DriversService } from '../../service/driver.servive';
 import { ROLE_CLASSES, ROLE_CONSTANTS, ROLE_LABELS } from '@rsApp/core/constants/roles.constants';
 import { UserManagementService } from '../../service/user.servive';
 import { FUNCTION_KEYS, MODULE_KEYS } from '@rsApp/core/constants/module-function-keys';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 @Component({
   selector: 'app-users',
@@ -54,6 +55,7 @@ export class UsersComponent implements OnInit {
     private router: Router,
     private driversService: DriversService,
     private userManagementService: UserManagementService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +79,11 @@ export class UsersComponent implements OnInit {
         this.userRole = ROLE_CONSTANTS.POS;
         this.capModule = MODULE_KEYS.USER_POS;
         this.capFunction = FUNCTION_KEYS.USER_POS.CREATE;
+        break;
+      case '/management/users-management/seller':
+        this.userRole = ROLE_CONSTANTS.SELLER;
+        this.capModule = MODULE_KEYS.USER_SELLER;
+        this.capFunction = FUNCTION_KEYS.USER_SELLER.CREATE;
         break;
       case '/management/users-management/tenant':
         this.userRole = ROLE_CONSTANTS.TENANT;
@@ -252,5 +259,10 @@ export class UsersComponent implements OnInit {
       // Thêm mới
       this.searchParams.filters.push(newItem);
     }
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
   }
 }

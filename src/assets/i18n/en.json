@@ -1,0 +1,54 @@
+{
+  "sidebar": {
+    "Dashboard": "Dashboard",
+    "Users Management": "User Management",
+    "Client": "Client",
+    "Driver": "Driver",
+    "POS": "POS",
+    "Operator": "Operator",
+
+    "Media Center": "Media Center",
+
+    "Goods Management": "Goods Management",
+    "Goods": "Goods",
+    "Goods Category": "Goods Category",
+
+    "Bus Management": "Bus Management",
+    "Buses": "Buses",
+
+    "Bus Schedule": "Bus Schedule",
+    "Bus Schedules": "Bus Schedules",
+    "Schedule Calendar": "Schedule Calendar",
+    "Bus Schedules Auto": "Bus Schedules Auto",
+
+    "Bus Design": "Bus Design",
+    "Bus Templates": "Bus Templates",
+
+    "Bus Schedule Templates": "Bus Schedule Templates",
+
+    "Bus Routes": "Bus Routes",
+    "Bus Layout Templates": "Bus Layout Templates",
+
+    "Bus Settings": "Bus Settings",
+    "Bus Provices": "Bus Provinces",
+    "Bus Stations": "Bus Stations",
+    "Bus Types": "Bus Types",
+    "Bus Services": "Bus Services",
+    "Seat Types": "Seat Types",
+
+    "Promotion Management": "Promotion Management",
+    "Booking Management": "Booking Management",
+    "Payment Management": "Payment Management",
+    "Payment Methods": "Payment Methods",
+    "Notification Management": "Notification Management",
+
+    "Content Management": "Content Management",
+    "Layouts": "Layouts",
+    "Widgets": "Widgets",
+
+    "Settings": "Settings",
+    "Theme setting": "Theme setting",
+    "Bus schedule setting": "Bus schedule setting",
+    "Organization setting": "Organization setting"
+  }
+}

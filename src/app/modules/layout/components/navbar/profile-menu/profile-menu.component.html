@@ -6,7 +6,7 @@
       clickOutside
       (clickOutside)="isOpen = false"
       class="h-9 w-9 rounded-md"
-      src="https://avatars.githubusercontent.com/u/12519008?v=4"
+      [src]="(currentUser && currentUser.avatar) || 'https://avatars.githubusercontent.com/u/12519008?v=4'"
       alt="" />
   </button>
   <!-- Dropdown -->
@@ -15,11 +15,16 @@
     class="bg-background shadow-custom absolute right-0 z-20 mt-2 w-60 origin-top-right transform rounded-md py-4 ring-1 ring-transparent ring-opacity-5 transition focus:outline-hidden">
     <div class="flext-row flex items-center px-4 pb-4">
       <div class="w-10 shrink-0">
-        <img class="rounded-md" src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="" />
+        <img
+          class="rounded-md"
+          [src]="(currentUser && currentUser.avatar) || 'https://avatars.githubusercontent.com/u/12519008?v=4'"
+          alt="" />
       </div>
       <div class="text-foreground overflow-hidden px-2 text-sm font-semibold">
-        Luciano Oliveira
-        <p class="text-muted-foreground truncate text-ellipsis text-xs font-semibold">me&#64;lanno.dev</p>
+        {{ (currentUser && currentUser.name) || '' }}
+        <p class="text-muted-foreground truncate text-ellipsis text-xs font-semibold">
+          {{ (currentUser && currentUser.phoneNumber) || '' }}
+        </p>
       </div>
     </div>
 

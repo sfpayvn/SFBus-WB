@@ -80,13 +80,15 @@ export class Booking {
 
   bookingTime?: Date; // Thêm trường thời gian thanh toán
 
-  paymentNumber: string = '';
+  bookingGroupNumber: string = '';
 
   status: string = '';
 
   selected: boolean = false;
 
   note: string = '';
+
+  createdAt?: Date;
 }
 
 export interface Booking2Create
@@ -98,7 +100,7 @@ export interface Booking2Create
     | 'bookingItems'
     | 'busSchedule'
     | 'bookingTime'
-    | 'paymentNumber'
+    | 'bookingGroupNumber'
     | 'payments'
     | 'status'
   > {}
@@ -111,22 +113,34 @@ export class BookingItem2Create {
   seat!: BookingItemSeat2Create;
 }
 
-export interface BookingItemSeat2Create extends Omit<BookingItemSeat, 'seatNumber' | 'status'> {}
+export interface BookingItemSeat2Create extends Omit<BookingItemSeat, 'seatNumber'> {}
 export class BookingItemSeat2Create {}
 
-export interface Booking2Update extends Omit<Booking2Create, 'bookingItems'> {}
-export class Booking2Update extends Booking2Create {
+export interface Booking2Update
+  extends Omit<
+    Booking,
+    | '_id'
+    | 'selected'
+    | 'bookingNumber'
+    | 'bookingItems'
+    | 'busSchedule'
+    | 'bookingTime'
+    | 'bookingGroupNumber'
+    | 'payments'
+    | 'status'
+  > {}
+export class Booking2Update {
   _id: string = '';
   bookingNumber: string = '';
-  override bookingItems: BookingItem2Update[] = [];
+  bookingItems: BookingItem2Update[] = [];
 }
 
-export interface BookingItem2Update extends Omit<BookingItem, '_id' | 'bookingItemNumber' | 'seat'> {}
+export interface BookingItem2Update extends Omit<BookingItem, 'seat'> {}
 export class BookingItem2Update {
   seat!: BookingItemSeat2Update;
 }
 
-export interface BookingItemSeat2Update extends Omit<BookingItemSeat, 'seatNumber' | 'status'> {}
+export interface BookingItemSeat2Update extends Omit<BookingItemSeat, 'seatNumber'> {}
 export class BookingItemSeat2Update {}
 
 export class SearchBooking {

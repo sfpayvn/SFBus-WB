@@ -17,13 +17,17 @@
     (ngSubmit)="onSubmit()">
     <div class="mb-5">
       <nz-form-item class="!flex !w-full !flex-col">
-        <nz-form-label
-          nzFor="name"
-          [nzNoColon]="true"
-          [nzRequired]="true"
-          class="!flex !items-center !justify-start !text-sm"
-          >Tỉnh/Thành Phố</nz-form-label
-        >
+        <div class="flex justify-between">
+          <nz-form-label
+            nzFor="name"
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            class="!flex !items-center !justify-start !text-sm"
+            >Tỉnh/Thành Phố</nz-form-label
+          >
+          <label nz-checkbox formControlName="isActive" class="min-w-24 !m-0 text-sm"> Is Active </label>
+        </div>
+
         <nz-form-control [nzErrorTip]="busProvinceNameErrorTpl" class="!flex flex-col">
           <nz-input-group [nzSuffix]="busProvinceNameClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
             <input type="text" nz-input formControlName="name" placeholder="Nhập Tên Tỉnh/Thành Phố" />
@@ -49,48 +53,6 @@
     <div class="mb-5">
       <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Các điểm dừng</label>
       <diV class="flex items-center justify-center gap-4">
-        <div class="drag-drop-container">
-          <div class="flex w-full pb-4">
-            <label class="text-muted-foreground relative w-full">
-              <div class="absolute left-2.5 top-2.5">
-                <svg-icon src="./assets/icons/heroicons/outline/magnifying-glass.svg" [svgClass]="'h-4 w-4'">
-                </svg-icon>
-              </div>
-              <input
-                class="text-muted-foreground w-full py-2 pl-8 pr-2 text-sm"
-                placeholder="Search Bus Stations"
-                type="text"
-                (keyup)="searchBusProvinceStations($event)" />
-            </label>
-          </div>
-          <div
-            cdkDropList
-            #list1="cdkDropList"
-            [cdkDropListData]="filteredBusProvinceStations"
-            [cdkDropListConnectedTo]="[list2]"
-            [cdkDropListDisabled]="defaultFlagService.isDefault(busProvince)"
-            class="drag-drop-list"
-            (cdkDropListDropped)="drop($event)">
-            @for (item of filteredBusProvinceStations; track item) {
-            <div
-              class="drag-drop-box"
-              (click)="toggleBusStation(item, true)"
-              cdkDrag
-              [ngClass]="{ 'drag-drop-box-selected': isStationSelected(item, true) }">
-              {{ item.name }} {{ defaultFlagService.defaultTextFlag(item) }}
-            </div>
-            }
-          </div>
-        </div>
-        @if(!defaultFlagService.isDefault(busProvince)) {
-        <button
-          class="switch-location inline-block"
-          [ngClass]="{ 'rotate-180': isRotated }"
-          (click)="toggleRotationBusStation()"
-          type="button">
-          <svg-icon svgClass="w-4 h-4 cursor-pointer" src="./assets/icons/repeat.svg"></svg-icon>
-        </button>
-        }
         <div class="drag-drop-container">
           <div class="flex w-full pb-4">
             <label class="text-muted-foreground relative w-full">
@@ -129,6 +91,49 @@
               </div>
               }
             </nz-skeleton>
+          </div>
+        </div>
+
+        @if(!defaultFlagService.isDefault(busProvince)) {
+        <button
+          class="switch-location inline-block"
+          [ngClass]="{ 'rotate-180': isRotated }"
+          (click)="toggleRotationBusStation()"
+          type="button">
+          <svg-icon svgClass="w-4 h-4 cursor-pointer" src="./assets/icons/repeat.svg"></svg-icon>
+        </button>
+        }
+        <div class="drag-drop-container">
+          <div class="flex w-full pb-4">
+            <label class="text-muted-foreground relative w-full">
+              <div class="absolute left-2.5 top-2.5">
+                <svg-icon src="./assets/icons/heroicons/outline/magnifying-glass.svg" [svgClass]="'h-4 w-4'">
+                </svg-icon>
+              </div>
+              <input
+                class="text-muted-foreground w-full py-2 pl-8 pr-2 text-sm"
+                placeholder="Search Bus Stations"
+                type="text"
+                (keyup)="searchBusProvinceStations($event)" />
+            </label>
+          </div>
+          <div
+            cdkDropList
+            #list1="cdkDropList"
+            [cdkDropListData]="filteredBusProvinceStations"
+            [cdkDropListConnectedTo]="[list2]"
+            [cdkDropListDisabled]="defaultFlagService.isDefault(busProvince)"
+            class="drag-drop-list"
+            (cdkDropListDropped)="drop($event)">
+            @for (item of filteredBusProvinceStations; track item) {
+            <div
+              class="drag-drop-box"
+              (click)="toggleBusStation(item, true)"
+              cdkDrag
+              [ngClass]="{ 'drag-drop-box-selected': isStationSelected(item, true) }">
+              {{ item.name }} {{ defaultFlagService.defaultTextFlag(item) }}
+            </div>
+            }
           </div>
         </div>
       </diV>

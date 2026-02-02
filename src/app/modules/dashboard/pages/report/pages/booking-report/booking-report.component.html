@@ -1,0 +1,205 @@
+<div class="flex flex-col items-center justify-between pt-6">
+  <h1 class="text-2xl font-bold text-gray-800">Báo Cáo Đặt Vé</h1>
+</div>
+<ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+
+<ng-template #contentTemplate>
+  <div class="py-6">
+    <!-- Report Header -->
+    <app-report-header
+      [filterForm]="filterForm"
+      [dateRangeType]="dateRangeType"
+      [comparisonMode]="comparisonMode"
+      (dateRangeTypeChange)="setDateRangeType($event)"
+      (comparisonModeChange)="toggleComparisonMode()"
+      (exportReport)="exportReport($event)"
+      (reload)="handleReload()"></app-report-header>
+
+    <!-- Additional Filters -->
+
+    <div class="mb-6 grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <app-booking-stats-card
+        class="flex"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"></app-booking-stats-card>
+      <app-revenue-booking-stats-card
+        class="flex"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"></app-revenue-booking-stats-card>
+
+      <div class="col-span-2 flex h-full flex-col rounded-lg bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+        <h3 class="mb-3 text-base font-semibold text-gray-700">Bộ Lọc Nâng Cao</h3>
+        <form [formGroup]="filterForm" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <!-- Bus Route -->
+          <nz-form-item class="!mb-0 !flex !w-full">
+            <nz-form-label nzFor="busRouteId" class="!flex !items-center !justify-start">Tuyến đường</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="busRouteId"
+                class="custom-nz-select !w-full"
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Chọn tuyến đường">
+                @for (busRoute of busRoutes; track busRoute._id) {
+                <nz-option [nzValue]="busRoute._id" [nzLabel]="busRoute.name"></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <!-- Status -->
+
+          <nz-form-item class="!mb-0 !flex !w-full">
+            <nz-form-label nzFor="status" class="!flex !items-center !justify-start">Trạng thái</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="status"
+                class="custom-nz-select !w-full"
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Chọn trạng thái">
+                @for (status of getBookingStatuses(); track status.value) {
+                <nz-option [nzValue]="status.value" [nzLabel]="status.label"></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <app-booking-chart
+        [dateRangeType]="dateRangeType"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"
+        (ondDataLoaded)="ondDataLoadedBookingChart($event)"
+        [isViewDetail]="false"></app-booking-chart>
+    </div>
+
+    <div class="mb-6">
+      <!-- Revenue Chart -->
+      <app-revenue-booking
+        [dateRangeType]="dateRangeType"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"
+        (ondDataLoaded)="ondDataLoadedRevenueChart($event)"
+        [isViewDetail]="false"></app-revenue-booking>
+    </div>
+
+    <!-- Results Tables -->
+    @if(comparisonMode && comparisonChartDetails.length > 0) {
+    <!-- Comparison Mode: 2 Summary Tables Side by Side -->
+    <div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+      <!-- Main Period Summary Table -->
+      <div class="rounded-lg bg-white p-4 shadow-sm">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-base font-semibold text-gray-700">Kỳ Chính</h3>
+        </div>
+        <ng-container
+          *ngTemplateOutlet="
+            summaryTableTemplate;
+            context: { $implicit: chartDetails, total: { tickets: totalTickets, revenue: totalRevenue } }
+          "></ng-container>
+      </div>
+
+      <!-- Comparison Period Summary Table -->
+      <div class="rounded-lg bg-white p-4 shadow-sm">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-base font-semibold text-gray-700">Kỳ So Sánh</h3>
+        </div>
+        <ng-container
+          *ngTemplateOutlet="
+            summaryTableTemplate;
+            context: {
+              $implicit: comparisonChartDetails,
+              total: { tickets: comparisonTickets, revenue: comparisonRevenue }
+            }
+          "></ng-container>
+      </div>
+    </div>
+    } @else {
+    <!-- Normal Mode: Single Summary Table -->
+    <div class="rounded-lg bg-white p-4 shadow-sm">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-700">Kết Quả</h2>
+      </div>
+      <ng-container
+        *ngTemplateOutlet="
+          summaryTableTemplate;
+          context: { $implicit: chartDetails, total: { tickets: totalTickets, revenue: totalRevenue } }
+        "></ng-container>
+    </div>
+    }
+  </div>
+</ng-template>
+
+<!-- Reusable Summary Table Template -->
+<ng-template #summaryTableTemplate let-data let-total="total">
+  <div class="overflow-x-auto">
+    <nz-table
+      [nzData]="data"
+      [nzLoading]="isLoading"
+      [nzFrontPagination]="false"
+      [nzShowPagination]="false"
+      [nzTemplateMode]="true"
+      [nzSize]="'small'"
+      class="!w-full">
+      <thead>
+        <tr>
+          <th class="min-w-[150px]">Thời gian</th>
+          <th class="min-w-[100px] text-center">Số vé</th>
+          <th class="min-w-[150px] text-right">Doanh thu</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (data.length === 0 && !isLoading) {
+        <tr>
+          <td colspan="3" class="py-8 text-center">
+            <div class="flex flex-col items-center justify-center text-gray-400">
+              <span nz-icon nzType="inbox" nzTheme="outline" class="mb-2 text-4xl"></span>
+              <p>Không có dữ liệu</p>
+            </div>
+          </td>
+        </tr>
+        } @for (item of data; track item.label) {
+        <tr class="hover:bg-gray-50">
+          <td>
+            <span class="font-medium text-gray-800">{{ item.label }}</span>
+          </td>
+          <td class="text-center">
+            <span class="font-medium text-blue-600">{{ item.tickets }}</span>
+          </td>
+          <td class="text-right">
+            <span class="font-medium text-green-600">{{ utils.formatPriceToVND(item.revenue) }}</span>
+          </td>
+        </tr>
+        } @if (data.length > 0) {
+        <tr class="bg-gray-100 font-bold">
+          <td>
+            <span class="text-gray-900">Tổng</span>
+          </td>
+          <td class="text-center">
+            <span class="text-blue-600">{{ total.tickets }}</span>
+          </td>
+          <td class="text-right">
+            <span class="text-green-700">{{ utils.formatPriceToVND(total.revenue) }}</span>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </nz-table>
+  </div>
+</ng-template>

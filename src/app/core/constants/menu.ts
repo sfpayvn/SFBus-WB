@@ -17,16 +17,7 @@ export class Menu {
           ],
         },
         {
-          icon: 'assets/icons/heroicons/outline/exclamation-triangle.svg',
-          label: 'Errors',
-          route: '/errors',
-          children: [
-            { label: '404', route: '/errors/404' },
-            { label: '500', route: '/errors/500' },
-          ],
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/heroicons/outline/users.svg',
           label: 'Users Management',
           route: '/management/users-management',
           moduleKey: MODULE_KEYS.USERS_MANAGEMENT,
@@ -51,7 +42,7 @@ export class Menu {
               route: '/management/users-management/tenant-operator',
               moduleKey: MODULE_KEYS.USER_TENANT_OPERATOR,
             },
-             {
+            {
               label: 'Tenant',
               route: '/management/users-management/tenant',
               moduleKey: MODULE_KEYS.USER_TENANT,
@@ -59,7 +50,7 @@ export class Menu {
           ],
         },
         {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/heroicons/outline/media.svg',
           label: 'Media Center',
           route: '/management/files-center-management',
           moduleKey: MODULE_KEYS.FILES_CENTER_MANAGEMENT,
@@ -79,19 +70,17 @@ export class Menu {
           ],
         },
         {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/heroicons/outline/truck.svg',
           label: 'Bus Management',
           route: '/management/bus-management',
           moduleKey: MODULE_KEYS.BUS_MANAGEMENT,
           children: [
             {
-              icon: 'assets/icons/heroicons/outline/cube.svg',
               label: 'Buses',
               route: '/management/bus-management/buses',
               moduleKey: MODULE_KEYS.BUSES,
             },
             {
-              icon: 'assets/icons/heroicons/outline/cube.svg',
               label: 'Bus Schedule',
               route: '/management/bus-management/bus-schedule',
               moduleKey: MODULE_KEYS.BUS_SCHEDULE,
@@ -102,19 +91,18 @@ export class Menu {
                   moduleKey: MODULE_KEYS.BUS_SCHEDULE_CALENDAR,
                 },
                 {
-                  label: 'Bus Scheduler',
+                  label: 'Bus Schedules',
                   route: '/management/bus-management/bus-schedule/bus-schedules/scheduler',
                   moduleKey: MODULE_KEYS.BUS_SCHEDULE,
                 },
                 {
-                  label: 'Bus Scheduler Auto',
+                  label: 'Bus Schedules Auto',
                   route: '/management/bus-management/bus-schedule/bus-schedule-autogenerators',
                   moduleKey: MODULE_KEYS.BUS_SCHEDULE_AUTOGENERATORS,
                 },
               ],
             },
             {
-              icon: 'assets/icons/heroicons/outline/cube.svg',
               label: 'Bus Design',
               route: '/management/bus-management/bus-design',
               moduleKey: MODULE_KEYS.BUS_DESIGN,
@@ -142,7 +130,6 @@ export class Menu {
               ],
             },
             {
-              icon: 'assets/icons/heroicons/outline/cube.svg',
               label: 'Bus Settings',
               route: '/management/bus-management/bus-setting',
               moduleKey: MODULE_KEYS.BUS_SETTING,
@@ -177,19 +164,19 @@ export class Menu {
           ],
         },
         {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/heroicons/outline/gift.svg',
           label: 'Promotion Management',
           route: '/management/promotion-management/promotion',
           moduleKey: MODULE_KEYS.PROMOTION_MANAGEMENT,
         },
         {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/heroicons/outline/ticket.svg',
           label: 'Booking Management',
           route: '/management/booking-management/booking',
           moduleKey: MODULE_KEYS.BOOKING_MANAGEMENT,
         },
         {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/heroicons/outline/payment.svg',
           label: 'Payment Management',
           route: '/management/payment-management',
           moduleKey: MODULE_KEYS.PAYMENT_MANAGEMENT,
@@ -202,7 +189,7 @@ export class Menu {
           ],
         },
         {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/heroicons/outline/building.svg',
           label: 'Tenant Management',
           route: '/management/tenant-management/tenant',
           moduleKey: MODULE_KEYS.TENANT_MANAGEMENT,
@@ -212,6 +199,30 @@ export class Menu {
           label: 'Subscription Management',
           route: '/management/subscription-management/subscription',
           moduleKey: MODULE_KEYS.SUBSCRIPTION_MANAGEMENT,
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/bell-snooze.svg',
+          label: 'Notification Management',
+          route: '/management/notification-management/notification-schedule',
+          moduleKey: MODULE_KEYS.NOTIFICATION_MANAGEMENT,
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/photo.svg',
+          label: 'Content Management',
+          route: '/management/content-management/content',
+          moduleKey: MODULE_KEYS.CONTENT_MANAGEMENT,
+          children: [
+            {
+              label: 'Layouts',
+              route: '/management/content-management/content-layout',
+              moduleKey: MODULE_KEYS.CONTENT_LAYOUTS,
+            },
+            {
+              label: 'Widget',
+              route: '/management/content-management/widget-block',
+              moduleKey: MODULE_KEYS.CONTENT_WIDGETS_BLOCK,
+            },
+          ],
         },
       ],
     },
@@ -228,7 +239,7 @@ export class Menu {
           children: [
             { label: 'Theme setting', route: '/settings/theme-setting', moduleKey: MODULE_KEYS.THEME_SETTINGS },
             {
-              label: 'Bus Schedule Setting',
+              label: 'Bus schedule setting',
               route: '/settings/bus-schedule-setting',
               moduleKey: MODULE_KEYS.BUS_SCHEDULE_SETTINGS,
             },

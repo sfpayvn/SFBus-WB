@@ -39,6 +39,7 @@ export class BusSchedule {
   busScheduleNumber: string = '';
   name: string = '';
   busId: string = '';
+  currentStationId: string = '';
   bus: Bus | undefined;
   busTemplateId: string = '';
   busTemplate: BusTemplate | undefined;

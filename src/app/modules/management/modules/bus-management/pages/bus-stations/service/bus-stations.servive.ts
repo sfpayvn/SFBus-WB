@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { BusStation2Create, BusStation2Update } from '../model/bus-station.model';
+import { FilesService } from '@rsApp/modules/management/modules/files-center-management/service/files-center.servive';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { BusStation2Create, BusStation2Update } from '../model/bus-station.model
 export class BusStationsService {
   url = '/admin/bus-station';
 
-  constructor(private apiGatewayService: ApiGatewayService) {}
+  constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
 
   findAll(skipLoadding?: boolean) {
     const url = `${this.url}/find-all`;
@@ -37,10 +38,43 @@ export class BusStationsService {
     return this.apiGatewayService.post(url, searchParams, { skipLoading: true }).pipe(tap((res: any) => {}));
   }
 
-  createBusStation(busService2Create: BusStation2Create) {
+  processCreateBusStation(busStationImageFile: FileList, busStation2Create: BusStation2Create) {
+    const url = this.url;
+    // Kiểm tra nếu có file trong FileList
+    if (busStationImageFile.length > 0) {
+      return this.filesService.uploadFiles(busStationImageFile).pipe(
+        switchMap((res: any) => {
+          // Gắn các liên kết trả về từ uploadFiles
+          busStation2Create.imageId = res[0]._id;
+          return this.createBusStation(busStation2Create);
+        }),
+      );
+    } else {
+      // Nếu không có file, chỉ gọi post trực tiếp
+      return this.createBusStation(busStation2Create);
+    }
+  }
+
+  createBusStation(busStation2Create: BusStation2Create) {
     const url = this.url;
 
-    return this.apiGatewayService.post(url, busService2Create).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.post(url, busStation2Create).pipe(tap((res: any) => {}));
+  }
+
+  processUpdateBusStation(busStationImageFile: FileList, busStation2Update: BusStation2Update) {
+    // Kiểm tra nếu có file trong FileList
+    if (busStationImageFile.length > 0) {
+      return this.filesService.uploadFiles(busStationImageFile).pipe(
+        switchMap((res: any) => {
+          // Gắn các liên kết trả về từ uploadFiles
+          busStation2Update.imageId = res[0]._id;
+          return this.updateBusStation(busStation2Update);
+        }),
+      );
+    } else {
+      // Nếu không có file, chỉ gọi post trực tiếp
+      return this.updateBusStation(busStation2Update);
+    }
   }
 
   updateBusStation(busStation2Update: BusStation2Update) {

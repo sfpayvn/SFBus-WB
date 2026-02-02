@@ -238,16 +238,7 @@ export class FilesComponent implements OnInit {
 
   zoomFile($event: any, file: FileDto): void {
     $event.stopPropagation();
-    const dialogRef = this.dialog.open(ViewImageDialogComponent, {
-      height: 'max-content',
-      width: 'max-content',
-      maxWidth: 'max-content',
-      panelClass: 'custom-dialog-view-image',
-      backdropClass: 'custom-back-drop-view-image',
-      data: {
-        file: file,
-      },
-    });
+    this.utilsModal.viewImage(event, file.link);
   }
 
   uploadFile(files2Upload: FileList): void {

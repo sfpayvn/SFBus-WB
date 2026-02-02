@@ -31,6 +31,12 @@ const routes: Routes = [
     component: UsersComponent,
   },
   {
+    path: 'seller',
+    canActivate: [ModuleBlockGuard, RoleAccessGuard],
+    data: { moduleKey: MODULE_KEYS.USER_SELLER },
+    component: UsersComponent,
+  },
+  {
     path: 'tenant',
     canActivate: [ModuleBlockGuard, RoleAccessGuard],
     data: { moduleKey: MODULE_KEYS.USER_TENANT },

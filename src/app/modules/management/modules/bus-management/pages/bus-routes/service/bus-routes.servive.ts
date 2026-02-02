@@ -11,9 +11,9 @@ export class BusRoutesService {
 
   constructor(private apiGatewayService: ApiGatewayService) {}
 
-  findAll() {
+  findAll(skipLoading: boolean = false) {
     const url = `${this.url}/find-all`;
-    return this.apiGatewayService.get(url).pipe(tap((res: any) => {}));
+    return this.apiGatewayService.get(url, null, { skipLoading }).pipe(tap((res: any) => {}));
   }
 
   searchBusRoute(

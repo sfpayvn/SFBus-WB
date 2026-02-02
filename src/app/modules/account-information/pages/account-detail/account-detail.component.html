@@ -1,0 +1,37 @@
+<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
+      (click)="backPage()">
+      Quay lại
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+  <div class="flex w-full items-center justify-between pb-4">
+    <label class="text-base font-medium"> Tài khoản của tôi </label>
+  </div>
+
+  @if (isLoaded) {
+  <nz-tabset nzType="card">
+    <nz-tab nzTitle="Thông tin cơ bản">
+      <app-account-info [user]="accountInformation"></app-account-info>
+    </nz-tab>
+
+    <nz-tab nzTitle="Thuê bao của tôi">
+      <app-my-tenant-subscription #tenantSubscriptionList class="w-full"> </app-my-tenant-subscription>
+    </nz-tab>
+
+    <nz-tab nzTitle="Thay đổi mật khẩu">
+      <app-account-password></app-account-password>
+    </nz-tab>
+  </nz-tabset>
+
+  } @else {
+  <div class="flex items-center justify-center py-12">
+    <div class="text-gray-500">Đang tải...</div>
+  </div>
+  }
+</div>

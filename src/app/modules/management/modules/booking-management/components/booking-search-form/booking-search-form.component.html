@@ -1,181 +1,147 @@
-<div class="search-form m-2x">
-  @if (bookingSearchForm) {
-  <form nz-form [formGroup]="bookingSearchForm" (ngSubmit)="onSubmit()">
-    <div class="flex items-center justify-end gap-2" (click)="resetFilter()">
-      <label class="text-primary cursor-pointer font-semibold">Bỏ lọc</label>
-      <ion-icon class="text-primary cursor-pointer font-semibold" name="refresh-outline"></ion-icon>
-    </div>
-    <div class="flex gap-4 pb-4">
-      <div class="flex w-5/12 flex-col gap-2">
-        <div class="mb-0 flex h-full w-full flex-col" id="chooseBusRoute">
-          <label class="m-0 flex min-h-[32px] items-center justify-start p-0 text-base font-semibold">
-            Thông tin tuyến xe
-          </label>
-          <div
-            (click)="chooseBusRoute($event)"
-            class="flex h-full w-full cursor-pointer justify-between rounded border border-gray-300 px-4 py-2">
-            @if (busRoute || busSchedule) {
-            <div class="flex w-5/12 flex-col gap-2 text-left">
-              @if (busRoute) {
-              <span>
-                {{ busRoute.name }}
-              </span>
-              } @if (busSchedule) {
-              <span>
-                {{ busSchedule.bus?.name || 'Chưa có xe' }}
-              </span>
-              }
-            </div>
-            <div class="flex w-5/12 flex-col gap-2 text-right">
-              @if (busSchedule) {
-              <span> {{ formatTime(busSchedule.startDate) }} - {{ formatDate(busSchedule.startDate) }} </span>
-              <span> {{ formatTime(busSchedule.endDate) }} - {{ formatDate(busSchedule.endDate) }} </span>
-              }
-            </div>
-            <div class="flex w-auto justify-end">
-              @if (busRoute || busSchedule) {
+<ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+
+<ng-template #contentTemplate>
+  <div class="border-muted/20 bg-background mb-4 flex min-w-full flex-col rounded-sm border p-4">
+    @if (bookingSearchForm) {
+    <form nz-form [formGroup]="bookingSearchForm" (ngSubmit)="onSubmit()">
+      <!-- Horizontal Layout: All fields in one row -->
+      <div class="flex flex-wrap items-end gap-3">
+        <!-- Bus Route (dependent on selected station) -->
+        <div class="flex min-w-[200px] flex-1 flex-col gap-1">
+          <label class="text-xs font-medium">Tuyến xe</label>
+          <nz-select
+            [nzSuffixIcon]="busRouteNzSuffixIcon"
+            class="custom-nz-select w-full"
+            formControlName="busRouteId"
+            nzPlaceHolder="Chọn tuyến">
+            <nz-option *ngFor="let route of busRoutes" [nzValue]="route._id" [nzLabel]="route.name"></nz-option>
+            <ng-template #busRouteNzSuffixIcon>
+              @if (bookingSearchForm.controls["busRouteId"].value) {
               <span
                 nz-icon
                 class="ant-input-clear-icon"
                 nzTheme="fill"
                 nzType="close-circle"
-                (click)="clearBusRoute($event)"></span>
+                (click)="clearFormValue('busRouteId')"></span>
               }
-            </div>
-            } @else {
-            <label class="line-clamp-1 block w-full cursor-pointer text-base font-semibold"> Chọn tuyến xe </label>
+            </ng-template>
+          </nz-select>
+        </div>
+
+        <!-- Start Time -->
+        <div class="flex min-w-[180px] flex-1 flex-col gap-1">
+          <label class="text-xs font-medium">Từ</label>
+          <nz-date-picker
+            class="w-full"
+            [nzDisabledDate]="checkDisableDateTime(0)"
+            [nzDisabledTime]="checkDisableDateTime(0).nzDisabledTime"
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm"
+            [nzMode]="'date'"
+            formControlName="startTimeScheduleValue"
+            nzPlaceHolder="Start"
+            (nzOnOpenChange)="handleStartOpenChange($event)"></nz-date-picker>
+        </div>
+
+        <!-- End Time -->
+        <div class="flex min-w-[180px] flex-1 flex-col gap-1">
+          <label class="text-xs font-medium">Đến</label>
+          <nz-date-picker
+            class="w-full"
+            #endDatePicker
+            [nzDisabledDate]="checkDisableDateTime(1)"
+            [nzDisabledTime]="checkDisableDateTime(1).nzDisabledTime"
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm"
+            [nzMode]="'date'"
+            formControlName="endTimeScheduleValue"
+            nzPlaceHolder="End"
+            (nzOnOpenChange)="handleEndOpenChange($event)"></nz-date-picker>
+        </div>
+
+        <!-- Search -->
+        <div class="flex min-w-[180px] flex-1 flex-col gap-1">
+          <label class="text-xs font-medium">Tìm kiếm</label>
+          <nz-input-group [nzSuffix]="bookingFormKeywordClearTpl" class="custom-nz-input-group">
+            <input type="text" nz-input formControlName="keyword" placeholder="Tìm kiếm" class="!rounded-md" />
+          </nz-input-group>
+          <ng-template #bookingFormKeywordClearTpl>
+            @if (bookingSearchForm.controls["keyword"].value) {
+            <span
+              nz-icon
+              class="ant-input-clear-icon"
+              nzTheme="fill"
+              nzType="close-circle"
+              (click)="clearFormValue('keyword')"></span>
             }
-          </div>
+          </ng-template>
         </div>
-      </div>
-      <div class="flex w-7/12 flex-col gap-2">
-        <div class="flex gap-2">
-          <div class="flex w-7/12 flex-col">
-            <nz-form-item class="!mb-0 !w-full !flex-col">
-              <nz-form-label
-                nzFor="timeSchedule"
-                class="!m-0 !flex !items-center !justify-start !p-0 !text-base !font-semibold"
-                >Thời gian</nz-form-label
-              >
-              <div class="flex w-full flex-row gap-2">
-                <nz-date-picker
-                  class="w-full"
-                  [nzDisabledDate]="checkDisableDateTime(0)"
-                  [nzDisabledTime]="checkDisableDateTime(0).nzDisabledTime"
-                  nzShowTime
-                  nzFormat="yyyy-MM-dd HH:mm"
-                  [nzMode]="'date'"
-                  formControlName="startTimeScheduleValue"
-                  nzPlaceHolder="Start"
-                  (ngModelChange)="timeScheduleChange($event)"
-                  (nzOnOpenChange)="handleStartOpenChange($event)"></nz-date-picker>
-                <nz-date-picker
-                  class="w-full"
-                  #endDatePicker
-                  [nzDisabledDate]="checkDisableDateTime(1)"
-                  [nzDisabledTime]="checkDisableDateTime(1).nzDisabledTime"
-                  nzShowTime
-                  nzFormat="yyyy-MM-dd HH:mm"
-                  [nzMode]="'date'"
-                  formControlName="endTimeScheduleValue"
-                  nzPlaceHolder="End"
-                  (ngModelChange)="timeScheduleChange($event)"
-                  (nzOnOpenChange)="handleEndOpenChange($event)"></nz-date-picker>
+        <button
+          class="h-10 cursor-pointer rounded-sm border border-gray-300 bg-white px-2 text-sm font-medium text-white transition duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          type="button"
+          (click)="resetFilter()">
+          <svg-icon [src]="'assets/icons/heroicons/outline/refresh.svg'" [svgClass]="'!h-4 !w-4'"></svg-icon>
+        </button>
+        <!-- Sort tooltip using ng-zorro tooltip with template content -->
+        <button
+          type="button"
+          class="ml-2 h-10 cursor-pointer rounded-sm border border-gray-300 bg-white px-2 text-sm font-medium text-white transition duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          nz-tooltip
+          [nzTooltipTitle]="sortTpl"
+          [nzTooltipOverlayClassName]="'sort-tooltip-panel'"
+          nzTooltipTrigger="click"
+          nzTooltipPlacement="bottomRight">
+          <svg-icon
+            [src]="'assets/icons/heroicons/outline/adjustments-horizontal.svg'"
+            [svgClass]="'!h-4 !w-4'"></svg-icon>
+        </button>
+        <ng-template #sortTpl>
+          <div class="sort-tooltip-content w-full p-1">
+            <div class="mb-2">Sắp xếp theo</div>
+            <div class="mb-2 max-h-[250px] overflow-auto">
+              <div class="flex flex-col">
+                <nz-radio-group formControlName="sortKey" class="!flex !flex-col gap-2">
+                  <label *ngFor="let col of sortOptions; let i = index" nz-radio [nzValue]="col.key" class="mb-1">{{
+                    col.label
+                  }}</label>
+                </nz-radio-group>
               </div>
-            </nz-form-item>
+            </div>
+            <div class="mb-2 flex items-center gap-2">
+              <button
+                nz-button
+                (click)="setSortOrder('ascend')"
+                [ngClass]="{
+                    '!border-primary !text-primary focus:!text-primary': bookingSearchForm.get('sortOrder')?.value === 'ascend',
+                    '!text-muted-foreground !border-gray-300': bookingSearchForm.get('sortOrder')?.value !== 'ascend',
+                  }"
+                class="hover:!text-primary relative !h-12 cursor-pointer rounded-sm border !px-4 !py-2.5 uppercase transition-opacity">
+                Tăng dần
+              </button>
+              <button
+                nz-button
+                (click)="setSortOrder('descend')"
+                [ngClass]="{
+                    '!border-primary !text-primary focus:!text-primary': bookingSearchForm.get('sortOrder')?.value === 'descend',
+                    '!text-muted-foreground !border-gray-300': bookingSearchForm.get('sortOrder')?.value !== 'descend',
+                  }"
+                class="hover:!text-primary relative !h-12 cursor-pointer rounded-sm border !px-4 !py-2.5 uppercase transition-opacity">
+                Giảm dần
+              </button>
+            </div>
           </div>
-          <div class="flex w-5/12 flex-col">
-            <nz-form-item class="!mb-0 !w-full !flex-col">
-              <nz-form-label
-                nzFor="busRouteId"
-                class="!m-0 !flex !items-center !justify-start !p-0 !text-base !font-semibold"
-                >Tình trạng</nz-form-label
-              >
-              <nz-form-control>
-                <nz-select
-                  class="custom-nz-select height-large !mt-0 !mb-0 !h-[42px] 
-            custom-nz-select-booking-status-{{ bookingSearchForm.get('status')?.value }}"
-                  formControlName="status"
-                  nzPlaceHolder="Chọn tình trạng"
-                  (ngModelChange)="chooseStatus($event)"
-                  [nzAllowClear]="true">
-                  @for (status of statuses; track status) {
-                  <nz-option nzCustomContent [nzLabel]="status.label" [nzValue]="status.value">
-                    <div class="flex items-center">
-                      <span class="!font-medium">
-                        {{ status.label }}
-                      </span>
-                    </div>
-                  </nz-option>
-                  }
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-        <div class="flex gap-2">
-          <div class="flex w-full">
-            <nz-form-item class="!mb-0 !flex !w-full !flex-col">
-              <nz-form-label
-                [nzNoColon]="true"
-                nzFor="phoneNumber"
-                class="!flex !items-center !justify-start !font-medium"
-                >Số điện thoại</nz-form-label
-              >
-              <nz-form-control class="nz-form-control-required !flex flex-col">
-                <nz-input-group
-                  [nzSuffix]="bookingFormPhoneNumberClearTpl"
-                  class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
-                  <input type="text" nz-input formControlName="phoneNumber" placeholder="Nhập số điện thoại" />
-                </nz-input-group>
-                <ng-template #bookingFormPhoneNumberClearTpl>
-                  @if (bookingSearchForm.controls['phoneNumber'].value) {
-                  <span
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    (click)="clearFormValue('phoneNumber')"></span>
-                  }
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-          <div class="flex w-full">
-            <nz-form-item class="!mb-0 !flex !w-full !flex-col">
-              <nz-form-label [nzNoColon]="true" nzFor="keyword" class="!flex !items-center !justify-start !font-medium"
-                >Tìm kiếm</nz-form-label
-              >
-              <nz-form-control class="nz-form-control-required !flex flex-col">
-                <nz-input-group
-                  [nzSuffix]="bookingFormKeywordClearTpl"
-                  class="custom-nz-input-group !mt-0 !mb-0 !rounded border-gray-200">
-                  <input type="text" nz-input formControlName="keyword" placeholder="Tìm kiếm" />
-                </nz-input-group>
-                <ng-template #bookingFormKeywordClearTpl>
-                  @if (bookingSearchForm.controls['keyword'].value) {
-                  <span
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    (click)="clearFormValue('keyword')"></span>
-                  }
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
+        </ng-template>
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="!bookingSearchForm.valid || !isLoaded"
+          nz-button
+          class="!bg-primary !h-full cursor-pointer !rounded-md !px-4 !py-2 font-medium !text-white hover:!text-white focus:!text-white"
+          aria-label="Add Booking">
+          Tìm kiếm
+        </button>
       </div>
-    </div>
-    <div class="relative flex w-full justify-center">
-      <button
-        type="submit"
-        [disabled]="!bookingSearchForm.valid || !isLoaded"
-        class="bg-primary absolute z-10 h-12 cursor-pointer rounded-full px-20 text-base font-semibold !text-white transition duration-200">
-        Tìm Kiếm
-      </button>
-    </div>
-  </form>
-  }
-</div>
+    </form>
+    }
+  </div>
+</ng-template>

@@ -7,6 +7,7 @@ import { SeatTypesDetailDialogComponent } from './component/seat-types-detail-di
 import { SeatTypesService } from './service/seat-types.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 @Component({
   selector: 'app-seat-types',
@@ -41,6 +42,7 @@ export class SeatTypesComponent implements OnInit {
     private seatTypesService: SeatTypesService,
     private dialog: MatDialog,
     private utils: Utils,
+    private utilsModal: UtilsModal,
     public defaultFlagService: DefaultFlagService,
   ) {}
 
@@ -229,5 +231,10 @@ export class SeatTypesComponent implements OnInit {
       sortBy,
     };
     this.loadData();
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
   }
 }

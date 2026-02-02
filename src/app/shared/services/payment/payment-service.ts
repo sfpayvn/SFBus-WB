@@ -9,7 +9,7 @@ import { catchError, map, of, skip, tap } from 'rxjs';
 export class PaymentService {
   constructor(private apiGatewayService: ApiGatewayService) {}
 
-  url = '/pos/payment';
+  url = '/admin/payment';
 
   findAll(skipLoading: boolean = false) {
     const url = `${this.url}/find-all`;

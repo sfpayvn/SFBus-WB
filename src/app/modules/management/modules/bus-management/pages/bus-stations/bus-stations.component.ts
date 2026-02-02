@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
-import { BusStation, BusStation2Create, SearchBusStation } from './model/bus-station.model';
+import { BusStation, BusStation2Create, BusStation2Update, SearchBusStation } from './model/bus-station.model';
 import { BusStationDetailDialogComponent } from './component/bus-station-detail-dialog/bus-station-detail-dialog.component';
 import { BusStationsService } from './service/bus-stations.servive';
 import { BusProvince } from '../bus-provices/model/bus-province.model';
 import { BusProvincesService } from '../bus-provices/service/bus-provinces.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 
 @Component({
   selector: 'app-bus-stations',
@@ -44,6 +45,7 @@ export class BusStationsComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     public defaultFlagService: DefaultFlagService,
+    private utilsModal: UtilsModal,
   ) {}
 
   ngOnInit(): void {
@@ -156,8 +158,17 @@ export class BusStationsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        const busStation2UpdateFormDetail = result.busStation;
+
+        const busStation2Update: BusStation2Update = {
+          ...busStation,
+          ...busStation2UpdateFormDetail,
+        };
+
+        const busStationImageFile: FileList = result.files;
+
         try {
-          this.busStationsService.updateBusStation(result).subscribe({
+          this.busStationsService.processUpdateBusStation(busStationImageFile, busStation2Update).subscribe({
             next: (res: BusStation) => {
               if (res) {
                 this.searchBusStation.busStations = this.searchBusStation.busStations.map((busStation: BusStation) =>
@@ -184,11 +195,16 @@ export class BusStationsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const busStation2Create = new BusStation2Create();
-        busStation2Create.name = result.name;
+        const busStation2CreateFormDetail = result.busStation;
+
+        const busStation2Create: BusStation2Create = {
+          ...busStation2CreateFormDetail,
+        };
+
+        const busStationImageFile: FileList = result.files;
 
         try {
-          this.busStationsService.createBusStation(busStation2Create).subscribe({
+          this.busStationsService.processCreateBusStation(busStationImageFile, busStation2Create).subscribe({
             next: (res: BusStation) => {
               if (res) {
                 this.loadData();
@@ -242,5 +258,10 @@ export class BusStationsComponent implements OnInit {
       sortBy,
     };
     this.loadData();
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
   }
 }

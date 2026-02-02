@@ -18,6 +18,7 @@ import { TableFooterComponent } from './components/table-footer/table-footer.com
 import { TableHeaderComponent } from './components/table-header/table-header.component';
 import { TriggerMaskComponent } from './components/trigger-mask/trigger-mask.component';
 import { TriggerModalComponent } from './components/trigger-modal/trigger-modal.component';
+import { AuthorizedDirective } from "@rsApp/core/directives/authorized.directive";
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { TriggerModalComponent } from './components/trigger-modal/trigger-modal.
     ClickOutsideDirective,
     CapCheckDirective,
     NgxMaskDirective,
-  ],
+    AuthorizedDirective
+],
   exports: [
     CommonModule,
     AngularSvgIconModule,

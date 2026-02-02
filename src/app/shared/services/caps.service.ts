@@ -85,7 +85,7 @@ export class CapsService {
   // ===== helpers cho UI =====
   visible(moduleKey: string, functionKey?: string | null): boolean {
     const cur = this.subject.value;
-    if (!cur) return true;
+    if (!cur) return false;
     const found = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
     return found ? true : cur.defaultAction === 'allow';
   }
@@ -94,7 +94,7 @@ export class CapsService {
     const cur = this.subject.value;
     if (!cur) return false;
     const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
-    if (!it) return cur.defaultAction !== 'allow';
+    if (!it) return false;
     if (it.type === 'unlimited') return false;
     return (it.remaining ?? 0) <= 0;
   }
@@ -113,7 +113,7 @@ export class CapsService {
   isBlocked(moduleKey: string, functionKey?: string | null): boolean {
     const cur = this.subject.value;
     // Nếu chưa load caps (chưa bootstrap) thì return false (không block, cho phép)
-    if (!cur) return false;
+    if (!cur) return true;
 
     const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
     return it ? (it as any).type === 'block' : false;

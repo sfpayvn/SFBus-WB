@@ -1,0 +1,127 @@
+<div *ngIf="showHeader" class="mt-2">
+  <app-table-action
+    *ngIf="true"
+    [title]="tableActionTitle"
+    [totalItem]="totalItem"
+    (sortDataEvent)="sortDataEvent.emit($event)"
+    (searchDataEvent)="searchDataEvent.emit($event)"></app-table-action>
+</div>
+<div class="data-table-wrapper draggable-scroll overflow-x-auto" #dataTableWrapper (scroll)="onScroll()">
+  <nz-table
+    [nzData]="rows"
+    [nzLoading]="!isLoaded"
+    class="!w-full"
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+    [style.min-width.px]="totalTableWidth"
+    [nzShowPagination]="false">
+    <thead>
+      <tr>
+        <!-- selection header (nz-checkbox style) -->
+        <th
+          class="select-col sticky bg-white"
+          [style.left.px]="0"
+          [style.zIndex.px]="110"
+          [style.width.px]="32"
+          [nzChecked]="headerChecked()"
+          [nzIndeterminate]="headerIndeterminate()"
+          nzLabel="Select all"
+          (nzCheckedChange)="toggleSelectAll($event)"></th>
+        <th
+          *ngFor="let col of columns"
+          [ngClass]="{
+            sticky: col.sticky === 'left' || col.sticky === 'right',
+            'actions-cell': col.key === 'actions',
+            'left-divider-cell': col.sticky === 'left',
+          }"
+          [style.left.px]="col._left"
+          [style.right.px]="col._right"
+          [style.min-width.px]="col.widthPx"
+          [style.width.px]="col.widthPx"
+          [nzFilters]="col.filters"
+          [nzFilterFn]="getFilterFn(col)"
+          [nzSortFn]="getSortFn(col)"
+          [nzSortOrder]="col.sortOrder"
+          [nzSortDirections]="col.sortDirections || ['asc', 'desc', null]">
+          {{ col.label }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows" [ngClass]="{ '!bg-blue-200': selectedSet.has(row[rowIdKey]) }">
+        <td
+          class="select-col sticky !p-1"
+          [ngClass]="{ '!bg-blue-200': selectedSet.has(row[rowIdKey]) }"
+          [style.left.px]="0"
+          [style.zIndex.px]="100"
+          [style.width.px]="32"
+          [nzChecked]="selectedSet.has(row[rowIdKey])"
+          [nzLabel]="row[rowIdKey]"
+          (nzCheckedChange)="toggleRowSelection(row, $event)"></td>
+        <td
+          *ngFor="let col of columns"
+          class="!p-1"
+          [ngClass]="{
+            sticky: !!col.sticky,
+            'left-divider-cell': col.sticky === 'left',
+            'actions-cell': col.key === 'actions',
+            'text-right': col.key === 'actions',
+            'w-[70px]': col.key === 'actions',
+            'z-index-40': col.key === 'actions',
+            '!bg-blue-200': selectedSet.has(row[rowIdKey]),
+          }"
+          [style.left.px]="col._left"
+          [style.right.px]="col._right"
+          [style.min-width.px]="col.widthPx"
+          [style.width.px]="col.widthPx">
+          <ng-container *ngIf="col.key !== 'actions'">
+            <ng-container *ngIf="col.template; else defaultCell">
+              <ng-container *ngTemplateOutlet="col.template; context: { $implicit: row }"></ng-container>
+            </ng-container>
+            <ng-template #defaultCell>
+              <span class="inline-block whitespace-nowrap">{{
+                col.formatter ? col.formatter(row) : row[col.key]
+              }}</span>
+            </ng-template>
+          </ng-container>
+          <ng-container *ngIf="col.key === 'actions'">
+            <ng-container *ngIf="col.template; else defaultActions">
+              <ng-container *ngTemplateOutlet="col.template; context: { $implicit: row }"></ng-container>
+            </ng-container>
+            <ng-template #defaultActions>
+              <div class="flex justify-end gap-1">
+                <button
+                  (click)="editRow(row)"
+                  class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-md"
+                  aria-label="Edit">
+                  <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                    <path
+                      d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
+                  </svg>
+                </button>
+                <button
+                  (click)="deleteRow(row._id)"
+                  class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-md"
+                  aria-label="Delete">
+                  <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                    <path
+                      fill-rule="evenodd"
+                      d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </ng-template>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+<div *ngIf="showFooter" class="mt-2">
+  <app-table-footer
+    [pageIdx]="pageIdx"
+    [pageSize]="pageSize"
+    [totalItem]="totalItem"
+    [totalPage]="totalPage"
+    (reloadDataAndPageEvent)="reloadDataAndPageEvent.emit($event)"></app-table-footer>
+</div>

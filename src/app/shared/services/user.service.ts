@@ -3,11 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { ApiGatewayService } from '@rsApp/api-gateway/api-gateaway.service';
 
-export interface User {
-  id: string;
-  [key: string]: any;
-}
-
 @Injectable({
   providedIn: 'root',
 })
