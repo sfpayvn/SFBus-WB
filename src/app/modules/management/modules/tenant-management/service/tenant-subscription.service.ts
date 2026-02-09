@@ -12,6 +12,32 @@ export class TenantSubscriptionService {
 
   constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
 
+  searchMyTenantSubscription(searchParams: {
+    pageIdx: number;
+    startDate: Date | '';
+    endDate: Date | '';
+    pageSize: number;
+    keyword: string;
+    sortBy: {
+      key: string;
+      value: string;
+    };
+    filters: { key: string; value: string | string[] }[];
+  }) {
+    const url = `${this.url}/search/my-subscription`;
+    const body = {
+      pageIdx: searchParams.pageIdx,
+      startDate: searchParams.startDate,
+      endDate: searchParams.endDate,
+      pageSize: searchParams.pageSize,
+      keyword: searchParams.keyword,
+      sortBy: searchParams.sortBy,
+      filters: searchParams.filters,
+    };
+
+    return this.apiGatewayService.post(url, body, { skipLoading: true }).pipe(tap((res: any) => {}));
+  }
+
   registerForTenant(registerToSubscription: {
     tenantId: string;
     subscriptionId: string;

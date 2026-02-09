@@ -10,6 +10,8 @@ import { BookingDetailComponent } from './pages/booking-detail/booking-detail.co
 import { BookingSearchFormComponent } from './components/booking-search-form/booking-search-form.component';
 import { ChooseBusSchedule2BookingDialogComponent } from './components/choose-bus-schedule-2-booking-dialog/choose-bus-schedule-2-booking-dialog.component';
 import { ManagementSharedModule } from '../../management-share.module';
+import { AppTableColumnComponent } from '../../components/app-table/app-table-column.component';
+import { AppTableComponent } from '../../components/app-table/app-table.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +28,8 @@ import { ManagementSharedModule } from '../../management-share.module';
     ManagementSharedModule,
     FilesCenterManagementModule,
     NZModule,
+    AppTableComponent,
+    AppTableColumnComponent,
   ],
   providers: [provideNgxMask()],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

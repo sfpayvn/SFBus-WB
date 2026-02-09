@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -9,8 +9,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Utils } from '@rsApp/shared/utils/utils';
-import { UsersService } from '../../../../service/user.servive';
 import { toast } from 'ngx-sonner';
+import { UserManagementService } from '../../../../service/user.servive';
+import { ROLE_CONSTANTS } from '@rsApp/core/constants/roles.constants';
 
 @Component({
   selector: 'app-user-password',
@@ -20,6 +21,7 @@ import { toast } from 'ngx-sonner';
 })
 export class UserPasswordComponent implements OnInit {
   @Input() userId!: string;
+  @Input() userRole: string = ROLE_CONSTANTS.CLIENT;
 
   passwordForm!: FormGroup;
   initialFormValue: any;
@@ -33,7 +35,7 @@ export class UserPasswordComponent implements OnInit {
 
   passwordVisible: boolean = false;
 
-  constructor(private fb: FormBuilder, private utils: Utils, private usersService: UsersService) {}
+  constructor(private fb: FormBuilder, private utils: Utils, private userManagementService: UserManagementService) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -97,7 +99,7 @@ export class UserPasswordComponent implements OnInit {
 
     const { password } = this.passwordForm.getRawValue();
     try {
-      this.usersService.setPassword(this.userId, password).subscribe({
+      this.userManagementService.setPassword(this.userRole, this.userId, password).subscribe({
         next: (response: any) => {
           toast.success('Mật khẩu đã được cập nhật thành công');
           this.passwordForm.markAsPristine();

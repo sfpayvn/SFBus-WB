@@ -47,6 +47,19 @@ export class Utils {
     const msg = 'Oh No! Some things wrong error';
     toast.error(msg, {
       position: 'bottom-right',
+      description: error.error?.message || 'Please try again later',
+      action: {
+        label: 'Dismiss',
+        onClick: () => {},
+      },
+      actionButtonStyle: 'background-color:#DC2626; color:white;',
+    });
+  }
+
+  handleUnexpectedError(error: any): void {
+    const title = 'Oh no! Something went wrong.';
+    toast.error(title, {
+      position: 'bottom-right',
       description: error.message || 'Please try again later',
       action: {
         label: 'Dismiss',
@@ -222,7 +235,7 @@ export class Utils {
     return daysOfWeek[formattedDate.getDay()];
   }
 
-  formatPriceToVND(price: number): string {
+  formatPriceToVND(price: number | string): string {
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   }
 
@@ -312,5 +325,46 @@ export class Utils {
       hash = (hash * 31 + str.charCodeAt(i)) | 0;
     }
     return String(hash);
+  }
+
+  parseTimeHmToMilliseconds(value: string): number {
+    if (!value) return 60 * 60 * 1000; // Default: 1 hour
+
+    const trimmed = value.trim().toLowerCase();
+
+    // Match number with optional unit
+    const match = trimmed.match(/^(\d+(?:\.\d+)?)?([hm])?$/);
+    if (!match) return 60 * 60 * 1000; // Default if invalid format
+
+    const number = match[1] ? parseFloat(match[1]) : 1; // Default number is 1
+    const unit = match[2] || 'h'; // Default unit is 'h' (hours)
+
+    if (unit === 'h') {
+      return number * 60 * 60 * 1000; // Convert hours to milliseconds
+    } else if (unit === 'm') {
+      return number * 60 * 1000; // Convert minutes to milliseconds
+    }
+
+    return 60 * 60 * 1000; // Default: 1 hour
+  }
+
+  updateState(state: any) {
+    const currentState = { ...history.state, newData: state };
+    history.replaceState(currentState.newData, '', window.location.href);
+  }
+
+  addOrReplaceFilters(
+    newItem: { key: string; value: any },
+    searchParams: { filters: { key: string; value: any }[] },
+  ): void {
+    const idx = searchParams.filters.findIndex((i) => i.key === newItem.key);
+
+    if (idx > -1) {
+      // Replace existing item with same key (ignore value equality)
+      searchParams.filters[idx] = newItem;
+    } else {
+      // Add new
+      searchParams.filters.push(newItem);
+    }
   }
 }

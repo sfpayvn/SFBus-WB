@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Driver } from '../../../../model/driver.model';
-import { DriversService } from '../../../../service/driver.servive';
 import { toast } from 'ngx-sonner';
 import { Utils } from '@rsApp/shared/utils/utils';
+import { DriversService } from '../../../../service/driver.servive';
 
 @Component({
   selector: 'app-user-driver-info',

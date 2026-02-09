@@ -10,9 +10,18 @@ import { GoodsCategoryDetailDialogComponent } from './component/goods-category-d
 import { FilesCenterManagementModule } from '../files-center-management/files-center-management.module';
 import { NZModule } from '@rsApp/library-modules/nz-module';
 import { ManagementSharedModule } from '../../management-share.module';
+import { AppTableColumnComponent } from '@rsApp/modules/management/components/app-table/app-table-column.component';
+import { AppTableComponent } from '@rsApp/modules/management/components/app-table/app-table.component';
+import { GoodsSearchFormComponent } from './component/goods-search-form/goods-search-form.component';
 
 @NgModule({
-  declarations: [GoodsDetailComponent, GoodsComponent, GoodsCategoriesComponent, GoodsCategoryDetailDialogComponent],
+  declarations: [
+    GoodsDetailComponent,
+    GoodsComponent,
+    GoodsCategoriesComponent,
+    GoodsCategoryDetailDialogComponent,
+    GoodsSearchFormComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -21,6 +30,8 @@ import { ManagementSharedModule } from '../../management-share.module';
     ManagementSharedModule,
     FilesCenterManagementModule,
     NZModule,
+    AppTableComponent,
+    AppTableColumnComponent,
   ],
 
   providers: [provideNgxMask()],

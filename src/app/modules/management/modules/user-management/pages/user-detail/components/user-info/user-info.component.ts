@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { User2Create, User2Update, UserAddress } from '../../../../model/user.model';
@@ -7,6 +7,7 @@ import { UserAddressDetailDialogComponent } from '../../../../component/user-add
 import { FilesCenterDialogComponent } from 'src/app/modules/management/modules/files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from 'src/app/modules/management/modules/files-center-management/model/file-center.model';
 import { combineLatest, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 import {
   AbstractControl,
@@ -17,8 +18,9 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { UsersService } from '../../../../service/user.servive';
 import { toast } from 'ngx-sonner';
+import { UserManagementService } from '../../../../service/user.servive';
+import { ROLE_CONSTANTS } from '@rsApp/core/constants/roles.constants';
 
 @Component({
   selector: 'app-user-info',
@@ -30,25 +32,15 @@ export class UserInfoComponent implements OnInit {
   @Input() mainForm!: FormGroup;
   @Input() user!: User;
   @Input() addresses: UserAddress[] = [];
+  @Input() userRole: string = ROLE_CONSTANTS.CLIENT;
 
   userAvartaFile!: File;
   userAvarta!: string;
 
   defaultAvatar = 'assets/icons/user.svg';
 
-  @Output() userAvartaChange = new EventEmitter<string>();
-  @Output() userAvartaFileChange = new EventEmitter<File>();
-  @Output() addressesChange = new EventEmitter<UserAddress[]>();
   @Output() rolesChange = new EventEmitter<string[]>();
-
   @Output() createUserEvent = new EventEmitter<User>();
-
-  roles = [
-    { label: 'Client', value: 'client' },
-    { label: 'Pos', value: 'pos' },
-    { label: 'Driver', value: 'driver' },
-    { label: 'Tenant', value: 'tenant' },
-  ];
 
   genders = [
     { label: 'Male', value: 'male' },
@@ -62,7 +54,7 @@ export class UserInfoComponent implements OnInit {
     public utils: Utils,
     private utilsModal: UtilsModal,
     private fb: FormBuilder,
-    private usersService: UsersService,
+    private userManagementService: UserManagementService,
   ) {}
 
   ngOnInit(): void {
@@ -79,8 +71,7 @@ export class UserInfoComponent implements OnInit {
       name = '',
       email = '',
       phoneNumber = '',
-      gender = '',
-      roles = [],
+      gender = 'other',
       birthdate = twelveYearsAgo,
       addresses = [],
     } = this.user || {};
@@ -92,7 +83,6 @@ export class UserInfoComponent implements OnInit {
         email: [email, [Validators.required]],
         phoneNumber: [phoneNumber, [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
         gender: [gender],
-        roles: [roles, [Validators.required]],
         birthdate: [birthdate],
       }),
     });
@@ -103,11 +93,6 @@ export class UserInfoComponent implements OnInit {
     this.userForm.get('roles')?.valueChanges.subscribe((roles: string[]) => {
       this.rolesChange.emit(roles);
     });
-
-    // Emit initial roles value
-    if (roles && roles.length > 0) {
-      this.rolesChange.emit(roles);
-    }
 
     if (!this.user) {
       this.userForm.get('password')?.addValidators(Validators.required);
@@ -132,18 +117,6 @@ export class UserInfoComponent implements OnInit {
     return current.getFullYear() > minYear;
   };
 
-  onUserAvartaChange(avarta: string) {
-    this.userAvarta = avarta;
-  }
-
-  onUserAvartaFileChange(file: File) {
-    this.userAvartaFile = file;
-  }
-
-  onAddressesChange(addresses: UserAddress[]) {
-    this.addresses = addresses;
-  }
-
   openFilesCenterDialog() {
     this.utilsModal.openModal(FilesCenterDialogComponent, null, 'large').subscribe((files: FileDto[]) => {
       if (!files || files.length === 0) return;
@@ -157,11 +130,10 @@ export class UserInfoComponent implements OnInit {
   onFileChange(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.userAvartaFileChange.emit(file);
+      this.userAvartaFile = file;
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.userAvarta = e.target.result;
-        this.userAvartaChange.emit(this.userAvarta);
       };
       reader.readAsDataURL(file);
     }
@@ -172,7 +144,7 @@ export class UserInfoComponent implements OnInit {
     this.utilsModal.openModal(UserAddressDetailDialogComponent, data, 'small').subscribe((result: any) => {
       if (result) {
         const updatedAddresses = [...this.addresses, result];
-        this.addressesChange.emit(updatedAddresses);
+        this.addresses = updatedAddresses;
       }
     });
   }
@@ -182,7 +154,7 @@ export class UserInfoComponent implements OnInit {
     this.utilsModal.openModal(UserAddressDetailDialogComponent, data, 'small').subscribe((result: any) => {
       if (result) {
         const updatedAddresses = this.addresses.map((item) => (item === address ? { ...item, ...result } : item));
-        this.addressesChange.emit(updatedAddresses);
+        this.addresses = updatedAddresses;
       }
     });
   }
@@ -193,7 +165,7 @@ export class UserInfoComponent implements OnInit {
       .subscribe((result) => {
         if (result) {
           const updatedAddresses = this.addresses.filter((item) => item._id !== addressId);
-          this.addressesChange.emit(updatedAddresses);
+          this.addresses = updatedAddresses;
         }
       });
   }
@@ -201,6 +173,10 @@ export class UserInfoComponent implements OnInit {
   onSubmit() {
     if (!this.userForm.valid) {
       this.utils.markFormGroupTouched(this.userForm);
+      return;
+    }
+
+    if (!this.hasFormChanged()) {
       return;
     }
 
@@ -238,11 +214,13 @@ export class UserInfoComponent implements OnInit {
 
   updateUser(files: FileList, user2Update: User2Update) {
     try {
-      this.usersService.processUpdateUser(files, user2Update).subscribe({
+      this.userManagementService.processUpdateUser(this.userRole, files, user2Update).subscribe({
         next: (updatedUser: User) => {
+          toast.success('Cập nhật thông tin người dùng thành công');
           this.user = updatedUser;
           const updatedState = { ...history.state, user: JSON.stringify(updatedUser) };
           window.history.replaceState(updatedState, '', window.location.href);
+          this.initialFormValue = JSON.parse(this.userForm.getRawValue());
           this.userForm.markAsPristine();
         },
         error: (error: any) => this.utils.handleRequestError(error),
@@ -254,8 +232,9 @@ export class UserInfoComponent implements OnInit {
 
   createUser(files: FileList, user2Create: User2Create) {
     try {
-      this.usersService.processCreateUser(files, user2Create).subscribe({
+      this.userManagementService.processCreateUser(this.userRole, files, user2Create).subscribe({
         next: (createdUser: User) => {
+          toast.success('Tạo mới thông tin người dùng thành công');
           this.user = createdUser;
           const updatedState = { ...history.state, user: JSON.stringify(createdUser) };
           window.history.replaceState(updatedState, '', window.location.href);
@@ -266,5 +245,10 @@ export class UserInfoComponent implements OnInit {
     } catch (err: any) {
       this.utils.handleRequestError(err.error);
     }
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
   }
 }

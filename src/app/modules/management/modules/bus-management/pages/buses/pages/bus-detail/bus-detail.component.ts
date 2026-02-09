@@ -17,6 +17,7 @@ import { BusLayoutTemplate } from '../../../bus-layout-templates/model/bus-layou
 import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service/bus-layout-templates.servive';
 import { BusTemplate } from '../../../bus-templates/model/bus-template.model';
 import { BusTemplatesService } from '../../../bus-templates/service/bus-templates.servive';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 
 interface BusLayoutTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -64,6 +65,7 @@ export class BusDetailComponent implements OnInit {
     private busesService: BusesService,
     private busTemplatesService: BusTemplatesService,
     private router: Router,
+    public defaultFlagService: DefaultFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -249,7 +251,7 @@ export class BusDetailComponent implements OnInit {
     const params = { busTemplate: JSON.stringify(busTemplate) };
 
     // Điều hướng đến trang chi tiết của bus template
-    this.router.navigateByUrl('/management/bus-templates/bus-template-detail', { state: params });
+    this.router.navigateByUrl('/management/bus-management/bus-design/bus-templates/bus-template-detail', { state: params });
   }
 
   editBusLayoutTemplate() {

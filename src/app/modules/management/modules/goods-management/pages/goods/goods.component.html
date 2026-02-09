@@ -1,168 +1,211 @@
-<div class="mb-4 flex justify-end">
-  <div class="flex gap-4">
-    <button
-      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
-      nz-button
-      aria-label="Import CSV">
-      Import CSV
-    </button>
-    <button
-      class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
-      nz-button
-      (click)="addGoods()"
-      type="button">
-      Add Goods
-    </button>
+<app-sf-body>
+  <div class="border-muted/20 flex items-center justify-between border-b pt-6 pb-4">
+    <h1 class="text-2xl font-bold text-gray-800">Dánh sách hàng hóa</h1>
+    <div class="flex gap-2">
+      <button
+        nz-button
+        class="!border-primary text-muted-foreground hover:text-foreground focus:!text-primary hover:!text-primary !h-full cursor-pointer !rounded-md !border bg-white !px-4 !py-2 font-semibold"
+        aria-label="Import CSV">
+        Import CSV
+      </button>
+      <button
+        (click)="addGoods()"
+        nz-button
+        class="!bg-primary !h-full cursor-pointer !rounded-md !px-4 !py-2 font-semibold !text-white hover:!text-white focus:!text-white"
+        aria-label="Add Goods">
+        Add Goods
+      </button>
+    </div>
   </div>
-</div>
+  <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+</app-sf-body>
 
-<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
-  <app-table-action
-    [title]="'Goods'"
-    [totalItem]="totalItem"
-    (sortDataEvent)="sortGoodPage($event)"
-    (searchDataEvent)="searchGoodPage($event)"></app-table-action>
-  <div class="overflow-x-auto">
-    <nz-table
-      #rowSelectionTable
-      nzShowPagination
-      nzShowSizeChanger
-      [nzFrontPagination]="false"
-      [nzLoading]="isLoadingGoods"
-      [nzData]="searchGoods.goods"
-      class="!w-full"
-      (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
-      <thead>
-        <tr>
-          <th
-            [nzChecked]="checked"
-            [nzIndeterminate]="indeterminate"
-            nzLabel="Select all"
-            (nzCheckedChange)="onAllChecked($event)"></th>
-          <th class="min-w-[60px]">#</th>
-          <th class="min-w-[150px]">Name</th>
-          <th class="min-w-[40px]">Qty</th>
-          <th class="min-w-[80px]">Customer Phone Number</th>
-          <th class="min-w-[80px]">Customer Name</th>
-          <th class="min-w-[80px]">Status</th>
-          <th class="w-[100px] !text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (goods of rowSelectionTable.data; track goods) {
-        <tr>
-          <td
-            [nzChecked]="setOfCheckedId.has(goods._id)"
-            [nzLabel]="goods.name"
-            (nzCheckedChange)="onItemChecked(goods._id, $event)"></td>
-          <td>
-            <nz-skeleton
-              [nzLoading]="isLoadingGoods"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
-              {{ goods.goodsNumber }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton
-              [nzLoading]="isLoadingGoods"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
-              {{ goods.name }}`
-            </nz-skeleton>
-          </td>
-
-          <td>
-            <nz-skeleton
-              [nzLoading]="isLoadingGoods"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
-              {{ goods.quantity }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton
-              [nzLoading]="isLoadingGoods"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
-              {{ goods.customerPhoneNumber }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton
-              [nzLoading]="isLoadingGoods"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
-              {{ goods.customerName }}
-            </nz-skeleton>
-          </td>
-          <td>
-            <nz-skeleton
-              [nzLoading]="isLoadingGoods"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
-              <span class="p-2 uppercase rounded-md text-xs {{ statusClasses[goods.status] }}">
-                {{ goodsStatuses[goods.status] }}
-              </span>
-            </nz-skeleton>
-          </td>
-          <td class="text-right">
-            <nz-skeleton
-              [nzLoading]="isLoadingGoods"
-              [nzParagraph]="false"
-              [nzTitle]="{ width: '100%' }"
-              [nzActive]="true">
-              <div class="flex items-center justify-center">
-                <button
-                  (click)="editGoods(goods)"
-                  class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                  aria-label="Edit goods">
-                  <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
-                    <path
-                      d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
-                  </svg>
-                </button>
-                <button
-                  (click)="cloneData(goods)"
-                  class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                  aria-label="Delete busRoute">
-                  <svg-icon
-                    [src]="'./assets/icons/heroicons/outline/document-duplicate.svg'"
-                    class="size-5 mr-1 inline-block"
-                    aria-hidden="true">
-                  </svg-icon>
-                </button>
-                <button
-                  (click)="deleteGoods(goods._id)"
-                  class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                  aria-label="Delete goods">
-                  <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
-                    <path
-                      fill-rule="evenodd"
-                      d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            </nz-skeleton>
-          </td>
-        </tr>
+<ng-template #contentTemplate>
+  <div class="py-6">
+    <div>
+      <app-goods-search-form
+        class="w-full"
+        [isLoaded]="isLoaded"
+        [busStationsOffices]="busStationsOffices"
+        [busRoutes]="busRoutes"
+        (findGoodsEvent)="loadDataFindGoods($event)"></app-goods-search-form>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-1 rounded-t-sm bg-white">
+      <div>
+        @for (item of statusCounts; track item.key) {
+        <button
+          #filterBtn
+          nz-button
+          (click)="filterStatusChange(item.key)"
+          [ngClass]="{
+              '!border-primary !text-primary focus:!text-primary': filterStatus === item.key,
+              '!text-muted-foreground !border-white': filterStatus !== item.key,
+            }"
+          class="hover:!text-primary relative !h-12 cursor-pointer rounded-sm border !px-4 !py-2.5 uppercase transition-opacity"
+          [attr.aria-pressed]="filterStatus === item.key">
+          {{ item.label }}
+          <span class="bg-muted text-muted-foreground ml-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium">
+            {{ item.value || 0 }}
+          </span>
+        </button>
         }
-      </tbody>
-    </nz-table>
+      </div>
+      <div class="flex w-full items-center justify-between gap-2">
+        <div class="mt-2 flex items-center gap-2">
+          @for (p of paymentStatusCounts; track p.key) {
+          <button
+            #filterBtn
+            nz-button
+            (click)="togglePaymentFilter(p.key)"
+            [ngClass]="{
+                '!border-primary !text-primary focus:!text-primary': filterPaymentStatus === p.key,
+                '!text-muted-foreground !border-white': filterPaymentStatus !== p.key,
+              }"
+            class="hover:!text-primary relative !h-12 cursor-pointer rounded-sm border !px-4 !py-2.5 uppercase transition-opacity"
+            [attr.aria-pressed]="filterPaymentStatus === p.key">
+            {{ p.label }}
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-b-sm border p-2">
+      <app-table
+        [rows]="filteredGooods"
+        [isLoaded]="isLoaded"
+        [selectedIds]="selectedIdsArray"
+        (searchDataEvent)="searchGoodPage($event)"
+        (sortDataEvent)="sortGoodPage($event)"
+        (currentPageDataChange)="onCurrentPageDataChange($event)"
+        [showFooter]="true"
+        [showHeader]="false"
+        [pageIdx]="searchParams.pageIdx"
+        [pageSize]="searchParams.pageSize"
+        [totalItem]="totalItem"
+        [totalPage]="totalPage"
+        (reloadDataAndPageEvent)="reloadGoodsPage($event)"
+        [tableActionTitle]="'Danh sách hàng hóa'"
+        (selectionChange)="onTableSelectionChange($event)">
+        <app-table-column key="goodsNumber" label="#" [widthPx]="40" sticky="left">
+          <ng-template let-row>
+            <span class="flex items-center gap-1">
+              <span
+                class="rounded-md px-2 py-1 text-sm font-medium uppercase"
+                [ngClass]="$any(priorityClasses)[$any(row.goodsPriority)]"
+                >{{ row.goodsPriority }}</span
+              >
+              <span>{{ row.goodsNumber }}</span>
+              @if (row.goodsImportant) {
+              <span class="text-sm font-medium text-red-500">
+                <svg-icon [src]="'assets/icons/heroicons/outline/sparkles.svg'" [svgClass]="'!h-4 !w-4'"></svg-icon>
+              </span>
+              }
+            </span>
+          </ng-template>
+        </app-table-column>
+
+        <app-table-column key="customerName" label="Khách hàng" [widthPx]="240">
+          <ng-template let-row>{{ row.customerName }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="customerPhoneNumber" label="SĐT" [widthPx]="150">
+          <ng-template let-row>{{ row.customerPhoneNumber }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="name" label="Hàng Hóa" [widthPx]="200">
+          <ng-template let-row>{{ row.name }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="quantity" label="Số lượng" [widthPx]="200">
+          <ng-template let-row>{{ row.quantity }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="busRouteId" label="Tuyến" [widthPx]="200">
+          <ng-template let-row>{{ (row.busRouteId && getBusRoutes(row.busRouteId)?.name) || 'N/A' }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="busScheduleId" label="Chuyến" [widthPx]="200">
+          <ng-template let-row>
+            {{ (row.busScheduleId && utils.formatTime(row.busSchedule.startDate)) || 'N/A' }} -
+            {{ (row.busScheduleId && utils.formatDate(row.busSchedule.startDate)) || 'N/A' }}
+          </ng-template>
+        </app-table-column>
+
+        <app-table-column key="originStationId" label="Từ" [widthPx]="150">
+          <ng-template let-row>{{
+            (row.originStationId && getBusStationOffice(row.originStationId)?.name) || 'Dọc đường'
+          }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="destinationStationId" label="Đến" [widthPx]="150">
+          <ng-template let-row>{{
+            (row.destinationStationId && getBusStationOffice(row.destinationStationId)?.name) || 'Dọc đường'
+          }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="currentStationId" label="Trạm Hiện Tại" [widthPx]="150">
+          <ng-template let-row>{{
+            (row.currentStationId && getBusStationOffice(row.currentStationId)?.name) || 'NA'
+          }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="deliveryAddress" label="Địa chỉ nhận hàng" [widthPx]="150">
+          <ng-template let-row>{{ row.deliveryAddress || 'NA' }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="shippingCost" label="Phí vận chuyển" [widthPx]="100">
+          <ng-template let-row>{{ utils.formatPriceToVND(row.shippingCost || 0) || 'NA' }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="cod" label="COD" [widthPx]="100">
+          <ng-template let-row>{{ utils.formatPriceToVND(row.cod || 0) || 'NA' }}</ng-template>
+        </app-table-column>
+
+        <app-table-column key="status" label="Trạng Thái" [widthPx]="150">
+          <ng-template let-row
+            ><span class="px-1 py-0.5 inline-block rounded {{ statusClasses[row.status] }}">{{
+              goodsStatusesLabel[row.status]
+            }}</span></ng-template
+          >
+        </app-table-column>
+
+        <app-table-column key="paymentStatus" label="Thanh Toán" [widthPx]="150">
+          <ng-template let-row
+            ><span class="px-1 py-0.5 inline-block rounded {{ paymentStatusClasses[row.paymentStatus] }}">{{
+              goodsPaymentStatuses[row.paymentStatus]
+            }}</span></ng-template
+          >
+        </app-table-column>
+
+        <app-table-column key="actions" label="Actions" [widthPx]="70" sticky="right">
+          <ng-template let-row>
+            <div class="flex justify-end gap-1">
+              <button
+                (click)="editGoods(row)"
+                class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-md"
+                aria-label="Edit user">
+                <!-- edit svg -->
+                <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                  <path
+                    d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
+                </svg>
+              </button>
+              <button
+                (click)="deleteGoods(row._id)"
+                class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-md"
+                aria-label="Delete user">
+                <!-- delete svg -->
+                <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                    clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </ng-template>
+        </app-table-column>
+      </app-table>
+    </div>
   </div>
-  <app-table-footer
-    [pageIdx]="searchParams.pageIdx"
-    [pageSize]="searchParams.pageSize"
-    [totalItem]="totalItem"
-    [isLoading]="isLoadingGoods"
-    [totalPage]="totalPage"
-    (reloadDataAndPageEvent)="reloadGoodsPage($event)">
-  </app-table-footer>
-</div>
+</ng-template>

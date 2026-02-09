@@ -238,21 +238,12 @@ export class FilesComponent implements OnInit {
 
   zoomFile($event: any, file: FileDto): void {
     $event.stopPropagation();
-    const dialogRef = this.dialog.open(ViewImageDialogComponent, {
-      height: 'max-content',
-      width: 'max-content',
-      maxWidth: 'max-content',
-      panelClass: 'custom-dialog-view-image',
-      backdropClass: 'custom-back-drop-view-image',
-      data: {
-        file: file,
-      },
-    });
+    this.utilsModal.viewImage(event, file.link);
   }
 
   uploadFile(files2Upload: FileList): void {
     const folderId = this.getActiveFolderId();
-    this.fileService.uploadFiles(files2Upload, folderId).subscribe({
+    this.fileService.uploadFiles2Media(files2Upload, folderId).subscribe({
       next: (res: File) => {
         if (res) {
           this.loadFiles();
@@ -264,7 +255,7 @@ export class FilesComponent implements OnInit {
   }
 
   updateFile(item: FileDto) {
-    this.fileService.updateFile(item).subscribe((res: any) => {
+    this.fileService.updateFileMedia(item).subscribe((res: any) => {
       if (!res) {
         toast.error('Cập nhập thư mục không thành công');
         return;
@@ -274,7 +265,7 @@ export class FilesComponent implements OnInit {
   }
 
   updateFiles2Folder(files: FileDto[], fileFolderId: string) {
-    this.fileService.updateFiles2Folder(files, fileFolderId).subscribe((res: any) => {
+    this.fileService.updateFilesMedia2Folder(files, fileFolderId).subscribe((res: any) => {
       if (!res) {
         toast.error('Cập nhập thư mục không thành công');
         return;

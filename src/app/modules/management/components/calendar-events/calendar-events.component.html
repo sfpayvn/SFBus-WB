@@ -1,4 +1,4 @@
-<section class="relative bg-stone-50 py-24">
+<section class="relative bg-stone-50 py-4">
   <div class="mx-auto w-full max-w-7xl overflow-x-auto px-6 lg:px-8">
     <!-- Header: chứa thông tin ngày tháng và các nút chuyển view, chuyển tuần -->
     <div
@@ -74,7 +74,7 @@
         <ng-container *ngSwitchCase="'list'">
           <div class="flex flex-col gap-4">
             <div *ngFor="let day of weekDates" class="flex flex-col gap-2">
-              <label>{{ utils.formatToDateWeek(day) }}</label>
+              <label [ngClass]="{ 'font-medium text-red-600': isToday(day) }">{{ utils.formatToDateWeek(day) }}</label>
               <div class="flex flex-col gap-2" *ngIf="getEventsForDay(day).length > 0; else noEvents">
                 <!-- Nội dung hiển thị khi có event -->
                 <ng-container *ngFor="let event of getEventsForDay(day)">
@@ -106,23 +106,42 @@
             </div>
 
             <!-- Cột sự kiện chiếm 10/12 -->
-            <div class="flex flex-col">
+            <div class="relative flex flex-col">
+              <!-- Đường gạch đỏ hiển thị thời gian hiện tại -->
+              <div
+                *ngIf="isLoadedEvent"
+                class="pointer-events-none absolute left-0 right-0 z-10 h-[1px] bg-red-500"
+                [ngStyle]="{ top: getCurrentSlotPixelPosition() + 'px' }"></div>
+
               <ng-container *ngFor="let slot of halfHourSlots">
                 <div
+                  #slotItem
                   class="flex flex-row border-r border-t border-gray-200 text-sm text-gray-400"
-                  [ngClass]="{ 'bg-gray-100': isSlotDisabled(slot, currentDayView) }"
-                  (click)="createEvent($event, slot)">
-                  <div class="flex w-2/12 border-r border-gray-200 py-2">
+                  [ngClass]="{ 'bg-gray-100': isSlotDisabled(slot, currentDayView) }">
+                  <div class="flex w-2/12 border-r border-gray-200 p-2">
                     {{ slot }}
                   </div>
-                  <div class="flex w-10/12 flex-col gap-1 p-2"
-                    [ngClass]="{ 'cursor-not-allowed': isSlotDisabled(slot, currentDayView), 'cursor-pointer hover:bg-stone-100': !isSlotDisabled(slot, currentDayView) }">
+                  <div
+                    class="flex w-10/12 flex-col gap-1 p-2"
+                    [ngClass]="{
+                      'cursor-not-allowed': isSlotDisabled(slot, currentDayView),
+                      'cursor-pointer hover:bg-stone-100': !isSlotDisabled(slot, currentDayView)
+                    }">
+                    @if(getEventsForDayAndSlot(currentDayView, slot).length > 0){
                     <!-- Render event nếu tồn tại cho ngày và slot này -->
                     <div class="flex flex-row flex-wrap gap-2">
                       <ng-container *ngFor="let event of getEventsForDayAndSlot(currentDayView, slot)">
                         <ng-container *ngTemplateOutlet="eventTemplate; context: { event: event }"></ng-container>
                       </ng-container>
                     </div>
+                    }@else{
+                    <button
+                      class="h-full w-full"
+                      capCheck
+                      [capModule]="capModule"
+                      [capFunction]="capFunction"
+                      (click)="createEvent($event, slot)"></button>
+                    }
                   </div>
                 </div>
               </ng-container>
@@ -149,11 +168,18 @@
           </div>
 
           <!-- Grid chứa nhãn giờ và ô các ngày -->
-          <div class="grid grid-cols-8">
+          <div class="relative grid grid-cols-8">
+            <!-- Đường gạch đỏ hiển thị thời gian hiện tại -->
+            <div
+              *ngIf="isLoadedEvent"
+              class="pointer-events-none absolute left-0 right-0 z-10 h-[1px] bg-red-500"
+              [ngStyle]="{ top: currentSlotPixelPosition + 'px' }"></div>
+
             <!-- Cột nhãn giờ -->
             <div class="flex flex-col">
               <ng-container *ngFor="let slot of halfHourSlots">
                 <div
+                  #slotItem
                   class="max-h-[120px] border-r border-t border-gray-200 p-1 text-sm text-gray-400"
                   [ngStyle]="{ height: 54 * (eventInSlot(slot).length || 1) + 'px' }">
                   {{ slot }}
@@ -165,22 +191,32 @@
               <div class="flex flex-col">
                 <ng-container *ngFor="let slot of halfHourSlots">
                   <div
-                    class="flex max-h-[120px] flex-col items-end gap-1 border-t border-r border-gray-200 p-0.5"
-                    [ngClass]="{ 'bg-gray-100 cursor-not-allowed': isSlotDisabled(slot, day), 'cursor-pointer hover:bg-stone-100': !isSlotDisabled(slot, day) }"
-                    [ngStyle]="{ height: 54 * (eventInSlot(slot).length || 1) + 'px' }"
-                    (click)="createEvent($event, slot, day)">
+                    class="flex max-h-[120px] flex-col items-end gap-1 border-t border-r border-gray-200 p-0.5 relative"
+                    [ngClass]="{
+                      'cursor-not-allowed bg-gray-100': isSlotDisabled(slot, day),
+                      'cursor-pointer hover:bg-stone-100': !isSlotDisabled(slot, day)
+                    }"
+                    [ngStyle]="{ height: 54 * (eventInSlot(slot).length || 1) + 'px' }">
                     <!-- Render event nếu tồn tại cho ngày và slot này -->
+
                     <ng-container
                       *ngFor="let event of getEventsForDayAndSlot(day, slot) | slice: 0:2; trackBy: trackByEvent">
                       <ng-container *ngTemplateOutlet="eventTemplate; context: { event: event }"></ng-container>
                     </ng-container>
+                    <button
+                      class="absolute inset-0"
+                      capCheck
+                      [capModule]="capModule"
+                      [capFunction]="capFunction"
+                      (click)="createEvent($event, slot, day)"></button>
+
                     <!-- Popover Trigger -->
                     <div
                       *ngIf="getEventsForDayAndSlot(day, slot).length > 2"
                       (nzPopoverVisibleChange)="visibleChange($event, getEventsForDayAndSlot(day, slot))"
                       nz-popover
                       [nzPopoverContent]="popoverTemplate"
-                      class="flex cursor-pointer justify-end">
+                      class="flex cursor-pointer justify-end relative z-20 pointer-events-auto">
                       <span class="rounded bg-indigo-200 py-1 px-3 text-xs text-indigo-800">...</span>
                     </div>
                   </div>
@@ -201,21 +237,30 @@
             <div
               *ngFor="let date of monthDates; trackBy: trackByDate"
               class="flex h-[160px] cursor-pointer flex-col items-end gap-1 border border-gray-200 py-3.5 px-2 text-center hover:bg-gray-100"
-              (click)="createEvent($event, '', date.date)">
+              [ngClass]="{ 'border-gray-300 bg-gray-200': !date.isCurrentMonth }">
               <!-- Display Day -->
               <span
                 [ngClass]="{
                   'text-gray-400': !date.isCurrentMonth,
                   'text-gray-900': date.isCurrentMonth,
-                  'text-indigo-600': isToday(date.date)
+                  'font-medium text-red-600 ': isToday(date.date)
                 }">
                 {{ date.date.getDate() }}
               </span>
 
+              @if(date.events.length > 0){
               <!-- Display Events -->
               <ng-container *ngFor="let event of date.events | slice: 0:2; trackBy: trackByEvent">
                 <ng-container *ngTemplateOutlet="eventTemplate; context: { event: event }"></ng-container>
               </ng-container>
+              }@else{
+              <button
+                class="h-full w-full"
+                capCheck
+                [capModule]="capModule"
+                [capFunction]="capFunction"
+                (click)="createEvent($event, '', date.date)"></button>
+              }
 
               <!-- Popover Trigger -->
               <div
@@ -240,7 +285,7 @@
     </ng-template>
     <ng-template #eventTemplate let-event="event">
       <div
-        class="w-[160px] max-h-[120px] max-w-full cursor-pointer rounded border-l-2 {{
+        class="relative z-10 w-[160px] max-h-[120px] max-w-full cursor-pointer rounded border-l-2 {{
           statusClasses[event.status]
         }} p-1 text-xs"
         (click)="viewDetailEvent($event, event)">

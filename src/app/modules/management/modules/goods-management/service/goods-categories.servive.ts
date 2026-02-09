@@ -59,7 +59,7 @@ export class GoodsCategoriesService {
       return this.filesService.uploadFiles(imageFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          goodsCategory2Create.icon = res[0].link;
+          goodsCategory2Create.iconId = res[0]._Id;
           return this.createGoodsCategories(goodsCategory2Create);
         }),
       );
@@ -81,7 +81,7 @@ export class GoodsCategoriesService {
       return this.filesService.uploadFiles(imageFile).pipe(
         switchMap((res: any) => {
           // Gắn các liên kết trả về từ uploadFiles
-          goodsCategory2Update.icon = res[0].link;
+          goodsCategory2Update.iconId = res[0]._id;
           return this.updateGoodsCategories(goodsCategory2Update);
         }),
       );

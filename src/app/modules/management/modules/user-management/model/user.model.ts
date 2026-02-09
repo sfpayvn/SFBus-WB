@@ -15,6 +15,7 @@ export class UserAddress {
 export class User {
   _id: string = '';
   tenantId: string = '';
+  tenant?: { _id: string; code: string; name: string };
   avatar: string = '';
   avatarId: string = '';
   name: string = '';

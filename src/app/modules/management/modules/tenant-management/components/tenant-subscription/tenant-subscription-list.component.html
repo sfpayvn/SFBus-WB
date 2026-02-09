@@ -65,24 +65,10 @@
         <td>{{ item.endAt | date: 'mediumDate' }}</td>
 
         <td>
-          <nz-tag *ngIf="statusTag(item.status)" [nzColor]="statusTag(item.status)!.nzColor">
-            {{ statusTag(item.status)!.text }}
+          <nz-tag class="{{ statusClasses[item.status] }}">
+            {{ statusLabels[item.status] }}
           </nz-tag>
         </td>
-
-        <!-- <td>
-          <button nz-button nzSize="small" (click)="onView(item)">View</button>
-          <button
-            nz-button
-            nzType="default"
-            nzDanger
-            nzSize="small"
-            class="ml-8"
-            (click)="onCancel(item)"
-            [disabled]="item.status !== 'active'">
-            Cancel
-          </button>
-        </td> -->
       </tr>
       }
     </tbody>

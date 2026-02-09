@@ -6,6 +6,8 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
 import { AuthService } from 'src/app/modules/auth/service/auth.service';
+import { User } from '@rsApp/modules/management/modules/user-management/model/user.model';
+import { CredentialService } from '@rsApp/shared/services/credential.service';
 
 @Component({
   selector: 'app-profile-menu',
@@ -41,7 +43,7 @@ export class ProfileMenuComponent implements OnInit {
     {
       title: 'Your Profile',
       icon: './assets/icons/heroicons/outline/user-circle.svg',
-      link: '/profile',
+      link: '/account-information',
     },
     {
       title: 'Settings',
@@ -83,9 +85,18 @@ export class ProfileMenuComponent implements OnInit {
 
   public themeMode = ['light', 'dark'];
 
-  constructor(public themeService: ThemeService, private authService: AuthService, private readonly _router: Router) {}
+  currentUser!: User;
 
-  ngOnInit(): void {}
+  constructor(
+    public themeService: ThemeService,
+    private authService: AuthService,
+    private readonly _router: Router,
+    private credentialService: CredentialService,
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    this.currentUser = await this.credentialService.getCurrentUser();
+  }
 
   public toggleMenu(): void {
     this.isOpen = !this.isOpen;

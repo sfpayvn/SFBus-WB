@@ -1,0 +1,18 @@
+/* Styles for sort tooltip panel */
+
+::ng-deep {
+  .sort-tooltip-panel .ant-tooltip-inner {
+    background: #ffffff !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .sort-tooltip-panel .ant-tooltip-inner .sort-tooltip-content {
+    background: #ffffff;
+    width: 300px !important;
+    color: black;
+    padding: 15px;
+  }
+}

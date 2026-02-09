@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ModuleBlockGuard } from '@rsApp/guards/module-block.guard';
 import { BusTypesComponent } from './pages/bus-types/bus-types.component';
 import { BusServicesComponent } from './pages/bus-services/bus-services.component';
 import { BusStationsComponent } from './pages/bus-stations/bus-stations.component';
@@ -39,6 +40,8 @@ const routes: Routes = [
   },
   {
     path: 'bus-schedule',
+    canActivate: [ModuleBlockGuard],
+    data: { moduleKey: 'bus-schedule' },
     component: BusManagementComponent,
     children: [
       {
@@ -55,20 +58,28 @@ const routes: Routes = [
       },
       {
         path: 'bus-schedule-autogenerators',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-schedule-autogenerators' },
         component: BusScheduleAutoGeneratorsComponent,
       },
       {
         path: 'bus-schedule-autogenerators/bus-schedule-autogenerator-detail',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-schedule-autogenerators' },
         component: BusScheduleAutoGeneratorDetailComponent,
       },
     ],
   },
   {
     path: 'bus-design',
+    canActivate: [ModuleBlockGuard],
+    data: { moduleKey: 'bus-design' },
     component: BusManagementComponent,
     children: [
       {
         path: 'bus-templates',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-templates' },
         component: BusTemplatesComponent,
       },
       {
@@ -77,6 +88,8 @@ const routes: Routes = [
       },
       {
         path: 'bus-schedule-templates',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-schedule-templates' },
         component: BusScheduleTemplatesComponent,
       },
       {
@@ -85,6 +98,8 @@ const routes: Routes = [
       },
       {
         path: 'bus-routes',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-routes' },
         component: BusRoutesComponent,
       },
       {
@@ -93,6 +108,8 @@ const routes: Routes = [
       },
       {
         path: 'bus-layout-templates',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-layout-templates' },
         component: BusLayoutTemplatesComponent,
       },
       {
@@ -103,26 +120,38 @@ const routes: Routes = [
   },
   {
     path: 'bus-setting',
+    canActivate: [ModuleBlockGuard],
+    data: { moduleKey: 'bus-setting' },
     component: BusManagementComponent,
     children: [
       {
         path: 'bus-stations',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-stations' },
         component: BusStationsComponent,
       },
       {
         path: 'bus-provinves',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-provinces' },
         component: BusProvincesComponent,
       },
       {
         path: 'bus-types',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-types' },
         component: BusTypesComponent,
       },
       {
         path: 'bus-services',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'bus-services' },
         component: BusServicesComponent,
       },
       {
         path: 'seat-type',
+        canActivate: [ModuleBlockGuard],
+        data: { moduleKey: 'seat-types' },
         component: SeatTypesComponent,
       },
     ],

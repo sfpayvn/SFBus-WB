@@ -1,0 +1,161 @@
+<div class="flex flex-col items-center justify-between pt-6">
+  <h1 class="text-2xl font-bold text-gray-800">Báo cáo thống kê</h1>
+</div>
+<ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+
+<ng-template #contentTemplate>
+  <div class="min-h-screen bg-gray-50">
+    <!-- Header with filters -->
+    <app-report-header
+      [filterForm]="filterForm"
+      [dateRangeType]="dateRangeType"
+      [comparisonMode]="comparisonMode"
+      (dateRangeTypeChange)="setDateRangeType($event)"
+      (comparisonModeChange)="toggleComparisonMode()"
+      (exportReport)="exportReport($event)"
+      (reload)="handleReload()"></app-report-header>
+
+    <!-- Statistics overview -->
+    <div class="mb-6 grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <app-booking-stats-card
+        class="flex"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"></app-booking-stats-card>
+      <app-revenue-booking-stats-card
+        class="flex"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"></app-revenue-booking-stats-card>
+      <app-schedule-stats-card
+        class="flex"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"></app-schedule-stats-card>
+      <app-goods-stats-card
+        class="flex"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"></app-goods-stats-card>
+      <app-revenue-goods-stats-card
+        class="flex"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"
+        [comparisonMode]="comparisonMode"></app-revenue-goods-stats-card>
+    </div>
+
+    <!-- Charts section -->
+    <div>
+      <h2 class="mb-4 px-2 text-lg font-semibold text-gray-800">Phân tích chi tiết Booking</h2>
+      <nz-tabset
+        [(nzSelectedIndex)]="selectedBookingTab"
+        (nzSelectedIndexChange)="onBookingTabChange($event)"
+        class="!mb-6 rounded-lg bg-white !p-4 shadow-sm">
+        <nz-tab nzTitle="Vé bán">
+          @if (hasTabLoaded(0)) {
+          <app-booking-chart
+            [dateRangeType]="dateRangeType"
+            [startDate]="startDate"
+            [endDate]="endDate"
+            [comparisonStartDate]="comparisonStartDate"
+            [comparisonEndDate]="comparisonEndDate"
+            [comparisonMode]="comparisonMode"
+            (viewDetailEvent)="viewDetailBookingReport()"></app-booking-chart>
+          }
+        </nz-tab>
+
+        <nz-tab nzTitle="Doanh thu">
+          @if (hasTabLoaded(1)) {
+          <app-revenue-booking
+            [dateRangeType]="dateRangeType"
+            [startDate]="startDate"
+            [endDate]="endDate"
+            [comparisonMode]="comparisonMode"
+            [comparisonStartDate]="comparisonStartDate"
+            [comparisonEndDate]="comparisonEndDate"
+            [comparisonMode]="comparisonMode"
+            (viewDetailEvent)="viewDetailBookingReport()"></app-revenue-booking>
+          }
+        </nz-tab>
+
+        <nz-tab nzTitle="Chuyến xe">
+          @if (hasTabLoaded(2)) {
+          <app-schedule-chart
+            [dateRangeType]="dateRangeType"
+            [startDate]="startDate"
+            [endDate]="endDate"
+            [comparisonStartDate]="comparisonStartDate"
+            [comparisonEndDate]="comparisonEndDate"
+            [comparisonMode]="comparisonMode"></app-schedule-chart>
+          }
+        </nz-tab>
+      </nz-tabset>
+    </div>
+    <div>
+      <h2 class="mb-4 px-2 text-lg font-semibold text-gray-800">Phân tích chi tiết Goods</h2>
+      <nz-tabset
+        [(nzSelectedIndex)]="selectedGoodsTab"
+        (nzSelectedIndexChange)="onGoodsTabChange($event)"
+        class="!mb-6 rounded-lg bg-white !p-4 shadow-sm">
+        <nz-tab nzTitle="Hàng hóa">
+          @if (hasTabLoaded(3)) {
+          <app-goods-chart
+            [dateRangeType]="dateRangeType"
+            [startDate]="startDate"
+            [endDate]="endDate"
+            [comparisonMode]="comparisonMode"></app-goods-chart>
+          }
+        </nz-tab>
+        <nz-tab nzTitle="Doanh thu Hàng hóa">
+          @if (hasTabLoaded(4)) {
+          <app-revenue-goods-chart
+            [dateRangeType]="dateRangeType"
+            [startDate]="startDate"
+            [endDate]="endDate"
+            [comparisonMode]="comparisonMode"></app-revenue-goods-chart>
+          }
+        </nz-tab>
+      </nz-tabset>
+    </div>
+
+    <!-- Performance and breakdown section -->
+    <div class="mb-6 grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
+      <app-top-route-stats
+        class="flex w-full"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonMode]="comparisonMode"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"></app-top-route-stats>
+
+      <app-payment-method-stats
+        class="flex w-full"
+        [dateRangeType]="dateRangeType"
+        [startDate]="startDate"
+        [endDate]="endDate"
+        [comparisonMode]="comparisonMode"
+        [comparisonStartDate]="comparisonStartDate"
+        [comparisonEndDate]="comparisonEndDate"></app-payment-method-stats>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="mb-6">
+      <app-booking-recent-list></app-booking-recent-list>
+    </div>
+
+    <!-- Recent Goods -->
+    <div class="mb-6">
+      <app-goods-recent-list class="mb-6"></app-goods-recent-list>
+    </div>
+  </div>
+</ng-template>

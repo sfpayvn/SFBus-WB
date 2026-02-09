@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { catchError, from, Observable, of, switchMap, tap } from 'rxjs';
+import { bufferTime, catchError, filter, from, mergeMap, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { Goods, Goods2Create, Goods2Update } from '../model/goods.model';
 import { FilesService } from '../../files-center-management/service/files-center.servive';
+import { ENV } from 'src/environments/environment.development';
+import io from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +12,22 @@ import { FilesService } from '../../files-center-management/service/files-center
 export class GoodsService {
   url = '/admin/goods';
 
-  constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {}
+  private socket: any;
+  private goodsChangeSubjects = new Map<string, Subject<any>>();
+  private socketHandlers = new Map<string, (goods: any) => void>();
+  private registeredEvents = new Set<string>(); // Track registered events
+
+  constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {
+    this.socket = io(ENV.WEBSOCKET_URL);
+
+    this.socket.on('connect', () => {
+      console.log('✅ Connected to WebSocket server, socket.id:', this.socket.id);
+    });
+
+    this.socket.on('disconnect', () => {
+      console.log('❌ Disconnected from WebSocket server');
+    });
+  }
 
   findAll() {
     const url = `${this.url}/find-all`;
@@ -26,21 +43,20 @@ export class GoodsService {
     return this.apiGatewayService.get(url, skipLoading).pipe(tap((res: any) => {}));
   }
 
-  searchGoods(searchParams: {
-    pageIdx: number;
-    startDate: Date | '';
-    endDate: Date | '';
-    pageSize: number;
-    keyword: string;
-    sortBy: {
-      key: string;
-      value: string;
-    };
-    filters: {
-      key: string;
-      value: string[];
-    };
-  }) {
+  searchGoods(
+    searchParams = {
+      pageIdx: 1,
+      startDate: '' as Date | '',
+      endDate: '' as Date | '',
+      pageSize: 5,
+      keyword: '',
+      sortBy: {
+        key: 'createdAt',
+        value: 'descend',
+      },
+      filters: [] as any[],
+    },
+  ) {
     const url = `${this.url}/search`;
     const body = {
       pageIdx: searchParams.pageIdx,
@@ -79,20 +95,17 @@ export class GoodsService {
 
   processUpdateGoods(imageFile: FileList, goods2Update: Goods2Update) {
     const url = this.url;
-    
+
     // Nếu có file mới, upload và thêm vào imageIds hiện tại
     if (imageFile.length > 0) {
       return this.filesService.uploadFiles(imageFile).pipe(
         switchMap((res: any[]) => {
           // Lấy imageIds từ files mới upload
           const newImageIds = res.map((file) => file._id);
-          
+
           // Kết hợp imageIds hiện tại với imageIds mới
-          goods2Update.imageIds = [
-            ...(goods2Update.imageIds || []),
-            ...newImageIds
-          ];
-          
+          goods2Update.imageIds = [...(goods2Update.imageIds || []), ...newImageIds];
+
           return this.updateGoods(goods2Update);
         }),
       );
@@ -110,5 +123,42 @@ export class GoodsService {
   deleteGoods(id: string) {
     const deleteOptionUrl = this.url + `/${id}`;
     return this.apiGatewayService.delete(deleteOptionUrl).pipe(tap((res: any) => {}));
+  }
+
+  listenGoodsChangeOfId(Id: string): Observable<any> {
+    const eventName = `goodsChangeOfId/${Id}`;
+
+    // Check if we already have a Subject for this busScheduleId
+    if (!this.goodsChangeSubjects.has(Id)) {
+      const subject = new Subject<any>();
+      this.goodsChangeSubjects.set(Id, subject);
+    }
+
+    // CRITICAL: Only register socket listener if not already registered
+    if (!this.registeredEvents.has(eventName)) {
+      const subject = this.goodsChangeSubjects.get(Id)!;
+
+      const handler = (goods: any) => {
+        subject.next(goods);
+      };
+
+      this.socketHandlers.set(eventName, handler);
+      this.socket.on(eventName, handler);
+      this.registeredEvents.add(eventName);
+    }
+
+    // Buffer events in 50ms windows and deduplicate within each window
+    return this.goodsChangeSubjects
+      .get(Id)!
+      .asObservable()
+      .pipe(
+        bufferTime(50),
+        filter((goods) => goods.length > 0),
+        mergeMap((goods) => {
+          // Deduplicate goods by _id within the 50ms window
+          const uniqueGoods = Array.from(new Map(goods.map((b) => [b._id, b])).values());
+          return uniqueGoods;
+        }),
+      );
   }
 }

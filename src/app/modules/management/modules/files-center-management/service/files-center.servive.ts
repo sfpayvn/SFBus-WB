@@ -53,7 +53,7 @@ export class FilesService {
         });
       }),
     ).then(() => formData);
-    const url = `${this.url}/upload-file-save-to-media/${folderId}`;
+    const url = `${this.url}/upload-file/${folderId}`;
 
     // Chuyển đổi Promise thành Observable
     return from(formDataPromise).pipe(
@@ -74,7 +74,39 @@ export class FilesService {
     );
   }
 
-  updateFiles2Folder(files2Update: File2Update[], folderId: string) {
+  uploadFiles2Media(filesList: FileList, folderId?: string): Observable<any> {
+    const formData: FormData = new FormData();
+    // Sử dụng Promise.all để chờ tất cả các file được thêm vào FormData
+    const formDataPromise = Promise.all(
+      Array.from(filesList).map((file) => {
+        return new Promise((resolve) => {
+          formData.append('files', file);
+          resolve(null);
+        });
+      }),
+    ).then(() => formData);
+    const url = `${this.url}/upload-file-save-to-media/${folderId}`;
+
+    // Chuyển đổi Promise thành Observable
+    return from(formDataPromise).pipe(
+      switchMap((formData: FormData) => {
+        return this.apiGatewayService.post(url, formData);
+      }),
+    );
+  }
+
+  updateFileMedia(file2Update: File2Update) {
+    const url = `${this.url}`;
+    return this.apiGatewayService.put(url, file2Update).pipe(
+      tap((res: any) => {}),
+      catchError((err: HttpErrorResponse) => {
+        const msg = err?.error?.message || err.message || 'Unexpected error';
+        return throwError(() => err);
+      }),
+    );
+  }
+
+  updateFilesMedia2Folder(files2Update: File2Update[], folderId: string) {
     const url = `${this.url}/update-files-folder/${folderId}`;
     return this.apiGatewayService.put(url, files2Update).pipe(
       tap((res: any) => {}),

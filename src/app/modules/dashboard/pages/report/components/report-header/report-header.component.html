@@ -1,0 +1,123 @@
+<div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+  <div class="flex flex-col gap-4">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-bold text-gray-800">Báo cáo kinh doanh</h2>
+        <p class="text-sm text-gray-600 mt-1">Thống kê và phân tích dữ liệu kinh doanh</p>
+      </div>
+      <div class="flex gap-2">
+        <!-- Reload button -->
+        <button nz-button nzType="default" (click)="onReload()" class="!flex !items-center !gap-2">
+          <ion-icon name="refresh-outline"></ion-icon>
+          <span class="hidden sm:inline">Tải lại</span>
+        </button>
+        <!-- Export buttons -->
+        <nz-dropdown [nzTrigger]="'click'">
+          <button nz-button class="!flex !items-center !gap-2" nzType="default" nz-dropdown>
+            <ion-icon name="download-outline"></ion-icon>
+            <span class="hidden sm:inline">Xuất báo cáo</span>
+          </button>
+          <ul nz-menu>
+            <li nz-menu-item (click)="onExport('excel')">
+              <ion-icon name="document-outline" class="mr-2"></ion-icon>
+              Xuất Excel
+            </li>
+            <!-- <li nz-menu-item (click)="onExport('pdf')">
+              <ion-icon name="document-text-outline" class="mr-2"></ion-icon>
+              Xuất PDF
+            </li> -->
+          </ul>
+        </nz-dropdown>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-3 border-t">
+      <div class="flex w-full gap-4">
+        <button nz-button [nzType]="comparisonMode ? 'primary' : 'default'" (click)="toggleComparisonMode()" class="!flex !items-center !gap-2">
+          <ion-icon name="git-compare-outline" class="text-base"></ion-icon>
+          <span>So sánh</span>
+        </button>
+        <!-- Date range buttons: today, this-week, this-month, last-7, last-30, custom -->
+        <nz-button-group class="flex w-full">
+          <button nz-button class="!flex !items-center !gap-2" [nzType]="dateRangeType === 'day' ? 'primary' : 'default'" (click)="setDateRangeType('day')">
+            <ion-icon name="today-outline" class="text-base"></ion-icon>
+            <span>Hôm nay</span>
+          </button>
+
+          <button
+            nz-button
+            class="!flex !items-center !gap-2"
+            [nzType]="dateRangeType === 'this-week' ? 'primary' : 'default'"
+            (click)="setDateRangeType('this-week')"
+          >
+            <ion-icon name="calendar-clear-outline" class="text-base"></ion-icon>
+            <span>Tuần này</span>
+          </button>
+
+          <button
+            nz-button
+            class="!flex !items-center !gap-2"
+            [nzType]="dateRangeType === 'this-month' ? 'primary' : 'default'"
+            (click)="setDateRangeType('this-month')"
+          >
+            <ion-icon name="calendar-number-outline" class="text-base"></ion-icon>
+            <span>Tháng này</span>
+          </button>
+
+          <button nz-button class="!flex !items-center !gap-2" [nzType]="dateRangeType === 'week' ? 'primary' : 'default'" (click)="setDateRangeType('week')">
+            <ion-icon name="calendar-outline" class="text-base"></ion-icon>
+            <span>7 ngày</span>
+          </button>
+
+          <button nz-button class="!flex !items-center !gap-2" [nzType]="dateRangeType === 'month' ? 'primary' : 'default'" (click)="setDateRangeType('month')">
+            <ion-icon name="calendar-number-outline" class="text-base"></ion-icon>
+            <span>30 ngày</span>
+          </button>
+
+          <button
+            nz-button
+            class="!flex !items-center !gap-2"
+            [nzType]="dateRangeType === 'custom' ? 'primary' : 'default'"
+            (click)="setDateRangeType('custom')"
+          >
+            <ion-icon name="options-outline" class="text-base"></ion-icon>
+            <span>Tùy chọn</span>
+          </button>
+        </nz-button-group>
+      </div>
+      <!-- Comparison mode toggle -->
+
+      <!-- Date range picker -->
+      <form [formGroup]="filterForm" class="flex flex-col sm:flex-row gap-3 items-center">
+        <nz-range-picker
+          formControlName="dateRange"
+          [nzDisabledDate]="disabledDate"
+          nzFormat="dd/MM/yyyy"
+          [nzPlaceHolder]="['Ngày bắt đầu', 'Ngày kết thúc']"
+          class="w-full sm:w-auto"
+        ></nz-range-picker>
+        @if (comparisonMode) {
+        <ion-icon name="code-outline" class="text-2xl"></ion-icon>
+        @if (dateRangeType === 'day') {
+        <nz-date-picker
+          formControlName="compareDateRange"
+          [nzDisabledDate]="disabledCompareDate"
+          nzFormat="dd/MM/yyyy"
+          nzPlaceHolder="Chọn ngày so sánh"
+          class="w-full sm:w-auto"
+        ></nz-date-picker>
+        } @else {
+        <nz-range-picker
+          formControlName="compareDateRange"
+          [nzDisabledDate]="disabledCompareDate"
+          nzFormat="dd/MM/yyyy"
+          [nzPlaceHolder]="['So sánh từ', 'So sánh đến']"
+          class="w-full sm:w-auto"
+        ></nz-range-picker>
+        } }
+      </form>
+    </div>
+  </div>
+</div>

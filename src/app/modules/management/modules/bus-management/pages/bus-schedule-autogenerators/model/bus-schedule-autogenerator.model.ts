@@ -33,6 +33,7 @@ export class SpecificTimeSlot2Create {}
 
 export interface BusScheduleAutoGenerator2Create
   extends Omit<BusScheduleAutoGenerator, '_id' | 'selected' | 'specificTimeSlots'> {}
+
 export class BusScheduleAutoGenerator2Create {
   specificTimeSlots: SpecificTimeSlot2Create[] = [];
 }

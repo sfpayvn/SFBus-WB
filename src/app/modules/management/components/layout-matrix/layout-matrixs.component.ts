@@ -44,10 +44,6 @@ export class LayoutMatrixComponent implements OnInit {
       this.busLayoutsMatrix.seatLayouts,
       this.busSeatLayoutBlockIds,
     );
-    console.log(
-      '🚀 ~ LayoutMatrixComponent ~ initData ~ this.busLayoutsMatrix.layoutsForMatrix:',
-      this.busLayoutsMatrix.layoutsForMatrix,
-    );
   }
 
   async initializeMatrix(seatLayouts: any, busSeatLayoutBlockIds?: string[]) {

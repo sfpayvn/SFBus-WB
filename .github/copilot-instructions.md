@@ -9,6 +9,7 @@ This is an Angular 19 + Tailwind CSS admin dashboard for bus management system. 
 - **Charts**: ApexCharts with ng-apexcharts wrapper
 - **Testing**: Playwright for E2E (use `npm run test:e2e`)
 - **Build**: Standard Angular CLI with custom base-href for deployment
+- **Code Quality**: Prettier with Tailwind plugin, ESLint
 
 ## Module Structure Pattern
 

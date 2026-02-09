@@ -1,0 +1,17 @@
+<div class="bg-white rounded-lg shadow-sm p-4">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Biểu đồ doanh thu</h3>
+    <span (click)="viewDetail()" class="text-sm text-blue-600 underline cursor-pointer">Chi tiết</span>
+  </div>
+  <app-canvas-chart
+    [isLoading]="isLoading"
+    [chartData]="chartData"
+    [comparisonMode]="comparisonMode"
+    [dateRangeType]="dateRangeType"
+    [startDate]="startDate"
+    [endDate]="endDate"
+    chartType="line"
+    [chartOptions]="chartOptions"
+    loadingTip="Đang tải dữ liệu..."
+  ></app-canvas-chart>
+</div>

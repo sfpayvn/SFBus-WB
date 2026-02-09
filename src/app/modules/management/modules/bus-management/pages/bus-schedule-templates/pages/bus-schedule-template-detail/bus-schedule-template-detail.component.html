@@ -24,7 +24,13 @@
         <div class="flex w-full gap-4">
           <div class="flex w-full">
             <nz-form-item class="!w-full">
-              <nz-form-label nzFor="name" class="!flex !items-center !justify-start">Name</nz-form-label>
+              <nz-form-label
+                nzFor="name"
+                [nzNoColon]="true"
+                [nzRequired]="true"
+                class="!flex !items-center !justify-start"
+                >Name</nz-form-label
+              >
               <nz-form-control [nzErrorTip]="busScheduleTemplateDetailNameErrorTpl" class="!flex flex-col">
                 <nz-input-group
                   [nzSuffix]="busScheduleTemplateDetailNameClearTpl"
@@ -53,7 +59,9 @@
         </div>
         <div class="flex w-full gap-4">
           <nz-form-item class="!w-full">
-            <nz-form-label nzFor="busServiceIds" class="!flex !items-center !justify-start">Bus Drivers</nz-form-label>
+            <nz-form-label nzFor="busServiceIds" [nzNoColon]="true" class="!flex !items-center !justify-start"
+              >Bus Drivers</nz-form-label
+            >
             <nz-form-control>
               <nz-select
                 formControlName="busDriverIds"
@@ -90,7 +98,11 @@
         <div class="flex w-full gap-4">
           <div class="flex w-6/12">
             <nz-form-item class="!w-full">
-              <nz-form-label nzFor="busTemplateId" class="!flex !items-center !justify-start"
+              <nz-form-label
+                nzFor="busTemplateId"
+                [nzNoColon]="true"
+                [nzRequired]="true"
+                class="!flex !items-center !justify-start"
                 >Bus Templates</nz-form-label
               >
               <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusTemplateIdErrorTpl">
@@ -122,7 +134,9 @@
           </div>
           <div class="flex w-6/12">
             <nz-form-item class="!w-full" *ngIf="filterdBuses.length > 0">
-              <nz-form-label nzFor="busId" class="!flex !items-center !justify-start">Buses</nz-form-label>
+              <nz-form-label nzFor="busId" [nzNoColon]="true" class="!flex !items-center !justify-start"
+                >Buses</nz-form-label
+              >
               <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusIdErrorTpl">
                 <nz-select formControlName="busId" nzPlaceHolder="Chọn Bus" (ngModelChange)="chooseBus($event)">
                   @for (bus of filterdBuses; track bus) {
@@ -197,7 +211,9 @@
           </ng-container>
         </div>
         <div class="flex w-full flex-col" formArrayName="busSeatPrices" *ngIf="busSeatPricesForm.controls.length > 0">
-          <label class="flex h-[32px] items-center font-medium">Giá tiền theo từng loại ghế</label>
+          <nz-form-label [nzNoColon]="true" [nzRequired]="true" class="!flex !items-center !justify-start font-medium"
+            >Giá tiền theo từng loại ghế</nz-form-label
+          >
           <div class="grid w-full grid-cols-2 flex-wrap gap-2 rounded-lg border border-dashed border-gray-200 p-4">
             <div class="flex w-full" *ngFor="let grp of busSeatPricesForm.controls; let i = index" [formGroupName]="i">
               <nz-form-item class="!flex">
@@ -248,7 +264,13 @@
       <div class="flex w-6/12 flex-col gap-4">
         <div class="flex w-full gap-4">
           <nz-form-item class="!w-full">
-            <nz-form-label nzFor="busRouteId" class="!flex !items-center !justify-start">Bus Route</nz-form-label>
+            <nz-form-label
+              nzFor="busRouteId"
+              [nzNoColon]="true"
+              [nzRequired]="true"
+              class="!flex !items-center !justify-start"
+              >Bus Route</nz-form-label
+            >
             <nz-form-control [nzErrorTip]="busLayoutTemplateDetailBusRouteIdErrorTpl">
               <nz-select formControlName="busRouteId" nzPlaceHolder="Chọn Route" (ngModelChange)="chooseRoute($event)">
                 @for (busRoute of busRoutes; track busRoute) {
@@ -275,7 +297,12 @@
         <div class="flex w-full flex-col">
           <ng-container *ngIf="this.busScheduleTemplateDetailForm.get('busRouteId')?.value">
             <div>
-              <label class="!flex min-h-[32px] !items-center !justify-start !font-medium">Bus Route Setup</label>
+              <nz-form-label
+                [nzNoColon]="true"
+                [nzRequired]="true"
+                class="!flex !items-center !justify-start font-medium"
+                >Break Points</nz-form-label
+              >
             </div>
             <div formGroupName="busRoute">
               <div formArrayName="breakPoints" class="flex w-full flex-col gap-4">
@@ -347,7 +374,7 @@
     </div>
     <div class="flex flex-col gap-4 pt-5" *ngIf="busLayoutTemplateReview">
       <div class="flex justify-between">
-        <label>Bus Layout Tempalte Review</label>
+        <label class="font-medium">Bus Layout Tempalte Review</label>
         <button
           class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
           nz-button

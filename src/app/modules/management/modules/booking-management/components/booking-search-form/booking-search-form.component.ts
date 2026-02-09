@@ -1,15 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { Utils } from '@rsApp/shared/utils/utils';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { combineLatest, of } from 'rxjs';
+import { StorageService } from '@rsApp/shared/services/storage.service';
+import { Utils } from '@rsApp/shared/utils/utils';
 import { NzDatePickerComponent } from 'ng-zorro-antd/date-picker';
-import { ChooseBusSchedule2BookingDialogComponent } from '../choose-bus-schedule-2-booking-dialog/choose-bus-schedule-2-booking-dialog.component';
 import { BusRoute } from '../../../bus-management/pages/bus-routes/model/bus-route.model';
 import { BusRoutesService } from '../../../bus-management/pages/bus-routes/service/bus-routes.servive';
-import { BusSchedule } from '../../../bus-management/pages/bus-schedules/model/bus-schedule.model';
-import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules/service/bus-schedules.servive';
 
 @Component({
   selector: 'app-booking-search-form',
@@ -19,100 +15,98 @@ import { BusSchedulesService } from '../../../bus-management/pages/bus-schedules
 })
 export class BookingSearchFormComponent implements OnInit {
   @ViewChild('endDatePicker') endDatePicker!: NzDatePickerComponent;
+  private stationSub: any;
 
   @Output() findBookingEvent = new EventEmitter<any>();
+  @Output() sortChange = new EventEmitter<{ key: string | null; order: 'asc' | 'desc' | null }>();
   bookingSearchForm: FormGroup = new FormGroup({});
 
-  @Input() busRoutes: BusRoute[] = [];
-  busRoute: BusRoute = null as any;
-
-  @Input() busSchedules: BusSchedule[] = [];
-  busSchedule: BusSchedule = null as any;
-
   @Input() isLoaded: boolean = false;
+
+  busRoutes: BusRoute[] = [];
 
   startTimeScheduleValueBusScheduleSearch: Date | null = null;
   endTimeScheduleValueBusScheduleSearch: Date | null = null;
 
   isBusRouteValid: boolean = false;
 
-  statuses: any = [
-    { value: 'reserved', label: 'ĐÃ ĐẶT' },
-    { value: 'paid', label: 'ĐÃ THANH TOÁN' },
-    { value: 'deposited', label: 'ĐÃ ĐẶT CỌC' },
-  ];
-
   constructor(
     public utils: Utils,
-    private utilsModal: UtilsModal,
     private router: Router,
     private busRoutesService: BusRoutesService,
-    private busSchedulesService: BusSchedulesService,
+    private storageService: StorageService,
     private fb: FormBuilder,
-  ) {}
-
-  ngOnInit() {
-    this.initForm();
-  }
-
-  initForm() {
+  ) {
+    // Initialize form immediately (synchronously) to avoid timing issues
     this.bookingSearchForm = this.fb.group({
       startTimeScheduleValue: [],
       endTimeScheduleValue: [],
-      status: [],
-      phoneNumber: [''],
       keyword: [''],
+      busRouteId: [''],
+      sortKey: ['createdAt'],
+      sortOrder: ['descend'],
     });
+  }
+
+  // Sort options shown in tooltip - defined here so template displays them from TS
+  sortOptions: Array<{ key: string; label: string }> = [
+    { key: 'createdAt', label: 'Ngày tạo' },
+    { key: 'startDate', label: 'Thời gian chuyến bắt đầu' },
+    { key: 'quantity', label: 'Số lượng' },
+  ];
+
+  showSortMenu = false;
+
+  // apply sort using values from reactive form
+  applySort() {
+    const key = this.bookingSearchForm.get('sortKey')?.value || null;
+    const order = this.bookingSearchForm.get('sortOrder')?.value || null;
+    this.sortChange.emit({ key, order });
+  }
+
+  // helper to choose a sort key (writes into form)
+  chooseSortKey(key: string) {
+    this.bookingSearchForm.patchValue({ sortKey: key });
+  }
+
+  // helper to toggle order (writes into form)
+  setSortOrder(order: 'ascend' | 'descend') {
+    this.bookingSearchForm.patchValue({ sortOrder: order });
+  }
+
+  async ngOnInit() {
+    await this.initForm();
+  }
+
+  async initForm() {
     this.initializeData();
+    this.onSubmit();
+  }
+
+  get f() {
+    return this.bookingSearchForm.controls;
   }
 
   async initializeData() {
-    const findBusRouteRequest = this.busRoutesService.findAll();
-    const findBusSchedulesRequest = this.busSchedulesService.findAll(); // lấy data to test
+    this.loadBusRoutes();
+  }
 
-    combineLatest([findBusRouteRequest, findBusSchedulesRequest]).subscribe(([busRoutes, busSchedules]) => {
-      this.busRoutes = busRoutes;
-      this.busSchedules = busSchedules;
+  loadBusRoutes() {
+    this.busRoutesService.findAll(true).subscribe({
+      next: (routes: any) => {
+        this.busRoutes = routes || [];
+      },
+      error: () => {
+        this.busRoutes = [];
+      },
     });
   }
 
-  ///////////////////////////////// Choose  Status ////////////////////////////////////////////////////////
-  chooseStatus(status: string) {
-    this.bookingSearchForm.patchValue({ status });
-  }
-
-  ///////////////////////////////// Choose  Bus Route ////////////////////////////////////////////////////////
-
-  clearBusRoute(event: MouseEvent | null = null) {
-    event?.stopPropagation();
-    this.busRoute = null as any;
-    this.busSchedule = null as any;
-    this.startTimeScheduleValueBusScheduleSearch = null;
-    this.endTimeScheduleValueBusScheduleSearch = null;
-  }
-
-  async chooseBusRoute(event: MouseEvent) {
-    const dataInput = {
-      busRoutes: this.busRoutes,
-      busRoute: this.busRoute,
-
-      busSchedules: this.busSchedules,
-      busSchedule: this.busSchedule,
-
-      startTimeScheduleValueBusScheduleSearch: this.startTimeScheduleValueBusScheduleSearch,
-      endTimeScheduleValueBusScheduleSearch: this.endTimeScheduleValueBusScheduleSearch,
-    };
-
-    this.utilsModal
-      .openContextModal(ChooseBusSchedule2BookingDialogComponent, dataInput, event, '#chooseBusRoute')
-      ?.subscribe((res) => {
-        if (res) {
-          this.busRoute = res.busRoute;
-          this.busSchedule = res.busSchedule;
-          this.startTimeScheduleValueBusScheduleSearch = res.startTimeScheduleValueBusScheduleSearch;
-          this.endTimeScheduleValueBusScheduleSearch = res.endTimeScheduleValueBusScheduleSearch;
-        }
-      });
+  ngOnDestroy(): void {
+    if (this.stationSub) {
+      this.stationSub.unsubscribe();
+      this.stationSub = null;
+    }
   }
 
   ///////////////////////////////// Time Schedule ////////////////////////////////////////////////////////
@@ -181,15 +175,9 @@ export class BookingSearchFormComponent implements OnInit {
     if (!open) {
       this.endDatePicker.open();
     }
-    console.log('handleStartOpenChange', open);
   }
 
-  handleEndOpenChange(open: boolean): void {
-    console.log('handleEndOpenChange', open);
-  }
-
-  ///////////////////////////////// Time Schedule Change ////////////////////////////////////////////////////////
-  timeScheduleChange(timeSchedule: any) {}
+  handleEndOpenChange(open: boolean): void {}
 
   formatTime(date: Date | undefined) {
     if (!date) return;
@@ -204,14 +192,12 @@ export class BookingSearchFormComponent implements OnInit {
 
   resetFilter() {
     this.bookingSearchForm.reset();
-    this.busRoute = null as any;
-    this.busSchedule = null as any;
+    this.storageService.remove('currentStationId');
     this.startTimeScheduleValueBusScheduleSearch = null;
     this.endTimeScheduleValueBusScheduleSearch = null;
   }
 
   clearFormValue(controlName: string) {
-    console.log('🚀 ~ BookingDetailComponent ~ clearFormValue ~ controlName:', controlName);
     const control = this.bookingSearchForm.get(controlName);
     if (control) {
       control.setValue('');
@@ -221,17 +207,33 @@ export class BookingSearchFormComponent implements OnInit {
   }
 
   onSubmit() {
+    const {
+      busRouteId,
+      startTimeScheduleValue,
+      endTimeScheduleValue,
+      status,
+      phoneNumber,
+      keyword,
+      sortKey,
+      sortOrder,
+    } = this.bookingSearchForm.value;
+
     const params = {
-      busRouteId: this.busRoute ? this.busRoute._id : null,
-      busScheduleId: this.busSchedule ? this.busSchedule._id : null,
+      filters: {
+        busRouteId: busRouteId || null,
 
-      startDate: this.bookingSearchForm.value.startTimeScheduleValue || null,
-      endDate: this.bookingSearchForm.value.endTimeScheduleValue || null,
+        startDate: startTimeScheduleValue || null,
+        endDate: endTimeScheduleValue || null,
 
-      status: this.bookingSearchForm.value.status || null,
+        status: status || null,
 
-      phoneNumber: this.bookingSearchForm.value.phoneNumber || null,
-      keyword: this.bookingSearchForm.value.keyword || null,
+        phoneNumber: phoneNumber || null,
+        keyword: keyword || null,
+      },
+      sortBy: {
+        key: sortKey || null,
+        value: sortOrder || null,
+      },
     };
     this.findBookingEvent.emit(params);
   }

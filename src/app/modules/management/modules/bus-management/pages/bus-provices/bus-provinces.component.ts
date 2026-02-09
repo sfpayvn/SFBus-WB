@@ -45,8 +45,6 @@ export class BusProvincesComponent implements OnInit {
 
   isLoading: boolean = false;
 
-  busStations: BusStation[] = [];
-
   filteredProvinces: filteredProvinces[] = [];
   searchKeyword: string = '';
   timeout: any;
@@ -68,16 +66,14 @@ export class BusProvincesComponent implements OnInit {
     this.isLoading = true;
 
     const searchBusProvince$ = this.busProvincesService.searchBusProvince(this.searchParams);
-    const searchBusStation$ = this.busStationsService.findAll(true);
 
-    let request = [searchBusProvince$, searchBusStation$];
+    let request = [searchBusProvince$];
 
-    combineLatest(request).subscribe(async ([searchBusProvinceRes, busStations]) => {
+    combineLatest(request).subscribe(async ([searchBusProvinceRes]) => {
       this.searchBusProvince = searchBusProvinceRes;
-      if (this.searchBusProvince && this.busStations) {
+      if (this.searchBusProvince) {
         this.totalItem = this.searchBusProvince.totalItem;
         this.totalPage = this.searchBusProvince.totalPage;
-        this.busStations = busStations;
         this.filterProvinces();
       }
       this.isLoading = false;
@@ -90,20 +86,6 @@ export class BusProvincesComponent implements OnInit {
       this.isLoading = true;
       const keyword = this.searchKeyword.toLowerCase();
       this.filteredProvinces = this.searchBusProvince.busProvinces
-        .map((province) => {
-          const matchingBusStations = this.busStations.filter(
-            (busStation: any) =>
-              busStation.provinceId === province._id && busStation.name.toLowerCase().includes(keyword),
-          );
-          const remainingBusStations = this.busStations.filter(
-            (busStation: any) =>
-              busStation.provinceId === province._id && !busStation.name.toLowerCase().includes(keyword),
-          );
-          return {
-            ...province,
-            busStations: [...matchingBusStations, ...remainingBusStations],
-          };
-        })
         .filter(
           (province) =>
             province.name.toLowerCase().includes(keyword) ||
@@ -211,7 +193,6 @@ export class BusProvincesComponent implements OnInit {
     const data = {
       title: 'Chỉnh sửa Tỉnh/Thành Phố',
       busProvince: { ...busProvince },
-      busStations: this.busStations.filter((bs) => !bs.isDefault),
     };
     this.utilsModal.openModal(BusProvinceDetailDialogComponent, data, 'medium').subscribe((result) => {
       if (result) {
@@ -288,7 +269,7 @@ export class BusProvincesComponent implements OnInit {
 
     const cloneBusProvince: CloneBusProvince = {
       busProvince: busProvince2Create,
-      busStations: this.busStations.filter((bs) => bs.provinceId === busProvince._id),
+      busStations: busProvince.busStations || [],
     };
 
     try {

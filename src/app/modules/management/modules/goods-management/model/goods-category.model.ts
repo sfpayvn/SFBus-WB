@@ -8,12 +8,13 @@ export class SearchGoodsCategory {
 export class GoodsCategory {
   _id: string = '';
   name: string = '';
+  iconId: string = '';
   icon: string = '';
   status: string = '';
   selected: boolean = false;
 }
 
-export interface GoodsCategory2Create extends Omit<GoodsCategory, '_id' | 'selected'> {}
+export interface GoodsCategory2Create extends Omit<GoodsCategory, '_id' | 'icon' | 'selected'> {}
 export class GoodsCategory2Create {}
 
 export class GoodsCategory2Update extends GoodsCategory2Create {

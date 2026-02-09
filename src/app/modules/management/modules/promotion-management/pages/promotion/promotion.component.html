@@ -80,7 +80,15 @@
               [nzActive]="true">
               <div class="h-8 w-8 overflow-hidden rounded-full">
                 @if(promotion.image){
-                <img alt="driver avarta" [src]="promotion.image" />
+                <app-trigger-mask class="flex h-full w-full">
+                  <img alt="driver avarta" [src]="promotion.image" />
+
+                  <div triggerMaskContent class="trigger-mask-content flex h-full w-full justify-center text-white">
+                    <button (click)="viewImage($event, promotion.image)">
+                      <svg-icon svgClass="w-5 h-5" src="./assets/icons/zoom-outline-white.svg"></svg-icon>
+                    </button>
+                  </div>
+                </app-trigger-mask>
                 }@else {
                 <div
                   class="flex h-full w-full items-center justify-center"

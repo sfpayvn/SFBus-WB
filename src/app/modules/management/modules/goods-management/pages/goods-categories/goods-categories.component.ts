@@ -202,7 +202,7 @@ export class GoodsCategoriesComponent implements OnInit {
         const goodsCategory2Update = {
           ...goodsCategory,
           name: result.name,
-          icon: result.icon,
+          iconId: result.iconId,
         };
         this.goodsCategoriesService.processUpdateGoodsCategories(result.files, goodsCategory2Update).subscribe({
           next: (res: GoodsCategory) => {
@@ -231,7 +231,7 @@ export class GoodsCategoriesComponent implements OnInit {
       if (result) {
         const goodsCategory2Create = new GoodsCategory2Create();
         goodsCategory2Create.name = result.name;
-        goodsCategory2Create.icon = result.icon;
+        goodsCategory2Create.iconId = result.iconId;
 
         this.goodsCategoriesService.processCreateGoodsCategories(result.files, goodsCategory2Create).subscribe({
           next: (res: GoodsCategory) => {
@@ -260,5 +260,10 @@ export class GoodsCategoriesComponent implements OnInit {
       },
       error: (error: any) => this.utils.handleRequestError(error),
     });
+  }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
   }
 }

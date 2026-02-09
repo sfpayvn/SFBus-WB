@@ -14,6 +14,10 @@ nz-select {
     font-size: var(--text-xs) !important;
     line-height: var(--tw-leading, var(--text-xs--line-height)) !important;
     color: var(--color-foreground) !important;
+    nz-select-item {
+      align-items: center !important;
+      display: flex !important;
+    }
 
     input {
       height: 100% !important;
@@ -51,10 +55,6 @@ nz-form-item {
   nz-form-control {
     min-height: auto !important;
   }
-}
-
-nz-date-picker {
-  min-height: 38px !important;
 }
 
 .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
@@ -110,6 +110,19 @@ nz-input-group.custom-nz-input-group:not(.ant-input-affix-wrapper-disabled):hove
 nz-input-group.custom-nz-input-group.ant-input-affix-wrapper-focused {
   border-color: var(--primary) !important;
   outline: 3px solid color-mix(in srgb, var(--primary) 20%, white) !important;
+}
+
+nz-date-picker {
+  height: 38px !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  border-color: var(--color-border) !important;
+}
+
+nz-date-picker.ant-picker-focused {
+  border-color: var(--primary) !important;
+  outline: 3px solid color-mix(in srgb, var(--primary) 20%, white) !important;
+  border-width: 1px !important;
 }
 
 .custom-nz-input:not(.ant-input-affix-wrapper-disabled):hover {
@@ -194,5 +207,5 @@ nz-input-otp {
     height: 60px !important;
     font-size: 24px;
     border-radius: 5px;
-    }
+  }
 }

@@ -36,8 +36,10 @@ export class BusSeatPrices {
 
 export class BusSchedule {
   _id: string = '';
+  busScheduleNumber: string = '';
   name: string = '';
   busId: string = '';
+  currentStationId: string = '';
   bus: Bus | undefined;
   busTemplateId: string = '';
   busTemplate: BusTemplate | undefined;

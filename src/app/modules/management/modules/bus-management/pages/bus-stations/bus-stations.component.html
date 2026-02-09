@@ -40,7 +40,10 @@
             [nzIndeterminate]="indeterminate"
             nzLabel="Select all"
             (nzCheckedChange)="onAllChecked($event)"></th>
+          <th class="min-w-[200px]">Image</th>
           <th class="min-w-[200px]">Name</th>
+          <th class="min-w-[200px]">Office</th>
+          <th class="min-w-[200px]">Active</th>
           <th class="w-[100px] text-center">Actions</th>
         </tr>
       </thead>
@@ -53,7 +56,44 @@
             (nzCheckedChange)="onItemChecked(busStation._id, $event)"></td>
           <td>
             <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
+              <app-trigger-mask class="flex h-10 w-10">
+                <img
+                  *ngIf="busStation.image"
+                  [src]="busStation.image"
+                  alt="{{ busStation.name }}"
+                  class="h-10 w-10 rounded-md object-cover" />
+
+                <div triggerMaskContent class="trigger-mask-content flex h-full w-full justify-center text-white">
+                  <button (click)="viewImage($event, busStation.image)">
+                    <svg-icon svgClass="w-5 h-5" src="./assets/icons/zoom-outline-white.svg"></svg-icon>
+                  </button>
+                </div>
+              </app-trigger-mask>
+            </nz-skeleton>
+          </td>
+          <td>
+            <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
               {{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
+            </nz-skeleton>
+          </td>
+          <td>
+            <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
+              @if(busStation.isOffice) {
+              <svg-icon
+                src="assets/icons/heroicons/outline/check-circle.svg"
+                [svgClass]="'h-5 w-5 cursor-pointer text-blue-500'">
+              </svg-icon>
+              }
+            </nz-skeleton>
+          </td>
+          <td>
+            <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
+              @if(busStation.isActive) {
+              <svg-icon
+                src="assets/icons/heroicons/outline/check-circle.svg"
+                [svgClass]="'h-5 w-5 cursor-pointer text-green-500'">
+              </svg-icon>
+              }
             </nz-skeleton>
           </td>
           <td class="text-center">

@@ -57,8 +57,8 @@ export class BusRouteDetailComponent implements OnInit {
   }
 
   initData() {
-    let findAllBusStations = this.busStationsService.findAll();
-    let findAllBusProvinces = this.busProvincesService.findAll();
+    let findAllBusStations = this.busStationsService.findAllAvailable();
+    let findAllBusProvinces = this.busProvincesService.findAllAvailable();
 
     let request = [findAllBusStations, findAllBusProvinces];
     combineLatest(request).subscribe(async ([busStations, busProvinces]) => {
@@ -244,5 +244,13 @@ export class BusRouteDetailComponent implements OnInit {
       },
       error: (error: any) => this.utils.handleRequestError(error),
     });
+  }
+
+  getSelectedBusStation(busStationId: string): BusStation | undefined {
+    for (const province of this.filteredProvinces) {
+      const station = province.busStations?.find((bs: BusStation) => bs._id === busStationId);
+      if (station) return station;
+    }
+    return undefined;
   }
 }

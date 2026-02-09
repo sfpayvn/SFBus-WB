@@ -1,4 +1,9 @@
-<div class="mx-auto w-[1128px]">
+<app-sf-body>
+  <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+</app-sf-body>
+<ng-template #contentTemplate>
+  <!-- Template in vé (ẩn khi không in) -->
+
   @if (!isDialog) {
   <div class="mb-4 flex justify-end">
     <div class="flex gap-4 py-6">
@@ -10,7 +15,7 @@
     </div>
   </div>
   } @if (booking) {
-  <div class="border-muted/20 flex min-w-full flex-col gap-4 rounded-xl border bg-white p-2">
+  <div class="border-muted/20 flex min-w-full flex-col gap-4 rounded-xl border bg-white p-4">
     <div class="flex justify-center p-2">
       <label class="text-xl font-semibold">
         <span> Chi Tiết Đặt Vé </span>
@@ -100,8 +105,11 @@
                 <div class="rounded-lg border border-blue-200 bg-blue-50 p-3">
                   <div class="mb-2 flex items-center justify-between gap-2">
                     <div class="flex gap-2">
+                      <span class="rounded bg-red-500 px-2 py-1 text-xs font-semibold text-white">
+                        #{{ bookingItem.bookingItemNumber }}
+                      </span>
                       <span class="rounded bg-blue-500 px-2 py-1 text-xs font-semibold text-white">
-                        Ghế {{ bookingItem.seat.name }}
+                        {{ getTypeOfSeat(bookingItem.seat)?.name }} {{ bookingItem.seat.name }}
                       </span>
                       <span
                         class="{{
@@ -140,20 +148,260 @@
             <nz-divider class="!mt-1 !mb-1"></nz-divider>
 
             <!-- Tổng tiền -->
-            <div class="flex items-center justify-between rounded-lg bg-red-50 py-2 px-4">
-              <label class="text-base font-bold text-gray-700">Tổng tiền:</label>
-              <label class="text-lg font-bold text-red-700">{{
-                utils.formatPriceToVND(booking.afterDiscountTotalPrice || 0)
-              }}</label>
+            <div class="flex flex-col py-2 px-4 gap-2 rounded-lg {{ getBookingStatusClass(booking.status) }}">
+              <div class="flex justify-between">
+                <label class="flex items-start justify-start !p-0 font-medium text-gray-600">Tổng tiền vé: </label>
+                <label class="">{{ utils.formatPriceToVND(booking.totalPrice) }}</label>
+              </div>
+              <div class="flex justify-between">
+                <label class="flex items-start justify-start !p-0 font-medium text-gray-600">Ưu đãi thanh toán: </label>
+                <label class="text-orange-500">- {{ utils.formatPriceToVND(booking.discountTotalAmount || 0) }}</label>
+              </div>
+              <div class="flex justify-between">
+                <label class="flex items-start justify-start !p-0 font-medium text-gray-600"
+                  >Tổng đã thanh toán:
+                </label>
+                <label class="">{{ utils.formatPriceToVND(booking.paymentPaidAmount || 0) }}</label>
+              </div>
+
+              <div class="flex justify-between">
+                <label class="flex items-start justify-start !p-0 font-medium text-gray-600"
+                  >Tổng cần thanh toán:
+                </label>
+                <label class="">{{ utils.formatPriceToVND(booking.paymentAmount || 0) }}</label>
+              </div>
             </div>
           </div>
         </nz-collapse-panel>
         <ng-template #collapseHeaderBookingInfo>
-          <label class="text-base font-semibold text-blue-500">Thông Tin Đặt Vé</label>
+          <label class="text-base font-semibold text-blue-500">
+            Thông Tin Đặt Vé
+            <span class="rounded bg-red-500 px-2 py-1 text-xs font-semibold text-white"
+              >#{{ booking.bookingNumber }}
+            </span>
+          </label>
         </ng-template>
       </nz-collapse>
       }
     </div>
+
+    <div class="bg-background flex min-w-full flex-col rounded-lg border border-dashed border-gray-300">
+      @if (booking.userInfo) {
+      <nz-collapse nzGhost [nzExpandIconPosition]="'end'">
+        <nz-collapse-panel [nzHeader]="collapseHeaderBookingPaymentHistory" [nzActive]="true">
+          <div class="relative flex flex-col gap-4 p-4">
+            @if(!isCreatePayment){ @if (payments && payments.length > 0) {
+            <div class="flex flex-col gap-3">
+              @for (payment of payments; track payment._id) {
+              <div class="rounded-lg border border-dashed border-gray-300 p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex flex-col">
+                    <div class="flex flex-1 items-center gap-3">
+                      <div>
+                        @if (getPaymentMethod(payment.paymentMethodId)?.image) {
+                        <img
+                          [src]="getPaymentMethod(payment.paymentMethodId)?.image"
+                          alt="payment icon"
+                          class="h-8 w-8 object-contain" />
+                        } @else {
+                        <svg-icon
+                          [src]="'assets/icons/heroicons/outline/cash.svg'"
+                          [svgClass]="'!h-4 !w-4 text-blue-500'"></svg-icon>
+                        }
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <span class="text-sm font-semibold text-gray-800">
+                          {{ getPaymentMethod(payment.paymentMethodId)?.name || 'Chưa xác định' }}
+                        </span>
+                        <span class="text-xs text-gray-500">
+                          Mã GD: <span class="font-medium text-gray-700">#{{ payment.paymentNumber || 'N/A' }}</span>
+                        </span>
+                      </div>
+                    </div>
+                    <span class="text-xs text-gray-500">
+                      {{ formatTime(payment.createdAt) }} - {{ formatDate(payment.createdAt) }}
+                    </span>
+                  </div>
+
+                  <div class="flex flex-col items-end gap-1 text-right">
+                    <div class="whitespace-nowrap text-lg font-bold text-green-700">
+                      {{ payment.status === 'completed' ? '+' : '' }}
+                      {{ utils.formatPriceToVND(payment.chargedAmount || 0) }}
+                    </div>
+                    <span
+                      class="px-2 py-0.5 rounded-md text-xs font-medium {{
+                        paymentStatusClasses[payment.status] || 'bg-gray-500'
+                      }}">
+                      {{ paymentStatuses[payment.status] || 'Chưa xác định' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+            } @else {
+            <div class="rounded-lg border border-dashed border-gray-300 py-6 text-center text-gray-500">
+              <p class="text-sm">Chưa có thông tin thanh toán</p>
+              @if(booking.paymentAmount && booking.paymentAmount > 0){
+              <button nz-button class="mt-2 !border-none" type="button" (click)="toggleCreatePaymentForm()">
+                <svg-icon
+                  [src]="'assets/icons/heroicons/outline/plus-circle.svg'"
+                  [svgClass]="'!h-6 !w-6 text-blue-500'"></svg-icon>
+              </button>
+              }
+            </div>
+            } }@else if (createPaymentForm && bookingForm) {
+            <!-- Form tạo thanh toán -->
+            <div [formGroup]="bookingForm">
+              <div formGroupName="createPaymentForm">
+                <label class="mb-3 flex h-[32px] font-medium text-gray-700">Tạo thanh toán</label>
+                <div class="flex w-full flex-col gap-4 rounded-lg border border-dashed border-gray-500 p-4">
+                  <!-- Phương thức thanh toán -->
+                  <nz-form-item class="!mb-0">
+                    <nz-form-label nzFor="paymentMethod" class="!mb-2">
+                      <span class="text-sm font-medium text-gray-700">Phương thức thanh toán</span>
+                    </nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        class="custom-nz-select !h-[42px]"
+                        formControlName="paymentMethod"
+                        nzPlaceHolder="Chọn phương thức thanh toán"
+                        [nzCustomTemplate]="defaultTemplate"
+                        [nzAllowClear]="true">
+                        @for (paymentMethod of paymentMethods; track paymentMethod._id) {
+                        <nz-option nzCustomContent [nzLabel]="paymentMethod.name" [nzValue]="paymentMethod">
+                          <div class="flex items-center gap-2">
+                            <img [src]="paymentMethod.image" class="h-5 w-5" />
+                            <span class="!font-medium">{{ paymentMethod.name }}</span>
+                          </div>
+                        </nz-option>
+                        }
+                      </nz-select>
+                      <ng-template #defaultTemplate let-selected>
+                        @if(createPaymentForm.controls['paymentMethod'].value) {
+                        <div class="flex flex-row items-center gap-2">
+                          <img [src]="createPaymentForm.controls['paymentMethod'].value.image" class="h-6 w-6" />
+                          <span class="text-base !font-medium">{{
+                            createPaymentForm.controls['paymentMethod'].value.name
+                          }}</span>
+                        </div>
+                        }
+                      </ng-template>
+                    </nz-form-control>
+                  </nz-form-item>
+
+                  <!-- Số tiền thanh toán -->
+                  @if(createPaymentForm.controls['paymentMethod'].value && createPaymentForm.controls['paymentAmount']){
+                  <nz-form-item class="!mb-0">
+                    <nz-form-label nzFor="paymentAmount" class="!mb-2">
+                      <span class="text-sm font-medium text-gray-700">Số tiền thanh toán</span>
+                    </nz-form-label>
+                    <nz-form-control [nzErrorTip]="paymentAmountErrorTpl">
+                      <nz-input-group [nzSuffix]="paymentAmountClearTpl" class="custom-nz-input-group">
+                        <input
+                          type="text"
+                          nz-input
+                          formControlName="paymentAmount"
+                          placeholder="Nhập số tiền"
+                          mask="separator.0"
+                          thousandSeparator="," />
+                      </nz-input-group>
+
+                      <ng-template #paymentAmountClearTpl>
+                        <div class="flex min-w-[25px] flex-row">
+                          <span class="pr-2 text-sm">₫</span>
+                          <div class="flex w-[12px] items-center">
+                            @if(createPaymentForm.controls['paymentAmount'].value){
+                            <span
+                              nz-icon
+                              class="ant-input-clear-icon cursor-pointer"
+                              nzTheme="fill"
+                              nzType="close-circle"
+                              (click)="createPaymentForm.controls['paymentAmount'].patchValue('0')"></span>
+                            }
+                          </div>
+                        </div>
+                      </ng-template>
+
+                      <ng-template #paymentAmountErrorTpl let-control>
+                        <span class="mt-1 flex w-full justify-end !text-xs text-red-500">
+                          @if(control.hasError('required')) {
+                          <ng-container>Vui lòng nhập số tiền</ng-container>
+                          } @if(control.hasError('min')) {
+                          <ng-container>Số tiền phải lớn hơn 0</ng-container>
+                          } @if(control.hasError('max')) {
+                          <ng-container
+                            >Số tiền phải nhỏ hơn
+                            {{ utils.formatPriceToVND(createPaymentForm.get('maxPaymentAmount')?.value) }}</ng-container
+                          >
+                          }
+                        </span>
+                      </ng-template>
+                    </nz-form-control>
+                  </nz-form-item>
+                  }@else{
+                  <div class="py-4 text-center text-gray-500">
+                    <p class="text-sm">Vui lòng chọn phương thức thanh toán</p>
+                  </div>
+                  }
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </nz-collapse-panel>
+        <ng-template #collapseHeaderBookingPaymentHistory>
+          <div class="flex items-center justify-between text-base font-semibold text-blue-500">
+            <label>
+              Thanh Toán @if(payments && payments.length > 0) {
+              <span class="ml-2 rounded-full bg-blue-500 px-2 py-1 text-xs font-semibold text-white">{{
+                payments.length
+              }}</span>
+              }
+            </label>
+            @if(booking.status !== bookingStatus.PAID && !isCreatePayment){
+            <button nz-button class="!border-none" type="button" (click)="toggleCreatePaymentForm($event)">
+              <svg-icon
+                [src]="'assets/icons/heroicons/outline/plus-circle.svg'"
+                [svgClass]="'!h-6 !w-6 text-blue-500'"></svg-icon>
+            </button>
+            }
+          </div>
+        </ng-template>
+      </nz-collapse>
+      }
+    </div>
+
+    <!-- Buttons ở cuối trang -->
+    @if(!isCreatePayment){
+    <div class="flex justify-center py-4">
+      <button
+        (click)="viewBusScheduleDetails()"
+        nz-button
+        class="cursor-pointer !rounded-md !bg-blue-500 !font-semibold !text-white">
+        Chỉnh Sửa
+      </button>
+    </div>
+    }@else{
+    <div class="flex justify-end gap-2 py-4">
+      <button
+        class="!min-w-24 !flex !h-max !justify-center !rounded-lg !bg-red-500 !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+        nz-button
+        nzType="default"
+        type="button"
+        (click)="toggleCreatePaymentForm()">
+        Quay Lại
+      </button>
+      <button
+        class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!bg-blue-600"
+        nz-button
+        nzType="default"
+        type="button"
+        (click)="processPayment()">
+        Thanh Toán
+      </button>
+    </div>
+    }
   </div>
   }
-</div>
+</ng-template>

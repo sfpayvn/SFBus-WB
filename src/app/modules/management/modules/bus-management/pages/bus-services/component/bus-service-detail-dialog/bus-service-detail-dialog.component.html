@@ -13,11 +13,11 @@
   <form class="sm:min-w-36 md:min-w-96" [formGroup]="busServiceForm" nz-form (ngSubmit)="onSubmit()">
     <div class="mb-5 w-full">
       <nz-form-item>
-        <nz-form-label [nzSpan]="6" nzFor="name" class="!flex !h-[36px] !items-center !justify-start"
+        <nz-form-label [nzNoColon]="true" [nzRequired]="true" nzFor="name" class="!flex !items-center !justify-start"
           >Name</nz-form-label
         >
         <nz-form-control [nzErrorTip]="busServiceNameErrorTpl" class="!flex !h-[56px] flex-col">
-          <nz-input-group [nzSuffix]="busServiceNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0 !h-[36px]">
+          <nz-input-group [nzSuffix]="busServiceNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
             <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
           </nz-input-group>
           <ng-template #busServiceNameClearTpl>
@@ -39,6 +39,9 @@
       </nz-form-item>
     </div>
     <div>
+      <nz-form-label [nzNoColon]="true" [nzRequired]="true" class="!flex !items-center !justify-start font-medium"
+        >Hình ảnh</nz-form-label
+      >
       @if(!busServiceIcon){
       <div
         nz-popover

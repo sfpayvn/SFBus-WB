@@ -36,7 +36,7 @@
   <ng-container [ngSwitch]="viewDisplayMode">
     <ng-container *ngSwitchCase="'table'">
       <app-table-action
-        [title]="'Bus Scheduler Auto'"
+        [title]="'Bus Schedules Auto'"
         [totalItem]="totalItem"
         (sortDataEvent)="sortBusScheduleAutoGeneratorPage($event)"
         (searchDataEvent)="searchBusScheduleAutoGeneratorPage($event)"></app-table-action>

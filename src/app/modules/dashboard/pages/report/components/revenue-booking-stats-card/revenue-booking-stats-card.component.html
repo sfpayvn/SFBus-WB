@@ -1,0 +1,45 @@
+<div class="flex h-full flex-col rounded-lg bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+  <div class="flex flex-col justify-between">
+    <p class="mb-1 text-sm text-gray-600">{{ stats.title }}</p>
+    <div class="flex gap-4">
+      <nz-skeleton [nzActive]="true" [nzParagraph]="false" [nzLoading]="isLoading">
+        <div class="flex w-full items-end gap-2">
+          <label class="text-2xl font-bold text-gray-800">{{ utils.formatPriceToVND(stats.value) }}</label>
+          <span class="text-sm text-gray-600">{{ stats.unit }}</span>
+        </div>
+      </nz-skeleton>
+      <div class="flex">
+        <div [class]="stats.bgColor + ' w-12 h-12 rounded-full flex items-center justify-center'">
+          <svg-icon [src]="stats.icon" [svgClass]="'h-6 w-6'" [ngClass]="stats.color"></svg-icon>
+        </div>
+      </div>
+    </div>
+    @if(comparisonMode) {
+    <div class="mt-2">
+      <nz-progress
+        [nzPercent]="stats.percentage"
+        [nzStatus]="
+          stats.changeType === 'increase' ? 'success' : stats.changeType === 'decrease' ? 'exception' : 'normal'
+        "
+        [nzShowInfo]="false"
+        [nzStrokeWidth]="6"></nz-progress>
+      <nz-skeleton [nzActive]="true" [nzParagraph]="false" [nzLoading]="isLoading">
+        <p
+          class="mt-1 flex items-center gap-1 text-xs"
+          [ngClass]="{
+            'text-green-600': stats.changeType === 'increase',
+            'text-red-600': stats.changeType === 'decrease',
+            'text-gray-600': stats.changeType === 'neutral'
+          }">
+          @if(comparisonMode && stats.changeType === 'increase') {
+          <svg-icon src="assets/icons/heroicons/outline/trending-up.svg" [svgClass]="'h-6 w-6'"></svg-icon>
+          } @else if(comparisonMode && stats.changeType === 'decrease') {
+          <svg-icon src="assets/icons/heroicons/outline/trending-down.svg" [svgClass]="'h-6 w-6'"></svg-icon>
+          }
+          {{ stats.change }}
+        </p>
+      </nz-skeleton>
+    </div>
+    }
+  </div>
+</div>

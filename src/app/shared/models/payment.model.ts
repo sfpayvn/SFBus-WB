@@ -33,7 +33,7 @@ export class Payment2Update extends Payment2Create {
 
 export class RequestPaymentDto {
   transactionId: string = '';
-  paymentNumber: string = '';
+  referrentGroupNumber: string = '';
   totalPrice: number = 0;
   paymentMethodId: string = '';
 }

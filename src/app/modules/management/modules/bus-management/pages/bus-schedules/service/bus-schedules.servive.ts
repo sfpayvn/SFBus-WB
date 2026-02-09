@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { BusSchedule2Create, BusSchedule2Update } from '../model/bus-schedule.model';
+import { FUNCTION_KEYS, MODULE_KEYS } from '@rsApp/core/constants/module-function-keys';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,7 @@ export class BusSchedulesService {
       },
       filters: [] as any[],
     },
-    viewDisplayMode: string,
+    viewDisplayMode: string = 'table',
   ) {
     const url = `${this.url}/search`;
 
@@ -56,8 +57,8 @@ export class BusSchedulesService {
 
   createBusSchedule(busSchedule2Create: BusSchedule2Create) {
     const url = this.url;
-
-    return this.apiGatewayService.post(url, busSchedule2Create).pipe(tap((res: any) => {}));
+    const options = { feature: { module: MODULE_KEYS.BUS_SCHEDULE, function: FUNCTION_KEYS.BUS_SCHEDULE.CREATE } };
+    return this.apiGatewayService.post(url, busSchedule2Create, options).pipe(tap((res: any) => {}));
   }
 
   updateBusSchedule(busSchedule2Update: BusSchedule2Update) {

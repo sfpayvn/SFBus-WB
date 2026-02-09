@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
@@ -8,7 +8,10 @@ import { Router } from '@angular/router';
 import { BusSchedule, BusSchedule2Create, SearchBusSchedule } from './model/bus-schedule.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { BusScheduleDetailDialogComponent } from './components/bus-schedule-detail-dialog/bus-schedule-detail-dialog.component';
-import { EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
+import { EVENT_STATUS_CLASSES, EVENT_STATUS_LABELS } from 'src/app/core/constants/status.constants';
+import { CapsService } from '@rsApp/shared/services/caps.service';
+import { MODULE_KEYS, FUNCTION_KEYS } from '@rsApp/core/constants/module-function-keys';
+import { EventCalendar } from '@rsApp/shared/models/event-calendar.model';
 
 @Component({
   selector: 'app-bus-schedules',
@@ -44,14 +47,10 @@ export class BusSchedulesComponent implements OnInit {
 
   statusClasses = EVENT_STATUS_CLASSES;
 
-  busScheduleStatuses: { [key: string]: string } = {
-    un_published: 'Chưa xuất bản',
-    scheduled: 'Đã lên lịch',
-    cancelled: 'Đã hủy',
-    in_progress: 'Đang diễn ra',
-    completed: 'Đã hoàn thành',
-    overdue: 'Quá hạn',
-  };
+  busScheduleStatusLabels = EVENT_STATUS_LABELS;
+
+  moduleKeys = MODULE_KEYS;
+  functionKeys = FUNCTION_KEYS;
 
   constructor(
     private busSchedulesService: BusSchedulesService,
@@ -304,19 +303,17 @@ export class BusSchedulesComponent implements OnInit {
     this.loadData();
   }
 
-  convertToCalendarEventData(
-    busSchedules: BusSchedule[],
-  ): { _id: string; name: string; startDate: Date; status: string }[] {
+  convertToCalendarEventData(busSchedules: BusSchedule[]): EventCalendar[] {
     // Kiểm tra xem busSchedules có dữ liệu hay không
     if (!busSchedules || busSchedules.length === 0) {
       return [];
     }
 
-    const events = busSchedules.map((schedule: any) => {
+    const events: EventCalendar[] = busSchedules.map((schedule: BusSchedule) => {
       return {
         _id: schedule._id,
         name: schedule.name || 'Unnamed Event',
-        startDate: new Date(schedule.startDate),
+        startDate: schedule.startDate || new Date(),
         status: schedule.status,
       };
     });

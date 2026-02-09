@@ -4,10 +4,18 @@ import { defer, from, of, throwError } from 'rxjs';
 import { catchError, concatMap, delay, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { CredentialService } from 'src/app/shared/services/credential.service';
-import { AuthRescue, RequestForgotPassword, RequestResetPassword, SignUp, VerifyAuthRescue } from '../model/auth.model';
+import {
+  AuthRescue,
+  RequestForgotPassword,
+  RequestResetPassword,
+  SignUp,
+  UpdatePasswordUserRequest,
+  VerifyAuthRescue,
+} from '../model/auth.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CapsService } from '@rsApp/shared/services/caps.service';
 import { MenuService } from '@rsApp/modules/layout/services/menu.service';
+import { RoleAccessService } from '@rsApp/core/services/role-access.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +28,7 @@ export class AuthService {
     private credentialService: CredentialService,
     private capsService: CapsService,
     private menuService: MenuService,
+    private roleAccessService: RoleAccessService,
   ) {}
 
   async init(): Promise<void> {
@@ -31,8 +40,9 @@ export class AuthService {
         return;
       }
       const currentUser = await this.getCurrentUser().toPromise();
-      await this.capsService.bootstrap();
+      await this.capsService.bootstrap(); // chờ bootstrap hoàn tất
       this.credentialService.setCurrentUser(currentUser);
+      await this.menuService.reloadPagesAndExpand(); // rồi reload menu
     } catch {
       this.credentialService.removeCurrentUser();
       this.credentialService.removeToken();
@@ -43,7 +53,7 @@ export class AuthService {
 
   login(phoneNumber: string, password: string, tenantCode: string) {
     const body = { phoneNumber, password, tenantCode };
-    const url = `/auth/login?phoneNumber=${encodeURIComponent(phoneNumber)}`;
+    const url = `/admin/auth/login?phoneNumber=${encodeURIComponent(phoneNumber)}`;
 
     return this.apiGatewayService.post(url, body).pipe(
       map((res: any) => res?.access_token),
@@ -68,10 +78,9 @@ export class AuthService {
         if (!user) return of(null);
         // đảm bảo setCurrentUser hoàn tất trước khi trả user
         return from(this.credentialService.setCurrentUser(user)).pipe(
-          tap(() => {
-            this.capsService.bootstrap();
-            this.menuService.reloadPagesAndExpand();
-          }), // <— refresh menu theo role mới
+          switchMap(() => from(this.capsService.bootstrap())), // chờ bootstrap hoàn tất
+          switchMap(() => from(this.roleAccessService.initializeUserRoles())), // init roles từ current user
+          switchMap(() => from(this.menuService.reloadPagesAndExpand())), // rồi reload menu
           map(() => user),
         );
       }),
@@ -104,6 +113,8 @@ export class AuthService {
     await this.credentialService.removeToken();
     await this.credentialService.removeCurrentUser();
     await this.capsService.clear();
+    // Clear RBAC cache
+    this.roleAccessService.clearCache();
   }
 
   getCurrentUser() {
@@ -120,13 +131,9 @@ export class AuthService {
     );
   }
 
-  updatePassword(password: string) {
-    const user = {
-      password,
-      isTempPassWord: true,
-    };
+  updatePassword(updatePasswordUserRequest: UpdatePasswordUserRequest) {
     const url = `/admin/auth/update-password`;
-    return this.apiGatewayService.post(url, user).pipe(
+    return this.apiGatewayService.post(url, updatePasswordUserRequest).pipe(
       tap((res: any) => {}),
       map((res: any) => {
         return res;

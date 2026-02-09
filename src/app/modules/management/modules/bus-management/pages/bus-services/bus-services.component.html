@@ -54,7 +54,15 @@
             (nzCheckedChange)="onItemChecked(busService._id, $event)"></td>
           <td>
             <nz-skeleton [nzLoading]="isLoading" [nzParagraph]="false" [nzTitle]="{ width: '100%' }" [nzActive]="true">
-              <svg-icon svgClass="w-6 h-6" src="{{ busService.icon }}"></svg-icon>
+              <app-trigger-mask class="flex h-6 w-6">
+                <svg-icon svgClass="w-6 h-6" src="{{ busService.icon }}"></svg-icon>
+
+                <div triggerMaskContent class="trigger-mask-content flex h-full w-full justify-center text-white">
+                  <button (click)="viewImage($event, busService.icon)">
+                    <svg-icon svgClass="w-5 h-5" src="./assets/icons/zoom-outline-white.svg"></svg-icon>
+                  </button>
+                </div>
+              </app-trigger-mask>
             </nz-skeleton>
           </td>
           <td>

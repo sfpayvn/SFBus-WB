@@ -10,6 +10,7 @@ export interface SubMenuItem {
   icon?: string;
   label?: string;
   route?: string | null;
+  moduleKey?: string; // Module key để check block status
   expanded?: boolean;
   active?: boolean;
   children?: Array<SubMenuItem>;

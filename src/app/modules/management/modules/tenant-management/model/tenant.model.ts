@@ -10,6 +10,7 @@ export class Tenant {
   phoneNumber: string = '';
   email?: string = '';
   address?: string = '';
+  logoId?: string = '';
   logo?: string = '';
   setting?: TenantSetting = new TenantSetting();
   subscriptionId?: string = '';

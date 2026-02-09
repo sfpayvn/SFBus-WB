@@ -25,6 +25,9 @@
         class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
         nz-button
         (click)="addBusSchedule()"
+        capCheck
+        [capModule]="moduleKeys.BUS_SCHEDULE"
+        [capFunction]="functionKeys.BUS_SCHEDULE.CREATE"
         type="button">
         Add Bus Schedule
       </button>
@@ -95,7 +98,7 @@
                   [nzTitle]="{ width: '100%' }"
                   [nzActive]="true">
                   <span class="p-2 uppercase rounded-md text-xs {{ statusClasses[busSchedule.status] }}">
-                    {{ busScheduleStatuses[busSchedule.status] }}
+                    {{ busScheduleStatusLabels[busSchedule.status] }}
                   </span>
                 </nz-skeleton>
               </td>
@@ -157,12 +160,15 @@
         (reloadDataAndPageEvent)="reloadBusSchedulePage($event)">
       </app-table-footer>
     </ng-container>
-    <ng-container *ngSwitchCase="'calendar'"
-      ><app-calendar-events
+    <ng-container *ngSwitchCase="'calendar'">
+      <app-calendar-events
         *ngIf="searchBusSchedule && searchBusSchedule.busSchedules"
         [events]="convertToCalendarEventData(searchBusSchedule.busSchedules)"
         [isLoadedEvent]="!isLoadingBusSchedule"
         [isCloneEvent]="true"
+        capCheck
+        [capModule]="moduleKeys.BUS_SCHEDULE"
+        [capFunction]="functionKeys.BUS_SCHEDULE.CREATE"
         (viewDetailEventEmit)="editBusSchedule($event)"
         (cloneDataEventEmit)="cloneData($event)"
         (createEventEmit)="addBusSchedule($event)"

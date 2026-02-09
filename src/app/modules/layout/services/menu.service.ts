@@ -2,16 +2,20 @@ import { Injectable, OnDestroy, signal, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { User } from '@rsApp/modules/management/modules/user-management/model/user.model';
 import { CredentialService } from '@rsApp/shared/services/credential.service';
+import { CapsService } from '@rsApp/shared/services/caps.service';
+import { RoleAccessService } from '@rsApp/core/services/role-access.service';
 import { Subscription, filter } from 'rxjs';
-import { MenuAdmin } from '@rsApp/core/constants/menu-admin';
-import { MenuTenant } from '@rsApp/core/constants/menu-teant';
 import { MenuItem, SubMenuItem } from 'src/app/core/models/menu.model';
 import _ from 'lodash';
+import { Menu } from '@rsApp/core/constants/menu';
+import { MODULE_KEYS } from '@rsApp/core/constants/module-function-keys';
 
 @Injectable({ providedIn: 'root' })
 export class MenuService implements OnDestroy {
   private router = inject(Router);
   private credentials = inject(CredentialService);
+  private capsService = inject(CapsService);
+  private roleAccessService = inject(RoleAccessService);
 
   private _showSidebar = signal(true);
   private _showMobileMenu = signal(false);
@@ -19,9 +23,6 @@ export class MenuService implements OnDestroy {
   private _subscription = new Subscription();
 
   constructor() {
-    // Lần đầu (reload trang) cũng lấy menu
-    this.reloadPagesAndExpand();
-
     // Theo dõi thay đổi route để cập nhật trạng thái expanded/active
     const sub = this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
@@ -107,10 +108,68 @@ export class MenuService implements OnDestroy {
 
   /** Lấy menu theo role của current user */
   private async getPages(): Promise<MenuItem[]> {
-    const currentUser: User = await this.credentials.getCurrentUser();
-    const role: string = currentUser.roles.includes('admin') ? 'admin' : 'tenant';
-    const menu = role === 'admin' ? MenuAdmin : MenuTenant;
+    const menu = Menu;
+    const pages = _.cloneDeep(menu.pages);
+    console.log("🚀 ~ MenuService ~ getPages ~ pages:", pages)
+    // Filter menu items nếu module bị block
+    return this.filterBlockedMenus(pages);
+  }
 
-    return _.cloneDeep(menu.pages);
+  /** Filter menu items nếu module bị block - sử dụng đệ quy để check tất cả children */
+  private filterBlockedMenus(items: MenuItem[]): MenuItem[] {
+    return items
+      .filter((menu) => !this.isMenuBlocked(menu))
+      .map((menu) => ({
+        ...menu,
+        items: this.filterBlockedSubMenus(menu.items) || [],
+      }));
+  }
+
+  /** Filter sub menu items đệ quy */
+  private filterBlockedSubMenus(items: SubMenuItem[] | undefined): SubMenuItem[] {
+    if (!items) return [];
+    return items
+      .filter((sub) => !this.isMenuBlocked(sub))
+      .map((sub) => {
+        const filteredChildren = this.filterBlockedSubMenus(sub.children);
+        return {
+          ...sub,
+          children: filteredChildren.length > 0 ? filteredChildren : undefined,
+        };
+      });
+  }
+
+  /** Kiểm tra xem menu item có bị block hay không dựa trên role permissions + caps blocking */
+  private isMenuBlocked(item: any): boolean {
+    if (item.moduleKey === MODULE_KEYS.FILES_CENTER_MANAGEMENT) {
+    }
+    // Ưu tiên moduleKey nếu có, nếu không thì extract từ route
+    const moduleKey = item.moduleKey || this.extractModuleKeyFromRoute(item.route);
+
+    if (!moduleKey) return false;
+
+    // Check 1: Kiểm tra role permission (RBAC)
+    const hasRolePermission = this.roleAccessService.canAccessModule(moduleKey);
+    if (!hasRolePermission) {
+      return true; // Block: User doesn't have role permission
+    }
+
+    // Check 2: Kiểm tra caps blocking (quota/capacity)
+    const isCapsBlocked = this.capsService.isBlocked(moduleKey);
+    if (isCapsBlocked) {
+      return true; // Block: Module is blocked by caps service (quota exceeded, etc.)
+    }
+
+    // Allow: User has role permission AND module is not caps-blocked
+    return false;
+  }
+
+  /** Extract moduleKey từ route */
+  private extractModuleKeyFromRoute(route: string): string | null {
+    if (!route) return null;
+    // Extract moduleKey từ route (e.g., '/management/auto-schedule' => 'auto-schedule')
+    const parts = route.split('/').filter((p) => p);
+    // Giả sử module key là phần cuối của route: 'management/auto-schedule' => 'auto-schedule'
+    return parts.length >= 2 ? parts[parts.length - 1] : null;
   }
 }

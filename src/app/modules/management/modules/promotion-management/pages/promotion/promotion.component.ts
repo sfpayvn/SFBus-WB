@@ -232,4 +232,9 @@ export class PromotionComponent implements OnInit {
     }
     return status;
   }
+
+  viewImage($event: any, image: string): void {
+    $event.stopPropagation();
+    this.utilsModal.viewImage($event, image);
+  }
 }

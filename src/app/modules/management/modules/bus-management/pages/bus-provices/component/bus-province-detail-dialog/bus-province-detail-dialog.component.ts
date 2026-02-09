@@ -8,15 +8,12 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 import _ from 'lodash';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { BusStationsService } from '../../../bus-stations/service/bus-stations.servive';
 
 export interface DialogData {
   title: string;
   busProvince: BusProvince2Create;
   busStations: BusStation[];
-}
-
-export class BusProvinceUI extends BusProvince {
-  busStations: BusStation[] = [];
 }
 
 @Component({
@@ -28,8 +25,8 @@ export class BusProvinceUI extends BusProvince {
 export class BusProvinceDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusProvinceDetailDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
-  busProvince: BusProvinceUI = { ...new BusProvinceUI(), ...this.data.busProvince };
-  busStations: BusStation[] = this.data.busStations ?? new BusStation();
+  busProvince: BusProvince = { ...new BusProvince(), ...this.data.busProvince };
+  busStations: BusStation[] = [];
 
   busProvinceForm!: FormGroup;
   isRotated = false;
@@ -45,12 +42,15 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   private initialFormValue: any = null;
   private initialBusProvinceStations: BusStation[] = [];
 
+  isLoaddedBusStations: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private utils: Utils,
     private utilsModal: UtilsModal,
     public defaultFlagService: DefaultFlagService,
     private cdr: ChangeDetectorRef,
+    private busStationsService: BusStationsService,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -59,9 +59,10 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   }
 
   private async initForm() {
-    const { name } = this.busProvince;
+    const { name, isActive } = this.busProvince;
     this.busProvinceForm = this.fb.group({
       name: [{ value: name, disabled: this.defaultFlagService.isDefault(this.busProvince) }, [Validators.required]],
+      isActive: [{ value: isActive, disabled: this.defaultFlagService.isDefault(this.busProvince) }],
     });
 
     // Store initial values after form is created
@@ -74,6 +75,11 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   }
 
   async initData() {
+    this.isLoaddedBusStations = true;
+    // Lấy tất cả bus stations
+    const allBusStationsRes = await this.busStationsService.findAll(true).toPromise();
+    this.busStations = allBusStationsRes || [];
+
     this.busStations = await _.difference(this.busStations, this.busProvince.busStations);
     this.filteredBusStations = this.busStations;
     this.filteredBusProvinceStations = this.busProvince.busStations;
@@ -81,6 +87,8 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     // Initialize selection maps
     this.selectedBusStationsMap.clear();
     this.selectedProvinceStationsMap.clear();
+
+    this.isLoaddedBusStations = false;
   }
 
   closeDialog(): void {
@@ -136,7 +144,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
       return;
     }
 
-    const { name } = this.busProvinceForm.getRawValue();
+    const { name, isActive } = this.busProvinceForm.getRawValue();
 
     // Các station mới được thêm vào province (không có trong initial)
     const busStationsAdded = this.filteredBusProvinceStations
@@ -157,6 +165,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
     const busProvince2Update: BusProvince2Update = {
       ...this.busProvince,
       name,
+      isActive,
     };
 
     const data = {

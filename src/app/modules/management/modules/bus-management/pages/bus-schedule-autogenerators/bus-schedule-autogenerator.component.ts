@@ -13,7 +13,7 @@ import {
 } from './model/bus-schedule-autogenerator.model';
 import moment from 'moment';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
-import { EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
+import { EVENT_STATUS, EVENT_STATUS_CLASSES } from 'src/app/core/constants/status.constants';
 import { BusScheduleAutogeneratorsDetailDialogComponent } from './components/bus-schedule-autogenerators-detail-dialog/bus-schedule-autogenerators-detail-dialog.component';
 
 export interface CalendarEvent {
@@ -268,7 +268,6 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
     delete (busScheduleAutoGenerator as any)._id;
     let busScheduleAutoGenerator2Create = new BusScheduleAutoGenerator2Create();
     busScheduleAutoGenerator2Create = { ...busScheduleAutoGenerator2Create, ...busScheduleAutoGenerator };
-    busScheduleAutoGenerator2Create.status = 'un_published';
 
     this.busScheduleAutoGeneratorsService.createBusScheduleAutoGenerator(busScheduleAutoGenerator2Create).subscribe({
       next: (res: BusScheduleAutoGenerator) => {
@@ -352,7 +351,7 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
             _id: schedule._id,
             name: schedule.name || 'Unnamed Event',
             startDate: eventDate,
-            status: this.updateStatus(eventDate),
+            status: schedule.status === EVENT_STATUS.SCHEDULED ? this.updateStatus(eventDate) : schedule.status,
           });
         });
       }

@@ -39,7 +39,9 @@
               (nzCheckedChange)="onAllChecked($event)"></th>
             <th class="min-w-[80px]">Name</th>
             <th class="min-w-[80px]">Price</th>
-            <th class="min-w-[80px]">Duration</th>
+            <th class="min-w-[80px]">Duration Unit</th>
+            <th class="min-w-[80px]">Duration Unit</th>
+            <th class="min-w-[80px]">Popular</th>
             <th class="min-w-[80px]">Status</th>
             <th class="min-w-[80px] !text-right">Actions</th>
           </tr>
@@ -75,7 +77,28 @@
                 [nzParagraph]="false"
                 [nzTitle]="{ width: '100%' }"
                 [nzActive]="true">
+                {{ subscription.durationUnit }}
+              </nz-skeleton>
+            </td>
+            <td>
+              <nz-skeleton
+                [nzLoading]="isLoadingSubscription"
+                [nzParagraph]="false"
+                [nzTitle]="{ width: '100%' }"
+                [nzActive]="true">
                 {{ subscription.duration }}
+              </nz-skeleton>
+            </td>
+            <td>
+              <nz-skeleton
+                [nzLoading]="isLoadingSubscription"
+                [nzParagraph]="false"
+                [nzTitle]="{ width: '100%' }"
+                [nzActive]="true">
+                @if (subscription.popular){
+                <svg-icon src="assets/icons/heroicons/outline/check-circle.svg" [svgClass]="'h-5 w-5 cursor-pointer'">
+                </svg-icon>
+                }@else{ }
               </nz-skeleton>
             </td>
             <td>

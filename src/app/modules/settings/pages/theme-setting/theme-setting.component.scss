@@ -1,0 +1,48 @@
+:host ::ng-deep {
+  .action-preview-img {
+    transition: opacity 0.3s ease;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+  }
+
+  .action-preview-img:hover {
+    opacity: 1 !important;
+  }
+
+  .custom-nz-input-group input[type='text'] {
+    text-transform: uppercase;
+  }
+
+  input[type='color'] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+    
+    &::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    
+    &::-webkit-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+    
+    &::-moz-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+  }
+
+  .ant-form-item {
+    margin-bottom: 0 !important;
+  }
+
+  nz-input-group {
+    .ant-input-affix-wrapper {
+      padding: 8px 11px;
+    }
+  }
+}

@@ -1,0 +1,217 @@
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Cài đặt tổ chức</h1>
+  <div class="inline-block space-x-4">
+    <button
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !px-3 !py-2 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
+      (click)="resetToDefault()">
+      Reset Default
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 flex min-w-full flex-col rounded-xl border bg-white p-2">
+  <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+    <form [formGroup]="mainForm" nz-form *ngIf="mainForm && isLoaded" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-2 gap-6">
+        <!-- Organization Name -->
+        <nz-form-item class="!mb-0 !flex !flex-col">
+          <nz-form-label
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            nzFor="organizationName"
+            class="!flex !items-center !justify-start !font-medium">
+            Tên tổ chức
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="orgNameErrorTpl" class="nz-form-control-required !flex flex-col">
+            <nz-input-group [nzSuffix]="orgNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+              <input
+                type="text"
+                nz-input
+                formControlName="organizationName"
+                id="organizationName"
+                placeholder="Nhập tên tổ chức" />
+            </nz-input-group>
+            <ng-template #orgNameClearTpl>
+              <span
+                *ngIf="mainForm.controls['organizationName'].value"
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="clearFormValue('organizationName')"></span>
+            </ng-template>
+            <ng-template #orgNameErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (mainForm.controls['organizationName'].errors?.['required']) { Tên tổ chức là bắt buộc }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- Organization Code -->
+        <nz-form-item class="!mb-0 !flex !flex-col">
+          <nz-form-label
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            nzFor="organizationCode"
+            class="!flex !items-center !justify-start !font-medium">
+            Mã tổ chức
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="orgCodeErrorTpl" class="nz-form-control-required !flex flex-col">
+            <nz-input-group [nzSuffix]="orgCodeClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+              <input
+                type="text"
+                nz-input
+                formControlName="organizationCode"
+                id="organizationCode"
+                placeholder="Nhập mã tổ chức" />
+            </nz-input-group>
+            <ng-template #orgCodeClearTpl>
+              <span
+                *ngIf="mainForm.controls['organizationCode'].value"
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="clearFormValue('organizationCode')"></span>
+            </ng-template>
+            <ng-template #orgCodeErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (mainForm.controls['organizationCode'].errors?.['required']) { Mã tổ chức là bắt buộc }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- Address -->
+        <nz-form-item class="col-span-2 !mb-0 !flex !flex-col">
+          <nz-form-label
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            nzFor="address"
+            class="!flex !items-center !justify-start !font-medium">
+            Địa chỉ
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="addressErrorTpl" class="nz-form-control-required !flex flex-col">
+            <textarea nz-input formControlName="address" id="address" placeholder="Nhập địa chỉ" rows="3"></textarea>
+            <ng-template #addressErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (mainForm.controls['address'].errors?.['required']) { Địa chỉ là bắt buộc }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- Phone -->
+        <nz-form-item class="!mb-0 !flex !flex-col">
+          <nz-form-label
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            nzFor="phone"
+            class="!flex !items-center !justify-start !font-medium">
+            Điện thoại
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="phoneErrorTpl" class="nz-form-control-required !flex flex-col">
+            <nz-input-group [nzSuffix]="phoneClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+              <input
+                type="text"
+                nz-input
+                formControlName="phone"
+                id="phone"
+                mask="0000 000 000"
+                placeholder="Nhập số điện thoại" />
+            </nz-input-group>
+            <ng-template #phoneClearTpl>
+              <span
+                *ngIf="mainForm.controls['phone'].value"
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="clearFormValue('phone')"></span>
+            </ng-template>
+            <ng-template #phoneErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (mainForm.controls['phone'].errors?.['required']) { Số điện thoại là bắt buộc }
+                @if(mainForm.controls['phone'].errors?.['pattern']) { Vui lòng nhập đúng số điện thoại }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- Email -->
+        <nz-form-item class="!mb-0 !flex !flex-col">
+          <nz-form-label
+            [nzNoColon]="true"
+            [nzRequired]="true"
+            nzFor="email"
+            class="!flex !items-center !justify-start !font-medium">
+            Email
+          </nz-form-label>
+          <nz-form-control [nzErrorTip]="emailErrorTpl" class="nz-form-control-required !flex flex-col">
+            <nz-input-group [nzSuffix]="emailClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+              <input type="email" nz-input formControlName="email" id="email" placeholder="Nhập email" />
+            </nz-input-group>
+            <ng-template #emailClearTpl>
+              <span
+                *ngIf="mainForm.controls['email'].value"
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="clearFormValue('email')"></span>
+            </ng-template>
+            <ng-template #emailErrorTpl let-control>
+              <span class="mt-1 !text-xs text-red-500">
+                @if (mainForm.controls['email'].errors?.['required']) { Email là bắt buộc }
+                @if(mainForm.controls['email'].errors?.['email']) { Email không hợp lệ }
+              </span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- Website -->
+        <nz-form-item class="col-span-2 !mb-0 !flex !flex-col">
+          <nz-form-label [nzNoColon]="true" nzFor="website" class="!flex !items-center !justify-start !font-medium">
+            Website
+          </nz-form-label>
+          <nz-form-control class="!flex flex-col">
+            <nz-input-group [nzSuffix]="websiteClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
+              <input
+                type="text"
+                nz-input
+                formControlName="website"
+                id="website"
+                placeholder="Nhập website (không bắt buộc)" />
+            </nz-input-group>
+            <ng-template #websiteClearTpl>
+              <span
+                *ngIf="mainForm.controls['website'].value"
+                nz-icon
+                class="ant-input-clear-icon"
+                nzTheme="fill"
+                nzType="close-circle"
+                (click)="clearFormValue('website')"></span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-6 flex justify-end gap-4">
+        <button
+          class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
+          nz-button
+          nzType="default"
+          type="submit">
+          SAVE
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="!isLoaded" class="flex items-center justify-center py-20">
+      <nz-spin nzSimple></nz-spin>
+    </div>
+  </div>
+</div>
