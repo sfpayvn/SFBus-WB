@@ -81,10 +81,3 @@
 .data-table-wrapper th.actions-cell {
   z-index: 90;
 }
-
-.data-table-wrapper {
-  /* Use ::ng-deep so styles apply into the nz-spin child component's view */
-  ::ng-deep nz-spin {
-    display: contents !important;
-  }
-}

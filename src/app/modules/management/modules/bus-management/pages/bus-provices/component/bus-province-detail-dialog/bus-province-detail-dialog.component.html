@@ -86,6 +86,7 @@
                 class="drag-drop-box"
                 (click)="toggleBusStation(busStation)"
                 cdkDrag
+                [cdkDragDisabled]="defaultFlagService.isDefault(busStation)"
                 [ngClass]="{ 'drag-drop-box-selected': isStationSelected(busStation) }">
                 {{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
               </div>
