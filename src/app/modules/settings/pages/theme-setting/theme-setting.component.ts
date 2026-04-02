@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { FilesCenterDialogComponent } from '@rsApp/modules/management/modules/files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from '@rsApp/modules/management/modules/files-center-management/model/file-center.model';
 import { Setting } from '../../model/setting.model';
@@ -41,6 +42,7 @@ export class ThemeSettingComponent implements OnInit {
     private settingService: SettingService,
     private settingCacheService: SettingCacheService,
     private filesService: FilesService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -104,7 +106,7 @@ export class ThemeSettingComponent implements OnInit {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      toast.error('Vui lòng chọn file hình ảnh');
+      toast.error(this.translate.instant('settings.themeSetting.errorSelectImage'));
       return;
     }
 
@@ -177,7 +179,7 @@ export class ThemeSettingComponent implements OnInit {
           });
           this.logoImage = DEFAULT_TENANT_LOGO;
           this.logoImageFile = null as any;
-          toast.success('Đã đặt lại cài đặt mặc định');
+          toast.success(this.translate.instant('settings.themeSetting.resetToDefault'));
         }
       });
   }
@@ -189,7 +191,7 @@ export class ThemeSettingComponent implements OnInit {
     }
 
     if (!this.hasFormChanged()) {
-      toast.info('Không có thay đổi nào để lưu');
+      toast.info(this.translate.instant('settings.themeSetting.noChanges'));
       return;
     }
 
@@ -229,12 +231,12 @@ export class ThemeSettingComponent implements OnInit {
             // apply theme
             this.applyThemeColors(formData.primaryColor, formData.secondaryColor);
             this.initialFormValue = this.mainForm.getRawValue();
-            toast.success('Cài đặt đã được lưu thành công');
+            toast.success(this.translate.instant('settings.themeSetting.settingsSaved'));
           });
         },
         error: (err) => {
           console.error('Failed to save settings', err);
-          toast.error('Lưu cài đặt thất bại');
+          toast.error(this.translate.instant('settings.themeSetting.saveFailed'));
         },
       });
     };
@@ -251,7 +253,7 @@ export class ThemeSettingComponent implements OnInit {
         },
         error: (err) => {
           console.error('Upload failed', err);
-          toast.error('Upload file thất bại');
+          toast.error(this.translate.instant('settings.themeSetting.uploadFailed'));
         },
       });
     } else {

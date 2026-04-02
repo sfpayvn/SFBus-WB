@@ -11,7 +11,7 @@
           <svg-icon src="assets/icons/logo.svg"> </svg-icon>
         </a>
         <b class="text-foreground ml-1 pl-2 text-sm font-bold">
-          {{ appJson.displayName }}
+          {{ title$ | async }}
         </b>
       </div>
       <button

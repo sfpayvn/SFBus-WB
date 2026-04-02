@@ -18,6 +18,7 @@ import { LoadingService } from '@rsApp/shared/services/loading.service';
 import { Subscription, Subscription2Create, Subscription2Update } from '../../model/subscription.model';
 import { combineLatest } from 'rxjs';
 import { COMMON_STATUS_OPTIONS, DURATION_STATUS, DURATION_STATUS_OPTIONS } from '@rsApp/core/constants/status.constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-subscription-detail',
@@ -43,6 +44,7 @@ export class SubscriptionDetailComponent implements OnInit {
     private location: Location,
     private subscriptionService: SubscriptionService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -146,10 +148,10 @@ export class SubscriptionDetailComponent implements OnInit {
 
           const updatedState = { ...history.state, subscription: subscriptionUpdated };
           window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('Promotion update successfully');
+          toast.success(this.translate.instant('messages.promotionUpdated'));
           return;
         }
-        toast.success('Promotion added successfully');
+        toast.success(this.translate.instant('messages.promotionAdded'));
         this.backPage();
       },
       error: (error: any) => this.utils.handleRequestError(error), // Xử lý lỗi

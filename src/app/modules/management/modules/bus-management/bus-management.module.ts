@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BusTypeDetailDialogComponent } from './pages/bus-types/component/bus-type-detail-dialog/bus-type-detail-dialog.component';
 import { BusTypesComponent } from './pages/bus-types/bus-types.component';
@@ -77,6 +77,7 @@ import { ManagementSharedModule } from '../../management-share.module';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
     BusManagementRoutingModule,
     ManagementSharedModule,
     FilesCenterManagementModule,

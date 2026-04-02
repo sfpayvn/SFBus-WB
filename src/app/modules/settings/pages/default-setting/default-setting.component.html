@@ -5,14 +5,14 @@
       nz-button
       (click)="addSetting()"
       type="button">
-      Add Setting
+      {{ 'buttons.Add' | translate }}
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
   <app-table-action
-    [title]="'Default Setting'"
+    [title]="'sidebar.Default setting' | translate"
     [totalItem]="totalItem"
     (sortDataEvent)="sortPage($event)"
     (searchDataEvent)="searchPage($event)"></app-table-action>
@@ -34,10 +34,10 @@
             [nzIndeterminate]="indeterminate"
             nzLabel="Select all"
             (nzCheckedChange)="onAllChecked($event)"></th>
-          <th class="min-w-[150px]">Name</th>
-          <th class="min-w-[150px]">Group Name</th>
-          <th class="min-w-[200px]">Value</th>
-          <th class="w-[120px] text-center">Actions</th>
+          <th class="min-w-[150px]">{{ 'common.Name' | translate }}</th>
+          <th class="min-w-[150px]">{{ 'settings.defaultSetting.groupName' | translate }}</th>
+          <th class="min-w-[200px]">{{ 'common.Value' | translate }}</th>
+          <th class="w-[120px] text-center">{{ 'settings.defaultSetting.actions' | translate }}</th>
         </tr>
       </thead>
       <tbody>

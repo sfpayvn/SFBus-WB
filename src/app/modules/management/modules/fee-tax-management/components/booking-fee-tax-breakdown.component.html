@@ -1,0 +1,59 @@
+<div *ngIf="booking" class="fee-tax-breakdown" [class.compact]="compact">
+  <div class="price-section">
+    <!-- Original Price -->
+    <div class="price-row">
+      <span class="label">{{ 'labels.Original Price' | translate }}:</span>
+      <span class="value">{{ booking.totalPrice | number: '1.0-0' }} VND</span>
+    </div>
+
+    <!-- Discount (if any) -->
+    <div class="price-row" *ngIf="booking.discountTotalAmount && booking.discountTotalAmount > 0">
+      <span class="label discount">{{ 'labels.Discount' | translate }}:</span>
+      <span class="value discount">- {{ booking.discountTotalAmount | number: '1.0-0' }} VND</span>
+    </div>
+
+    <!-- Subtotal after discount -->
+    <div class="price-row divider-top">
+      <span class="label bold">{{ 'labels.Subtotal' | translate }}:</span>
+      <span class="value bold">{{ booking.afterDiscountTotalPrice | number: '1.0-0' }} VND</span>
+    </div>
+  </div>
+
+  <!-- Fees Section -->
+  <div class="fees-section" *ngIf="booking.appliedFees && booking.appliedFees.length > 0">
+    <div class="section-title" *ngIf="!compact">{{ 'labels.Fees' | translate }}</div>
+    <div *ngFor="let fee of booking.appliedFees" class="fee-row">
+      <span class="label">{{ fee.name }}</span>
+      <span class="value">+ {{ fee.amount | number: '1.0-0' }} VND</span>
+    </div>
+  </div>
+
+  <!-- Taxes Section -->
+  <div class="taxes-section" *ngIf="booking.appliedTaxes && booking.appliedTaxes.length > 0">
+    <div class="section-title" *ngIf="!compact">{{ 'labels.Taxes' | translate }}</div>
+    <div *ngFor="let tax of booking.appliedTaxes" class="tax-row">
+      <span class="label">{{ tax.name }}</span>
+      <span class="value">+ {{ tax.amount | number: '1.0-0' }} VND</span>
+    </div>
+  </div>
+
+  <!-- Total Fees & Taxes Summary -->
+  <div class="summary-section" *ngIf="booking.totalFeeAmount > 0 || booking.totalTaxAmount > 0">
+    <div class="summary-row" *ngIf="booking.totalFeeAmount > 0">
+      <span class="label">{{ 'labels.Total Fees' | translate }}:</span>
+      <span class="value">{{ booking.totalFeeAmount | number: '1.0-0' }} VND</span>
+    </div>
+    <div class="summary-row" *ngIf="booking.totalTaxAmount > 0">
+      <span class="label">{{ 'labels.Total Taxes' | translate }}:</span>
+      <span class="value">{{ booking.totalTaxAmount | number: '1.0-0' }} VND</span>
+    </div>
+  </div>
+
+  <!-- Final Total -->
+  <div class="final-section">
+    <div class="final-row">
+      <span class="label\">{{ 'labels.Total Amount Payable' | translate }}:</span>
+      <span class="value">{{ booking.finalTotalPrice | number: '1.0-0' }} VND</span>
+    </div>
+  </div>
+</div>

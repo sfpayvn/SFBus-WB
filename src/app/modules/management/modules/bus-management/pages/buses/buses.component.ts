@@ -6,6 +6,7 @@ import { Bus, Bus2Create, SearchBus } from './model/bus.model';
 import { BusesService } from './service/buses.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-buses',
@@ -34,6 +35,7 @@ export class BusesComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     private router: Router,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -117,7 +119,7 @@ export class BusesComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.searchBus.buses = this.searchBus.buses.filter((bus) => bus._id !== id);
-              toast.success('Bus deleted successfully');
+              toast.success(this.translate.instant('messages.busDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -144,7 +146,7 @@ export class BusesComponent implements OnInit {
       next: (res: Bus) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

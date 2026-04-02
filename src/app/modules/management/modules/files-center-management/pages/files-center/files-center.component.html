@@ -1,7 +1,7 @@
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl px-4 py-4">
   <div class="flex min-h-[44px] pb-4">
     <div class="flex w-3/12">
-      <label class="text-base font-medium">Trung tâm phương tiện</label>
+      <label class="text-base font-medium">{{ 'labels.mediaCenter' | translate }}</label>
     </div>
     <div class="flex w-9/12 items-center justify-start pl-4" *ngIf="selectedFiles.length > 0 && isChooseMultiple">
       <svg-icon
@@ -25,7 +25,7 @@
           </div>
           <input
             class="text-muted-foreground w-full py-2.5 pl-8 pr-2 text-sm"
-            placeholder="Tìm kiếm thư mục"
+            [attr.placeholder]="'labels.searchFolder' | translate"
             type="text"
             (keyup)="searchFolder($event)" />
         </label>
@@ -82,7 +82,7 @@
                   (keydown.enter)="handleActoinFolderInput(item)"
                   (blur)="handleActoinFolderInput(item)"
                   (keydown.esc)="cancelEditFileFolder(item)"
-                  placeholder="Nhập tên thư mục"
+                  [attr.placeholder]="'labels.folderName' | translate"
                   class="w-full rounded-sm border focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <app-trigger-modal *ngIf="utils.isValidObjectId(item._id) && !item.isEditing">
@@ -96,7 +96,7 @@
                         (click)="setIsEditFileFolder(item)">
                         <div class="flex items-center">
                           <svg-icon svgClass="w-6 h-6" src="./assets/icons/edit.svg"></svg-icon>
-                          <label class="pl-2 text-sm">Sửa tên</label>
+                          <label class="pl-2 text-sm">{{ 'buttons.editFolder' | translate }}</label>
                         </div>
                       </button>
                     </li>
@@ -104,7 +104,7 @@
                       <button mat-button class="w-full !justify-start !rounded-none" (click)="deleteFileFolder(item)">
                         <div class="flex items-center">
                           <svg-icon svgClass="w-6 h-6" src="./assets/icons/trash.svg"></svg-icon>
-                          <label class="pl-2 text-sm">Xóa thư mục</label>
+                          <label class="pl-2 text-sm">{{ 'buttons.deleteFolder' | translate }}</label>
                         </div>
                       </button>
                     </li>
@@ -127,7 +127,7 @@
               </div>
               <input
                 class="text-muted-foreground w-full py-2.5 pl-8 pr-2 text-sm"
-                placeholder="Tìm kiếm thư mục"
+                [attr.placeholder]="'labels.searchFolder' | translate"
                 type="text"
                 (keyup)="searchFileData($event)" />
             </label>
@@ -137,8 +137,8 @@
               <button
                 (click)="resetFileData()"
                 class="bg-muted text-foreground w-22 rounded-md py-2.5 text-xs font-medium"
-                aria-label="Tải ảnh lên">
-                Đặt lại
+                [attr.aria-label]="'buttons.reset' | translate">
+                {{ 'buttons.reset' | translate }}
               </button>
             </div>
             <div class="relative flex cursor-pointer flex-wrap items-center justify-center px-2">
@@ -149,8 +149,8 @@
                 (change)="onFileChange($event)" />
               <button
                 class="bg-primary text-primary-foreground w-22 absolute top-0 right-0 rounded-md py-2.5 text-xs font-medium"
-                aria-label="Tải ảnh lên">
-                Tải ảnh lên
+                [attr.aria-label]="'buttons.uploadImage' | translate">
+                {{ 'buttons.uploadImage' | translate }}
               </button>
             </div>
           </div>
@@ -158,9 +158,9 @@
         @if(!searchFile || searchFile.files.length <= 0){
         <div class="flex flex-col items-center justify-between">
           <img class="h-64 w-64 object-contain" src="assets/images/upload-media.png" />
-          <label class="mb-2 text-lg font-medium">Đồng bộ với bộ nhớ đám mây</label>
+          <label class="mb-2 text-lg font-medium">{{ 'labels.syncMedia' | translate }}</label>
           <label class="mb-5 text-sm text-gray-500"
-            >Tránh lặp lại quá trình tải lên và nâng cao hiệu quả tái sử dụng tài liệu.</label
+            >{{ 'labels.syncMediaDescription' | translate }}</label
           >
           <div class="relative flex h-12 cursor-pointer flex-wrap items-center justify-center px-2">
             <input
@@ -169,8 +169,8 @@
               (change)="onFileChange($event)" />
             <button
               class="bg-primary text-primary-foreground w-22 absolute cursor-pointer rounded-md py-2.5 text-xs font-medium"
-              aria-label="Tải ảnh lên">
-              Tải ảnh lên
+              [attr.aria-label]="'buttons.uploadImage' | translate">
+              {{ 'buttons.uploadImage' | translate }}
             </button>
           </div>
         </div>

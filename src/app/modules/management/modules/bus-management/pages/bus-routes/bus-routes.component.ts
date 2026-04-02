@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { BusRoute, BusRoute2Create, SearchBusRoute } from './model/bus-route.model';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { SeatType } from '../seat-types/model/seat-type.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bus-routes',
@@ -44,6 +45,7 @@ export class BusRoutesComponent implements OnInit {
     private utils: Utils,
     private router: Router,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -126,7 +128,7 @@ export class BusRoutesComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.searchBusRoute.busRoutes = this.searchBusRoute.busRoutes.filter((br) => br._id !== busRoute._id);
-              toast.success('Bus deleted successfully');
+              toast.success(this.translate.instant('messages.busDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -153,7 +155,7 @@ export class BusRoutesComponent implements OnInit {
       next: (res: BusRoute) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

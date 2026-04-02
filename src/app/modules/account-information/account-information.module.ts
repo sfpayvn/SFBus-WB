@@ -9,6 +9,7 @@ import { ManagementSharedModule } from '../management/management-share.module';
 import { MaterialModule } from '../../library-modules/material-module';
 import { FilesCenterManagementModule } from '../management/modules/files-center-management/files-center-management.module';
 import { MyTenantSubscriptionListComponent } from './pages/account-detail/components/my-tenant-subscription/my-tenant-subscriptioncomponent';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { MyTenantSubscriptionListComponent } from './pages/account-detail/compon
     ManagementSharedModule,
     MaterialModule,
     FilesCenterManagementModule,
+    TranslateModule,
   ],
   exports: [],
 })

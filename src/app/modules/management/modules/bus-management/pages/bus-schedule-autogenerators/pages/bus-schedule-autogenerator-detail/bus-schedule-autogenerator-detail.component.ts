@@ -217,7 +217,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   createSpecificTimeSlot(timeSlot?: string): FormGroup {
     // Lấy FormArray chứa các specific time slots
     const specificTimeSlots = this.busScheduleAutoGeneratorDetailForm.get('specificTimeSlots') as FormArray;
-    let defaultTime: Date = this.minimumAllowedTime;
+    let defaultTime: Date = new Date(this.minimumAllowedTime);
     const [hours, minutes, seconds] = (timeSlot ?? '00:00:00').split(':').map(Number);
 
     defaultTime.setHours(hours);

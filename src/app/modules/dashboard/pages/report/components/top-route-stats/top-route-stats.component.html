@@ -1,13 +1,13 @@
 <div class="bg-white rounded-lg shadow-sm p-6 w-full">
-  <h3 class="text-lg font-semibold text-gray-800 mb-4">Tuyến đường hiệu quả nhất</h3>
+  <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ 'topRoute.title' | translate }}</h3>
   <nz-spin [nzSpinning]="isLoading">
     <nz-table #topRoutesTable [nzData]="displayRoutes.data || []" [nzShowPagination]="false" [nzSize]="'small'">
       <thead>
         <tr>
-          <th>Tuyến đường</th>
-          <th>Số vé</th>
-          <th>Doanh thu</th>
-          <th>Tỷ lệ</th>
+          <th>{{ 'topRoute.table.route' | translate }}</th>
+          <th>{{ 'topRoute.table.tickets' | translate }}</th>
+          <th>{{ 'topRoute.table.revenue' | translate }}</th>
+          <th>{{ 'topRoute.table.percentage' | translate }}</th>
         </tr>
       </thead>
       <tbody>

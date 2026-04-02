@@ -1,5 +1,5 @@
 <mat-dialog-title class="text-center">
-  <span class="text-xl font-medium">{{ mode === 'create' ? 'Add' : 'Edit' }} Setting</span>
+  <span class="text-xl font-medium">{{ mode === 'create' ? ('buttons.add' | translate) : ('buttons.edit' | translate) }} {{ 'labels.setting' | translate }}</span>
   <button class="absolute right-3" (click)="onCancel()">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
       <path
@@ -19,11 +19,11 @@
     <!-- Name -->
     <nz-form-item class="!w-full">
       <nz-form-label nzFor="name" [nzNoColon]="true" [nzRequired]="true" class="!flex !items-center !justify-start"
-        >Name</nz-form-label
+        >{{ 'labels.name' | translate }}</nz-form-label
       >
       <nz-form-control [nzErrorTip]="nameErrorTpl" class="!flex flex-col">
         <nz-input-group [nzSuffix]="nameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
-          <input type="text" nz-input formControlName="name" placeholder="Enter setting name" />
+          <input type="text" nz-input formControlName="name" [attr.placeholder]="'placeholders.enterSettingName' | translate" />
         </nz-input-group>
         <ng-template #nameClearTpl>
           @if(mainForm.get('name')?.value) {
@@ -37,8 +37,8 @@
         </ng-template>
         <ng-template #nameErrorTpl>
           <span class="mt-1 !text-xs text-red-500">
-            @if (mainForm.get('name')?.errors?.['required']) { Name is required } @if
-            (mainForm.get('name')?.errors?.['minlength']) { Name must be at least 2 characters }
+            @if (mainForm.get('name')?.errors?.['required']) { {{ 'errors.nameRequired' | translate }} } @if
+            (mainForm.get('name')?.errors?.['minlength']) { {{ 'errors.nameMinLength' | translate }} }
           </span>
         </ng-template>
       </nz-form-control>
@@ -47,11 +47,11 @@
     <!-- Group Name -->
     <nz-form-item class="!w-full">
       <nz-form-label nzFor="groupName" [nzNoColon]="true" [nzRequired]="true" class="!flex !items-center !justify-start"
-        >Group Name</nz-form-label
+        >{{ 'labels.groupName' | translate }}</nz-form-label
       >
       <nz-form-control [nzErrorTip]="groupNameErrorTpl" class="!flex flex-col">
         <nz-input-group [nzSuffix]="groupNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
-          <input type="text" nz-input formControlName="groupName" placeholder="Enter group name" />
+          <input type="text" nz-input formControlName="groupName" [attr.placeholder]="'placeholders.enterGroupName' | translate" />
         </nz-input-group>
         <ng-template #groupNameClearTpl>
           @if(mainForm.get('groupName')?.value) {
@@ -65,7 +65,7 @@
         </ng-template>
         <ng-template #groupNameErrorTpl>
           <span class="mt-1 !text-xs text-red-500">
-            @if (mainForm.get('groupName')?.errors?.['required']) { Group Name is required }
+            @if (mainForm.get('groupName')?.errors?.['required']) { {{ 'errors.groupNameRequired' | translate }} }
           </span>
         </ng-template>
       </nz-form-control>
@@ -75,7 +75,7 @@
     <nz-form-item class="!w-full">
       <div class="!flex !items-center !justify-between gap-2">
         <nz-form-label nzFor="value" [nzNoColon]="true" [nzRequired]="true" class="!flex !items-start !justify-start"
-          >Value</nz-form-label
+          >{{ 'labels.value' | translate }}</nz-form-label
         >
         <div class="flex gap-2">
           <button
@@ -84,7 +84,7 @@
             [class.bg-primary]="valueEditorMode === 'editor'"
             [class.text-white]="valueEditorMode === 'editor'"
             class="hover:border-primary rounded border border-gray-300 px-2 py-1 text-xs">
-            Editor
+            {{ 'buttons.editor' | translate }}
           </button>
           <button
             type="button"
@@ -102,19 +102,19 @@
           #quillEditorRef
           formControlName="value"
           [modules]="editorModules"
-          placeholder="Enter formatted text..."
+          [attr.placeholder]="'placeholders.enterFormattedText' | translate"
           class="w-full rounded border border-gray-300 bg-white">
         </quill-editor>
         } @else {
         <textarea
           formControlName="value"
-          placeholder="Enter JSON"
+          [attr.placeholder]="'placeholders.enterJSON' | translate"
           rows="6"
           class="w-full rounded border border-gray-300 p-2 font-mono text-sm"></textarea>
         }
         <ng-template #valueErrorTpl>
           <span class="mt-1 !text-xs text-red-500">
-            @if (mainForm.get('value')?.errors?.['required']) { Value is required }
+            @if (mainForm.get('value')?.errors?.['required']) { {{ 'errors.valueRequired' | translate }} }
           </span>
         </ng-template>
       </nz-form-control>
@@ -123,14 +123,14 @@
     <!-- Description -->
     <nz-form-item class="!w-full">
       <nz-form-label nzFor="description" [nzNoColon]="true" class="!flex !items-start !justify-start"
-        >Description</nz-form-label
+        >{{ 'labels.description' | translate }}</nz-form-label
       >
       <nz-form-control class="!flex flex-col">
         <nz-input-group [nzSuffix]="descriptionClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
           <textarea
             nz-input
             formControlName="description"
-            placeholder="Enter description (optional)"
+            [attr.placeholder]="'placeholders.enterDescriptionOptional' | translate"
             rows="3"
             class="rounded border border-gray-300 p-2"></textarea>
         </nz-input-group>

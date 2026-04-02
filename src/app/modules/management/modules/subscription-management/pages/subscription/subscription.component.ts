@@ -8,6 +8,7 @@ import { toast } from 'ngx-sonner';
 import { SubscriptionService } from '../../service/subscription.service';
 import { SearchSubscriptions, Subscription } from '../../model/subscription.model';
 import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-subscription',
@@ -59,6 +60,7 @@ export class SubscriptionComponent implements OnInit {
     private router: Router,
     private subscriptionService: SubscriptionService,
     private dialog: MatDialog,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
   }
@@ -186,7 +188,7 @@ export class SubscriptionComponent implements OnInit {
               this.searchSubscription.subscriptions = this.searchSubscription.subscriptions.filter(
                 (subscription) => subscription._id !== id,
               );
-              toast.success('Subscription Category deleted successfully');
+              toast.success(this.translate.instant('messages.subscriptionCategoryDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),

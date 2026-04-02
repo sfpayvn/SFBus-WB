@@ -38,7 +38,7 @@
             nz-button
             nzType="default"
             (click)="backToday()">
-            Today
+            {{ 'calendar.today' | translate }}
           </button>
         </div>
         <div class="flex items-center gap-px rounded-lg bg-gray-100 p-1">
@@ -46,25 +46,25 @@
             (click)="changeView('list')"
             [ngClass]="{ 'bg-white !text-indigo-600': viewMode == 'list' }"
             class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
-            List
+            {{ 'calendar.list' | translate }}
           </button>
           <button
             (click)="changeView('day')"
             [ngClass]="{ 'bg-white !text-indigo-600': viewMode == 'day' }"
             class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
-            Day
+            {{ 'calendar.day' | translate }}
           </button>
           <button
             (click)="changeView('week')"
             [ngClass]="{ 'bg-white !text-indigo-600': viewMode == 'week' }"
             class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
-            Week
+            {{ 'calendar.week' | translate }}
           </button>
           <button
             (click)="changeView('month')"
             [ngClass]="{ 'bg-white !text-indigo-600': viewMode == 'month' }"
             class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
-            Month
+            {{ 'calendar.month' | translate }}
           </button>
         </div>
       </div>

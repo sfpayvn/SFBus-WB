@@ -4,7 +4,7 @@ import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { FilesCenterDialogComponent } from 'src/app/modules/management/modules/files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from 'src/app/modules/management/modules/files-center-management/model/file-center.model';
 import { Router } from '@angular/router';
-
+import { TranslateService } from '@ngx-translate/core';
 import {
   AbstractControl,
   FormArray,
@@ -59,6 +59,7 @@ export class AccountInfoComponent implements OnInit {
     private fb: FormBuilder,
     private accountInformationService: AccountInformationService,
     private router: Router,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -226,7 +227,7 @@ export class AccountInfoComponent implements OnInit {
     try {
       this.accountInformationService.processUpdateUserProfile(files, user2Update).subscribe({
         next: (updatedUser: User) => {
-          toast.success('Cập nhật thông tin người dùng thành công');
+          toast.success(this.translate.instant('messages.userInfoUpdatedSuccess'));
           this.user = updatedUser;
           const updatedState = { ...history.state, user: JSON.stringify(updatedUser) };
           window.history.replaceState(updatedState, '', window.location.href);

@@ -4,6 +4,7 @@ import { Utils } from 'src/app/shared/utils/utils';
 import { Location } from '@angular/common';
 import { combineLatest, EMPTY, switchMap, tap } from 'rxjs';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { BusStation } from '../../../bus-stations/model/bus-station.model';
 import { BusStationsService } from '../../../bus-stations/service/bus-stations.servive';
 import { BusRoute } from '../../../bus-routes/model/bus-route.model';
@@ -126,6 +127,7 @@ export class BusScheduleDetailComponent implements OnInit {
     private utilsModal: UtilsModal,
     private settingCacheService: SettingCacheService,
     private settingService: SettingService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -696,7 +698,7 @@ export class BusScheduleDetailComponent implements OnInit {
   async onSubmit() {
     // Nếu isOverSchedule = false, không cho phép submit
     if (this.isOverSchedule) {
-      toast.error('Không thể cập nhật lịch trình đã được công bố');
+      toast.error(this.translate.instant('errors.cannotUpdatePublished'));
       return;
     }
 
@@ -773,7 +775,7 @@ export class BusScheduleDetailComponent implements OnInit {
         if (res) {
           const updatedState = { ...history.state, busSchedule: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('Bus Route update successfully');
+          toast.success(this.translate.instant('messages.busRouteUpdated'));
           // Update initialFormValue after successful save (deep clone)
           this.initialFormValue = JSON.parse(JSON.stringify(this.busScheduleDetailForm.getRawValue()));
           this.saveScheduleEvent.emit(res);
@@ -788,7 +790,7 @@ export class BusScheduleDetailComponent implements OnInit {
       next: (res: BusSchedule) => {
         if (res) {
           this.createScheduleEvent.emit(res);
-          toast.success('Bus Route added successfully');
+          toast.success(this.translate.instant('messages.busRouteAdded'));
 
           // Update initialFormValue after successful create (deep clone)
           this.initialFormValue = JSON.parse(JSON.stringify(this.busScheduleDetailForm.getRawValue()));

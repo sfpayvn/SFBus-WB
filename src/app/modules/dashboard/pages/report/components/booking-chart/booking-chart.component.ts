@@ -4,6 +4,7 @@ import { ReportService } from "../../services/report.service";
 import { ChartStatsRequest, ChartStatsResponse } from "../../models/report.model";
 import { Router } from "@angular/router";
 import { da } from "date-fns/locale";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-booking-chart",
@@ -56,7 +57,7 @@ export class BookingChartComponent implements OnChanges, OnInit {
   private lastLoadedStart?: string;
   private lastLoadedEnd?: string;
 
-  constructor(private reportService: ReportService, private router: Router) {}
+  constructor(private reportService: ReportService, private router: Router, private translate: TranslateService) {}
 
   @Output() viewDetailEvent = new EventEmitter<void>();
   @Output() ondDataLoaded = new EventEmitter<ChartStatsResponse>();
@@ -126,7 +127,7 @@ export class BookingChartComponent implements OnChanges, OnInit {
           labels: response.metadata?.groupBy == "hour" ? currentLabels : mergedLabels,
           datasets: [
             {
-              label: this.comparisonMode ? "Kỳ hiện tại" : "Vé đã bán",
+              label: this.comparisonMode ? this.translate.instant('common.currentPeriod') : this.translate.instant('reports.ticketSales'),
               data: currentData,
               borderColor: "#10b981",
               backgroundColor: "#3b82f6",
@@ -136,7 +137,7 @@ export class BookingChartComponent implements OnChanges, OnInit {
             ...(this.comparisonMode && response.previous
               ? [
                   {
-                    label: "Kỳ so sánh",
+                    label: this.translate.instant('common.comparisonPeriod'),
                     data: previousData,
                     borderColor: "#94a3b8",
                     backgroundColor: "#94a3b8",

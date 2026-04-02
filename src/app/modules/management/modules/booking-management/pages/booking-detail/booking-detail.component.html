@@ -265,7 +265,7 @@
                       <nz-select
                         class="custom-nz-select !h-[42px]"
                         formControlName="paymentMethod"
-                        nzPlaceHolder="Chọn phương thức thanh toán"
+                        [nzPlaceHolder]="'placeholders.selectPaymentMethod' | translate"
                         [nzCustomTemplate]="defaultTemplate"
                         [nzAllowClear]="true">
                         @for (paymentMethod of paymentMethods; track paymentMethod._id) {
@@ -302,7 +302,7 @@
                           type="text"
                           nz-input
                           formControlName="paymentAmount"
-                          placeholder="Nhập số tiền"
+                          [attr.placeholder]="'placeholders.enterAmount' | translate"
                           mask="separator.0"
                           thousandSeparator="," />
                       </nz-input-group>

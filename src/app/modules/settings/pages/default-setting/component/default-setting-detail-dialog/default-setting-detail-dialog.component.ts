@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { Setting } from '@rsApp/modules/settings/model/setting.model';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { toast } from 'ngx-sonner';
@@ -40,6 +41,7 @@ export class DefaultSettingDetailDialogComponent implements OnInit, AfterViewIni
     public utils: Utils,
     public dialogRef: MatDialogRef<DefaultSettingDetailDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private translate: TranslateService,
   ) {
     this.setting = data.setting;
     this.mode = data.mode;
@@ -155,7 +157,7 @@ export class DefaultSettingDetailDialogComponent implements OnInit, AfterViewIni
   onSubmit(): void {
     if (!this.mainForm.valid) {
       this.utils.markFormGroupTouched(this.mainForm);
-      toast.error('Please fill in all required fields');
+      toast.error(this.translate.instant('errors.fillAllRequiredFields'));
       return;
     }
 

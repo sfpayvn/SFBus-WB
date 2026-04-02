@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementR
 import { Utils } from 'src/app/shared/utils/utils';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, firstValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import {
   PRIORITYCLASSES,
   GOODS_STATUS_CLASSES,
@@ -142,6 +143,7 @@ export class GoodsComponent implements OnInit, OnDestroy {
     private busStationsService: BusStationsService,
     private storageService: StorageService,
     private renderer: Renderer2,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
   }
@@ -358,10 +360,10 @@ export class GoodsComponent implements OnInit, OnDestroy {
       if (result) {
         this.goodsService.deleteGoods(goods._id).subscribe((res: any) => {
           if (res) {
-            toast.success('Xóa thành công');
+            toast.success(this.translate.instant('messages.deleteSuccess'));
             this.loadGoods();
           } else {
-            toast.error('Xóa thất bại');
+            toast.error(this.translate.instant('errors.deleteFailed'));
           }
         });
       }
@@ -387,7 +389,7 @@ export class GoodsComponent implements OnInit, OnDestroy {
       this.busRoutes = await firstValueFrom(this.busRoutesService.findAll());
       GoodsComponent.cachedBusRoutes.set('all', this.busRoutes);
     } catch (error) {
-      toast.error('Tải danh sách tuyến xe thất bại');
+      toast.error(this.translate.instant('errors.failedLoadRoutes'));
       return;
     }
   }

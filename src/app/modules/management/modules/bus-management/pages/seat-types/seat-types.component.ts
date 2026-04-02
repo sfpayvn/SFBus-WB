@@ -8,6 +8,7 @@ import { SeatTypesService } from './service/seat-types.servive';
 import { Utils } from 'src/app/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-seat-types',
@@ -44,6 +45,7 @@ export class SeatTypesComponent implements OnInit {
     private utils: Utils,
     private utilsModal: UtilsModal,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -126,7 +128,7 @@ export class SeatTypesComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.searchSeatType.seatTypes = this.searchSeatType.seatTypes.filter((st) => st._id !== seatType._id);
-              toast.success('SeatType deleted successfully');
+              toast.success(this.translate.instant('messages.seatTypeDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -157,7 +159,7 @@ export class SeatTypesComponent implements OnInit {
               this.searchSeatType.seatTypes = this.searchSeatType.seatTypes.map((seatType: SeatType) =>
                 seatType._id === res._id ? { ...seatType, ...res } : seatType,
               );
-              toast.success('SeatType updated successfully');
+              toast.success(this.translate.instant('messages.seatTypeUpdatedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -184,7 +186,7 @@ export class SeatTypesComponent implements OnInit {
           next: (res: SeatType) => {
             if (res) {
               this.loadData();
-              toast.success('SeatType added successfully');
+              toast.success(this.translate.instant('messages.seatTypeAddedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -202,7 +204,7 @@ export class SeatTypesComponent implements OnInit {
       next: (res: SeatType) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

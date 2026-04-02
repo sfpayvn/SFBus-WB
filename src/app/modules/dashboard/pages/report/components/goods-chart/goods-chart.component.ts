@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { ChartData } from "chart.js";
 import { ChartStatsRequest } from "../../models/report.model";
 import { ReportService } from "../../services/report.service";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-goods-chart",
@@ -51,7 +52,7 @@ export class GoodsChartComponent implements OnChanges {
 
   @Output() viewDetailEvent = new EventEmitter<void>();
 
-  constructor(private reportService: ReportService) {}
+  constructor(private reportService: ReportService, private translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -99,7 +100,7 @@ export class GoodsChartComponent implements OnChanges {
           labels: response.metadata?.groupBy == "hour" ? currentLabels : mergedLabels,
           datasets: [
             {
-              label: this.comparisonMode ? "Kỳ hiện tại" : "Số lượng hàng hóa",
+              label: this.comparisonMode ? this.translate.instant('common.currentPeriod') : this.translate.instant('goodsChart.count'),
               data: currentData,
               borderColor: "#10b981",
               backgroundColor: "#3b82f6",
@@ -109,7 +110,7 @@ export class GoodsChartComponent implements OnChanges {
             ...(this.comparisonMode && response.previous
               ? [
                   {
-                    label: "Kỳ so sánh",
+                    label: this.translate.instant('common.comparisonPeriod'),
                     data: previousData,
                     borderColor: "#94a3b8",
                     backgroundColor: "#94a3b8",

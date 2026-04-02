@@ -17,6 +17,7 @@ import { TenantSubscriptionListComponent } from '../../components/tenant-subscri
 import { COMMON_STATUS, COMMON_STATUS_OPTIONS } from '@rsApp/core/constants/status.constants';
 import { FilesCenterDialogComponent } from '../../../files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from '../../../files-center-management/model/file-center.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tenant-detail',
@@ -59,6 +60,7 @@ export class TenantDetailComponent implements OnInit {
     private loadingService: LoadingService,
     private subscriptionService: SubscriptionService,
     private dialog: MatDialog,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -189,7 +191,7 @@ export class TenantDetailComponent implements OnInit {
         this.tenantSubscriptionService.registerForTenant(registerToSubscription).subscribe({
           next: (response) => {
             console.log('🚀 ~ TenantDetailComponent ~ addNewSubscription ~ response:', response);
-            toast.success('Tenant subscription registered successfully');
+            toast.success(this.translate.instant('messages.tenantSubscriptionRegistered'));
 
             // Refresh data trong tenant subscription list component
             if (this.tenantSubscriptionList) {
@@ -243,10 +245,10 @@ export class TenantDetailComponent implements OnInit {
         if (actionName == 'update') {
           const updatedState = { ...history.state, tenant: res[0] };
           window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('Tenant update successfully');
+          toast.success(this.translate.instant('messages.tenantUpdated'));
           return;
         }
-        toast.success('Tenant added successfully');
+        toast.success(this.translate.instant('messages.tenantAdded'));
         this.backPage();
       },
       error: (error: any) => this.utils.handleRequestError(error), // Xử lý lỗi

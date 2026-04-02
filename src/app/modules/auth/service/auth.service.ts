@@ -34,18 +34,33 @@ export class AuthService {
   async init(): Promise<void> {
     try {
       const token = await this.credentialService.getToken();
+      const hasRememberMe = !!localStorage.getItem('rememberMeCredentials');
+      const sessionActive = !!sessionStorage.getItem('sessionActiveFlag');
+
+      // If no token, logout
       if (!token) {
-        this.credentialService.removeCurrentUser();
-        this.credentialService.removeToken();
+        await this.logout();
         return;
       }
+
+      // If token exists but session ended
+      if (!sessionActive) {
+        // If user checked "Remember Me", keep them logged in by restoring session
+        if (hasRememberMe) {
+          sessionStorage.setItem('sessionActiveFlag', 'true');
+        } else {
+          // User didn't check "Remember Me", so logout
+          await this.logout();
+          return;
+        }
+      }
+
       const currentUser = await this.getCurrentUser().toPromise();
-      await this.capsService.bootstrap(); // chờ bootstrap hoàn tất
+      await this.capsService.bootstrap(); // wait for bootstrap to complete
       this.credentialService.setCurrentUser(currentUser);
-      await this.menuService.reloadPagesAndExpand(); // rồi reload menu
+      await this.menuService.reloadPagesAndExpand(); // then reload menu
     } catch {
-      this.credentialService.removeCurrentUser();
-      this.credentialService.removeToken();
+      await this.logout();
     } finally {
       this.initialized.set(true);
     }
@@ -57,37 +72,37 @@ export class AuthService {
 
     return this.apiGatewayService.post(url, body).pipe(
       map((res: any) => res?.access_token),
-      filter((token): token is string => !!token), // chỉ đi tiếp khi có token
+      filter((token): token is string => !!token), // only proceed when token is available
       switchMap((token) => this.handleAuthenticationSuccess(token)),
       take(1),
       catchError((error) => {
         console.error('Login error:', error);
-        return throwError(() => error); // để caller xử lý
+        return throwError(() => error); // let caller handle
       }),
     );
   }
 
   /**
-   * Đặt token -> lấy current user -> lưu current user -> bootstrap caps
-   * Trả về Observable<User | null>
+   * Set token -> get current user -> save current user -> bootstrap caps
+   * Return Observable<User | null>
    */
   private handleAuthenticationSuccess(accessToken: string) {
     return defer(() => from(this.credentialService.setToken(accessToken))).pipe(
       switchMap(() => this.getCurrentUser()),
       switchMap((user: any) => {
         if (!user) return of(null);
-        // đảm bảo setCurrentUser hoàn tất trước khi trả user
+        // ensure setCurrentUser completes before returning user
         return from(this.credentialService.setCurrentUser(user)).pipe(
-          switchMap(() => from(this.capsService.bootstrap())), // chờ bootstrap hoàn tất
-          switchMap(() => from(this.roleAccessService.initializeUserRoles())), // init roles từ current user
-          switchMap(() => from(this.menuService.reloadPagesAndExpand())), // rồi reload menu
+          switchMap(() => from(this.capsService.bootstrap())), // wait for bootstrap to complete
+          switchMap(() => from(this.roleAccessService.initializeUserRoles())), // init roles from current user
+          switchMap(() => from(this.menuService.reloadPagesAndExpand())), // then reload menu
           map(() => user),
         );
       }),
       catchError((err) => {
         console.error('handleAuthenticationSuccess error:', err);
         const msg = err?.error?.message || err.message || 'Unexpected error';
-        // ví dụ: show toast ở ngoài; ở đây rethrow để tầng gọi xử lý
+        // example: show toast outside; here we rethrow for caller to handle
         return throwError(() => err);
       }),
     );

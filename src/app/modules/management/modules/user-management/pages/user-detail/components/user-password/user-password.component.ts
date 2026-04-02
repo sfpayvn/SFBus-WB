@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { UserManagementService } from '../../../../service/user.servive';
 import { ROLE_CONSTANTS } from '@rsApp/core/constants/roles.constants';
 
@@ -35,7 +36,7 @@ export class UserPasswordComponent implements OnInit {
 
   passwordVisible: boolean = false;
 
-  constructor(private fb: FormBuilder, private utils: Utils, private userManagementService: UserManagementService) {}
+  constructor(private fb: FormBuilder, private utils: Utils, private userManagementService: UserManagementService, private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -101,7 +102,7 @@ export class UserPasswordComponent implements OnInit {
     try {
       this.userManagementService.setPassword(this.userRole, this.userId, password).subscribe({
         next: (response: any) => {
-          toast.success('Mật khẩu đã được cập nhật thành công');
+          toast.success(this.translate.instant('messages.passwordUpdatedSuccess'));
           this.passwordForm.markAsPristine();
           this.initialFormValue = JSON.parse(JSON.stringify(this.passwordForm.getRawValue()));
         },

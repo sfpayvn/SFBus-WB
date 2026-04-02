@@ -6,11 +6,13 @@ import forms from 'grapesjs-plugin-forms';
 import navbar from 'grapesjs-navbar';
 import customCode from 'grapesjs-custom-code';
 import tabs from 'grapesjs-tabs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-html-builder',
   templateUrl: './html-builder.component.html',
   styleUrls: ['./html-builder.component.scss'],
+  imports: [TranslateModule],
 })
 export class HtmlBuilderComponent implements AfterViewInit, OnDestroy {
   private editor!: Editor;

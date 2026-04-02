@@ -1,0 +1,123 @@
+<div class="fee-tax-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>{{ 'sidebar.Fee Tax Management' | translate }}</h1>
+    <p class="subtitle">{{ 'labels.Manage booking fees and taxes configurations' | translate }}</p>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="search-section">
+    <form [formGroup]="searchForm" class="search-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>{{ 'labels.Fee Type' | translate }}</label>
+          <nz-select formControlName="feeType" [nzPlaceHolder]="'labels.All Types' | translate" nzAllowClear>
+            <nz-option *ngFor="let opt of feeTypeOptions" [nzValue]="opt.value" [nzLabel]="opt.label | translate">
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="form-group">
+          <label>{{ 'common.Status' | translate }}</label>
+          <nz-select formControlName="enabled" [nzPlaceHolder]="'labels.All Statuses' | translate" nzAllowClear>
+            <nz-option [nzValue]="true" [nzLabel]="'labels.Active' | translate"></nz-option>
+            <nz-option [nzValue]="false" [nzLabel]="'labels.Inactive' | translate"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class="button-group">
+        <button nz-button nzType="primary" (click)="onSearch()">{{ 'buttons.Search' | translate }}</button>
+        <button nz-button (click)="onReset()">{{ 'buttons.Reset' | translate }}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Add Button -->
+  <div class="toolbar">
+    <button nz-button nzType="primary" (click)="onAdd()">
+      <i nz-icon nzType="plus-circle" nzTheme="outline"></i>
+      <span>{{ 'labels.Add Fee/Tax' | translate }}</span>
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <nz-table
+      #nzTable
+      [nzData]="feeTaxes"
+      nzBordered
+      nzSize="small"
+      [nzPageIndex]="pageIndex"
+      [nzPageSize]="pageSize"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzScroll]="{ x: '1200px' }"
+      (nzQueryParams)="onQueryParamsChange($event)">
+      <thead>
+        <tr>
+          <th nzWidth="80px">{{ 'labels.Type' | translate }}</th>
+          <th nzWidth="150px">{{ 'common.Name' | translate }}</th>
+          <th nzWidth="120px">{{ 'labels.Applied On' | translate }}</th>
+          <th nzWidth="100px">{{ 'labels.Calculation' | translate }}</th>
+          <th nzWidth="80px">{{ 'common.Value' | translate }}</th>
+          <th nzWidth="80px">{{ 'labels.Priority' | translate }}</th>
+          <th nzWidth="80px">{{ 'common.Status' | translate }}</th>
+          <th nzWidth="100px">{{ 'common.Description' | translate }}</th>
+          <th nzWidth="120px">{{ 'labels.Actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let feeTax of feeTaxes">
+          <td>
+            <span [ngClass]="feeTax.feeType === 'fee' ? 'tag-fee' : 'tag-tax'">
+              {{ getFeeTypeLabel(feeTax.feeType) }}
+            </span>
+          </td>
+          <td>{{ feeTax.name }}</td>
+          <td>{{ getAppliedOnLabel(feeTax.appliedOn) }}</td>
+          <td>{{ getCalculationTypeLabel(feeTax.calculationType) }}</td>
+          <td>{{ getValueDisplay(feeTax) }}</td>
+          <td>{{ feeTax.priority }}</td>
+          <td>
+            <span [ngClass]="'badge badge-' + (feeTax.enabled ? 'success' : 'secondary')">
+              {{ getStatusText(feeTax.enabled) }}
+            </span>
+          </td>
+          <td class="text-truncate" [title]="feeTax.description || ''">
+            {{ feeTax.description || '-' }}
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button
+                class="btn-icon btn-info"
+                nz-button
+                nzType="text"
+                nzSize="small"
+                (click)="onEdit(feeTax)"
+                [nz-tooltip]="'labels.View Details' | translate">
+                <i nz-icon nzType="eye" nzTheme="outline"></i>
+              </button>
+              <button
+                class="btn-icon btn-primary"
+                nz-button
+                nzType="text"
+                nzSize="small"
+                (click)="onEdit(feeTax)"
+                [nz-tooltip]="'buttons.Edit' | translate">
+                <i nz-icon nzType="edit" nzTheme="outline"></i>
+              </button>
+              <button
+                class="btn-icon btn-danger"
+                nz-button
+                nzType="text"
+                nzSize="small"
+                (click)="onDelete(feeTax._id)"
+                [nz-tooltip]="'buttons.Delete' | translate">
+                <i nz-icon nzType="delete" nzTheme="outline"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { Setting } from '../../model/setting.model';
 import { SettingService } from '../../services/setting.service';
@@ -51,7 +52,7 @@ export class DefaultSettingComponent implements OnInit {
 
   isLoading: boolean = false;
 
-  constructor(private settingService: SettingService, private dialog: MatDialog, private utils: Utils) {}
+  constructor(private settingService: SettingService, private dialog: MatDialog, private utils: Utils, private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -139,7 +140,7 @@ export class DefaultSettingComponent implements OnInit {
           );
           this.totalItem--;
           this.totalPage = Math.ceil(this.totalItem / this.searchParams.pageSize);
-          toast.success('Setting deleted successfully');
+          toast.success(this.translate.instant('settings.defaultSetting.settingDeleted'));
         } catch (err: any) {
           this.utils.handleRequestError(err.error);
         }
@@ -164,7 +165,7 @@ export class DefaultSettingComponent implements OnInit {
           if (index > -1) {
             this.searchDefaultSetting.settings[index] = result;
           }
-          toast.success('Setting updated successfully');
+          toast.success(this.translate.instant('settings.defaultSetting.settingUpdated'));
         } catch (error: any) {
           this.utils.handleRequestError(error);
         }
@@ -188,7 +189,7 @@ export class DefaultSettingComponent implements OnInit {
           this.searchDefaultSetting.settings.unshift(result);
           this.totalItem++;
           this.totalPage = Math.ceil(this.totalItem / this.searchParams.pageSize);
-          toast.success('Setting added successfully');
+          toast.success(this.translate.instant('settings.defaultSetting.settingAdded'));
         } catch (error: any) {
           this.utils.handleRequestError(error);
         }
@@ -217,7 +218,7 @@ export class DefaultSettingComponent implements OnInit {
           this.searchDefaultSetting.settings.push(result);
           this.totalItem++;
           this.totalPage = Math.ceil(this.totalItem / this.searchParams.pageSize);
-          toast.success('Setting cloned successfully');
+          toast.success(this.translate.instant('messages.settingClonedSuccess'));
         } catch (error: any) {
           this.utils.handleRequestError(error);
         }

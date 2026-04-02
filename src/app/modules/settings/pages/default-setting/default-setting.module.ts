@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { DefaultSettingRoutingModule } from './default-setting-routing.module';
 import { NZModule } from '@rsApp/library-modules/nz-module';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -12,6 +13,6 @@ import { QuillModule } from 'ngx-quill';
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [DefaultSettingComponent, DefaultSettingDetailDialogComponent],
-  imports: [CommonModule, ReactiveFormsModule, DefaultSettingRoutingModule, NZModule, MatDialogModule, ManagementSharedModule, QuillModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DefaultSettingRoutingModule, NZModule, MatDialogModule, ManagementSharedModule, QuillModule],
 })
 export class DefaultSettingModule {}

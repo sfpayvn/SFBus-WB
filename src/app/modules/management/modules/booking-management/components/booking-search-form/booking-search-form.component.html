@@ -13,7 +13,7 @@
             [nzSuffixIcon]="busRouteNzSuffixIcon"
             class="custom-nz-select w-full"
             formControlName="busRouteId"
-            nzPlaceHolder="Chọn tuyến">
+            [nzPlaceHolder]="'placeholders.selectRoute' | translate">
             <nz-option *ngFor="let route of busRoutes" [nzValue]="route._id" [nzLabel]="route.name"></nz-option>
             <ng-template #busRouteNzSuffixIcon>
               @if (bookingSearchForm.controls["busRouteId"].value) {

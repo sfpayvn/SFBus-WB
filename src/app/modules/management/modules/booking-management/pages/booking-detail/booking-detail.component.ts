@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import {
   SEAT_STATUS_CLASSES,
   SEAT_STATUS_LABELS,
@@ -82,6 +83,7 @@ export class BookingDetailComponent implements OnInit {
     private paymentMethodService: PaymentMethodService,
     private fb: FormBuilder,
     private bookingService: BookingService,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
   }
@@ -264,11 +266,11 @@ export class BookingDetailComponent implements OnInit {
 
       this.paymentService.paymentBooking(requestPaymentDto).subscribe((payment2Result: Payment[]) => {
         if (!payment2Result || payment2Result.length === 0) {
-          toast.error('Thanh toán không thành công');
+          toast.error(this.translate.instant('errors.paymentFailed'));
           return;
         }
 
-        toast.success('Thanh toán thành công');
+        toast.success(this.translate.instant('messages.paymentSuccess'));
         this.toggleCreatePaymentForm();
 
         // Load lại danh sách payments

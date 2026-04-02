@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { Utils } from 'src/app/shared/utils/utils';
 import { SearchUser, User } from '../../model/user.model';
@@ -56,6 +57,7 @@ export class UsersComponent implements OnInit {
     private driversService: DriversService,
     private userManagementService: UserManagementService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -173,7 +175,7 @@ export class UsersComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.searchUser.users = this.searchUser.users.filter((u) => u._id !== user._id);
-              toast.success('User deleted successfully');
+              toast.success(this.translate.instant('messages.userDeletedSuccess'));
               if (user.roles.includes('driver')) {
                 this.driversService.deleteDriverByUser(user._id).subscribe();
               }

@@ -17,9 +17,9 @@ export class BookingStatsCardComponent implements OnInit, OnChanges {
 
   isLoading = false;
   stats: StatisticCard = {
-    title: 'Tổng số vé đã bán',
+    title: 'bookingStats.totalSold',
     value: 0,
-    unit: 'vé',
+    unit: 'bookingStats.unit.ticket',
     icon: 'assets/icons/heroicons/outline/ticket.svg',
     color: 'text-blue-600',
     bgColor: 'bg-blue-50',

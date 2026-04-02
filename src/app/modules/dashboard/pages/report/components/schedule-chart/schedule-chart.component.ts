@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, Output, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, Output, SimpleChanges, EventEmitter, Inject } from '@angular/core';
 import { ChartData } from 'chart.js';
 import { ChartStatsRequest, ChartStatsResponse } from '../../models/report.model';
 import { ReportService } from '../../services/report.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-schedule-chart',
@@ -52,7 +53,7 @@ export class ScheduleChartComponent implements OnChanges {
 
   @Output() ondDataLoaded = new EventEmitter<ChartStatsResponse>();
 
-  constructor(private reportService: ReportService) {}
+  constructor(private reportService: ReportService, private translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -101,7 +102,7 @@ export class ScheduleChartComponent implements OnChanges {
           labels: response.metadata?.groupBy == 'hour' ? currentLabels : mergedLabels,
           datasets: [
             {
-              label: this.comparisonMode ? 'Kỳ hiện tại' : 'Chuyến đã chạy',
+              label: this.comparisonMode ? this.translate.instant('common.currentPeriod') : this.translate.instant('scheduleChart.tripsLabel'),
               data: currentData,
               borderColor: '#10b981',
               backgroundColor: '#3b82f6',
@@ -111,7 +112,7 @@ export class ScheduleChartComponent implements OnChanges {
             ...(this.comparisonMode && response.previous
               ? [
                   {
-                    label: 'Kỳ so sánh',
+                    label: this.translate.instant('common.comparisonPeriod'),
                     data: previousData,
                     borderColor: '#94a3b8',
                     backgroundColor: '#94a3b8',

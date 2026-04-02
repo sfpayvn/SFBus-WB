@@ -11,6 +11,7 @@ import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 import { FilesCenterDialogComponent } from '@rsApp/modules/management/modules/files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from '@rsApp/modules/management/modules/files-center-management/model/file-center.model';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface DialogData {
   title: string;
@@ -43,6 +44,7 @@ export class BusStationDetailDialogComponent implements OnInit {
     public defaultFlagService: DefaultFlagService,
     private busProvincesService: BusProvincesService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -183,15 +185,15 @@ export class BusStationDetailDialogComponent implements OnInit {
             this.busStationImageFile = file;
             this.busStationForm.patchValue({ imageId: 'new' });
             this.readAndSetImage(file);
-            toast.success('Hình ảnh đã được paste thành công');
+            toast.success(this.translate.instant('messages.imagePastedSuccess'));
             return;
           }
         }
       }
-      toast.error('Vui lòng copy một hình ảnh trước khi paste');
+      toast.error(this.translate.instant('errors.copyImageFirst'));
     } catch (error) {
       console.error('Lỗi khi paste image từ clipboard:', error);
-      toast.error('Không thể paste hình ảnh. Vui lòng kiểm tra quyền clipboard hoặc thử cách khác');
+      toast.error(this.translate.instant('errors.pasteImageFailed'));
     }
   }
 

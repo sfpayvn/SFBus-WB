@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { enableProdMode, importProvidersFrom, provideAppInitializer, inject } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -17,10 +17,6 @@ import { LoadingService } from './app/shared/services/loading.service';
 import en from '@angular/common/locales/en';
 import vi from '@angular/common/locales/vi';
 import { registerLocaleData } from '@angular/common';
-
-// ngx-translate
-import { TranslateModule } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 if (ENV.production) {
   enableProdMode();
@@ -42,19 +38,6 @@ bootstrapApplication(AppComponent, {
 
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
-
-    // ngx-translate core
-    importProvidersFrom(
-      TranslateModule.forRoot({
-        defaultLanguage: 'vi',
-      }),
-    ),
-
-    // ngx-translate http loader (version mới - constructor 0 args)
-    ...provideTranslateHttpLoader({
-      prefix: './assets/i18n/',
-      suffix: '.json',
-    }),
   ],
 }).catch((err) => console.error(err));
 

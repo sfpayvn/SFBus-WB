@@ -4,7 +4,7 @@
       class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
       nz-button
       (click)="backPage()">
-      Back
+      {{ 'buttons.Back' | translate }}
     </button>
   </div>
 </div>
@@ -16,7 +16,7 @@
     </label>
   </div>
   <nz-tabset nzType="card">
-    <nz-tab nzTitle="Thông tin cơ bản">
+    <nz-tab [nzTitle]="'account.basicInfo' | translate">
       <app-user-info
         [user]="user"
         [userRole]="userRole"
@@ -26,11 +26,11 @@
       </app-user-info>
     </nz-tab>
 
-    <nz-tab nzTitle="Mật khẩu" *ngIf="user">
+    <nz-tab [nzTitle]="'account.changePassword' | translate" *ngIf="user">
       <app-user-password [userId]="user._id" [userRole]="userRole"></app-user-password>
     </nz-tab>
 
-    <nz-tab nzTitle="Thông tin Driver" *ngIf="showDriverTab && user && user._id">
+    <nz-tab [nzTitle]="'user.driverInfo' | translate" *ngIf="showDriverTab && user && user._id">
       <app-user-driver-info [userId]="user._id" [userRole]="userRole"> </app-user-driver-info>
     </nz-tab>
   </nz-tabset>

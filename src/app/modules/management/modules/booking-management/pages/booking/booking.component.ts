@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { combineLatest, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -97,6 +98,7 @@ export class BookingComponent implements OnInit {
     private utilsModal: UtilsModal,
     private bookingService: BookingService,
     private router: Router,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
   }
@@ -255,10 +257,10 @@ export class BookingComponent implements OnInit {
       if (result) {
         this.bookingService.deleteBooking(booking._id).subscribe((res: any) => {
           if (res) {
-            toast.success('Xóa vé thành công');
+            toast.success(this.translate.instant('messages.ticketDeletedSuccess'));
             this.loadBooking();
           } else {
-            toast.error('Xóa vé thất bại');
+            toast.error(this.translate.instant('errors.ticketDeleteFailed'));
           }
         });
       }

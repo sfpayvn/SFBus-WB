@@ -11,6 +11,7 @@ import { SearchPaymentMethod, PaymentMethod, PaymentMethod2Create } from '../../
 import { PaymentMethodService } from '../../service/payment-method.service';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-payment-method',
@@ -64,6 +65,7 @@ export class PaymentMethodComponent implements OnInit {
     private dialog: MatDialog,
     public capsService: CapsService,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {
     console.log('PaymentMethodComponent constructor called!');
     this.eventSubscription = [];
@@ -198,7 +200,7 @@ export class PaymentMethodComponent implements OnInit {
               this.searchPaymentMethod.paymentMethods = this.searchPaymentMethod.paymentMethods.filter(
                 (pm) => pm._id !== paymentMethod._id,
               );
-              toast.success('PaymentMethod Category deleted successfully');
+              toast.success(this.translate.instant('messages.paymentMethodDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -221,7 +223,7 @@ export class PaymentMethodComponent implements OnInit {
       next: (res: PaymentMethod) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

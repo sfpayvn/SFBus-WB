@@ -7,7 +7,7 @@
           <input nz-input formControlName="keyword" placeholder="Search by name / _id / tenantId" />
         </nz-input-group>
         <ng-template #searchBtnTpl>
-          <button nz-button nzType="primary" [disabled]="loading" htmlType="submit">Search</button>
+          <button nz-button nzType="primary" [disabled]="loading" htmlType="submit">{{ 'buttons.Search' | translate }}</button>
         </ng-template>
       </div>
       <div nz-col [nzSpan]="6">
@@ -19,7 +19,7 @@
         <nz-range-picker style="width: 100%" formControlName="dateRange"></nz-range-picker>
       </div>
       <div nz-col [nzSpan]="2" class="text-right">
-        <button nz-button nzType="default" (click)="reset()" [disabled]="loading">Reset</button>
+        <button nz-button nzType="default" (click)="reset()" [disabled]="loading">{{ 'buttons.Reset' | translate }}</button>
       </div>
     </div>
   </form> -->
@@ -37,12 +37,12 @@
     class="!w-full">
     <thead>
       <tr>
-        <th nzShowSort nzSortKey="name">Plan</th>
-        <th nzShowSort nzSortKey="price">Price</th>
-        <th>Duration</th>
-        <th nzShowSort nzSortKey="startAt">Start</th>
-        <th nzShowSort nzSortKey="endAt">End</th>
-        <th>Status</th>
+        <th nzShowSort nzSortKey="name">{{ 'table.headers.plan' | translate }}</th>
+        <th nzShowSort nzSortKey="price">{{ 'table.headers.price' | translate }}</th>
+        <th>{{ 'table.headers.duration' | translate }}</th>
+        <th nzShowSort nzSortKey="startAt">{{ 'table.headers.startDate' | translate }}</th>
+        <th nzShowSort nzSortKey="endAt">{{ 'table.headers.endDate' | translate }}</th>
+        <th>{{ 'table.headers.status' | translate }}</th>
         <!-- <th class="w-130">Actions</th> -->
       </tr>
     </thead>

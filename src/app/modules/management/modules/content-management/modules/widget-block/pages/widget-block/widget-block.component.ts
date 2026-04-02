@@ -8,6 +8,7 @@ import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service'
 import { WidgetBlockService } from '../../service/widget-block.servive';
 import { SearchWidgetBlock, WidgetBlock, WidgetBlock2Create } from '../../model/widget-block.model';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-widget-block',
@@ -45,6 +46,7 @@ export class WidgetBlockComponent implements OnInit {
     private router: Router,
     public defaultFlagService: DefaultFlagService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -129,7 +131,7 @@ export class WidgetBlockComponent implements OnInit {
               this.searchWidgetBlock.widgetBlocks = this.searchWidgetBlock.widgetBlocks.filter(
                 (bt: WidgetBlock) => bt._id !== widgetBlock._id,
               );
-              toast.success('Bus deleted successfully');
+              toast.success(this.translate.instant('messages.busDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -159,7 +161,7 @@ export class WidgetBlockComponent implements OnInit {
       next: (res: WidgetBlock) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

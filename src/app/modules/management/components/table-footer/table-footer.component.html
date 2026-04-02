@@ -1,6 +1,6 @@
 <div class="text-muted-foreground flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-xs">
   <div class="order-2 flex items-center gap-2 md:order-1">
-    <span>Show</span>
+    <span>{{ 'table.pagination.show' | translate }}</span>
     <select class="!w-16 p-2" (change)="changePerPage($event)">
       <option
         *ngFor="let perPage of perPages"
@@ -10,10 +10,10 @@
         {{ perPage.value }}
       </option>
     </select>
-    <span>per page</span>
+    <span>{{ 'table.pagination.perPage' | translate }}</span>
   </div>
   <div class="order-1 flex items-center gap-4 md:order-2">
-    <span> {{ startItems }}-{{ endItems }} of {{ totalItem }} </span>
+    <span> {{ startItems }}-{{ endItems }} {{ 'table.pagination.of' | translate }} {{ totalItem }} </span>
     <div class="inline-flex items-center gap-1">
       <button
         type="button"

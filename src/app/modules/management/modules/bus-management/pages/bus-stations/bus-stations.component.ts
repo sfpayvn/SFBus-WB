@@ -10,6 +10,7 @@ import { BusProvincesService } from '../bus-provices/service/bus-provinces.servi
 import { Utils } from 'src/app/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bus-stations',
@@ -46,6 +47,7 @@ export class BusStationsComponent implements OnInit {
     private utils: Utils,
     public defaultFlagService: DefaultFlagService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -136,7 +138,7 @@ export class BusStationsComponent implements OnInit {
                 this.searchBusStation.busStations = this.searchBusStation.busStations.filter(
                   (b) => b._id !== busStation._id,
                 );
-                toast.success('BusStation deleted successfully');
+                toast.success(this.translate.instant('messages.busStationDeletedSuccess'));
               }
             },
             error: (error: any) => this.utils.handleRequestError(error),
@@ -174,7 +176,7 @@ export class BusStationsComponent implements OnInit {
                 this.searchBusStation.busStations = this.searchBusStation.busStations.map((busStation: BusStation) =>
                   busStation._id === res._id ? { ...busStation, ...res } : busStation,
                 );
-                toast.success('BusStation updated successfully');
+                toast.success(this.translate.instant('messages.busStationUpdatedSuccess'));
               }
             },
             error: (err: any) => this.utils.handleRequestError(err.error),
@@ -208,7 +210,7 @@ export class BusStationsComponent implements OnInit {
             next: (res: BusStation) => {
               if (res) {
                 this.loadData();
-                toast.success('BusStation added successfully');
+                toast.success(this.translate.instant('messages.busStationAddedSuccess'));
               }
             },
             error: (error: any) => this.utils.handleRequestError(error),
@@ -229,7 +231,7 @@ export class BusStationsComponent implements OnInit {
       next: (res: BusStation) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

@@ -1,5 +1,6 @@
 import { ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { toast } from 'ngx-sonner';
 import moment from 'moment-timezone';
 import 'moment/locale/vi';
@@ -12,7 +13,7 @@ export class Utils {
 
   VN_MOBILE_REX = /^(?:(?:\+|00)84|0)(?:[35789])\d{8}$/;
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
+  constructor(private componentFactoryResolver: ComponentFactoryResolver, private translateService: TranslateService) {}
 
   createComponent(component: any, emlement: any, params: any) {
     const factory = this.componentFactoryResolver.resolveComponentFactory(component);
@@ -44,12 +45,12 @@ export class Utils {
   }
 
   handleRequestError(error: any): void {
-    const msg = 'Oh No! Some things wrong error';
+    const msg = this.translateService.instant('messages.error.requestFailed');
     toast.error(msg, {
       position: 'bottom-right',
-      description: error.error?.message || 'Please try again later',
+      description: error.error?.message || this.translateService.instant('messages.error.tryLater'),
       action: {
-        label: 'Dismiss',
+        label: this.translateService.instant('buttons.Dismiss'),
         onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',
@@ -57,12 +58,12 @@ export class Utils {
   }
 
   handleUnexpectedError(error: any): void {
-    const title = 'Oh no! Something went wrong.';
+    const title = this.translateService.instant('messages.error.title');
     toast.error(title, {
       position: 'bottom-right',
-      description: error.message || 'Please try again later',
+      description: error.message || this.translateService.instant('messages.error.tryLater'),
       action: {
-        label: 'Dismiss',
+        label: this.translateService.instant('buttons.Dismiss'),
         onClick: () => {},
       },
       actionButtonStyle: 'background-color:#DC2626; color:white;',

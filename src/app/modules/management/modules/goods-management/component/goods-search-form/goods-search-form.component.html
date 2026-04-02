@@ -8,12 +8,12 @@
       <div class="flex flex-wrap items-end gap-3">
         <!-- Bus Route (dependent on selected station) -->
         <div class="flex min-w-[200px] flex-1 flex-col gap-1">
-          <label class="text-xs font-medium">Tuyến xe</label>
+          <label class="text-xs font-medium">{{ 'labels.busRoute' | translate }}</label>
           <nz-select
             [nzSuffixIcon]="busRouteNzSuffixIcon"
             class="custom-nz-select w-full"
             formControlName="busRouteId"
-            nzPlaceHolder="Chọn tuyến">
+            [nzPlaceHolder]="'labels.selectBusRoute' | translate">
             <nz-option *ngFor="let route of busRoutes" [nzValue]="route._id" [nzLabel]="route.name"></nz-option>
             <ng-template #busRouteNzSuffixIcon>
               @if (goodsSearchForm.controls["busRouteId"].value) {
@@ -30,7 +30,7 @@
 
         <!-- Start Time -->
         <div class="flex min-w-[180px] flex-1 flex-col gap-1">
-          <label class="text-xs font-medium">Từ</label>
+          <label class="text-xs font-medium">{{ 'labels.from' | translate }}</label>
           <nz-date-picker
             class="w-full"
             [nzDisabledDate]="checkDisableDateTime(0)"
@@ -39,13 +39,13 @@
             nzFormat="yyyy-MM-dd HH:mm"
             [nzMode]="'date'"
             formControlName="startTimeScheduleValue"
-            nzPlaceHolder="Start"
+            [nzPlaceHolder]="'labels.from' | translate"
             (nzOnOpenChange)="handleStartOpenChange($event)"></nz-date-picker>
         </div>
 
         <!-- End Time -->
         <div class="flex min-w-[180px] flex-1 flex-col gap-1">
-          <label class="text-xs font-medium">Đến</label>
+          <label class="text-xs font-medium">{{ 'labels.to' | translate }}</label>
           <nz-date-picker
             class="w-full"
             #endDatePicker
@@ -55,15 +55,15 @@
             nzFormat="yyyy-MM-dd HH:mm"
             [nzMode]="'date'"
             formControlName="endTimeScheduleValue"
-            nzPlaceHolder="End"
+            [nzPlaceHolder]="'labels.to' | translate"
             (nzOnOpenChange)="handleEndOpenChange($event)"></nz-date-picker>
         </div>
 
         <!-- Search -->
         <div class="flex min-w-[180px] flex-1 flex-col gap-1">
-          <label class="text-xs font-medium">Tìm kiếm</label>
+          <label class="text-xs font-medium">{{ 'labels.search' | translate }}</label>
           <nz-input-group [nzSuffix]="bookingFormKeywordClearTpl" class="custom-nz-input-group">
-            <input type="text" nz-input formControlName="keyword" placeholder="Tìm kiếm" class="!rounded-md" />
+            <input type="text" nz-input formControlName="keyword" [attr.placeholder]="'labels.search' | translate" class="!rounded-md" />
           </nz-input-group>
           <ng-template #bookingFormKeywordClearTpl>
             @if (goodsSearchForm.controls["keyword"].value) {
@@ -95,7 +95,7 @@
         </button>
         <ng-template #sortTpl>
           <div class="sort-tooltip-content w-full p-1">
-            <div class="mb-2">Sắp xếp theo</div>
+            <div class="mb-2">{{ 'labels.sortBy' | translate }}</div>
             <div class="mb-2 max-h-[250px] overflow-auto">
               <div class="flex flex-col">
                 <nz-radio-group formControlName="sortKey" class="!flex !flex-col gap-2">

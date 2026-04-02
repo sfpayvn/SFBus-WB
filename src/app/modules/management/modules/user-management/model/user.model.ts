@@ -12,10 +12,26 @@ export class UserAddress {
   isDefault: boolean = false;
 }
 
+export class Tenant {
+  code: string = '';
+
+  name: string = '';
+
+  phoneNumber: string = '';
+
+  email: string = '';
+
+  address?: string;
+
+  logoId?: string;
+
+  logo?: string;
+}
+
 export class User {
   _id: string = '';
   tenantId: string = '';
-  tenant?: { _id: string; code: string; name: string };
+  tenant?: Tenant;
   avatar: string = '';
   avatarId: string = '';
   name: string = '';
