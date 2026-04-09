@@ -10,7 +10,8 @@
       class="flex h-full w-full"
       [busScheduleAutoGenerator]="data.busScheduleAutoGenerator"
       [startDate]="data.startDate"
-      (saveScheduleEvent)="closeDialog($event)"
+      (createScheduleEvent)="closeDialogWithReloadData()"
+      (saveScheduleEvent)="saveSchedule()"
       [isDialog]="true"></app-bus-schedule-autogenerator-detail>
   </mat-dialog-content>
 </div>

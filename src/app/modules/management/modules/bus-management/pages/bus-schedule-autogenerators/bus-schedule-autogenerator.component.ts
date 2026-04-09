@@ -236,8 +236,8 @@ export class BusScheduleAutoGeneratorsComponent implements OnInit {
           { busScheduleAutoGenerator: busScheduleAutoGenerator2Edit },
           'large',
         )
-        .subscribe((busScheduleAutoGenerator: BusScheduleAutoGenerator) => {
-          if (!busScheduleAutoGenerator) return;
+        .subscribe((isReloadData: boolean) => {
+          if (!isReloadData) return;
           this.loadData();
         });
       return;

@@ -1,13 +1,14 @@
+@if(!isDialog){
 <div class="mb-4 flex justify-end">
   <div class="inline-block space-x-4">
     <button
       class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold"
       (click)="backPage()">
-      Back
+      {{ 'buttons.Back' | translate }}
     </button>
   </div>
 </div>
-
+}
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
   <form [formGroup]="busScheduleAutoGeneratorDetailForm" nz-form *ngIf="busScheduleAutoGeneratorDetailForm">
     <span class="mb-5 text-xl font-bold">{{ busScheduleAutoGenerator ? 'Chỉnh sửa' : 'Thêm mới' }}</span>
@@ -19,13 +20,13 @@
             [nzNoColon]="true"
             [nzRequired]="true"
             class="!flex !h-[36px] !items-center !justify-start !text-sm"
-            >Name</nz-form-label
+            >{{ 'common.Name' | translate }}</nz-form-label
           >
           <nz-form-control [nzErrorTip]="busScheduleAutoGeneratorDetailNameErrorTpl" class="!flex flex-col">
             <nz-input-group
               [nzSuffix]="busScheduleAutoGeneratorDetailNameClearTpl"
               class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-              <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+              <input type="text" nz-input formControlName="name" [placeholder]="'labels.enterName' | translate" />
             </nz-input-group>
             <ng-template #busScheduleAutoGeneratorDetailNameClearTpl>
               <span
@@ -52,12 +53,14 @@
               [nzNoColon]="true"
               [nzRequired]="true"
               class="!flex !h-[36px] !items-center !justify-start"
-              >Bus Schedule Template
+              >{{ 'labels.busScheduleTemplate' | translate }}
             </nz-form-label>
             <nz-form-control
               [nzErrorTip]="busScheduleAutogeneratorDetailBusScheduleTemplateIdErrorTpl"
               class="!flex !w-full flex-col">
-              <nz-select formControlName="busScheduleTemplateId" nzPlaceHolder="Chọn Bus Schedule Template">
+              <nz-select
+                formControlName="busScheduleTemplateId"
+                [nzPlaceHolder]="'labels.selectBusScheduleTemplate' | translate">
                 @for (busScheduleTemplate of busScheduleTemplates; track busScheduleTemplate) {
                 <nz-option nzCustomContent [nzLabel]="busScheduleTemplate.name" [nzValue]="busScheduleTemplate._id">
                   <div class="flex items-center">
@@ -84,7 +87,7 @@
               [nzNoColon]="true"
               [nzRequired]="true"
               class="!flex !items-center !justify-start"
-              >Status</nz-form-label
+              >{{ 'common.Status' | translate }}</nz-form-label
             >
             <nz-form-control class="!flex !max-h-[42px] flex-col">
               <nz-select
@@ -110,7 +113,7 @@
               [nzNoColon]="true"
               [nzRequired]="true"
               class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >Run rule every</nz-form-label
+              >{{ 'labels.Run rule every' | translate }}</nz-form-label
             >
             <nz-form-control
               [nzErrorTip]="busScheduleAutoGeneratorDetailRepeatIntervalDaysErrorTpl"
@@ -144,21 +147,21 @@
               [nzNoColon]="true"
               [nzRequired]="true"
               class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >Repeat Types</nz-form-label
+              >{{ 'labels.Repeat Types' | translate }}</nz-form-label
             >
             <nz-form-control>
               <nz-select
                 formControlName="repeatType"
-                nzPlaceHolder="Chọn Bus Repeat Types"
+                [nzPlaceHolder]="'labels.selectBusScheduleTemplate' | translate"
                 (ngModelChange)="changeRepeatType($event)">
-                <nz-option nzCustomContent [nzLabel]="'Days'" [nzValue]="'days'">
+                <nz-option nzCustomContent [nzLabel]="'labels.Days' | translate" [nzValue]="'days'">
                   <div class="flex items-center">
-                    <span class="!font-medium"> Days </span>
+                    <span class="!font-medium"> {{ 'labels.Days' | translate }} </span>
                   </div>
                 </nz-option>
-                <nz-option nzCustomContent [nzLabel]="'Weeks'" [nzValue]="'weeks'">
+                <nz-option nzCustomContent [nzLabel]="'labels.Weeks' | translate" [nzValue]="'weeks'">
                   <div class="flex items-center">
-                    <span class="!font-medium"> Weeks </span>
+                    <span class="!font-medium"> {{ 'labels.Weeks' | translate }} </span>
                   </div>
                 </nz-option>
               </nz-select>
@@ -172,7 +175,7 @@
               [nzNoColon]="true"
               [nzRequired]="true"
               class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >PreGenerate Days</nz-form-label
+              >{{ 'labels.PreGenerate Days' | translate }}</nz-form-label
             >
             <nz-form-control
               [nzErrorTip]="busScheduleAutoGeneratorDetailPreGenerateDaysErrorTpl"
@@ -208,7 +211,7 @@
               [nzNoColon]="true"
               [nzRequired]="true"
               class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >Start Date</nz-form-label
+              >{{ 'labels.Start Date' | translate }}</nz-form-label
             >
             <nz-form-control
               [nzErrorTip]="busScheduleAutogeneratorDetailStartDateErrorTpl"
@@ -235,7 +238,7 @@
               [nzNoColon]="true"
               [nzRequired]="!this.isNonEndDate"
               class="!flex !h-[36px] !items-center !justify-start !text-sm"
-              >End Date</nz-form-label
+              >{{ 'labels.End Date' | translate }}</nz-form-label
             >
             <div class="flex flex-row items-start gap-2">
               <nz-form-control
@@ -260,7 +263,7 @@
                 [(ngModel)]="isNonEndDate"
                 [ngModelOptions]="{ standalone: true }"
                 (ngModelChange)="selectIsEndDate()"
-                >Nerver
+                >{{ 'labels.Never' | translate }}
               </label>
             </div>
           </nz-form-item>
@@ -275,7 +278,7 @@
             [nzNoColon]="true"
             [nzRequired]="true"
             class="!flex !h-[36px] !items-center !justify-start !text-sm"
-            >On
+            >{{ 'labels.On' | translate }}
           </nz-form-label>
           <nz-form-control
             [nzErrorTip]="busScheduleAutogeneratorDetailRepeatDaysPerWeekErrorTpl"
@@ -313,7 +316,7 @@
             [nzNoColon]="true"
             [nzRequired]="true"
             class="!flex !h-[36px] !items-center !justify-start"
-            >At
+            >{{ 'labels.At' | translate }}
           </nz-form-label>
           <div formArrayName="specificTimeSlots" class="flex w-full flex-col gap-4">
             <nz-form-item
@@ -351,7 +354,7 @@
             nzType="default"
             (click)="addSpecificTimeSlot()">
             <svg-icon src="assets/icons/add-square.svg" [svgClass]="'h-5 w-5 mr-2'"> </svg-icon>
-            Add Specific TimeSlot
+            {{ 'labels.Add Specific TimeSlot' | translate }}
           </button>
         </div>
       </div>
@@ -363,7 +366,7 @@
         (click)="onSubmit()"
         nzType="default"
         type="submit">
-        SAVE
+        {{ 'buttons.Save' | translate }}
       </button>
     </div>
   </form>

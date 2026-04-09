@@ -63,6 +63,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
 
   minimumAllowedTime: Date = new Date(new Date().getTime() + 60 * 60 * 1000);
 
+  @Output() createScheduleEvent = new EventEmitter<BusScheduleAutoGenerator>();
   @Output() saveScheduleEvent = new EventEmitter<BusScheduleAutoGenerator>();
 
   constructor(
@@ -433,6 +434,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
           window.history.replaceState(updatedState, '', window.location.href);
           this.busScheduleAutoGenerator = res;
           toast.success('Bus Route update successfully');
+          this.saveScheduleEvent.emit(res);
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -447,6 +449,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
           const updatedState = { ...history.state, busScheduleAutoGenerator: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus Route added successfully');
+          this.createScheduleEvent.emit(res);
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
