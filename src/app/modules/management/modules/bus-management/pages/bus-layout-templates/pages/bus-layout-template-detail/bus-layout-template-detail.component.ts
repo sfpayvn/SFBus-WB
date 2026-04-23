@@ -3,6 +3,7 @@ import { BusLayoutTemplatesService } from '../../service/bus-layout-templates.se
 import { Location } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { SeatType } from '../../../seat-types/model/seat-type.model';
 import { SeatTypesService } from '../../../seat-types/service/seat-types.servive';
 import {
@@ -69,6 +70,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     private router: Router,
     public defaultFlagService: DefaultFlagService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -431,7 +433,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     // Kiểm tra định dạng tên (phải bắt đầu bằng 'A' và theo sau là số từ 01 đến 99)
     const nameFormat = /^[A-Z]\d{2}$/;
     if (!nameFormat.test(newName)) {
-      toast.error('Tên không hợp lệ. Tên phải có định dạng A01, A02, ..., A99.');
+      toast.error(this.translate.instant('messages.seatNameInvalid'));
       cell.hasError = true; // Đánh dấu ô có lỗi
       this.focusCell(); // Focus vào ô lỗi
       return;
@@ -439,7 +441,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
 
     // Kiểm tra nếu tên mới đã được sử dụng và khác với tên hiện tại
     if (newName !== this.originalName && this.usedNames.has(newName)) {
-      toast.error('Tên này đã được sử dụng. Vui lòng chọn tên khác.');
+      toast.error(this.translate.instant('messages.seatNameAlreadyUsed'));
       cell.hasError = true; // Đánh dấu ô có lỗi
       this.focusCell(); // Focus vào ô lỗi
       return;
@@ -517,7 +519,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
           this.busLayoutTemplate = res;
           const updatedState = { ...history.state, busLayoutTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('BusLayoutTemplate update successfully');
+          toast.success(this.translate.instant('messages.BusLayoutTemplateUpdated'));
 
           // Update initialFormValue sau khi save thành công (deep clone)
           this.initialFormValue = JSON.parse(JSON.stringify(this.busTemplateDetailForm.getRawValue()));
@@ -535,7 +537,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
           const updatedState = { ...history.state, busLayoutTemplate: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           this.router.navigate([], { queryParams: { id: res._id } });
-          toast.success('BusLayoutTemplate added successfully');
+          toast.success(this.translate.instant('messages.BusLayoutTemplateCreated'));
 
           // Update initialFormValue sau khi save thành công (deep clone)
           this.initialFormValue = JSON.parse(JSON.stringify(this.busTemplateDetailForm.getRawValue()));
@@ -566,7 +568,7 @@ export class BusLayoutTemplateDetailComponent implements OnInit {
     );
 
     if (hasErrorMatrix) {
-      toast.error('Tên không hợp lệ. Tên phải có định dạng A01, A02, ..., A99.');
+      toast.error(this.translate.instant('messages.seatNameInvalid'));
       this.selectedIndex = indexLayoutHasError;
     }
     return !hasErrorMatrix;

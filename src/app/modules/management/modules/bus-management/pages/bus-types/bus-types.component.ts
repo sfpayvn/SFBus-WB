@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { toast } from 'ngx-sonner';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusType, BusType2Create, SearchBusType } from './model/bus-type.model';
@@ -41,6 +42,7 @@ export class BusTypesComponent implements OnInit {
     private dialog: MatDialog,
     private utils: Utils,
     public defaultFlagService: DefaultFlagService,
+    private translateService: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -101,16 +103,15 @@ export class BusTypesComponent implements OnInit {
         icon: {
           type: 'dangerous',
         },
-        title: 'Delete BusType',
-        content:
-          'Are you sure you want to delete this busType? All of your data will be permanently removed. This action cannot be undone.',
+        title: this.translateService.instant('messages.busType.deleteConfirm'),
+        content: this.translateService.instant('messages.busType.deleteMessage'),
         btn: [
           {
-            label: 'NO',
+            label: this.translateService.instant('buttons.No'),
             type: 'cancel',
           },
           {
-            label: 'YES',
+            label: this.translateService.instant('buttons.Yes'),
             type: 'submit',
           },
         ],
@@ -123,7 +124,7 @@ export class BusTypesComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.searchBusType.busTypes = this.searchBusType.busTypes.filter((bt) => bt._id !== busType._id);
-              toast.success('BusType deleted successfully');
+              toast.success(this.translateService.instant('messages.busType.deletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -135,7 +136,7 @@ export class BusTypesComponent implements OnInit {
   editBusType(busType: BusType): void {
     const dialogRef = this.dialog.open(BusTypeDetailDialogComponent, {
       data: {
-        title: 'Cập nhật Loại Xe',
+        title: this.translateService.instant('buttons.Edit') + ' ' + this.translateService.instant('sidebar.Bus Types'),
         busType: { ...busType },
       },
     });
@@ -150,7 +151,7 @@ export class BusTypesComponent implements OnInit {
               this.searchBusType.busTypes = this.searchBusType.busTypes.map((busType: BusType) =>
                 busType._id === res._id ? { ...busType, ...res } : busType,
               );
-              toast.success('Cập nhật Loại Xe thành công');
+              toast.success(this.translateService.instant('messages.busType.updatedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -162,7 +163,7 @@ export class BusTypesComponent implements OnInit {
   addBusType(): void {
     const dialogRef = this.dialog.open(BusTypeDetailDialogComponent, {
       data: {
-        title: 'Thêm Loại Xe',
+        title: this.translateService.instant('labels.Add Bus Type'),
       },
     });
 
@@ -172,7 +173,7 @@ export class BusTypesComponent implements OnInit {
           next: (res: BusType) => {
             if (res) {
               this.loadData();
-              toast.success('Thêm Loại Xe thành công');
+              toast.success(this.translateService.instant('messages.busType.createdSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -190,7 +191,7 @@ export class BusTypesComponent implements OnInit {
       next: (res: BusType) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translateService.instant('messages.busType.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -219,18 +220,5 @@ export class BusTypesComponent implements OnInit {
       sortBy,
     };
     this.loadData();
-  }
-
-  private handleRequestError(error: any): void {
-    const msg = 'An error occurred while processing your request';
-    toast.error(msg, {
-      position: 'bottom-right',
-      description: error.message || 'Please try again later',
-      action: {
-        label: 'Dismiss',
-        onClick: () => {},
-      },
-      actionButtonStyle: 'background-color:#DC2626; color:white;',
-    });
   }
 }

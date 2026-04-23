@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
+import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from "chart.js";
 
 export interface PerformanceItem {
@@ -16,7 +17,7 @@ export interface PerformanceItem {
 })
 export class CanvasPerformanceComponent implements OnChanges, OnDestroy {
   @Input() isLoading = false;
-  @Input() loadingTip = "Đang tải dữ liệu...";
+  @Input() loadingTip = "";
   @Input() chartData!: ChartData<"doughnut">;
   @Input() chartType: "doughnut" | "pie" = "doughnut";
 
@@ -46,6 +47,10 @@ export class CanvasPerformanceComponent implements OnChanges, OnDestroy {
 
   private loadingInterval?: any;
   private readonly mockColors = ["#e2e8f0", "#cbd5e1", "#94a3b8", "#64748b", "#475569"];
+
+  constructor(private translate: TranslateService) {
+    this.loadingTip = this.translate.instant('common.Loading');
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["isLoading"]) {

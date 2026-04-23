@@ -1,5 +1,5 @@
 ﻿<div class="rounded-lg bg-white p-4 shadow-sm">
-  <h2 class="mb-4 text-lg font-semibold text-gray-800">Đặt chỗ gần đây</h2>
+  <h2 class="mb-4 text-lg font-semibold text-gray-800">{{ 'bookingRecent.title' | translate }}</h2>
   <div class="overflow-x-auto">
     <nz-table
       #rowSelectionTable
@@ -12,14 +12,14 @@
       <thead>
         <tr>
           <th class="min-w-[30px]"></th>
-          <th class="min-w-[60px]">#</th>
-          <th class="min-w-[150px]">Tên</th>
-          <th class="min-w-[40px]">Sđt</th>
-          <th class="min-w-[80px]">SL Vé</th>
-          <th class="min-w-[80px]">Tổng Tiền</th>
-          <th class="min-w-[80px]">Status</th>
-          <th class="min-w-[80px]">Thời gian đặt</th>
-          <th class="min-w-[80px] !text-right">Actions</th>
+          <th class="min-w-[60px]">{{ 'table.idx' | translate }}</th>
+          <th class="min-w-[150px]">{{ 'table.name' | translate }}</th>
+          <th class="min-w-[40px]">{{ 'table.phone' | translate }}</th>
+          <th class="min-w-[80px]">{{ 'bookingRecent.table.qty' | translate }}</th>
+          <th class="min-w-[80px]">{{ 'bookingRecent.table.total' | translate }}</th>
+          <th class="min-w-[80px]">{{ 'table.status' | translate }}</th>
+          <th class="min-w-[80px]">{{ 'table.createdAt' | translate }}</th>
+          <th class="min-w-[80px] !text-right">{{ 'table.actions' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -97,7 +97,7 @@
             <nz-collapse [nzBordered]="false" [nzGhost]="true">
               <nz-collapse-panel [nzActive]="isExpanded(booking._id)" [nzShowArrow]="false" [nzDisabled]="true">
                 <div class="flex flex-col gap-2">
-                  <label class="text-sm font-semibold text-gray-700">Thông tin ghế:</label>
+                  <label class="text-sm font-semibold text-gray-700">{{ 'bookingRecent.seatInfo' | translate }}:</label>
                   @if (booking.bookingItems && booking.bookingItems.length > 0) {
                   <div class="grid gap-3">
                     @for (bookingItem of booking.bookingItems; let i = $index; track $index ) {
@@ -111,25 +111,25 @@
                             class="{{
                               getSeatStatusClass(bookingItem.seat.status)
                             }} px-2 py-1 rounded text-xs font-semibold border">
-                            {{ getSeatStatusLabel(bookingItem.seat.status) || 'Chưa xác định' }}
+                            {{ getSeatStatusLabel(bookingItem.seat.status) || ('common.unknown' | translate) }}
                           </span>
                         </div>
                       </div>
                       <div class="grid grid-cols-2 gap-2 text-sm">
                         <div>
-                          <label class="font-medium text-gray-600">Điểm đón:</label>
-                          <span class="ml-2 text-gray-700">{{ bookingItem.departure || 'Chưa có thông tin' }}</span>
+                          <label class="font-medium text-gray-600">{{ 'bookingRecent.labels.pickup' | translate }}</label>
+                          <span class="ml-2 text-gray-700">{{ bookingItem.departure || ('common.noInfo' | translate) }}</span>
                         </div>
                         <div>
-                          <label class="font-medium text-gray-600">Điểm trả:</label>
-                          <span class="ml-2 text-gray-700">{{ bookingItem.destination || 'Chưa có thông tin' }}</span>
+                          <label class="font-medium text-gray-600">{{ 'bookingRecent.labels.dropoff' | translate }}</label>
+                          <span class="ml-2 text-gray-700">{{ bookingItem.destination || ('common.noInfo' | translate) }}</span>
                         </div>
                         <div>
-                          <label class="font-medium text-gray-600">Giá ghế:</label>
+                          <label class="font-medium text-gray-600">{{ 'bookingRecent.labels.seatPrice' | translate }}</label>
                           <span class="ml-2 text-gray-700">{{ utils.formatPriceToVND(bookingItem.price || 0) }}</span>
                         </div>
                         <div>
-                          <label class="font-medium text-gray-600">Loại ghế:</label>
+                          <label class="font-medium text-gray-600">{{ 'bookingRecent.labels.seatType' | translate }}</label>
                           <span class="ml-2 text-gray-700">{{ getTypeOfSeat(bookingItem.seat)?.name }}</span>
                         </div>
                       </div>
@@ -137,7 +137,7 @@
                     }
                   </div>
                   } @else {
-                  <span class="text-sm text-gray-500">Chưa có thông tin ghế</span>
+                  <span class="text-sm text-gray-500">{{ 'common.noInfo' | translate }}</span>
                   }
                 </div>
               </nz-collapse-panel>

@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
+import { TranslateService } from '@ngx-translate/core';
 import { ChartConfiguration, ChartData, ChartType } from "chart.js";
 
 @Component({
@@ -21,7 +22,7 @@ export class CanvasChartComponent implements OnChanges, OnDestroy {
       y: { beginAtZero: true },
     },
   };
-  @Input() loadingTip = "Đang tải dữ liệu...";
+  @Input() loadingTip = "";
   @Input() comparisonMode = false;
   @Input() dateRangeType: "day" | "this-week" | "this-month" | "week" | "month" | "custom"  = "day";
   @Input() startDate?: Date;
@@ -30,6 +31,10 @@ export class CanvasChartComponent implements OnChanges, OnDestroy {
   labels: string[] = [];
 
   private loadingInterval?: any;
+
+  constructor(private translate: TranslateService) {
+    this.loadingTip = this.translate.instant('common.Loading');
+  }
   displayChartData: any;
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -78,11 +83,11 @@ export class CanvasChartComponent implements OnChanges, OnDestroy {
 
     const displayLabels = this.labels.length ? [...this.labels] : Array.from({ length: dataLength }, (_, i) => `${i + 1}`);
 
-    this.displayChartData = {
+        this.displayChartData = {
       labels: displayLabels,
       datasets: [
         {
-          label: this.comparisonMode ? "Kỳ hiện tại" : "Dữ liệu",
+          label: this.comparisonMode ? this.translate.instant('common.currentPeriod') : this.translate.instant('common.data'),
           data: [...currentData],
           backgroundColor: "#e2e8f0",
           borderColor: "#cbd5e1",
@@ -91,7 +96,7 @@ export class CanvasChartComponent implements OnChanges, OnDestroy {
         ...(this.comparisonMode
           ? [
               {
-                label: "Kỳ trước",
+                label: this.translate.instant('common.previousPeriod'),
                 data: [...currentDataPrevious],
                 backgroundColor: "#f1f5f9",
                 borderColor: "#e2e8f0",

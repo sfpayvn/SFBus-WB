@@ -10,6 +10,7 @@ import { SearchPromotion, Promotion, Promotion2Create } from '../../model/promot
 import { PromotionService } from '../../service/promotion.service';
 import { CapsService } from '@rsApp/shared/services/caps.service';
 import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-promotion',
@@ -66,6 +67,7 @@ export class PromotionComponent implements OnInit {
     private promotionService: PromotionService,
     private dialog: MatDialog,
     public capsService: CapsService,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
     this.searchPromotion = {
@@ -199,7 +201,7 @@ export class PromotionComponent implements OnInit {
               this.searchPromotion.promotions = this.searchPromotion.promotions.filter(
                 (promotion) => promotion._id !== id,
               );
-              toast.success('Promotion Category deleted successfully');
+              toast.success(this.translate.instant('messages.promotionCategoryDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -217,7 +219,7 @@ export class PromotionComponent implements OnInit {
       next: (res: Promotion) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

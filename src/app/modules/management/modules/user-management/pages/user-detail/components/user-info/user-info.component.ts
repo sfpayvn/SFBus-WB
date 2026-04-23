@@ -8,7 +8,7 @@ import { FilesCenterDialogComponent } from 'src/app/modules/management/modules/f
 import { FileDto } from 'src/app/modules/management/modules/files-center-management/model/file-center.model';
 import { combineLatest, tap } from 'rxjs';
 import { Router } from '@angular/router';
-
+import { TranslateService } from '@ngx-translate/core';
 import {
   AbstractControl,
   FormArray,
@@ -55,6 +55,7 @@ export class UserInfoComponent implements OnInit {
     private utilsModal: UtilsModal,
     private fb: FormBuilder,
     private userManagementService: UserManagementService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -216,7 +217,7 @@ export class UserInfoComponent implements OnInit {
     try {
       this.userManagementService.processUpdateUser(this.userRole, files, user2Update).subscribe({
         next: (updatedUser: User) => {
-          toast.success('Cập nhật thông tin người dùng thành công');
+          toast.success(this.translate.instant('messages.userInfoUpdatedSuccess'));
           this.user = updatedUser;
           const updatedState = { ...history.state, user: JSON.stringify(updatedUser) };
           window.history.replaceState(updatedState, '', window.location.href);
@@ -234,7 +235,7 @@ export class UserInfoComponent implements OnInit {
     try {
       this.userManagementService.processCreateUser(this.userRole, files, user2Create).subscribe({
         next: (createdUser: User) => {
-          toast.success('Tạo mới thông tin người dùng thành công');
+          toast.success(this.translate.instant('messages.userInfoCreatedSuccess'));
           this.user = createdUser;
           const updatedState = { ...history.state, user: JSON.stringify(createdUser) };
           window.history.replaceState(updatedState, '', window.location.href);

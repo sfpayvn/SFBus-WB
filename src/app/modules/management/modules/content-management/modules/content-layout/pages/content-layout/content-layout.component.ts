@@ -13,6 +13,7 @@ import {
   PLATFORM_DEFAULT_APP_SOURCE_LABELS,
 } from '@rsApp/core/constants/app-source.constant';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-content-layout',
@@ -54,6 +55,7 @@ export class ContentLayoutComponent implements OnInit {
     private router: Router,
     public defaultFlagService: DefaultFlagService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -138,7 +140,7 @@ export class ContentLayoutComponent implements OnInit {
               this.searchContentLayout.contentLayouts = this.searchContentLayout.contentLayouts.filter(
                 (cl: ContentLayout) => cl._id !== contentLayout._id,
               );
-              toast.success('Content layout deleted successfully');
+              toast.success(this.translate.instant('messages.contentLayoutDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -168,7 +170,7 @@ export class ContentLayoutComponent implements OnInit {
       next: (res: ContentLayout) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

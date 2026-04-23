@@ -1,35 +1,37 @@
 <form class="my-10 space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="text-center">
-    <h2 class="text-foreground mb-1 text-3xl font-semibold">Sign Up <span class="text-primary">!</span></h2>
-    <p class="text-muted-foreground text-sm">Let's get started with your 30 day free trial</p>
+    <h2 class="text-foreground mb-1 text-3xl font-semibold">
+      {{ 'auth.signUp' | translate }} <span class="text-primary">!</span>
+    </h2>
+    <p class="text-muted-foreground text-sm">{{ 'auth.signUpDescription' | translate }}</p>
   </div>
 
   <div routerLink="/dashboard">
     <app-button full impact="bold" tone="light" shape="rounded" size="medium">
       <svg-icon src="assets/icons/google-logo.svg" [svgClass]="'h-6 w-6 mr-2'"> </svg-icon>
-      Sign Up with Google
+      {{ 'auth.signUpGoogle' | translate }}
     </app-button>
   </div>
 
   <div
     class="before:border-muted after:border-muted my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t after:mt-0.5 after:flex-1 after:border-t">
-    <p class="text-muted-foreground mx-4 mb-0 text-center text-sm">or</p>
+    <p class="text-muted-foreground mx-4 mb-0 text-center text-sm">{{ 'common.or' | translate }}</p>
   </div>
 
   <div class="space-y-3 text-left">
     <div class="relative flex gap-2">
       <div class="w-1/2">
         <nz-form-item class="!flex !w-full !flex-col">
-          <nz-form-label nzFor="tenantName" class="!flex !items-center !justify-start !text-sm"
-            >Tenant Name</nz-form-label
-          >
+          <nz-form-label nzFor="tenantName" class="!flex !items-center !justify-start !text-sm">{{
+            'labels.tenantName' | translate
+          }}</nz-form-label>
           <nz-form-control [nzErrorTip]="userFormTenantNameErrorTpl" class="!flex flex-col">
             <nz-input-group [nzSuffix]="userFormTenantNameClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
               <input
                 type="text"
                 nz-input
                 formControlName="tenantName"
-                placeholder="Nhập Tenant Name"
+                [attr.placeholder]="'placeholders.auth.tenantName' | translate"
                 (ngModelChange)="updateTenantCode()" />
             </nz-input-group>
             <ng-template #userFormTenantNameClearTpl>
@@ -44,7 +46,7 @@
             </ng-template>
             <ng-template #userFormTenantNameErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
-                @if (f['tenantName'].errors?.['required']) { Vui lòng nhập Tenant Name }
+                @if (f['tenantName'].errors?.['required']) { {{ 'auth.tenantNameRequired' | translate }} }
               </span>
             </ng-template>
           </nz-form-control>
@@ -52,12 +54,16 @@
       </div>
       <div class="w-1/2">
         <nz-form-item class="!flex !w-full !flex-col">
-          <nz-form-label nzFor="tenantCode" class="!flex !items-center !justify-start !text-sm"
-            >Tenant Code</nz-form-label
-          >
+          <nz-form-label nzFor="tenantCode" class="!flex !items-center !justify-start !text-sm">{{
+            'labels.tenantCode' | translate
+          }}</nz-form-label>
           <nz-form-control [nzErrorTip]="userFormTenantCodeErrorTpl" class="!flex flex-col">
             <nz-input-group [nzSuffix]="userFormTenantCodeClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
-              <input type="text" nz-input formControlName="tenantCode" placeholder="Nhập Tenant Code" />
+              <input
+                type="text"
+                nz-input
+                formControlName="tenantCode"
+                [attr.placeholder]="'placeholders.auth.tenantCode' | translate" />
             </nz-input-group>
             <ng-template #userFormTenantCodeClearTpl>
               @if(f['tenantCode'].value){
@@ -71,7 +77,7 @@
             </ng-template>
             <ng-template #userFormTenantCodeErrorTpl let-control>
               <span class="mt-1 !text-xs text-red-500">
-                @if (f['tenantCode'].errors?.['required']) { Vui lòng nhập Tenant Code }
+                @if (f['tenantCode'].errors?.['required']) { {{ 'auth.tenantCodeRequired' | translate }} }
               </span>
             </ng-template>
           </nz-form-control>
@@ -80,9 +86,9 @@
     </div>
     <div class="relative">
       <nz-form-item class="!flex !w-full !flex-col">
-        <nz-form-label nzFor="phoneNumber" class="!flex !items-center !justify-start !text-sm"
-          >Phone Number</nz-form-label
-        >
+        <nz-form-label nzFor="phoneNumber" class="!flex !items-center !justify-start !text-sm">{{
+          'common.phoneNumber' | translate
+        }}</nz-form-label>
         <nz-form-control [nzErrorTip]="userFormPhoneNumberErrorTpl" class="!flex flex-col">
           <nz-input-group [nzSuffix]="userFormPhoneNumberClearTpl" class="!mt-0 !mb-0 !rounded border-gray-200">
             <input
@@ -92,7 +98,7 @@
               mask="0000 000 000"
               [dropSpecialCharacters]="maskConfig.dropSpecialCharacters"
               [showMaskTyped]="maskConfig.showMaskTyped"
-              placeholder="Nhập Phone Number" />
+              [attr.placeholder]="'placeholders.auth.phoneNumber' | translate" />
           </nz-input-group>
           <ng-template #userFormPhoneNumberClearTpl>
             @if(f['phoneNumber'].value){
@@ -106,8 +112,8 @@
           </ng-template>
           <ng-template #userFormPhoneNumberErrorTpl let-control>
             <span class="mt-1 !text-xs text-red-500">
-              @if (f['phoneNumber'].errors?.['required']) { Vui lòng nhập số điện thoại }
-              @if(f['phoneNumber'].errors?.['pattern']) { Vui lòng nhập đúng số điện thoại }
+              @if (f['phoneNumber'].errors?.['required']) { {{ 'auth.phoneNumberRequired' | translate }} }
+              @if(f['phoneNumber'].errors?.['pattern']) { {{ 'auth.phoneNumberInvalid' | translate }} }
             </span>
           </ng-template>
         </nz-form-control>
@@ -115,13 +121,15 @@
     </div>
     <div class="relative flex flex-col gap-4">
       <nz-form-item class="!flex !w-full !flex-col">
-        <nz-form-label nzFor="password" class="!flex !items-start !justify-start !p-0 !text-sm">Password</nz-form-label>
+        <nz-form-label nzFor="password" class="!flex !items-start !justify-start !p-0 !text-sm">{{
+          'labels.password' | translate
+        }}</nz-form-label>
         <nz-form-control [nzErrorTip]="passwordErrorTpl" class="!contents">
           <nz-input-group [nzSuffix]="suffixTemplatePassword" class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
             <input
               [type]="passwordVisible ? 'text' : 'password'"
               nz-input
-              placeholder="Nhập mật khẩu"
+              [attr.placeholder]="'placeholders.auth.password' | translate"
               formControlName="password"
               (focus)="passwordFocused = true"
               (blur)="passwordFocused = false" />
@@ -145,9 +153,9 @@
           </ng-template>
           <ng-template #passwordErrorTpl let-control>
             <span class="mt-1 !text-xs text-red-500">
-              @if (f['password'].errors?.['required'] && f['password'].touched) { Vui lòng nhập mật khẩu. } @if
-              (f['password'].errors?.['passwordInvalid'] && f['password'].touched) { Vui lòng nhập đúng format mật khẩu.
-              }
+              @if (f['password'].errors?.['required'] && f['password'].touched) {
+              {{ 'auth.passwordRequired' | translate }} } @if (f['password'].errors?.['passwordInvalid'] &&
+              f['password'].touched) { {{ 'auth.passwordInvalid' | translate }} }
             </span>
           </ng-template>
         </nz-form-control>
@@ -158,49 +166,49 @@
           'max-h-0 -translate-y-2 transform opacity-0': !passwordFocused,
           'max-h-96 translate-y-0 transform opacity-100': passwordFocused
         }">
-        <label class="text-sm font-medium">Password yêu cầu</label>
+        <label class="text-sm font-medium">{{ 'auth.passwordRequirements' | translate }}</label>
         <label
           nz-checkbox
           [(ngModel)]="passwordConditions['minLength']"
           [ngModelOptions]="{ standalone: true }"
           class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
-          Tối thiểu 8 ký tự
+          {{ 'auth.passwordMinLength' | translate }}
         </label>
         <label
           nz-checkbox
           [(ngModel)]="passwordConditions['hasWordCase']"
           [ngModelOptions]="{ standalone: true }"
           class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
-          Ít nhất một chữ cái viết hoa và viết thường
+          {{ 'auth.passwordMixedCase' | translate }}
         </label>
         <label
           nz-checkbox
           [(ngModel)]="passwordConditions['hasNumber']"
           [ngModelOptions]="{ standalone: true }"
           class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
-          Ít nhất một chữ số
+          {{ 'auth.passwordNumber' | translate }}
         </label>
         <label
           nz-checkbox
           [(ngModel)]="passwordConditions['hasSpecial']"
           [ngModelOptions]="{ standalone: true }"
           class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
-          Ít nhất một ký tự đặc biệt: {{ '! @ # $ % ^ & * ( ) _ + - =' }}
+          {{ 'auth.passwordSpecial' | translate }}: {{ '! @ # $ % ^ & * ( ) _ + - =' }}
         </label>
         <label
           nz-checkbox
           [(ngModel)]="passwordConditions['noneSpace']"
           [ngModelOptions]="{ standalone: true }"
           class="nz-checkbox-marker pointer-events-none !m-0 !p-0 transition-all duration-200">
-          Không chứa khoảng trắng
+          {{ 'auth.passwordNoSpace' | translate }}
         </label>
       </div>
     </div>
     <div class="relative">
       <nz-form-item class="!flex !w-full !flex-col">
-        <nz-form-label nzFor="confirmPassword" class="!flex !items-start !justify-start !p-0 !text-sm"
-          >Confirm Password</nz-form-label
-        >
+        <nz-form-label nzFor="confirmPassword" class="!flex !items-start !justify-start !p-0 !text-sm">{{
+          'labels.confirmPassword' | translate
+        }}</nz-form-label>
         <nz-form-control [nzErrorTip]="confirmPasswordErrorTpl" class="!contents">
           <nz-input-group
             [nzSuffix]="suffixTemplateConfirmPPassword"
@@ -208,7 +216,7 @@
             <input
               [type]="confirmPasswordVisible ? 'text' : 'password'"
               nz-input
-              placeholder="Nhập lại mật khẩu"
+              [attr.placeholder]="'placeholders.auth.confirmPassword' | translate"
               formControlName="confirmPassword" />
           </nz-input-group>
           <ng-template #suffixTemplateConfirmPPassword>
@@ -230,13 +238,14 @@
           </ng-template>
           <ng-template #confirmPasswordErrorTpl let-control>
             <span class="mt-1 !text-xs text-red-500">
-              @if (f['confirmPassword'].errors?.['required'] && f['confirmPassword'].touched) { Vui lòng nhập mật khẩu.
+              @if (f['confirmPassword'].errors?.['required'] && f['confirmPassword'].touched) {
+              {{ 'auth.passwordRequired' | translate }}
               }
             </span>
           </ng-template>
           @if (f['confirmPassword'].errors?.['passwordMismatch'] && !f['confirmPassword'].errors?.['required'] &&
           f['confirmPassword'].touched) {
-          <span class="mt-1 !text-xs text-red-500">Mật khẩu không khớp nhau.</span> }
+          <span class="mt-1 !text-xs text-red-500">{{ 'auth.passwordMismatch' | translate }}</span> }
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -246,12 +255,16 @@
     <nz-form-control [nzErrorTip]="acceptTermErrorTpl" class="!contents">
       <label nz-checkbox formControlName="acceptTerm" class="!m-0 !p-0">
         <label for="accept-term" class="text-muted-foreground ml-2 flex items-center text-sm">
-          I Accept the <app-button impact="none" tone="primary" shape="rounded" size="small"> Terms </app-button>
+          {{ 'auth.acceptTerms' | translate }}
+          <app-button impact="none" tone="primary" shape="rounded" size="small">
+            {{ 'auth.terms' | translate }}
+          </app-button>
         </label>
       </label>
       <ng-template #acceptTermErrorTpl let-control>
         <span class="mt-1 !text-xs text-red-500">
-          @if (f['acceptTerm'].errors?.['required'] && f['acceptTerm'].touched) { Vui lòng chấp nhận điều khoản. }
+          @if (f['acceptTerm'].errors?.['required'] && f['acceptTerm'].touched) {
+          {{ 'auth.termsRequired' | translate }} }
         </span>
       </ng-template>
     </nz-form-control>
@@ -259,14 +272,16 @@
 
   <!-- Submit Button -->
   <div>
-    <app-button full impact="bold" tone="primary" shape="rounded" size="medium">Sign up</app-button>
+    <app-button full impact="bold" tone="primary" shape="rounded" size="medium">{{
+      'auth.signUp' | translate
+    }}</app-button>
   </div>
 
   <!-- Sign-up -->
   <div class="text-muted-foreground flex items-center text-sm">
-    Already have an Account?
+    {{ 'auth.haveAccount' | translate }}
     <app-button routerLink="/auth/sign-in" impact="none" tone="primary" shape="rounded" size="small">
-      Sign in
+      {{ 'auth.signIn' | translate }}
     </app-button>
   </div>
 </form>

@@ -1,0 +1,168 @@
+.fee-tax-breakdown {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+
+  &.compact {
+    padding: 12px;
+
+    .section-title {
+      display: none;
+    }
+
+    .fee-row,
+    .tax-row,
+    .summary-row {
+      font-size: 12px;
+    }
+
+    .label,
+    .value {
+      font-size: 12px;
+    }
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 12px 0 8px;
+  }
+
+  .price-section {
+    margin-bottom: 16px;
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+
+      .label {
+        color: #6b7280;
+
+        &.discount {
+          color: #10b981;
+        }
+      }
+
+      .value {
+        color: #1f2937;
+        font-weight: 500;
+
+        &.discount {
+          color: #10b981;
+        }
+      }
+
+      &.divider-top {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 12px;
+      }
+
+      .label.bold,
+      .value.bold {
+        font-weight: 600;
+        color: #1f2937;
+      }
+    }
+  }
+
+  .fees-section {
+    margin-bottom: 12px;
+
+    .fee-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+
+      .label {
+        color: #6b7280;
+      }
+
+      .value {
+        color: #0891b2;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .taxes-section {
+    margin-bottom: 12px;
+
+    .tax-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+
+      .label {
+        color: #6b7280;
+      }
+
+      .value {
+        color: #f59e0b;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .summary-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    margin: 12px 0;
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 12px;
+
+      .label {
+        color: #6b7280;
+      }
+
+      .value {
+        color: #1f2937;
+        font-weight: 500;
+      }
+
+      &:not(:last-child) {
+        margin-bottom: 6px;
+      }
+    }
+  }
+
+  .final-section {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 12px;
+
+    .final-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .value {
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+      }
+    }
+  }
+}

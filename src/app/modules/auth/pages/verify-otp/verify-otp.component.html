@@ -1,13 +1,13 @@
 @if(currentUser){
 <form class="my-10 space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="flex flex-col gap-2 text-center">
-    <h2 class="text-foreground mb-1 text-3xl font-semibold">Phone Number Verification</h2>
+    <h2 class="text-foreground mb-1 text-3xl font-semibold">{{ 'auth.verifyOtp.title' | translate }}</h2>
     <div>
-      <p class="text-muted-foreground text-sm">Enter the verification code we sent to</p>
+      <p class="text-muted-foreground text-sm">{{ 'auth.verifyOtp.description' | translate }}</p>
       <div class="text-muted-foreground text-lg">{{ currentUser.phoneNumber }}</div>
     </div>
     <label class="text-muted-foreground cursor-pointer font-medium underline" (click)="onResendOtp()"
-      >Re-Sent OTP</label
+      >{{ 'auth.verifyOtp.resendOtp' | translate }}</label
     >
   </div>
 
@@ -19,7 +19,7 @@
 
   <!-- Submit Button -->
   <div>
-    <app-button full impact="bold" tone="primary" shape="rounded" size="medium"> Submit </app-button>
+    <app-button full impact="bold" tone="primary" shape="rounded" size="medium"> {{ 'buttons.Submit' | translate }} </app-button>
   </div>
 </form>
 }

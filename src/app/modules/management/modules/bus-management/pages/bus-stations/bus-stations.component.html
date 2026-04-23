@@ -1,17 +1,17 @@
-<div class="mb-4 flex justify-end">
+  <div class="mb-4 flex justify-end">
   <div class="flex gap-4">
     <button
       class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
       nz-button
-      aria-label="Import CSV">
-      Import CSV
+      [attr.aria-label]="'buttons.Import CSV' | translate">
+      {{ 'buttons.Import CSV' | translate }}
     </button>
     <button
       class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
       nz-button
       (click)="addBusStation()"
       type="button">
-      Add Bus Station
+      {{ 'labels.Add Bus Station' | translate }}
     </button>
   </div>
 </div>
@@ -38,13 +38,13 @@
             class="w-[50px]"
             [nzChecked]="checked"
             [nzIndeterminate]="indeterminate"
-            nzLabel="Select all"
+            [nzLabel]="'common.Select all' | translate"
             (nzCheckedChange)="onAllChecked($event)"></th>
-          <th class="min-w-[200px]">Image</th>
-          <th class="min-w-[200px]">Name</th>
-          <th class="min-w-[200px]">Office</th>
-          <th class="min-w-[200px]">Active</th>
-          <th class="w-[100px] text-center">Actions</th>
+          <th class="min-w-[200px]">{{ 'common.image' | translate }}</th>
+          <th class="min-w-[200px]">{{ 'common.Name' | translate }}</th>
+          <th class="min-w-[200px]">{{ 'labels.Is Office' | translate }}</th>
+          <th class="min-w-[200px]">{{ 'labels.Is Active' | translate }}</th>
+          <th class="w-[100px] text-center">{{ 'labels.Actions' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -137,7 +137,7 @@
         </tr>
         } @empty {
         <tr>
-          <td class="py-4 text-center text-sm" colspan="4">No busStations found</td>
+          <td class="py-4 text-center text-sm" colspan="5">{{ 'common.No data found' | translate }}</td>
         </tr>
         }
       </tbody>

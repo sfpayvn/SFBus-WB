@@ -7,12 +7,13 @@ import { AuthService } from '../../service/auth.service';
 import { toast } from 'ngx-sonner';
 import { CustomCommonModule } from '@rsApp/library-modules/custom-common-module';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.css'],
-  imports: [CustomCommonModule, NgxMaskDirective],
+  imports: [CustomCommonModule, NgxMaskDirective, TranslateModule],
   providers: [provideNgxMask()],
 })
 export class SignUpComponent implements OnInit {
@@ -49,11 +50,11 @@ export class SignUpComponent implements OnInit {
   initForm() {
     this.form = this._formBuilder.group(
       {
-        tenantName: ['SF', [Validators.required]],
-        tenantCode: [{ disabled: true, value: 'SF' }, [Validators.required]],
-        phoneNumber: ['0961090433', [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
+        tenantName: ['', [Validators.required]],
+        tenantCode: [{ disabled: true, value: '' }, [Validators.required]],
+        phoneNumber: ['', [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
         password: [
-          '@Solid2023',
+          '',
           [
             Validators.required,
             this.optionalValidator(
@@ -61,11 +62,11 @@ export class SignUpComponent implements OnInit {
             ),
           ],
         ],
-        confirmPassword: ['@Solid2023', [Validators.required]],
+        confirmPassword: ['', [Validators.required]],
         acceptTerm: [false, [Validators.requiredTrue]],
       },
       {
-        validators: this.passwordMatchValidator, // Sử dụng form-level validator
+        validators: this.passwordMatchValidator, // Use form-level validator
       },
     );
   }
@@ -83,7 +84,7 @@ export class SignUpComponent implements OnInit {
       formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     } else {
-      // Clear error nếu passwords match
+      // Clear error if passwords match
       const confirmPasswordControl = formGroup.get('confirmPassword');
       if (confirmPasswordControl?.errors?.['passwordMismatch']) {
         delete confirmPasswordControl.errors['passwordMismatch'];
@@ -98,9 +99,9 @@ export class SignUpComponent implements OnInit {
   optionalValidator(validator: ValidatorFn): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value || control.value.trim() === '') {
-        return null; // Không validate nếu không có giá trị
+        return null; // Do not validate if no value
       }
-      return validator(control); // Thực hiện validate khi có giá trị
+      return validator(control); // Perform validation when value exists
     };
   }
 
@@ -132,11 +133,11 @@ export class SignUpComponent implements OnInit {
     this.f['tenantCode'].patchValue(normalizedName);
   }
 
-  // Thêm method để bỏ dấu tiếng Việt
+  // Add method to remove Vietnamese diacritics
   removeDiacritics(str: string): string {
     return str
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // Bỏ dấu
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
       .replace(/đ/g, 'd')
       .replace(/Đ/g, 'D');
   }

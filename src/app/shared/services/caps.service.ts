@@ -1,28 +1,27 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { CookieService } from './cookie.service';
-import { ApiGatewayService } from '@rsApp/api-gateway/api-gateaway.service';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+import { ApiGatewayService } from "@rsApp/api-gateway/api-gateaway.service";
+import { CookieService } from "./cookie.service";
 
 export interface CapabilityItem {
   moduleKey: string;
   functionKey: string | null; // null = module-level
-  type: 'unlimited' | 'count' | 'block'; // FE KHÔNG cần biết useFull, BE đã map sang 'unlimited'
+  type: "unlimited" | "count" | "block"; // FE KHÔNG cần biết useFull, BE đã map sang 'unlimited'
   quota: number | null;
   remaining: number | null;
   resetAt: string | null; // ISO
 }
 export interface CapabilitiesRes {
-  defaultAction: 'allow' | 'block';
+  defaultAction: "allow" | "block";
   items: CapabilityItem[];
 }
 
-const COOKIE_KEY = 'caps:v1';
+const COOKIE_KEY = "caps:v1";
 const COOKIE_EXPIRE_DAYS = 30; // tuỳ bạn
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class CapsService {
-  url = '/tenant/tenant-subscription-usage/capabilities';
+  url = "/tenant/tenant-subscription-usage/capabilities";
 
   private subject = new BehaviorSubject<CapabilitiesRes | null>(null);
   caps$ = this.subject.asObservable();
@@ -32,7 +31,10 @@ export class CapsService {
   private refreshTimer: any;
   items$: any;
 
-  constructor(private api: ApiGatewayService, private cookie: CookieService) {}
+  constructor(
+    private api: ApiGatewayService,
+    private cookie: CookieService,
+  ) {}
 
   /** Gọi 1 lần sau login */
   async bootstrap(): Promise<void> {
@@ -40,11 +42,16 @@ export class CapsService {
     if (this.bootstrapped) return;
 
     // 1) lấy cache từ cookie để UI hiển thị tức thì
-    const cached = this.cookie.get(COOKIE_KEY) as unknown as CapabilitiesRes | null;
-    if (cached) {
-      this.subject.next(cached);
-      this.computeNextRefresh(cached);
-      this.armRefreshTimer();
+    try {
+      const cachedData = await this.cookie.get(COOKIE_KEY);
+      const cached = this.isValidCaps(cachedData) ? cachedData : null;
+      if (cached) {
+        this.subject.next(cached);
+        this.computeNextRefresh(cached);
+        this.armRefreshTimer();
+      }
+    } catch (err) {
+      console.warn('⚠️ CapsService: Error loading cached capabilities', err);
     }
 
     // 2) đồng bộ mới từ server (không chặn UI)
@@ -67,18 +74,13 @@ export class CapsService {
   }
 
   /** Interceptor gọi để cập nhật nhanh sau mỗi request */
-  async applyQuotaUpdate(
-    moduleKey: string,
-    functionKey: string | null,
-    remaining?: number | null,
-    resetAtMs?: number | null,
-  ) {
+  async applyQuotaUpdate(moduleKey: string, functionKey: string | null, remaining?: number | null, resetAtMs?: number | null) {
     const cur = this.subject.value;
-    if (!cur) return;
-    const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
+    if (!cur || !Array.isArray(cur.items)) return;
+    const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? "") === (functionKey ?? ""));
     if (!it) return;
-    if (typeof remaining === 'number') it.remaining = Math.max(0, remaining);
-    if (typeof resetAtMs === 'number') it.resetAt = new Date(resetAtMs).toISOString();
+    if (typeof remaining === "number") it.remaining = Math.max(0, remaining);
+    if (typeof resetAtMs === "number") it.resetAt = new Date(resetAtMs).toISOString();
     await this.setCaps({ ...cur, items: [...cur.items] });
   }
 
@@ -86,23 +88,21 @@ export class CapsService {
   visible(moduleKey: string, functionKey?: string | null): boolean {
     const cur = this.subject.value;
     if (!cur) return false;
-    const found = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
-    return found ? true : cur.defaultAction === 'allow';
+    const found = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? "") === (functionKey ?? ""));
+    return found ? true : cur.defaultAction === "allow";
   }
 
   disabled(moduleKey: string, functionKey?: string | null): boolean {
     const cur = this.subject.value;
     if (!cur) return false;
-    const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
+    const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? "") === (functionKey ?? ""));
     if (!it) return false;
-    if (it.type === 'unlimited') return false;
+    if (it.type === "unlimited") return false;
     return (it.remaining ?? 0) <= 0;
   }
 
   remaining(moduleKey: string, functionKey?: string | null): number | null {
-    const it = this.subject.value?.items.find(
-      (i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''),
-    );
+    const it = this.subject.value?.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? "") === (functionKey ?? ""));
     return it?.remaining ?? null;
   }
 
@@ -115,8 +115,8 @@ export class CapsService {
     // Nếu chưa load caps (chưa bootstrap) thì return false (không block, cho phép)
     if (!cur) return true;
 
-    const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? '') === (functionKey ?? ''));
-    return it ? (it as any).type === 'block' : false;
+    const it = cur.items.find((i) => i.moduleKey === moduleKey && (i.functionKey ?? "") === (functionKey ?? ""));
+    return it ? (it as any).type === "block" : false;
   }
 
   /** Kiểm tra xem quota tổng có được allow không
@@ -129,7 +129,7 @@ export class CapsService {
     if (!cur) return true; // Nếu chưa load caps thì cho phép
 
     // Nếu defaultAction = 'allow' thì luôn được phép
-    if (cur.defaultAction === 'allow') return true;
+    if (cur.defaultAction === "allow") return true;
 
     // Nếu defaultAction = 'block' thì chỉ được phép nếu có items (subscription active)
     return cur.items.length > 0;
@@ -144,8 +144,21 @@ export class CapsService {
   }
 
   private computeNextRefresh(v: CapabilitiesRes) {
+    if (!v || !Array.isArray(v.items)) {
+      this.nextRefreshAt = null;
+      return;
+    }
     const times = v.items.map((i) => (i.resetAt ? Date.parse(i.resetAt) : NaN)).filter((n) => !Number.isNaN(n));
     this.nextRefreshAt = times.length ? Math.min(...times) : null;
+  }
+
+  private isValidCaps(data: any): data is CapabilitiesRes {
+    return (
+      data &&
+      typeof data === 'object' &&
+      Array.isArray(data.items) &&
+      ['allow', 'block'].includes(data.defaultAction)
+    );
   }
 
   private armRefreshTimer() {

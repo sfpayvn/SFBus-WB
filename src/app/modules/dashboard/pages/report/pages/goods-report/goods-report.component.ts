@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -72,6 +73,7 @@ export class GoodsReportComponent implements OnInit, OnDestroy {
     private busRoutesService: BusRoutesService,
     private router: Router,
     public utils: Utils,
+    private translate: TranslateService,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -254,7 +256,7 @@ export class GoodsReportComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error loading bus routes:', error);
-        toast.error('Không thể tải danh sách tuyến đường');
+        toast.error(this.translate.instant('goodsReport.errors.loadRoutes'));
       },
     });
     this.subscriptions.push(sub);
@@ -271,7 +273,7 @@ export class GoodsReportComponent implements OnInit, OnDestroy {
    * Export to Excel
    */
   exportToExcel(): void {
-    toast.info('Chức năng xuất Excel đang được phát triển');
+    toast.info(this.translate.instant('common.exportInProgress'));
   }
 
   /**

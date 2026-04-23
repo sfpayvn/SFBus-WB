@@ -1,11 +1,14 @@
 {
   "sidebar": {
+    "Base": "Cơ bản",
+    "Config": "Cấu hình",
     "Dashboard": "Bảng điều khiển",
     "Users Management": "Quản lý người dùng",
     "Client": "Khách hàng",
     "Driver": "Tài xế",
     "POS": "Quản lý",
     "Operator": "Điều hành",
+    "Tenant": "Chủ xe",
 
     "Media Center": "Quang lý phương tiện",
 
@@ -23,7 +26,6 @@
 
     "Bus Design": "Thiết kế tuyến xe",
     "Bus Templates": "Mẫu tuyến xe",
-
     "Bus Schedule Templates": "Mẫu lịch trình xe",
 
     "Bus Routes": "Tuyến xe",
@@ -40,15 +42,865 @@
     "Booking Management": "Quản lý đặt vé",
     "Payment Management": "Quản lý thanh toán",
     "Payment Methods": "Phương thức thanh toán",
+    "Fee Tax Management": "Quản lý phí và thuế",
+    "Tenant Management": "Quản lý chủ xe",
+    "Subscription Management": "Quản lý gói dịch vụ",
     "Notification Management": "Quản lý thông báo",
 
     "Content Management": "Quản lý nội dung",
     "Layouts": "Bố cục",
-    "Widgets": "Tiện ích",
+    "Widget": "Tiện ích",
 
     "Settings": "Cài đặt",
     "Theme setting": "Giao diện",
     "Bus schedule setting": "Chính sách lịch trình",
-    "Organization setting": "Tổ chức"
+    "Organization setting": "Tổ chức",
+    "Default setting": "Cài đặt mặc định"
+  },
+
+  "buttons": {
+    "Save": "Lưu",
+    "Cancel": "Hủy",
+    "Submit": "Gửi",
+    "Add": "Thêm",
+    "Edit": "Chỉnh sửa",
+    "Delete": "Xóa",
+    "Close": "Đóng",
+    "Confirm": "Xác nhận",
+    "Search": "Tìm kiếm",
+    "Reset": "Đặt lại",
+    "reset": "Đặt lại",
+    "Back": "Quay lại",
+    "Next": "Tiếp theo",
+    "Previous": "Trước đó",
+    "Create": "Tạo",
+    "Update": "Cập nhật",
+    "Clone": "Nhân bản",
+    "Import CSV": "Nhập CSV",
+    "Dismiss": "Đóng",
+    "Yes": "Có",
+    "No": "Không",
+    "OK": "OK",
+    "preview": "Xem trước",
+    "selectImage": "Chọn Hình ảnh",
+    "editAddress": "Chỉnh sửa Địa chỉ",
+    "deleteAddress": "Xóa Địa chỉ",
+    "editUser": "Chỉnh sửa Người dùng",
+    "deleteUser": "Xóa Người dùng",
+    "importCSV": "Nhập CSV",
+    "editSetting": "Chỉnh sửa Cài đặt",
+    "cloneSetting": "Nhân bản Cài đặt",
+    "deleteSetting": "Xóa Cài đặt",
+    "SignUp": "Đăng ký",
+    "SignIn": "Đăng nhập"
+  },
+
+  "common": {
+    "Back": "Quay lại",
+    "Name": "Tên",
+    "Email": "Email",
+    "Phone": "Điện thoại",
+    "Phone Number": "Số điện thoại",
+    "Address": "Địa chỉ",
+    "Code": "Mã",
+    "Status": "Trạng thái",
+    "Description": "Mô tả",
+    "Value": "Giá trị",
+    "Required": "Bắt buộc",
+    "Optional": "Tùy chọn",
+    "Loading": "Đang tải",
+    "Error": "Lỗi",
+    "Success": "Thành công",
+    "Warning": "Cảnh báo",
+    "Info": "Thông tin",
+    "Message": "Tin nhắn",
+    "License Plate": "Biển số xe",
+    "No data found": "Không có dữ liệu",
+    "Select all": "Chọn tất cả",
+    "Avatar": "Ảnh đại diện",
+    "Image": "Hình ảnh",
+    "Role": "Vai trò",
+    "or": "hoặc"
+  },
+
+  "auth": {
+    "tagline": "Nhanh chóng, Hiệu quả và Năng suất",
+    "description": "SFBus WB là nền tảng quản lý toàn diện cho vận tải xe buýt và hàng hóa. Với các tính năng mạnh mẽ như quản lý đặt vé, tạo hóa đơn điện tử, thống kê chi tiết, kiểm soát phân quyền người dùng, chúng tôi giúp bạn tối ưu hóa quy trình kinh doanh và nâng cao dịch vụ khách hàng.",
+    "Hello Again": "Chào mừng trở lại",
+    "Enter your credential to access your account": "Nhập thông tin xác thực của bạn để truy cập tài khoản",
+    "Tenant Code": "Mã chủ xe",
+    "Please enter your phone number": "Vui lòng nhập số điện thoại",
+    "Verify OTP": "Xác minh OTP",
+    "Server Error": "Oops! Lỗi máy chủ",
+    "signInGoogle": "Đăng nhập với Google",
+    "signIn": {
+      "greeting": "Chào mừng trở lại!",
+      "title": "Đăng Nhập"
+    },
+    "signUp": {
+      "title": "Đăng Ký!",
+      "subtitle": "Hãy bắt đầu với bản dùng thử miễn phí 30 ngày",
+      "googleButton": "Đăng ký với Google",
+      "acceptTerms": "Tôi đồng ý với các điều khoản và điều kiện"
+    },
+    "newPassword": {
+      "title": "Thiết lập Mật khẩu Mới",
+      "confirmPassword": "Xác nhận Mật khẩu"
+    },
+    "common": {
+      "or": "hoặc"
+    },
+    "verifyOtp": {
+      "title": "Xác minh Số điện thoại",
+      "description": "Nhập mã xác minh chúng tôi đã gửi đến",
+      "resendButton": "Gửi lại OTP",
+      "resendOtp": "Gửi lại OTP",
+      "submit": "Gửi"
+    },
+    "forgotPassword": {
+      "title": "Quên Mật khẩu",
+      "description": "Nhập email của bạn để đặt lại mật khẩu",
+      "phoneNumber": "Số điện thoại",
+      "placeholder": "Nhập Phone Number",
+      "requiredPhone": "Vui lòng nhập số điện thoại",
+      "invalidPhone": "Vui lòng nhập đúng số điện thoại",
+      "submit": "Gửi"
+    },
+    "phoneNumberInvalid": "Số điện thoại không hợp lệ",
+    "tenantCodeRequired": "Mã chủ xe là bắt buộc",
+    "forgotPasswordQuestion": "Quên mật khẩu?",
+    "notMemberYet": "Chưa là thành viên?",
+    "rememberMe": "Ghi nhớ tôi"
+  },
+
+  "account": {
+    "myAccount": "Tài khoản của tôi",
+    "basicInfo": "Thông tin cơ bản",
+    "mySubscriptions": "Các gói dịch vụ của tôi",
+    "mySubscription": "Thuê bao của tôi",
+    "changePassword": "Thay đổi mật khẩu",
+    "oldPassword": "Mật khẩu Cũ",
+    "loading": "Đang tải..."
+  },
+
+  "user": {
+    "driverInfo": "Thông tin Tài xế"
+  },
+
+  "reports": {
+    "title": "Báo cáo thống kê",
+    "statisticsReport": {
+      "title": "Báo cáo thống kê"
+    },
+    "bookingReport": {
+      "title": "Báo cáo đặt vé"
+    },
+    "bookingAnalysis": {
+      "title": "Phân tích chi tiết Booking"
+    },
+    "goodsAnalysis": {
+      "title": "Phân tích chi tiết Hàng hóa"
+    },
+    "tabs": {
+      "ticketsSold": "Vé bán",
+      "revenue": "Doanh thu",
+      "trips": "Chuyến xe",
+      "goods": "Hàng hóa",
+      "goodsRevenue": "Doanh thu Hàng hóa"
+    },
+    "ticketSales": "Vé bán",
+    "revenue": "Doanh thu",
+    "busTrips": "Chuyến xe",
+    "goods": "Hàng hóa",
+    "goodsRevenue": "Doanh thu Hàng hóa"
+  },
+
+  "labels": {
+    "Fee Type": "Loại phí",
+    "All Types": "Tất cả loại",
+    "All Statuses": "Tất cả trạng thái",
+    "Add Fee/Tax": "Thêm phí/Thuế",
+    "Add New Fee/Tax": "Thêm phí/Thuế mới",
+    "Edit Fee/Tax": "Chỉnh sửa phí/Thuế",
+    "Fee Type is required": "Loại phí là bắt buộc",
+    "Name": "Tên",
+    "Name is required": "Tên là bắt buộc",
+    "Applied On": "Áp dụng cho",
+    "Applied On is required": "Áp dụng cho là bắt buộc",
+    "Calculation Type": "Loại tính toán",
+    "Calculation Type is required": "Loại tính toán là bắt buộc",
+    "Value is required": "Giá trị là bắt buộc",
+    "Value must be greater than 0": "Giá trị phải lớn hơn 0",
+    "Priority (0-1000)": "Ưu tiên (0-1000)",
+    "Priority is required": "Ưu tiên là bắt buộc",
+    "Priority must be >= 0": "Ưu tiên phải >= 0",
+    "Priority must be <= 1000": "Ưu tiên phải <= 1000",
+    "Valid From": "Có hiệu lực từ",
+    "Valid To": "Hết hiệu lực",
+    "Add optional description": "Thêm mô tả tùy chọn",
+    "e.g., Booking Fee": "ví dụ: Phí đặt vé",
+    "Fee": "Phí",
+    "Tax": "Thuế",
+    "Fixed Amount": "Số tiền cố định",
+    "Percentage": "Phần trăm",
+    "Ticket Price": "Giá vé",
+    "Total Booking": "Tổng đặt vé",
+    "After Discount": "Sau khi giảm giá",
+    "Active": "Hoạt động",
+    "Inactive": "Không hoạt động",
+    "Type": "Loại",
+    "Calculation": "Tính toán",
+    "Priority": "Ưu tiên",
+    "Actions": "Hành động",
+    "View Details": "Xem chi tiết",
+    "Manage booking fees and taxes configurations": "Quản lý cấu hình phí và thuế đặt vé",
+    "Please fill all required fields": "Vui lòng điền tất cả các trường bắt buộc",
+    "Please fill all required fields correctly": "Vui lòng điền chính xác tất cả các trường bắt buộc",
+    "Lower numbers apply first. Fees at priority 10, Taxes at 50": "Số nhỏ hơn được áp dụng trước. Phí tại mức ưu tiên 10, Thuế tại 50",
+    "Select date": "Chọn ngày",
+    "Original Price": "Giá gốc",
+    "Discount": "Giảm giá",
+    "Subtotal": "Tổng cộng",
+    "Fees": "Phí",
+    "Taxes": "Thuế",
+    "Total Fees": "Tổng phí",
+    "Total Taxes": "Tổng thuế",
+    "Total Amount Payable": "Tổng tiền cần thanh toán",
+    "Tenant Name": "Tên chủ xe",
+    "Enter tenant name": "Nhập tên chủ xe",
+    "enterName": "Nhập Tên",
+    "Please enter tenant name": "Vui lòng nhập tên chủ xe",
+    "Name must be at least 2 characters": "Tên phải có ít nhất 2 ký tự",
+    "Organization Name": "Tên tổ chức",
+    "Enter organization name": "Nhập tên tổ chức",
+    "Organization name is required": "Tên tổ chức là bắt buộc",
+    "Organization Code": "Mã tổ chức",
+    "Enter organization code": "Nhập mã tổ chức",
+    "Organization code is required": "Mã tổ chức là bắt buộc",
+    "Enter address": "Nhập địa chỉ",
+    "Address is required": "Địa chỉ là bắt buộc",
+    "Enter phone number": "Nhập số điện thoại",
+    "Phone number is required": "Số điện thoại là bắt buộc",
+    "Please enter valid phone number": "Vui lòng nhập đúng số điện thoại",
+    "Add Bus": "Thêm Xe",
+    "Add Bus Station": "Thêm Trạm Xe",
+    "Add Bus Type": "Thêm Loại Xe",
+    "Add Bus Service": "Thêm Dịch vụ Xe",
+    "Add Bus Template": "Thêm Mẫu Xe",
+    "Add Bus Route": "Thêm Tuyến Xe",
+    "Add Bus Schedule": "Thêm Lịch trình Xe",
+    "Add Bus Layout Template": "Thêm Mẫu Bố trí Xe",
+    "Add Bus Province": "Thêm Tỉnh Thành Xe",
+    "Add Bus Schedule Template": "Thêm Mẫu Lịch trình Xe",
+    "Add Bus Schedule Auto": "Thêm lịch trình tự động",
+    "Add Seat Type": "Thêm Loại Ghế",
+    "Add Goods Category": "Thêm Danh mục Hàng hóa",
+    "All Goods Category": "Tất cả Danh mục Hàng hóa",
+    "All Bus Schedule": "Tất cả Lịch trình Xe",
+    "Is Environment": "Môi trường",
+    "Is Office": "Văn phòng",
+    "Is Active": "Hoạt động",
+    "Gender": "Giới tính",
+    "Bus Route": "Tuyến Xe",
+    "Bus Services": "Dịch vụ xe",
+    "busScheduleTemplate": "Mẫu Lịch trình Xe",
+    "selectBusScheduleTemplate": "Chọn Mẫu Lịch trình Xe",
+    "busDrivers": "Tài xế Xe",
+    "selectBusDrivers": "Chọn Tài xế Xe",
+    "busTemplates": "Mẫu Xe",
+    "selectTemplate": "Chọn Mẫu",
+    "selectBusServices": "Chọn Dịch vụ Xe",
+    "selectBusType": "Chọn Loại Xe",
+    "selectBusLayoutTemplate": "Chọn Mẫu Bố trí Xe",
+    "Bus Layout Template Review": "Xem trước Mẫu Bố trí Xe",
+    "Layout Bus Template": "Bố trí Mẫu Xe",
+    "Show per page": "Hiển thị trên mỗi trang",
+    "passwordRequirements": "Yêu cầu Mật khẩu",
+    "tenantName": "Tên Chủ xe",
+    "tenantCode": "Mã Chủ xe",
+    "phoneNumber": "Số điện thoại",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận Mật khẩu",
+    "advancedFilter": "Bộ lọc nâng cao",
+    "mainPeriod": "Kỳ chính",
+    "comparisonPeriod": "Kỳ so sánh",
+    "results": "Kết quả",
+    "availabilityDueDate": "Thời hạn cắt tính khả dụng",
+    "name": "Tên",
+    "email": "Email",
+    "birthDate": "Ngày sinh",
+    "address": "Địa chỉ",
+    "addressType": "Loại địa chỉ",
+    "avatar": "Ảnh đại diện",
+    "gender": "Giới tính",
+    "localFile": "Tập tin cục bộ",
+    "mediaCenter": "Trung tâm phương tiện",
+    "licenseExpirationDate": "Ngày hết hạn Giấy phép",
+    "search": "Tìm kiếm",
+    "reset": "Đặt lại",
+    "senderPhone": "Số điện thoại",
+    "senderName": "Tên Người gửi",
+    "currentStation": "Trạm Hiện Tại",
+    "goodsCode": "Mã Hàng Hóa",
+    "status": "Tình Trạng",
+    "shippingFee": "Phí vận chuyển",
+    "paymentMethod": "Phương thức thanh toán",
+    "busRoute": "Tuyến xe",
+    "stopPoints": "Các điểm dừng",
+    "provinceCity": "Tỉnh/Thành Phố",
+    "isActive": "Đang hoạt động",
+    "icon": "Biểu tượng",
+    "actions": "Hành động",
+    "member": "Thành viên",
+    "username": "Tên đăng nhập",
+    "hobbies": "Sở thích",
+    "occupation": "Nghề nghiệp",
+    "phone": "Điện thoại",
+    "item": "Mục",
+    "openPrice": "Giá mở",
+    "recentOffer": "Đề nghị gần đây",
+    "timeLeft": "Thời gian còn lại",
+    "view": "Xem",
+    "Calendar": "Lịch",
+    "Table": "Bảng",
+    "Run rule every": "Chạy quy tắc mỗi",
+    "Repeat Types": "Loại Lặp lại",
+    "Days": "Ngày",
+    "Weeks": "Tuần",
+    "PreGenerate Days": "Số Ngày Tạo Trước",
+    "Start Date": "Ngày Bắt Đầu",
+    "End Date": "Ngày Kết Thúc",
+    "Never": "Không bao giờ",
+    "On": "Vào",
+    "At": "Tại",
+    "Add Specific TimeSlot": "Thêm Khung Giờ Cụ Thể",
+    "Layout Name": "Tên Bố trí",
+    "Select Type": "Chọn Kiểu",
+    "Add Layout": "Thêm Bố trí",
+    "Details": "Chi Tiết",
+    "Edit": "Chỉnh sửa",
+    "Add New": "Thêm mới",
+    "Distance": "Khoảng cách",
+    "Distance Time": "Thời gian khoảng cách",
+    "Break Points": "Các Điểm Dừng",
+    "Add Break Point": "Thêm Điểm Dừng",
+    "Select Bus Station": "Chọn Trạm Xe",
+    "Please select at least 2 bus stations": "Vui lòng chọn ít nhất 2 trạm xe.",
+    "Cannot select duplicate bus stations": "Không được chọn 2 trạm xe giống nhau."
+  },
+
+  "forms": {
+    "addGoods": "Thêm Hàng hóa",
+    "editGoods": "Sửa Hàng hóa",
+    "scheduleInformation": "Thông tin lịch trình",
+    "senderInformation": "Thông tin người gửi",
+    "goodsInformation": "Thông tin hàng hóa",
+    "createPaymentRefund": "Tạo thanh toán hoàn tiền",
+    "createPayment": "Tạo thanh toán",
+    "noPaymentInformation": "Chưa có thông tin thanh toán",
+    "deleteFolder": "Xóa thư mục",
+    "createScheduleInformation": "Tạo Thông tin Lịch trình",
+    "editScheduleInformation": "Chỉnh sửa Thông tin Lịch trình"
+  },
+
+  "validations": {
+    "passwordRequired": "Vui lòng nhập mật khẩu",
+    "passwordInvalid": "Vui lòng nhập đúng format mật khẩu",
+    "passwordsMismatch": "Mật khẩu không khớp nhau",
+    "enterAmount": "Nhập số tiền",
+    "enterPrice": "Vui lòng nhập giá",
+    "priceGreaterThanZero": "Giá phải lớn hơn 0",
+    "fillThisField": "Vui lòng nhập trường này"
+  },
+
+  "calendar": {
+    "today": "Hôm nay",
+    "list": "Danh sách",
+    "day": "Ngày",
+    "week": "Tuần",
+    "month": "Tháng"
+  },
+
+  "messages": {
+    "error": {
+      "title": "Oops! Đã xảy ra lỗi",
+      "tryLater": "Vui lòng thử lại sau",
+      "requestFailed": "Oops! Có lỗi xảy ra"
+    },
+    "busType": {
+      "deleteConfirm": "Xóa Loại Xe",
+      "deleteMessage": "Bạn có chắc chắn muốn xóa loại xe này không? Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn. Hành động này không thể được hoàn tác.",
+      "deletedSuccess": "Xóa Loại Xe thành công",
+      "createdSuccess": "Thêm Loại Xe thành công",
+      "updatedSuccess": "Cập nhật Loại Xe thành công",
+      "clonedSuccess": "Nhân bản Loại Xe thành công"
+    },
+    "Fee/Tax created successfully": "Phí/Thuế được tạo thành công",
+    "Fee/Tax updated successfully": "Phí/Thuế được cập nhật thành công",
+    "Fee/Tax deleted successfully": "Phí/Thuế đã xóa thành công",
+    "Failed to load fee/tax configurations": "Không thể tải cấu hình phí/thuế",
+    "Failed to create fee/tax": "Không thể tạo phí/thuế",
+    "Failed to update fee/tax": "Không thể cập nhật phí/thuế",
+    "Failed to delete fee/tax": "Không thể xóa phí/thuế",
+    "Are you sure you want to delete this fee/tax configuration?": "Bạn có chắc chắn muốn xóa cấu hình phí/thuế này không?",
+    "goodsCreatedSuccess": "Hàng hóa tạo thành công",
+    "goodsUpdatedSuccess": "Hàng hóa cập nhật thành công",
+    "goodsDeletedSuccess": "Hàng hóa đã xóa thành công",
+    "busLayoutSaved": "Bố trí xe đã lưu",
+    "busLayoutCreated": "Bố trí xe tạo thành công",
+    "confirmAction": "Xác nhận hành động",
+    "operationFailed": "Thao tác thất bại",
+    "exceedImageLimit": "Đã đủ {{count}} ảnh. Vui lòng xóa ảnh cũ trước khi thêm mới.",
+    "imageExceededLimit": "{{count}} ảnh vượt quá giới hạn {{limit}} ảnh",
+    "imageDeletedSuccess": "Đã xóa ảnh",
+    "imageDeleted": "Đã xóa ảnh",
+    "fillAllRequiredInfo": "Vui lòng điền đầy đủ thông tin theo yêu cầu",
+    "paymentSuccessful": "Thanh toán thành công",
+    "paymentSuccess": "Thanh toán thành công",
+    "paymentFailed": "Thanh toán không thành công",
+    "seatNameInvalid": "Tên không hợp lệ. Tên phải có định dạng A01, A02, ..., A99.",
+    "seatNameAlreadyUsed": "Tên này đã được sử dụng. Vui lòng chọn tên khác.",
+    "BusLayoutTemplateUpdated": "BusLayoutTemplate update successfully",
+    "BusLayoutTemplateCreated": "BusLayoutTemplate added successfully",
+    "busLayoutUpdated": "Mẫu bố trí xe cập nhật thành công",
+    "busLayoutAdded": "Mẫu bố trí xe tạo thành công",
+    "busRouteUpdated": "Tuyến xe cập nhật thành công",
+    "busRouteAdded": "Tuyến xe thêm thành công",
+    "imagePastedSuccess": "Hình ảnh dán thành công",
+    "fileDeletedSuccess": "Xóa file thành công",
+    "fileAdded": "File thêm thành công",
+    "folderUpdated": "Thư mục cập nhật thành công",
+    "folderCreated": "Thư mục tạo thành công",
+    "folderDeleted": "Thư mục xóa thành công",
+    "goodsUpdated": "Hàng hóa cập nhật thành công",
+    "goodsAdded": "Hàng hóa thêm thành công",
+    "promotionUpdated": "Khuyến mãi cập nhật thành công",
+    "promotionAdded": "Khuyến mãi thêm thành công",
+    "driverCreatedSuccess": "Tài xế tạo thành công",
+    "driverUpdatedSuccess": "Tài xế cập nhật thành công",
+    "userInfoUpdatedSuccess": "Cập nhật thông tin người dùng thành công",
+    "userInfoCreatedSuccess": "Tạo mới thông tin người dùng thành công",
+    "passwordUpdatedSuccess": "Mật khẩu cập nhật thành công",
+    "resetLinkSentSuccess": "Liên kết đặt lại mật khẩu đã được gửi lại thành công",
+    "passwordResetSuccess": "Mật khẩu đã được đặt lại thành công",
+    "ticketDeletedSuccess": "Vé xóa thành công",
+    "ticketDeleteFailed": "Xóa vé thất bại",
+    "busScheduleSettingsUpdated": "Cài đặt Lịch trình xe cập nhật thành công",
+    "settingsResetDefault": "Cài đặt đặt lại mặc định",
+    "settingDeletedSuccess": "Cài đặt xóa thành công",
+    "settingUpdatedSuccess": "Cài đặt cập nhật thành công",
+    "settingAddedSuccess": "Cài đặt thêm thành công",
+    "settingClonedSuccess": "Cài đặt nhân bản thành công",
+    "organizationSettingsUpdated": "Cài đặt tổ chức cập nhật thành công",
+    "settingsSavedSuccess": "Cài đặt lưu thành công",
+    "noChangesToSave": "Không có thay đổi nào để lưu",
+    "contentLayoutAdded": "Bố cục nội dung thêm thành công",
+    "contentLayoutUpdated": "Bố cục nội dung cập nhật thành công",
+    "contentLayoutDeletedSuccess": "Bố cục nội dung xóa thành công",
+    "widgetBlockAdded": "Khối tiện ích thêm thành công",
+    "goodsCategoryDeletedSuccess": "Danh mục hàng hóa xóa thành công",
+    "goodsCategoryUpdatedSuccess": "Danh mục hàng hóa cập nhật thành công",
+    "seatTypeAddedSuccess": "Loại ghế thêm thành công",
+    "paymentMethodUpdated": "Phương thức thanh toán cập nhật thành công",
+    "paymentMethodAdded": "Phương thức thanh toán thêm thành công",
+    "paymentMethodDeletedSuccess": "Phương thức thanh toán xóa thành công",
+    "subscriptionCategoryDeletedSuccess": "Gói dịch vụ xóa thành công",
+    "tenantSubscriptionRegistered": "Đăng ký gói dịch vụ chủ xe thành công",
+    "tenantUpdated": "Chủ xe cập nhật thành công",
+    "tenantAdded": "Chủ xe thêm thành công",
+    "tenantCategoryDeletedSuccess": "Chủ xe xóa thành công",
+    "seatTypeDeletedSuccess": "Loại ghế xóa thành công",
+    "seatTypeUpdatedSuccess": "Loại ghế cập nhật thành công",
+    "busLayoutTemplateDeletedSuccess": "Mẫu bố trí xe xóa thành công",
+    "busDeletedSuccess": "Xe xóa thành công",
+    "clonedSuccess": "Nhân bản thành công",
+    "busScheduleRunSuccess": "Chạy lịch trình xe thành công",
+    "busTypeDeletedSuccess": "Loại xe xóa thành công",
+    "busTypeUpdatedSuccess": "Loại xe cập nhật thành công",
+    "busTypeAddedSuccess": "Loại xe thêm thành công",
+    "busUpdated": "Xe cập nhật thành công",
+    "busAdded": "Xe thêm thành công",
+    "busServiceDeletedSuccess": "Dịch vụ xe xóa thành công",
+    "busServiceUpdatedSuccess": "Dịch vụ xe cập nhật thành công",
+    "busServiceAddedSuccess": "Dịch vụ xe thêm thành công",
+    "busStationDeletedSuccess": "Trạm xe xóa thành công",
+    "busStationUpdatedSuccess": "Trạm xe cập nhật thành công",
+    "busStationAddedSuccess": "Trạm xe thêm thành công",
+    "provinceDeletedSuccess": "Tỉnh/Thành Phố xóa thành công",
+    "updateSuccess": "Cập nhật thành công",
+    "provinceAddedSuccess": "Tỉnh/Thành Phố thêm thành công",
+    "userDeletedSuccess": "Người dùng xóa thành công",
+    "excelExportDeveloping": "Chức năng xuất Excel đang được phát triển",
+    "qrPaymentDeveloping": "Chức năng thanh toán QR đang được phát triển",
+    "otpResendSuccess": "OTP đã được gửi lại thành công"
+  },
+
+  "tooltips": {
+    "Edit": "Chỉnh sửa",
+    "Delete": "Xóa",
+    "Save": "Lưu",
+    "View Details": "Xem chi tiết",
+    "Create": "Tạo",
+    "Update": "Cập nhật"
+  },
+
+  "errors": {
+    "unauthorized": {
+      "action": "Bạn không có quyền thực hiện hành động này"
+    },
+    "fillRequiredFields": "Vui lòng điền tất cả các trường bắt buộc",
+    "copyImageFirst": "Vui lòng copy một hình ảnh trước khi paste",
+    "pasteImageFailed": "Không thể paste hình ảnh. Vui lòng kiểm tra quyền clipboard hoặc thử cách khác",
+    "maxImagesReached": "Đã đủ {{MAX_IMAGES}} ảnh. Vui lòng xóa ảnh cũ trước khi thêm mới.",
+    "imagesExceededLimit": "{{exceededCount}} ảnh vượt quá giới hạn {{MAX_IMAGES}} ảnh",
+    "invalidSeatName": "Tên không hợp lệ. Tên phải có định dạng A01, A02, ..., A99.",
+    "seatNameExists": "Tên này đã được sử dụng. Vui lòng chọn tên khác.",
+    "cannotUpdatePublished": "Không thể cập nhật lịch trình đã được công bố",
+    "checkInformation": "Vui lòng kiểm tra lại thông tin",
+    "failedLoadRoutes": "Không thể tải danh sách tuyến đường",
+    "selectImageFile": "Vui lòng chọn file hình ảnh",
+    "savingSettingsFailed": "Lưu cài đặt thất bại",
+    "fileUploadFailed": "Upload file thất bại",
+    "noSubscriptionsAvailable": "Không có gói dịch vụ nào disponible",
+    "selectSubscriptionPlan": "Vui lòng chọn một gói dịch vụ",
+    "otpVerificationFailed": "Xác thực OTP không thành công",
+    "authenticationError": "Đã xảy ra lỗi trong quá trình xác thực, vui lòng thử lại sau.",
+    "selectDateRange": "Vui lòng chọn khoảng thời gian",
+    "folderUpdateFailed": "Cập nhập thư mục không thành công",
+    "folderCreationFailed": "Tạo thư mục không thành công",
+    "folderDeleteFailed": "Xóa thư mục không thành công",
+    "genericError": "Oops! Có lỗi xảy ra",
+    "tryAgainLater": "Vui lòng thử lại sau",
+    "somethingWentWrong": "Oops! Có lỗi xảy ra",
+    "quotaExceeded": "Bạn đã vượt quá hạn ngạch cho tính năng này.",
+    "error403": {
+      "title": "Truy cập bị từ chối",
+      "description": "Bạn không có quyền truy cập tài nguyên này. Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là một lỗi.",
+      "why": "Tại sao?",
+      "whyDescription": "Tài khoản của bạn không có các quyền cần thiết để truy cập phần này của ứng dụng.",
+      "backToDashboard": "← Quay lại Dashboard",
+      "homepage": "Trang chủ",
+      "support": "Nếu bạn cần hỗ trợ, vui lòng",
+      "contactSupport": "liên hệ bộ phận hỗ trợ"
+    },
+    "error404": {
+      "title": "Oops!",
+      "description": "Chúng tôi không thể tìm thấy trang đó. Bạn có thể quay lại trang trước hoặc đi đến trang chủ.",
+      "homepage": "Trang chủ"
+    },
+    "error500": {
+      "title": "Oops! Lỗi máy chủ",
+      "description": "Vui lòng thử lại sau. Nếu sự cố vẫn tiếp tục, vui lòng liên hệ chúng tôi để được hỗ trợ.",
+      "homepage": "Trang chủ"
+    },
+    "fillAllRequiredFields": "Vui lòng điền tất cả các trường bắt buộc"
+  },
+
+  "settings": {
+    "organization": {
+      "title": "Cài đặt tổ chức",
+      "organizationName": "Tên tổ chức",
+      "address": "Địa chỉ",
+      "phone": "Số điện thoại",
+      "email": "Email"
+    },
+    "theme": {
+      "title": "Cài đặt giao diện",
+      "tenantName": "Tên doanh nghiệp"
+    },
+    "busSchedule": {
+      "title": "Cài đặt lịch chuyến",
+      "editor": "Editor",
+      "json": "JSON",
+      "enterJson": "Nhập JSON",
+      "transitPolicy": "Chính sách trung chuyến",
+      "enterTransitPolicy": "Nhập chính sách vận chuyển...",
+      "bookingCancellationPolicy": "Chính sách hủy vé",
+      "enterBookingPolicy": "Nhập chính sách hủy vé...",
+      "boardingRequirements": "Chính sách yêu cầu lên xe",
+      "enterBoardingPolicy": "Nhập yêu cầu lên xe...",
+      "carryOnBaggage": "Chính sách hành lý xách tay",
+      "enterBaggagePolicy": "Nhập chính sách hành lý xách tay...",
+      "childAndPregnancy": "Chính sách trẻ em và mang thai",
+      "enterPregnancyPolicy": "Nhập chính sách trẻ em và mang thai...",
+      "roadsidePickup": "Chính sách nhận xe bên đường",
+      "enterPickupPolicy": "Nhập chính sách nhận xe bên đường...",
+      "otherPolicy": "Chính sách khác",
+      "enterOtherPolicy": "Nhập chính sách khác...",
+      "scheduleAvailabilityCutoff": "Thời hạn cắt tính khả dụng"
+    },
+    "themeSetting": {
+      "title": "Cài đặt giao diện",
+      "logo": "Logo",
+      "uploadLogo": "Tải Logo",
+      "localFile": "Tập tin cục bộ",
+      "mediaCenter": "Trung tâm phương tiện",
+      "businessName": "Tên doanh nghiệp",
+      "placeholderBusinessName": "Nhập tên doanh nghiệp",
+      "errorBusinessNameRequired": "Vui lòng nhập tên doanh nghiệp",
+      "errorBusinessNameMinLength": "Tên phải có ít nhất 2 ký tự",
+      "primaryColor": "Màu chính",
+      "secondaryColor": "Màu phụ",
+      "errorSelectImage": "Vui lòng chọn file hình ảnh",
+      "settingsSaved": "Cài đặt đã được lưu thành công",
+      "saveFailed": "Lưu cài đặt thất bại",
+      "uploadFailed": "Upload file thất bại",
+      "noChanges": "Không có thay đổi nào để lưu",
+      "resetToDefault": "Đã đặt lại cài đặt mặc định"
+    },
+    "organizationSetting": {
+      "title": "Cài đặt tổ chức",
+      "organizationName": "Tên tổ chức",
+      "placeholderOrganizationName": "Nhập tên tổ chức",
+      "errorOrganizationNameRequired": "Tên tổ chức là bắt buộc",
+      "organizationCode": "Mã tổ chức",
+      "placeholderOrganizationCode": "Nhập mã tổ chức",
+      "placeholderAddress": "Nhập địa chỉ",
+      "errorAddressRequired": "Địa chỉ là bắt buộc",
+      "placeholderPhone": "Nhập số điện thoại",
+      "errorPhoneRequired": "Số điện thoại là bắt buộc",
+      "errorPhoneInvalid": "Vui lòng nhập đúng số điện thoại",
+      "placeholderEmail": "Nhập email",
+      "errorEmailRequired": "Email là bắt buộc",
+      "errorEmailInvalid": "Email không hợp lệ",
+      "errorFillAllFields": "Vui lòng điền đầy đủ thông tin theo yêu cầu",
+      "orgSettingsUpdated": "Organization settings updated successfully"
+    },
+    "busScheduleSetting": {
+      "errorFillAllFields": "Vui lòng điền đầy đủ thông tin theo yêu cầu",
+      "busScheduleSettingsUpdated": "Bus Schedule settings updated successfully"
+    },
+    "defaultSetting": {
+      "title": "Cài đặt mặc định",
+      "addSetting": "Thêm cài đặt",
+      "name": "Tên",
+      "groupName": "Tên nhóm",
+      "value": "Giá trị",
+      "actions": "Hành động",
+      "settingDeleted": "Setting deleted successfully",
+      "settingUpdated": "Setting updated successfully",
+      "settingAdded": "Setting added successfully"
+    },
+    "common": {
+      "resetDefault": "Đặt lại mặc định",
+      "save": "Lưu",
+      "reset": "Đặt lại"
+    }
+  },
+
+  "placeholders": {
+    "auth": {
+      "phoneNumber": "Nhập Số điện thoại",
+      "tenantCode": "Nhập Mã chủ xe",
+      "tenantName": "Nhập Tên chủ xe",
+      "password": "Nhập mật khẩu",
+      "confirmPassword": "Nhập lại mật khẩu"
+    },
+    "account": {
+      "oldPassword": "Nhập mật khẩu cũ",
+      "newPassword": "Nhập mật khẩu mới",
+      "gender": "Chọn Giới tính",
+      "role": "Chọn Vai trò"
+    },
+    "goods": {
+      "routeSelect": "Chọn tuyến",
+      "scheduleSelect": "Chọn Lịch trình xe",
+      "pickupMethod": "Chọn phương thức lấy hàng",
+      "deliveryMethod": "Chọn phương thức giao hàng",
+      "senderPhone": "Nhập số điện thoại",
+      "customerName": "Nhập tên khách hàng",
+      "address": "Nhập địa chỉ",
+      "stationSelect": "Chọn trạm"
+    },
+    "bus": {
+      "name": "Nhập Tên",
+      "licensePlate": "Nhập Biển số xe",
+      "driverSelect": "Chọn Tài xế",
+      "busTemplate": "Chọn Mẫu xe"
+    },
+    "enterAddress": "Nhập Địa chỉ",
+    "enterAmount": "Nhập Số tiền",
+    "enterName": "Nhập Tên",
+    "enterQuantity": "Nhập Số lượng",
+    "enterLength": "Nhập Chiều dài",
+    "enterWidth": "Nhập Chiều rộng",
+    "enterHeight": "Nhập Chiều cao",
+    "enterWeight": "Nhập Cân nặng",
+    "enterAddressType": "Nhập Loại địa chỉ",
+    "selectPaymentMethod": "Chọn Phương thức thanh toán",
+    "selectCategory": "Chọn Danh mục",
+    "selectPayer": "Chọn Người thanh toán",
+    "selectBusRoute": "Chọn Tuyến xe",
+    "selectBusSchedule": "Chọn Lịch trình xe",
+    "selectRoute": "Chọn Tuyến",
+    "enterEmail": "Nhập Email"
+  },
+
+  "reportHeader": {
+    "businessReport": "Báo cáo kinh doanh",
+    "dataAnalysis": "Thống kê và phân tích dữ liệu kinh doanh",
+    "reload": "Tải lại",
+    "exportReport": "Xuất báo cáo",
+    "exportExcel": "Xuất Excel",
+    "exportPdf": "Xuất PDF",
+    "comparison": "So sánh",
+    "today": "Hôm nay",
+    "thisWeek": "Tuần này",
+    "thisMonth": "Tháng này",
+    "last7Days": "7 ngày",
+    "last30Days": "30 ngày",
+    "custom": "Tùy chọn",
+    "dateRange": {
+      "start": "Chọn ngày so sánh",
+      "from": "So sánh từ",
+      "to": "So sánh đến",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc"
+    }
+  },
+
+  "bookingReport": {
+    "title": "Báo cáo đặt vé",
+    "advancedFilter": "Bộ lọc nâng cao",
+    "filters": {
+      "route": "Tuyến",
+      "status": "Trạng thái"
+    },
+    "placeholders": {
+      "selectRoute": "Chọn tuyến",
+      "selectStatus": "Chọn trạng thái"
+    },
+    "periods": {
+      "main": "Kỳ chính",
+      "comparison": "Kỳ so sánh"
+    },
+    "results": {
+      "title": "Kết quả"
+    },
+    "table": {
+      "time": "Thời gian",
+      "tickets": "Số vé",
+      "revenue": "Doanh thu"
+    },
+    "errors": {
+      "loadRoutes": "Không tải được tuyến"
+    }
+  },
+  "goodsReport": {
+    "title": "Báo cáo hàng hóa",
+    "advancedFilter": "Bộ lọc nâng cao",
+    "filters": {
+      "route": "Tuyến",
+      "status": "Trạng thái"
+    },
+    "placeholders": {
+      "selectRoute": "Chọn tuyến",
+      "selectStatus": "Chọn trạng thái"
+    },
+    "periods": {
+      "main": "Kỳ chính",
+      "comparison": "Kỳ so sánh"
+    },
+    "results": {
+      "title": "Kết quả"
+    },
+    "table": {
+      "time": "Thời gian",
+      "tickets": "Số lượng",
+      "revenue": "Doanh thu"
+    },
+    "errors": {
+      "loadRoutes": "Không tải được tuyến"
+    }
+  },
+  "scheduleChart": {
+    "title": "Biểu đồ lịch trình",
+    "tripsLabel": "Số chuyến"
+  },
+  "revenueGoodsChart": {
+    "title": "Biểu đồ doanh thu hàng hóa"
+  },
+  "topRoute": {
+    "title": "Tuyến hàng đầu",
+    "table": {
+      "route": "Tuyến",
+      "tickets": "Số vé",
+      "revenue": "Doanh thu",
+      "percentage": "Phần trăm"
+    }
+  },
+  "bookingRecent": {
+    "title": "Đặt vé gần đây",
+    "table": {
+      "qty": "Số lượng",
+      "total": "Tổng"
+    },
+    "seatInfo": "Thông tin ghế",
+    "labels": {
+      "pickup": "Điểm đi",
+      "dropoff": "Điểm đến",
+      "seatPrice": "Giá ghế",
+      "seatType": "Loại ghế"
+    }
+  },
+  "goodsRecent": {
+    "title": "Hàng hóa gần đây",
+    "table": {
+      "name": "Tên",
+      "qty": "Số lượng",
+      "shipping": "Vận chuyển"
+    },
+    "details": "Chi tiết",
+    "labels": {
+      "sender": "Người gửi"
+    }
+  },
+  "bookingStats": {
+    "totalSold": "Tổng đã bán",
+    "unit": {
+      "ticket": "vé"
+    }
+  },
+  "scheduleStats": {
+    "title": "Thống kê lịch trình",
+    "unit": {
+      "trip": "chuyến"
+    }
+  },
+  "goodsStats": {
+    "title": "Thống kê hàng hóa",
+    "unit": {
+      "package": "gói"
+    }
+  },
+  "revenueGoodsStats": {
+    "title": "Thống kê doanh thu hàng hóa"
+  },
+  "goodsChart": {
+    "title": "Biểu đồ hàng hóa"
+  },
+  "table": {
+    "headers": {
+      "avatar": "Ảnh đại diện",
+      "name": "Tên",
+      "phoneNumber": "Số điện thoại",
+      "role": "Vai trò",
+      "actions": "Hành động",
+      "plan": "Gói",
+      "price": "Giá",
+      "duration": "Thời hạn",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "status": "Trạng thái"
+    },
+    "pagination": {
+      "show": "Hiển thị",
+      "perPage": "trên mỗi trang",
+      "of": "của"
+    }
+  },
+  "language": {
+    "vietnamese": "Tiếng Việt",
+    "english": "Tiếng Anh"
   }
 }

@@ -13,6 +13,7 @@ import customCode from 'grapesjs-custom-code';
 import tabs from 'grapesjs-tabs';
 import { toast } from 'ngx-sonner';
 import { Utils } from '@rsApp/shared/utils/utils';
+import { TranslateService } from '@ngx-translate/core';
 import {
   ContentLayout,
   ContentLayout2Create,
@@ -78,6 +79,7 @@ export class ContentLayoutDetailComponent implements OnInit, AfterViewInit, OnDe
     private utilsModal: UtilsModal,
     private utils: Utils,
     private widgetBlocksService: WidgetBlockService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -257,15 +259,15 @@ export class ContentLayoutDetailComponent implements OnInit, AfterViewInit, OnDe
             const file = new File([imageBlob], `screenshot-${Date.now()}.png`, { type: imageBlob.type });
             this.imageFile = file;
             this.readAndSetImage(file);
-            toast.success('Hình ảnh đã được paste thành công');
+            toast.success(this.translate.instant('messages.imagePastedSuccess'));
             return;
           }
         }
       }
-      toast.error('Vui lòng copy một hình ảnh trước khi paste');
+      toast.error(this.translate.instant('errors.copyImageFirst'));
     } catch (error) {
       console.error('Lỗi khi paste image từ clipboard:', error);
-      toast.error('Không thể paste hình ảnh. Vui lòng kiểm tra quyền clipboard hoặc thử cách khác');
+      toast.error(this.translate.instant('errors.pasteImageFailed'));
     }
   }
 
@@ -609,7 +611,7 @@ export class ContentLayoutDetailComponent implements OnInit, AfterViewInit, OnDe
     this.contentLayoutService.processCreateContentLayout(files, contentLayout2Create).subscribe({
       next: (res: ContentLayout) => {
         if (res) {
-          toast.success('Content Layout added successfully');
+          toast.success(this.translate.instant('messages.contentLayoutAdded'));
           const updatedState = { ...history.state, contentLayout: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           this.initialFormValue = this.getFormValueAsComparable();
@@ -623,7 +625,7 @@ export class ContentLayoutDetailComponent implements OnInit, AfterViewInit, OnDe
     this.contentLayoutService.processUpdateContentLayout(files, contentLayout2Update).subscribe({
       next: (res: ContentLayout) => {
         if (res) {
-          toast.success('Content Layout updated successfully');
+          toast.success(this.translate.instant('messages.contentLayoutUpdated'));
           const updatedState = { ...history.state, contentLayout: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           this.initialFormValue = this.getFormValueAsComparable();

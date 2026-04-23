@@ -11,6 +11,7 @@ import { ClickOutsideDirective } from 'src/app/shared/directives/click-outside.d
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { SvgIconComponent } from 'angular-svg-icon';
 import { CapCheckDirective } from '@rsApp/shared/directives/cap-check.directive';
+import { TranslateModule } from '@ngx-translate/core';
 import { CalendarEventsComponent } from './components/calendar-events/calendar-events.component';
 import { LayoutMatrixComponent } from './components/layout-matrix/layout-matrixs.component';
 import { TableActionComponent } from './components/table-action/table-action.component';
@@ -42,6 +43,7 @@ import { AuthorizedDirective } from "@rsApp/core/directives/authorized.directive
     ClickOutsideDirective,
     CapCheckDirective,
     NgxMaskDirective,
+    TranslateModule,
     AuthorizedDirective
 ],
   exports: [
@@ -52,6 +54,7 @@ import { AuthorizedDirective } from "@rsApp/core/directives/authorized.directive
     DragDropModule,
     MaterialModule,
     NZModule,
+    TranslateModule,
     ClickOutsideDirective,
     CapCheckDirective,
     NgxMaskDirective,

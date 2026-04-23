@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ThemeSettingRoutingModule } from './theme-setting-routing.module';
 import { MaterialModule } from '@rsApp/library-modules/material-module';
 import { NZModule } from '@rsApp/library-modules/nz-module';
@@ -13,6 +14,7 @@ import { ThemeSettingComponent } from './theme-setting.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    TranslateModule,
     ThemeSettingRoutingModule,
     MaterialModule,
     NZModule,

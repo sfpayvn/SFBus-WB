@@ -3,8 +3,8 @@
     <button
       class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
       nz-button
-      aria-label="Import CSV">
-      Import CSV
+      [attr.aria-label]="'buttons.importCSV' | translate">
+      {{ 'buttons.importCSV' | translate }}
     </button>
     <button
       capCheck
@@ -14,7 +14,7 @@
       nz-button
       (click)="addUser()"
       type="button">
-      Thêm {{ userRoleLabel[userRole] }}
+      {{ 'buttons.add' | translate }} {{ userRoleLabel[userRole] }}
     </button>
   </div>
 </div>
@@ -41,13 +41,13 @@
           <th
             [nzChecked]="checked"
             [nzIndeterminate]="indeterminate"
-            nzLabel="Select all"
+            [nzLabel]="'common.Select all' | translate"
             (nzCheckedChange)="onAllChecked($event)"></th>
-          <th class="min-w-[40px]">Avarta</th>
-          <th class="min-w-[200px]">Name</th>
-          <th class="min-w-[200px]">Phone Number</th>
-          <th class="min-w-[200px]" [nzFilterFn]="true" [nzSortFn]="true" [nzFilterMultiple]="true">Role</th>
-          <th class="min-w-[80px] !text-center">Actions</th>
+          <th class="min-w-[40px]">{{ 'common.Avatar' | translate }}</th>
+          <th class="min-w-[200px]">{{ 'common.Name' | translate }}</th>
+          <th class="min-w-[200px]">{{ 'common.Phone Number' | translate }}</th>
+          <th class="min-w-[200px]" [nzFilterFn]="true" [nzSortFn]="true" [nzFilterMultiple]="true">{{ 'common.Role' | translate }}</th>
+          <th class="min-w-[80px] !text-center">{{ 'labels.Actions' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -127,7 +127,7 @@
               <button
                 (click)="editUser(user)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Edit user">
+                [attr.aria-label]="'buttons.editUser' | translate">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
@@ -136,7 +136,7 @@
               <button
                 (click)="deleteUser(user)"
                 class="text-muted-foreground hover:bg-card hover:text-foreground inline-flex h-7 w-7 items-center justify-center rounded-md"
-                aria-label="Delete user">
+                [attr.aria-label]="'buttons.deleteUser' | translate">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path
                     fill-rule="evenodd"

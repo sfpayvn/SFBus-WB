@@ -134,7 +134,7 @@
                                 nz-input
                                 formControlName="phoneNumber"
                                 mask="0000 000 000"
-                                placeholder="Nhập số điện thoại" />
+                                [attr.placeholder]="'placeholders.enterPhoneNumber' | translate" />
                             </nz-input-group>
                             <ng-template #tenantFormPhoneNumberClearTpl>
                               <span

@@ -18,9 +18,9 @@ export class RevenueGoodsStatsCardComponent implements OnInit, OnChanges {
 
   isLoading = false;
   stats: StatisticCard = {
-    title: 'Doanh Thu Hàng hóa',
+    title: 'revenueGoodsStats.title',
     value: 0,
-    unit: 'kiện',
+    unit: 'goodsStats.unit.package',
     icon: 'assets/icons/heroicons/outline/cash.svg',
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',

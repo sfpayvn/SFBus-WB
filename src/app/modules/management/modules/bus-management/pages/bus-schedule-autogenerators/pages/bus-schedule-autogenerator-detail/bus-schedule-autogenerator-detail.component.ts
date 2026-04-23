@@ -63,6 +63,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
 
   minimumAllowedTime: Date = new Date(new Date().getTime() + 60 * 60 * 1000);
 
+  @Output() createScheduleEvent = new EventEmitter<BusScheduleAutoGenerator>();
   @Output() saveScheduleEvent = new EventEmitter<BusScheduleAutoGenerator>();
 
   constructor(
@@ -217,7 +218,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
   createSpecificTimeSlot(timeSlot?: string): FormGroup {
     // Lấy FormArray chứa các specific time slots
     const specificTimeSlots = this.busScheduleAutoGeneratorDetailForm.get('specificTimeSlots') as FormArray;
-    let defaultTime: Date = this.minimumAllowedTime;
+    let defaultTime: Date = new Date(this.minimumAllowedTime);
     const [hours, minutes, seconds] = (timeSlot ?? '00:00:00').split(':').map(Number);
 
     defaultTime.setHours(hours);
@@ -433,6 +434,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
           window.history.replaceState(updatedState, '', window.location.href);
           this.busScheduleAutoGenerator = res;
           toast.success('Bus Route update successfully');
+          this.saveScheduleEvent.emit(res);
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -447,6 +449,7 @@ export class BusScheduleAutoGeneratorDetailComponent implements OnInit {
           const updatedState = { ...history.state, busScheduleAutoGenerator: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           toast.success('Bus Route added successfully');
+          this.createScheduleEvent.emit(res);
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

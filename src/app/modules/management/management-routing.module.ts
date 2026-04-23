@@ -71,6 +71,13 @@ const routes: Routes = [
           import('./modules/payment-management/payment-management.module').then((m) => m.PaymentManagementModule),
       },
       {
+        path: 'fee-tax-management',
+        canActivate: [ModuleBlockGuard, RoleAccessGuard],
+        data: { moduleKey: MODULE_KEYS.FEE_TAX_MANAGEMENT },
+        loadChildren: () =>
+          import('./modules/fee-tax-management/fee-tax-management.module').then((m) => m.FeeTaxManagementModule),
+      },
+      {
         path: 'booking-management',
         canActivate: [ModuleBlockGuard, RoleAccessGuard],
         data: { moduleKey: MODULE_KEYS.BOOKING_MANAGEMENT },

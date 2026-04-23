@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusScheduleTemplatesService } from './service/bus-schedule-templates.servive';
 import { Utils } from 'src/app/shared/utils/utils';
@@ -46,6 +47,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
     private utils: Utils,
     private router: Router,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -131,7 +133,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
                 this.searchBusScheduleTemplate.busScheduleTemplates.filter(
                   (bst) => bst._id !== busScheduleTemplate._id,
                 );
-              toast.success('Bus deleted successfully');
+              toast.success(this.translate.instant('messages.busDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -161,7 +163,7 @@ export class BusScheduleTemplatesComponent implements OnInit {
       next: (res: BusScheduleTemplate) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

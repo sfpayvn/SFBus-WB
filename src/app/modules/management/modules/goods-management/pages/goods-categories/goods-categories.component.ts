@@ -3,6 +3,7 @@ import { Utils } from 'src/app/shared/utils/utils';
 import { Router } from '@angular/router';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { GoodsCategoriesService } from '../../service/goods-categories.servive';
 import { SearchGoodsCategory, GoodsCategory, GoodsCategory2Create } from '../../model/goods-category.model';
 import { MaterialDialogComponent } from '@rsApp/shared/components/material-dialog/material-dialog.component';
@@ -61,6 +62,7 @@ export class GoodsCategoriesComponent implements OnInit {
     private router: Router,
     private goodsCategoriesService: GoodsCategoriesService,
     private dialog: MatDialog,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
   }
@@ -180,7 +182,7 @@ export class GoodsCategoriesComponent implements OnInit {
               this.searchGoodsCategories.goodsCategories = this.searchGoodsCategories.goodsCategories.filter(
                 (goodsCategory) => goodsCategory._id !== id,
               );
-              toast.success('Goods Category deleted successfully');
+              toast.success(this.translate.instant('messages.goodsCategoryDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -211,7 +213,7 @@ export class GoodsCategoriesComponent implements OnInit {
                 (goodsCategory: GoodsCategory) =>
                   goodsCategory._id === res._id ? { ...goodsCategory, ...res } : goodsCategory,
               );
-              toast.success('Goods Category updated successfully');
+              toast.success(this.translate.instant('messages.goodsCategoryUpdatedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -237,7 +239,7 @@ export class GoodsCategoriesComponent implements OnInit {
           next: (res: GoodsCategory) => {
             if (res) {
               this.loadData();
-              toast.success('SeatType added successfully');
+              toast.success(this.translate.instant('messages.seatTypeAddedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -255,7 +257,7 @@ export class GoodsCategoriesComponent implements OnInit {
       next: (res: GoodsCategory) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

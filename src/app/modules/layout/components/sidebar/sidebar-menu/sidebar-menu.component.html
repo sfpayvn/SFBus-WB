@@ -1,7 +1,7 @@
 <div class="pt-4" *ngFor="let menu of menuService.pagesMenu">
   <div class="mx-1 mb-2 flex items-center justify-between">
     <small [ngClass]="{ hidden: !menuService.showSideBar }" class="text-muted-foreground/50 text-xs font-semibold">
-      {{ menu.group }}
+      {{ 'sidebar.' + menu.group | translate }}
     </small>
   </div>
   <ul class="flex flex-col space-y-1">

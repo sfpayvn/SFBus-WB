@@ -1,5 +1,5 @@
 <div class="bg-white rounded-lg shadow-sm p-4">
-  <h3 class="text-lg font-semibold text-gray-800 mb-4">Biểu đồ chuyến xe</h3>
+  <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ 'scheduleChart.title' | translate }}</h3>
   <app-canvas-chart
     [isLoading]="isLoading"
     [chartData]="chartData"
@@ -9,6 +9,6 @@
     [endDate]="endDate"
     chartType="bar"
     [chartOptions]="chartOptions"
-    loadingTip="Đang tải dữ liệu..."
+    [loadingTip]="'common.Loading' | translate"
   ></app-canvas-chart>
 </div>

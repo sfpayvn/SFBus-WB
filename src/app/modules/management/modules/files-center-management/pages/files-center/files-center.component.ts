@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import _, { remove } from 'lodash';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { FileFolder, SearchFile, FileDto, FileFolder2Create, FileFolder2Update } from '../../model/file-center.model';
@@ -8,7 +9,7 @@ import { FilesService } from '../../service/files-center.servive';
 import { CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Utils } from 'src/app/shared/utils/utils';
 import { ViewImageDialogComponent } from '../../components/view-image-dialog/view-image-dialog.component';
-import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service'
 
 @Component({
   selector: 'app-files-center',
@@ -68,6 +69,7 @@ export class FilesComponent implements OnInit {
     private utilsModal: UtilsModal,
     public utils: Utils,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -198,7 +200,7 @@ export class FilesComponent implements OnInit {
             next: (res: any) => {
               if (res) {
                 this.loadFiles();
-                toast.success('Xóa file thành công');
+                toast.success(this.translate.instant('messages.fileDeletedSuccess'));
                 this.selectedFiles = [];
               }
             },
@@ -227,7 +229,7 @@ export class FilesComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.loadFiles();
-              toast.success('Xóa file thành công');
+              toast.success(this.translate.instant('messages.fileDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -247,7 +249,7 @@ export class FilesComponent implements OnInit {
       next: (res: File) => {
         if (res) {
           this.loadFiles();
-          toast.success('File added successfully');
+          toast.success(this.translate.instant('messages.fileAdded'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -257,24 +259,24 @@ export class FilesComponent implements OnInit {
   updateFile(item: FileDto) {
     this.fileService.updateFileMedia(item).subscribe((res: any) => {
       if (!res) {
-        toast.error('Cập nhập thư mục không thành công');
+        toast.error(this.translate.instant('errors.folderUpdateFailed'));
         return;
       }
-      toast.success('Cập nhập thư mục thành công');
+      toast.success(this.translate.instant('messages.folderUpdated'));
     });
   }
 
   updateFiles2Folder(files: FileDto[], fileFolderId: string) {
     this.fileService.updateFilesMedia2Folder(files, fileFolderId).subscribe((res: any) => {
       if (!res) {
-        toast.error('Cập nhập thư mục không thành công');
+        toast.error(this.translate.instant('errors.folderUpdateFailed'));
         return;
       }
       const isNotFolder = this.getActiveFolderId() === '';
       if (!isNotFolder) {
         this.loadFiles();
       }
-      toast.success('Cập nhập thư mục thành công');
+      toast.success(this.translate.instant('messages.folderUpdated'));
     });
   }
 
@@ -419,12 +421,12 @@ export class FilesComponent implements OnInit {
     };
     this.fileService.createFileFolder(fileFolder2Create).subscribe((res: any) => {
       if (!res) {
-        toast.error('Tạo thư mục không thành công');
+        toast.error(this.translate.instant('errors.folderCreationFailed'));
         _.remove(this.fileFolders, { _id: item._id });
         return;
       }
       item._id = res._id;
-      toast.success('Tạo thư mục thành công');
+      toast.success(this.translate.instant('messages.folderCreated'));
       item.isEditing = false;
       this.originalFileFolders = this.fileFolders;
     });
@@ -433,11 +435,11 @@ export class FilesComponent implements OnInit {
   updateFileFolder(item: FileFolder2Update) {
     this.fileService.updateFileFolder(item).subscribe((res: any) => {
       if (!res) {
-        toast.error('Cập nhập thư mục không thành công');
+        toast.error(this.translate.instant('errors.folderUpdateFailed'));
         return;
       }
       this.originalFileFolders = this.fileFolders;
-      toast.success('Cập nhập thư mục thành công');
+      toast.success(this.translate.instant('messages.folderUpdated'));
     });
   }
 
@@ -453,14 +455,14 @@ export class FilesComponent implements OnInit {
           this.fileService.deleteFileFolder(item._id).subscribe(
             (res: any) => {
               if (!res) {
-                toast.success('Xóa thư mực không thành công');
+                toast.error(this.translate.instant('errors.folderDeleteFailed'));
                 return;
               }
               _.remove(this.fileFolders, { _id: item._id });
               this.originalFileFolders = this.fileFolders;
               this.resetSelectedFileFolder();
 
-              toast.success('Xóa thư mực thành công');
+              toast.success(this.translate.instant('messages.folderDeleted'));
             },
             (error: any) => {
               console.log('🚀 ~ FileComponent ~ ).subscribe ~ error:', error);

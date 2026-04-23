@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusService, BusService2Create, SearchBusService } from './model/bus-service.model';
 import { BusServiceDetailDialogComponent } from './component/bus-service-detail-dialog/bus-service-detail-dialog.component';
@@ -44,6 +45,7 @@ export class BusServicesComponent implements OnInit {
     private utils: Utils,
     private utilsModal: UtilsModal,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -128,7 +130,7 @@ export class BusServicesComponent implements OnInit {
               this.searchBusService.busServices = this.searchBusService.busServices.filter(
                 (bs) => bs._id !== busService._id,
               );
-              toast.success('BusService deleted successfully');
+              toast.success(this.translate.instant('messages.busServiceDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -158,7 +160,7 @@ export class BusServicesComponent implements OnInit {
               this.searchBusService.busServices = this.searchBusService.busServices.map((busService: BusService) =>
                 busService._id === res._id ? { ...busService, ...res } : busService,
               );
-              toast.success('BusService updated successfully');
+              toast.success(this.translate.instant('messages.busServiceUpdatedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -184,7 +186,7 @@ export class BusServicesComponent implements OnInit {
           next: (res: BusService) => {
             if (res) {
               this.loadData();
-              toast.success('BusService added successfully');
+              toast.success(this.translate.instant('messages.busServiceAddedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -202,7 +204,7 @@ export class BusServicesComponent implements OnInit {
       next: (res: BusService) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

@@ -14,7 +14,7 @@
           <nz-select
             class="custom-nz-select height-large !mt-0 !mb-0 !h-[42px]"
             formControlName="busRouteId"
-            nzPlaceHolder="Chọn tuyến xe"
+            [nzPlaceHolder]="'placeholders.selectBusRoute' | translate"
             (ngModelChange)="chooseBusRoute()"
             [nzAllowClear]="true">
             @for (busRoute of busRoutes; track busRoute) {
@@ -75,7 +75,7 @@
           <nz-select
             class="custom-nz-select custom-nz-select-2-line height-large !mt-0 !mb-0"
             formControlName="busScheduleId"
-            nzPlaceHolder="Chọn Bus Schedule"
+            [nzPlaceHolder]="'placeholders.selectBusSchedule' | translate"
             nzSize="large"
             nzShowSearch
             nzServerSearch

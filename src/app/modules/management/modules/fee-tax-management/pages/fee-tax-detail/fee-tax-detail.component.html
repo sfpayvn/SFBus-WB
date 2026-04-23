@@ -1,0 +1,198 @@
+<div class="mb-4 flex justify-end">
+  <div class="inline-block space-x-4">
+    <button
+      class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
+      nz-button
+      (click)="backToList()">
+      {{ 'buttons.Back' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
+  <div class="flex w-full items-center justify-between pb-6">
+    <label class="text-base font-medium">
+      {{ isNew ? ('labels.Add New Fee/Tax' | translate) : ('labels.Edit Fee/Tax' | translate) }}
+    </label>
+  </div>
+
+  <!-- Form Card -->
+  <div class="space-y-6">
+    <form [formGroup]="form" class="space-y-4">
+      <!-- Fee Type -->
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'labels.Fee Type' | translate }} *</label>
+        <nz-select
+          formControlName="feeType">
+          <nz-option
+            *ngFor="let opt of feeTypeOptions"
+            [nzValue]="opt.value"
+            [nzLabel]="(opt.label | translate)">
+          </nz-option>
+        </nz-select>
+        <div class="text-red-500 text-sm mt-1" *ngIf="form.get('feeType')?.hasError('required') && submitted">
+          {{ 'labels.Fee Type is required' | translate }}
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'labels.Name' | translate }} *</label>
+        <input
+          nz-input
+          formControlName="name"
+          type="text"
+          class="w-full"
+          placeholder="{{ 'labels.e.g., Booking Fee' | translate }}" />
+        <div class="text-red-500 text-sm mt-1" *ngIf="form.get('name')?.hasError('required') && submitted">
+          {{ 'labels.Name is required' | translate }}
+        </div>
+        <div class="text-red-500 text-sm mt-1" *ngIf="form.get('name')?.hasError('minlength') && submitted">
+          {{ 'labels.Name must be at least 2 characters' | translate }}
+        </div>
+      </div>
+
+      <!-- Applied On -->
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'labels.Applied On' | translate }} *</label>
+        <nz-select
+          formControlName="appliedOn">
+          <nz-option
+            *ngFor="let opt of appliedOnOptions"
+            [nzValue]="opt.value"
+            [nzLabel]="(opt.label | translate)">
+          </nz-option>
+        </nz-select>
+        <div class="text-red-500 text-sm mt-1" *ngIf="form.get('appliedOn')?.hasError('required') && submitted">
+          {{ 'labels.Applied On is required' | translate }}
+        </div>
+      </div>
+
+      <!-- Calculation Type & Value Row -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Calculation Type -->
+        <div class="form-group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'labels.Calculation Type' | translate }} *</label>
+          <nz-select
+            formControlName="calculationType">
+            <nz-option
+              *ngFor="let opt of calculationTypeOptions"
+              [nzValue]="opt.value"
+              [nzLabel]="(opt.label | translate)">
+            </nz-option>
+          </nz-select>
+          <div class="text-red-500 text-sm mt-1" *ngIf="form.get('calculationType')?.hasError('required') && submitted">
+            {{ 'labels.Calculation Type is required' | translate }}
+          </div>
+        </div>
+
+        <!-- Value -->
+        <div class="form-group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            {{ 'common.Value' | translate }} *
+            <span class="text-gray-500">
+              {{ form.get('calculationType')?.value === 'percentage' ? '(%)' : '(VND)' }}
+            </span>
+          </label>
+          <input
+            nz-input
+            formControlName="value"
+            type="number"
+            class="w-full"
+            placeholder="0" />
+          <div class="text-red-500 text-sm mt-1" *ngIf="form.get('value')?.hasError('required') && submitted">
+            {{ 'labels.Value is required' | translate }}
+          </div>
+          <div class="text-red-500 text-sm mt-1" *ngIf="form.get('value')?.hasError('min') && submitted">
+            {{ 'labels.Value must be greater than 0' | translate }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Priority -->
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'labels.Priority (0-1000)' | translate }} *</label>
+        <input
+          nz-input
+          formControlName="priority"
+          type="number"
+          class="w-full"
+          min="0"
+          max="1000"
+          placeholder="10" />
+        <small class="text-gray-500 block mt-1">{{ 'labels.Lower numbers apply first. Fees at priority 10, Taxes at 50' | translate }}</small>
+        <div class="text-red-500 text-sm mt-1" *ngIf="form.get('priority')?.hasError('required') && submitted">
+          {{ 'labels.Priority is required' | translate }}
+        </div>
+        <div class="text-red-500 text-sm mt-1" *ngIf="form.get('priority')?.hasError('min') && submitted">
+          {{ 'labels.Priority must be >= 0' | translate }}
+        </div>
+        <div class="text-red-500 text-sm mt-1" *ngIf="form.get('priority')?.hasError('max') && submitted">
+          {{ 'labels.Priority must be <= 1000' | translate }}
+        </div>
+      </div>
+
+      <!-- Date Range Row -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Valid From -->
+        <div class="form-group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'labels.Valid From' | translate }}</label>
+          <nz-date-picker
+            formControlName="startDate"
+            nzFormat="yyyy-MM-dd"
+            [nzPlaceHolder]="'labels.Select date' | translate"
+            style="width: 100%">
+          </nz-date-picker>
+        </div>
+
+        <!-- Valid To -->
+        <div class="form-group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'labels.Valid To' | translate }}</label>
+          <nz-date-picker
+            formControlName="endDate"
+            nzFormat="yyyy-MM-dd"
+            [nzPlaceHolder]="'labels.Select date' | translate"
+            style="width: 100%">
+          </nz-date-picker>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'common.Description' | translate }}</label>
+        <textarea
+          nz-input
+          formControlName="description"
+          rows="3"
+          class="w-full"
+          placeholder="{{ 'labels.Add optional description' | translate }}"></textarea>
+      </div>
+
+      <!-- Enabled Checkbox -->
+      <div class="form-group">
+        <label nz-checkbox formControlName="enabled" class="font-medium">
+          <span>{{ 'labels.Active' | translate }}</span>
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+        <button
+          nz-button
+          (click)="backToList()"
+          class="px-6">
+          {{ 'buttons.Cancel' | translate }}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          [nzLoading]="loading"
+          [disabled]="loading"
+          (click)="onSave()"
+          class="px-6">
+          {{ isNew ? ('buttons.Create' | translate) : ('buttons.Update' | translate) }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { QuillEditorComponent } from 'ngx-quill';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { Setting } from '../../model/setting.model';
 import { SettingService } from '../../services/setting.service';
 import { SettingCacheService } from '../../services/setting-cache.service';
@@ -51,6 +52,7 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
     private settingService: SettingService,
     private settingCacheService: SettingCacheService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -214,12 +216,12 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
   async onSubmit() {
     if (!this.mainForm.valid) {
       this.utils.markFormGroupTouched(this.mainForm);
-      toast.error('Vui lòng điền đầy đủ thông tin theo yêu cầu');
+      toast.error(this.translate.instant('settings.busScheduleSetting.errorFillAllFields'));
       return;
     }
 
     if (!this.hasFormChanged()) {
-      toast.info('Không có gì thay đổi để lưu');
+      toast.info(this.translate.instant('settings.themeSetting.noChanges'));
       return;
     }
 
@@ -277,7 +279,7 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
       // Update baseline after successful save
       this.initialFormValue = this.mainForm.getRawValue();
 
-      toast.success('Bus Schedule settings updated successfully');
+      toast.success(this.translate.instant('settings.busScheduleSetting.busScheduleSettingsUpdated'));
     } catch (error: any) {
       this.utils.handleRequestError(error);
       throw error;
@@ -291,7 +293,7 @@ export class BusScheduleSettingComponent implements OnInit, AfterViewInit {
         if (result) {
           this.mainForm.reset();
           this.initialFormValue = this.mainForm.getRawValue();
-          toast.success('Settings reset to default');
+          toast.success(this.translate.instant('buttons.Reset'));
         }
       });
   }

@@ -9,6 +9,7 @@ import { toast } from 'ngx-sonner';
 import { SearchTenant, Tenant } from '../../model/tenant.model';
 import { TenantService } from '../../service/tenant.service';
 import { COMMON_STATUS_CLASSES, COMMON_STATUS_LABELS } from 'src/app/core/constants/status.constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tenant',
@@ -60,6 +61,7 @@ export class TenantComponent implements OnInit {
     private router: Router,
     private tenantService: TenantService,
     private dialog: MatDialog,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
   }
@@ -185,7 +187,7 @@ export class TenantComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.searchTenant.tenants = this.searchTenant.tenants.filter((tenant) => tenant._id !== id);
-              toast.success('Tenant Category deleted successfully');
+              toast.success(this.translate.instant('messages.tenantCategoryDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),

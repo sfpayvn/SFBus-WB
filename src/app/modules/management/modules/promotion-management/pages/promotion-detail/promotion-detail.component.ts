@@ -18,6 +18,7 @@ import { Promotion, Promotion2Create, Promotion2Update } from '../../model/promo
 import { PromotionService } from '../../service/promotion.service';
 import { FilesCenterDialogComponent } from '../../../files-center-management/components/files-center-dialog/files-center-dialog.component';
 import { FileDto } from '../../../files-center-management/model/file-center.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-promotion-detail',
@@ -60,6 +61,7 @@ export class PromotionDetailComponent implements OnInit {
     private location: Location,
     private promotionService: PromotionService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -231,10 +233,10 @@ export class PromotionDetailComponent implements OnInit {
           const updatedState = { ...history.state, promotion: promotionUpdated };
           window.history.replaceState(updatedState, '', window.location.href);
           this.initialFormValue = this.mainForm.getRawValue();
-          toast.success('Promotion update successfully');
+          toast.success(this.translate.instant('messages.promotionUpdated'));
           return;
         }
-        toast.success('Promotion added successfully');
+          toast.success(this.translate.instant('messages.promotionAdded'));
         this.backPage();
       },
       error: (error: any) => this.utils.handleRequestError(error), // Xử lý lỗi

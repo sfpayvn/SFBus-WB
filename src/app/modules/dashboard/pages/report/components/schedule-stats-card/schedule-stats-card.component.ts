@@ -17,9 +17,9 @@ export class ScheduleStatsCardComponent implements OnInit, OnChanges {
 
   isLoading = false;
   stats: StatisticCard = {
-    title: 'Chuyến xe đã chạy',
+    title: 'scheduleStats.title',
     value: 0,
-    unit: 'chuyến',
+    unit: 'scheduleStats.unit.trip',
     icon: 'assets/icons/heroicons/outline/truck.svg',
     color: 'text-orange-600',
     bgColor: 'bg-orange-50',

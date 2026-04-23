@@ -9,17 +9,38 @@ import { ButtonComponent } from 'src/app/shared/components/button/button.compone
 import { AuthService } from '../../service/auth.service';
 import { RequestForgotPassword } from '../../model/auth.model';
 import { toast } from 'ngx-sonner';
+import { NgxMaskDirective } from 'ngx-mask';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.css'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, ButtonComponent, NZModule],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    RouterLink,
+    AngularSvgIconModule,
+    ButtonComponent,
+    NZModule,
+    NgxMaskDirective,
+    TranslateModule,
+  ],
 })
 export class ForgotPasswordComponent implements OnInit {
   form!: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder, private utils: Utils, private authService: AuthService) {}
+  maskConfig = {
+    dropSpecialCharacters: true,
+    showMaskTyped: true,
+  };
+
+  constructor(
+    private _formBuilder: FormBuilder,
+    private utils: Utils,
+    private authService: AuthService,
+    private translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -27,7 +48,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   initForm() {
     this.form = this._formBuilder.group({
-      phoneNumber: ['0961090433', [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(this.utils.VN_MOBILE_REX)]],
     });
   }
 
@@ -53,7 +74,7 @@ export class ForgotPasswordComponent implements OnInit {
         toast.error(res.error.message || res.message);
         return;
       }
-      toast.success('Link reset password has been resent successfully');
+      toast.success(this.translate.instant('messages.resetLinkSentSuccess'));
     });
   }
 }

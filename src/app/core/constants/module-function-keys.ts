@@ -23,6 +23,7 @@ export const MODULE_KEYS = {
   PROMOTION_MANAGEMENT: 'promotion-management',
   PAYMENT_MANAGEMENT: 'payment-management',
   BOOKING_MANAGEMENT: 'booking-management',
+  FEE_TAX_MANAGEMENT: 'fee-tax-management',
   SETTING_MANAGEMENT: 'setting-management',
   NOTIFICATION_MANAGEMENT: 'notification-management',
   CONTENT_MANAGEMENT: 'content-management',
@@ -120,6 +121,9 @@ export const FUNCTION_KEYS = {
 
   // Promotion Management functions
   PROMOTION_MANAGEMENT: CRUD_OPERATIONS,
+
+  // Fee Tax Management functions
+  FEE_TAX_MANAGEMENT: CRUD_OPERATIONS,
 
   // Bus Design functions
   BUS_DESIGN: CRUD_OPERATIONS,

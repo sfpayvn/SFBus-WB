@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from "chart.js";
 import { ReportService } from "../../services/report.service";
 import { ChartStatsRequest, ChartStatsResponse } from "../../models/report.model";
@@ -53,7 +54,7 @@ export class RevenueBookingComponent implements OnChanges {
   @Output() viewDetailEvent = new EventEmitter<void>();
   @Output() ondDataLoaded = new EventEmitter<ChartStatsResponse>();
 
-  constructor(private reportService: ReportService) {}
+  constructor(private reportService: ReportService, private translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -103,7 +104,7 @@ export class RevenueBookingComponent implements OnChanges {
           labels: response.metadata?.groupBy == "hour" ? currentLabels : mergedLabels,
           datasets: [
             {
-              label: this.comparisonMode ? "Kỳ hiện tại" : "Doanh thu",
+              label: this.comparisonMode ? this.translate.instant('report.currentPeriod') : this.translate.instant('reports.revenue'),
               data: currentData,
               borderColor: "#10b981",
               backgroundColor: "rgba(16, 185, 129, 0.1)",
@@ -115,7 +116,7 @@ export class RevenueBookingComponent implements OnChanges {
             ...(this.comparisonMode && response.previous
               ? [
                   {
-                    label: "Kỳ so sánh",
+                    label: this.translate.instant('report.comparisonPeriod'),
                     data: previousData,
                     borderColor: "#94a3b8",
                     backgroundColor: "rgba(148, 163, 184, 0.1)",

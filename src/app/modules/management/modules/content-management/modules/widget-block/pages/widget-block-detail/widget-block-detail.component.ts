@@ -14,6 +14,7 @@ import tabs from 'grapesjs-tabs';
 import { toast } from 'ngx-sonner';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { WidgetBlock, WidgetBlock2Create } from '../../model/widget-block.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-widget-block-detail',
@@ -37,6 +38,7 @@ export class WidgetBlockDetailComponent implements OnInit, AfterViewInit, OnDest
     private formBuilder: FormBuilder,
     private utilsModal: UtilsModal,
     private utils: Utils,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -396,7 +398,7 @@ export class WidgetBlockDetailComponent implements OnInit, AfterViewInit, OnDest
       next: (res: WidgetBlock) => {
         if (res) {
           // this.loadBlockLibrary();
-          toast.success('WidgetBlock added successfully');
+          toast.success(this.translate.instant('messages.widgetBlockAdded'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

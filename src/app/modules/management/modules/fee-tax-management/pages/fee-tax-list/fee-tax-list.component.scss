@@ -1,0 +1,335 @@
+.fee-tax-container {
+  padding: 24px;
+
+  .page-header {
+    margin-bottom: 24px;
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: #1f2937;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin: 0;
+    }
+  }
+
+  .search-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+
+    .search-form {
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+
+        label {
+          font-size: 12px;
+          font-weight: 500;
+          margin-bottom: 6px;
+          color: #374151;
+        }
+
+        .form-control {
+          padding: 8px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 4px;
+          font-size: 13px;
+
+          &:focus {
+            border-color: #3b82f6;
+            outline: none;
+          }
+        }
+      }
+
+      .button-group {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+
+        .btn {
+          padding: 8px 16px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 500;
+
+          &.btn-primary {
+            background: #3b82f6;
+            color: white;
+
+            &:hover {
+              background: #2563eb;
+            }
+          }
+
+          &.btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+
+            &:hover {
+              background: #d1d5db;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    gap: 8px;
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &.btn-success {
+        background: #10b981;
+        color: white;
+
+        &:hover {
+          background: #059669;
+        }
+      }
+    }
+  }
+
+  .table-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+
+    ::ng-deep {
+      .ant-table {
+        font-size: 13px;
+
+        th {
+          background: #f3f4f6 !important;
+          font-weight: 600;
+          color: #374151;
+          padding: 12px !important;
+        }
+
+        td {
+          padding: 12px !important;
+        }
+
+        tr:hover {
+          background: #f9fafb;
+        }
+      }
+    }
+
+    .tag-fee {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .tag-tax {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 500;
+
+      &.badge-success {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      &.badge-secondary {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+    }
+
+    .text-truncate {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+
+      .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 0 !important;
+        font-size: 14px;
+
+        &.btn-info {
+          color: #0891b2;
+
+          &:hover {
+            color: #0e7490;
+          }
+        }
+
+        &.btn-primary {
+          color: #3b82f6;
+
+          &:hover {
+            color: #2563eb;
+          }
+        }
+
+        &.btn-danger {
+          color: #ef4444;
+
+          &:hover {
+            color: #dc2626;
+          }
+        }
+      }
+    }
+  }
+
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: #374151;
+
+        .unit {
+          font-size: 12px;
+          color: #6b7280;
+          font-weight: 400;
+        }
+      }
+
+      .form-control {
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 13px;
+        font-family: inherit;
+
+        &:focus {
+          border-color: #3b82f6;
+          outline: none;
+        }
+      }
+
+      .checkbox {
+        margin-right: 8px;
+      }
+
+      .help-text {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+      }
+
+      .error-message {
+        font-size: 12px;
+        color: #ef4444;
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .detail-row {
+      display: flex;
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        font-weight: 600;
+        color: #374151;
+        min-width: 150px;
+      }
+
+      .value {
+        color: #6b7280;
+        flex: 1;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 500;
+
+        &.badge-success {
+          background: #d1fae5;
+          color: #065f46;
+        }
+
+        &.badge-secondary {
+          background: #f3f4f6;
+          color: #6b7280;
+        }
+      }
+    }
+  }
+}
