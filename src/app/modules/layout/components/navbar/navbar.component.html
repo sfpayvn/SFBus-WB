@@ -19,7 +19,7 @@
         <a class="bg-primary flex items-center justify-center rounded-sm p-2 focus:outline-hidden focus:ring-1">
           <svg-icon src="assets/icons/logo.svg"></svg-icon>
         </a>
-        <b class="text-foreground hidden pl-3 text-sm font-bold sm:block"> SFBus WB </b>
+        <b class="text-foreground hidden pl-3 text-sm font-bold sm:block"> {{ title$ | async }} </b>
       </div>
 
       <!-- Desktop Menu -->
@@ -29,6 +29,38 @@
 
       <!-- Profile menu -->
       <div class="items-center justify-end sm:order-4 md:flex md:flex-1 lg:w-0">
+        <!-- Language Switcher -->
+        <div
+          class="flex cursor-pointer items-center gap-2 text-white transition hover:opacity-80"
+          nz-dropdown
+          [nzDropdownMenu]="languageMenu"
+          [nzPlacement]="'bottomRight'">
+          @if (currentLanguage === "vi") {
+          <img src="assets/icons/vietnam.svg" width="16" alt="vietnamese" />
+          } @else {
+          <img src="assets/icons/eng.svg" width="16" alt="english" />
+          }
+          <span class="text-sm font-medium text-foreground">{{ getLanguageLabel(currentLanguage) }}</span>
+          <img src="assets/icons/icon_form_droplist.svg" width="10" alt="dropdown" />
+        </div>
+        <nz-dropdown-menu #languageMenu="nzDropdownMenu">
+          <ul nz-menu nzSelectable class="bg-white">
+            <li
+              nz-menu-item
+              (click)="changeLanguage('vi')"
+              [ngClass]="{ selected: currentLanguage === 'vi' }"
+              class="px-4!">
+              <img src="assets/icons/vietnam.svg" width="18" alt="vietnamese" /> {{ 'language.vietnamese' | translate }}
+            </li>
+            <li
+              nz-menu-item
+              (click)="changeLanguage('en')"
+              [ngClass]="{ selected: currentLanguage === 'en' }"
+              class="px-4!">
+              <img src="assets/icons/eng.svg" width="18" alt="english" /> {{ 'language.english' | translate }}
+            </li>
+          </ul>
+        </nz-dropdown-menu>
         <app-profile-menu></app-profile-menu>
       </div>
     </div>

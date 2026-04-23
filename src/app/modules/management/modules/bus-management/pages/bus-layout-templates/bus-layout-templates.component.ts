@@ -11,6 +11,7 @@ import { BusLayoutTemplatesService } from './service/bus-layout-templates.serviv
 import { Router } from '@angular/router';
 import { Utils } from 'src/app/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bus-layout-templates',
@@ -47,6 +48,7 @@ export class BusLayoutTemplatesComponent implements OnInit {
     private router: Router,
     private utils: Utils,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -131,7 +133,7 @@ export class BusLayoutTemplatesComponent implements OnInit {
               this.searchBusLayoutTemplate.busLayoutTemplates = this.searchBusLayoutTemplate.busLayoutTemplates.filter(
                 (blt) => blt._id !== busLayoutTemplate._id,
               );
-              toast.success('BusLayoutTemplate deleted successfully');
+              toast.success(this.translate.instant('messages.busLayoutTemplateDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -160,7 +162,7 @@ export class BusLayoutTemplatesComponent implements OnInit {
       next: (res: BusLayoutTemplate) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

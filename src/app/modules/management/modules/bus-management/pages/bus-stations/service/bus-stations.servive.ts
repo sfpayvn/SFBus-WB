@@ -22,6 +22,11 @@ export class BusStationsService {
     return this.apiGatewayService.get(url, null, { skipLoading: skipLoadding }).pipe(tap((res: any) => {}));
   }
 
+  findAllUnAssignedAvailable(skipLoadding?: boolean) {
+    const url = `${this.url}/find-all-unassigned-available`;
+    return this.apiGatewayService.get(url, null, { skipLoading: skipLoadding }).pipe(tap((res: any) => {}));
+  }
+
   searchBusStation(
     searchParams = {
       pageIdx: 1,

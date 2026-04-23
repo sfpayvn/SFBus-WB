@@ -1,6 +1,7 @@
 import { ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { MaterialDialogComponent } from '../components/material-dialog/material-dialog.component';
 import { ViewImageDialogComponent } from '@rsApp/modules/management/modules/files-center-management/components/view-image-dialog/view-image-dialog.component';
 
@@ -10,7 +11,7 @@ import { ViewImageDialogComponent } from '@rsApp/modules/management/modules/file
 export class UtilsModal {
   ref: ComponentRef<any> | undefined;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private translateService: TranslateService) {}
 
   openModalConfirm(title: string, content: string, type?: string, btns?: any) {
     const dialogRef = this.dialog.open(MaterialDialogComponent, {
@@ -22,11 +23,11 @@ export class UtilsModal {
         content: content,
         btn: btns || [
           {
-            label: 'NO',
+            label: this.translateService.instant('buttons.No'),
             type: 'cancel',
           },
           {
-            label: 'YES',
+            label: this.translateService.instant('buttons.Yes'),
             type: 'submit',
           },
         ],
@@ -45,7 +46,7 @@ export class UtilsModal {
         content: content,
         btn: [
           {
-            label: btnLabel || 'OK',
+            label: btnLabel || this.translateService.instant('buttons.OK'),
             type: 'submit',
           },
         ],

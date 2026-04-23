@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { MaterialDialogComponent } from 'src/app/shared/components/material-dialog/material-dialog.component';
 import { BusSchedulesService } from './service/bus-schedules.servive';
 import { Utils } from 'src/app/shared/utils/utils';
@@ -58,6 +59,7 @@ export class BusSchedulesComponent implements OnInit {
     private utils: Utils,
     private utilsModal: UtilsModal,
     private router: Router,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -213,7 +215,7 @@ export class BusSchedulesComponent implements OnInit {
           next: (res: any) => {
             if (res) {
               this.searchBusSchedule.busSchedules = this.searchBusSchedule.busSchedules.filter((bus) => bus._id !== id);
-              toast.success('Bus deleted successfully');
+              toast.success(this.translate.instant('messages.busDeletedSuccess'));
             }
           },
           error: (error: any) => this.utils.handleRequestError(error),
@@ -264,7 +266,7 @@ export class BusSchedulesComponent implements OnInit {
       next: (res: BusSchedule) => {
         if (res) {
           this.loadData();
-          toast.success('Nhân bản thành công');
+          toast.success(this.translate.instant('messages.clonedSuccess'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

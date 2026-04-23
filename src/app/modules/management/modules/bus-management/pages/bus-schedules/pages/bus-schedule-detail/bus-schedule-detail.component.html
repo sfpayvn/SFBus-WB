@@ -12,7 +12,7 @@
   <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
     <div class="flex w-full gap-4">
       <label class="mb-4 flex text-2xl font-semibold">
-        @if(this.busSchedule) { Edit Bus Schedule } @else { Create Bus Schedule }
+        @if(this.busSchedule) { {{ 'forms.editScheduleInformation' | translate }} } @else { {{ 'forms.createScheduleInformation' | translate }} }
       </label>
       @if(this.busSchedule){
       <span class="text-2xl font-semibold">#{{ this.busSchedule.busScheduleNumber }}</span>
@@ -24,13 +24,13 @@
           <div class="flex w-full gap-4">
             <nz-form-item class="!w-full">
               <nz-form-label nzFor="busScheduleTemplateId" [nzNoColon]="true" class="!flex !items-center !justify-start"
-                >Bus Schedule Template</nz-form-label
+                >{{ 'labels.busScheduleTemplate' | translate }}</nz-form-label
               >
               <nz-form-control>
                 <nz-input-group class="!flex !items-center gap-4">
                   <nz-select
                     formControlName="busScheduleTemplateId"
-                    nzPlaceHolder="Chọn Bus Schedule Template"
+                    [nzPlaceHolder]="'labels.selectBusScheduleTemplate' | translate"
                     (ngModelChange)="chooseBusScheduleTemplate($event)">
                     @for (busScheduleTemplate of busScheduleTemplates; track busScheduleTemplate) {
                     <nz-option
@@ -52,7 +52,7 @@
                       type="button"
                       nzType="default"
                       (click)="resetBusScheduleTemplate()">
-                      Reset
+                      {{ 'buttons.reset' | translate }}
                     </button>
                   </div>
                 </nz-input-group>
@@ -67,13 +67,13 @@
                   [nzNoColon]="true"
                   [nzRequired]="true"
                   class="!flex !items-center !justify-start"
-                  >Name</nz-form-label
+                  >{{ 'labels.name' | translate }}</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="busScheduleDetailNameErrorTpl" class="!flex flex-col">
                   <nz-input-group
                     [nzSuffix]="busScheduleDetailNameClearTpl"
                     class="!mt-0 !mb-0 !rounded border-gray-200">
-                    <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+                    <input type="text" nz-input formControlName="name" [attr.placeholder]="'labels.enterName' | translate" />
                   </nz-input-group>
                   <ng-template #busScheduleDetailNameClearTpl>
                     <span
@@ -85,7 +85,7 @@
                   </ng-template>
                   <ng-template #busScheduleDetailNameErrorTpl let-control>
                     <span class="mt-1 !text-xs text-red-500">
-                      @if (busScheduleDetailForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+                      @if (busScheduleDetailForm.controls['name'].errors?.['required']) { {{ 'validations.fillThisField' | translate }} }
                     </span>
                   </ng-template>
                 </nz-form-control>
@@ -95,13 +95,13 @@
           <div class="flex w-full gap-4">
             <nz-form-item class="!w-full">
               <nz-form-label nzFor="busServiceIds" [nzNoColon]="true" class="!flex !items-center !justify-start"
-                >Bus Drivers</nz-form-label
+                >{{ 'labels.busDrivers' | translate }}</nz-form-label
               >
               <nz-form-control>
                 <nz-select
                   formControlName="busDriverIds"
                   nzMode="multiple"
-                  nzPlaceHolder="Chọn Bus Drivers"
+                  [nzPlaceHolder]="'labels.selectBusDrivers' | translate"
                   [nzOptionHeightPx]="42"
                   nzSize="large">
                   @for (driver of drivers; track driver) {
@@ -139,12 +139,12 @@
                   [nzNoColon]="true"
                   [nzRequired]="true"
                   class="!flex !items-center !justify-start"
-                  >Bus Templates</nz-form-label
+                  >{{ 'labels.busTemplates' | translate }}</nz-form-label
                 >
                 <nz-form-control [nzErrorTip]="busScheduleDetailBusTemplateIdErrorTpl">
                   <nz-select
                     formControlName="busTemplateId"
-                    nzPlaceHolder="Chọn Template"
+                  [nzPlaceHolder]="'labels.selectTemplate' | translate"
                     (ngModelChange)="chooseBusTemplate($event)">
                     @for (busTemplate of busTemplates; track busTemplate) {
                     <nz-option
@@ -250,7 +250,7 @@
           </div>
           <div class="flex w-full flex-col" formArrayName="busSeatPrices" *ngIf="busSeatPricesForm.controls.length > 0">
             <nz-form-label class="!flex !items-center !justify-start font-medium" [nzNoColon]="true" [nzRequired]="true"
-              >Giá tiền theo từng loại ghế</nz-form-label
+              >{{ 'labels.priceBySeats' | translate }}</nz-form-label
             >
             <div class="grid w-full grid-cols-2 flex-wrap gap-2 rounded-lg border border-dashed border-gray-200 p-4">
               <div
@@ -268,7 +268,7 @@
                           type="text"
                           nz-input
                           formControlName="price"
-                          placeholder="Nhập giá"
+                          [attr.placeholder]="'placeholders.enterPrice' | translate"
                           mask="separator.0"
                           thousandSeparator="," />
                       </nz-input-group>
@@ -291,8 +291,8 @@
 
                     <ng-template #priceErrorTpl let-control>
                       <span class="mt-1 flex w-full justify-end !text-xs text-red-500">
-                        <ng-container *ngIf="control.hasError('required')"> Vui lòng nhập giá </ng-container>
-                        <ng-container *ngIf="control.hasError('min')"> Giá phải lớn hơn 0 </ng-container>
+                        <ng-container *ngIf="control.hasError('required')"> {{ 'validations.enterPrice' | translate }} </ng-container>
+                        <ng-container *ngIf="control.hasError('min')"> {{ 'validations.priceGreaterThanZero' | translate }} </ng-container>
                       </span>
                     </ng-template>
                   </nz-form-control>

@@ -13,6 +13,7 @@ import { toast } from 'ngx-sonner';
 import { ROLE_CONSTANTS } from '@rsApp/core/constants/roles.constants';
 import { AuthService } from '@rsApp/modules/auth/service/auth.service';
 import { UpdatePasswordUserRequest } from '@rsApp/modules/auth/model/auth.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-account-password',
@@ -38,7 +39,7 @@ export class AccountPasswordComponent implements OnInit {
 
   passwordVisible: boolean = false;
 
-  constructor(private fb: FormBuilder, private utils: Utils, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private utils: Utils, private authService: AuthService, private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -150,7 +151,7 @@ export class AccountPasswordComponent implements OnInit {
 
     this.authService.updatePassword(updatePasswordUserRequest).subscribe({
       next: (res: any) => {
-        toast.success('Password updated successfully');
+        toast.success(this.translate.instant('messages.passwordUpdatedSuccess'));
         this.passwordForm.reset({
           oldPassword: '',
           password: '',

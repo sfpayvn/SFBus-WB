@@ -1,12 +1,13 @@
 import { NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Nft } from '../../../models/nft';
 import { NftAuctionsTableItemComponent } from '../nft-auctions-table-item/nft-auctions-table-item.component';
 
 @Component({
   selector: '[nft-auctions-table]',
   templateUrl: './nft-auctions-table.component.html',
-  imports: [NgFor, NftAuctionsTableItemComponent],
+  imports: [NgFor, NftAuctionsTableItemComponent, TranslateModule],
 })
 export class NftAuctionsTableComponent implements OnInit {
   public activeAuction: Nft[] = [];

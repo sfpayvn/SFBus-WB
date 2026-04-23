@@ -1,11 +1,11 @@
 <div class="flex h-full flex-col rounded-lg bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
   <div class="flex flex-col justify-between">
-    <p class="mb-1 text-sm text-gray-600">{{ stats.title }}</p>
+    <p class="mb-1 text-sm text-gray-600">{{ stats.title | translate }}</p>
     <div class="flex gap-4">
       <nz-skeleton [nzActive]="true" [nzParagraph]="false" [nzLoading]="isLoading">
         <div class="flex w-full items-end gap-2">
           <label class="text-2xl font-bold text-gray-800">{{ stats.value }}</label>
-          <span class="text-sm text-gray-600">{{ stats.unit }}</span>
+          <span class="text-sm text-gray-600">{{ stats.unit | translate }}</span>
         </div>
       </nz-skeleton>
       <div class="flex">

@@ -15,6 +15,7 @@ import {
   COMMON_STATUS_LABELS,
   PAYMENT_METHOD_TYPES,
 } from '@rsApp/core/constants/status.constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-payment-method-detail',
@@ -54,6 +55,7 @@ export class PaymentMethodDetailComponent implements OnInit {
     private paymentMethodService: PaymentMethodService,
     private utilsModal: UtilsModal,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -282,10 +284,10 @@ export class PaymentMethodDetailComponent implements OnInit {
           const updatedState = { ...history.state, paymentMethod: paymentMethodUpdated };
           window.history.replaceState(updatedState, '', window.location.href);
           this.initialFormValue = this.mainForm.getRawValue();
-          toast.success('PaymentMethod update successfully');
+          toast.success(this.translate.instant('messages.paymentMethodUpdated'));
           return;
         }
-        toast.success('PaymentMethod added successfully');
+        toast.success(this.translate.instant('messages.paymentMethodAdded'));
         this.backPage();
       },
       error: (error: any) => this.utils.handleRequestError(error), // Xử lý lỗi

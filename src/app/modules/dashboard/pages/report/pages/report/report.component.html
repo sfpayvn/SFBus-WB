@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center justify-between pt-6">
-  <h1 class="text-2xl font-bold text-gray-800">Báo cáo thống kê</h1>
+  <h1 class="text-2xl font-bold text-gray-800">{{ 'reports.title' | translate }}</h1>
 </div>
 <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
 
@@ -56,12 +56,12 @@
 
     <!-- Charts section -->
     <div>
-      <h2 class="mb-4 px-2 text-lg font-semibold text-gray-800">Phân tích chi tiết Booking</h2>
+      <h2 class="mb-4 px-2 text-lg font-semibold text-gray-800">{{ 'reports.bookingAnalysis' | translate }}</h2>
       <nz-tabset
         [(nzSelectedIndex)]="selectedBookingTab"
         (nzSelectedIndexChange)="onBookingTabChange($event)"
         class="!mb-6 rounded-lg bg-white !p-4 shadow-sm">
-        <nz-tab nzTitle="Vé bán">
+        <nz-tab [nzTitle]="'reports.ticketSales' | translate">
           @if (hasTabLoaded(0)) {
           <app-booking-chart
             [dateRangeType]="dateRangeType"
@@ -74,7 +74,7 @@
           }
         </nz-tab>
 
-        <nz-tab nzTitle="Doanh thu">
+        <nz-tab [nzTitle]="'reports.revenue' | translate">
           @if (hasTabLoaded(1)) {
           <app-revenue-booking
             [dateRangeType]="dateRangeType"
@@ -88,7 +88,7 @@
           }
         </nz-tab>
 
-        <nz-tab nzTitle="Chuyến xe">
+        <nz-tab [nzTitle]="'reports.busTrips' | translate">
           @if (hasTabLoaded(2)) {
           <app-schedule-chart
             [dateRangeType]="dateRangeType"
@@ -102,12 +102,12 @@
       </nz-tabset>
     </div>
     <div>
-      <h2 class="mb-4 px-2 text-lg font-semibold text-gray-800">Phân tích chi tiết Goods</h2>
+      <h2 class="mb-4 px-2 text-lg font-semibold text-gray-800">{{ 'reports.goodsAnalysis' | translate }}</h2>
       <nz-tabset
         [(nzSelectedIndex)]="selectedGoodsTab"
         (nzSelectedIndexChange)="onGoodsTabChange($event)"
         class="!mb-6 rounded-lg bg-white !p-4 shadow-sm">
-        <nz-tab nzTitle="Hàng hóa">
+        <nz-tab [nzTitle]="'reports.goods' | translate">
           @if (hasTabLoaded(3)) {
           <app-goods-chart
             [dateRangeType]="dateRangeType"
@@ -116,7 +116,7 @@
             [comparisonMode]="comparisonMode"></app-goods-chart>
           }
         </nz-tab>
-        <nz-tab nzTitle="Doanh thu Hàng hóa">
+        <nz-tab [nzTitle]="'reports.goodsRevenue' | translate">
           @if (hasTabLoaded(4)) {
           <app-revenue-goods-chart
             [dateRangeType]="dateRangeType"

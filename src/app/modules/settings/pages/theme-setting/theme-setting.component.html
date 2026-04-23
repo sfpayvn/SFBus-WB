@@ -1,11 +1,11 @@
 <div class="mb-4 flex items-center justify-between">
-  <h1 class="text-2xl font-bold">Cài đặt giao diện</h1>
+  <h1 class="text-2xl font-bold">{{ 'settings.themeSetting.title' | translate }}</h1>
   <div class="inline-block space-x-4">
     <button
       class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !px-3 !py-2 hover:!border-gray-300 hover:!bg-gray-300"
       nz-button
       (click)="resetToDefault()">
-      Reset Default
+      {{ 'buttons.Reset' | translate }}
     </button>
   </div>
 </div>
@@ -18,7 +18,7 @@
         <div class="flex h-full w-3/12 flex-col">
           <div class="flex flex-col gap-2">
             <nz-form-label [nzNoColon]="true" nzFor="logo" class="!flex !items-center !justify-start !font-medium"
-              >Logo</nz-form-label
+              >{{ 'settings.themeSetting.logo' | translate }}</nz-form-label
             >
             <ng-container *ngIf="!logoImage; else logoPresent">
               <div class="flex flex-col items-center">
@@ -29,7 +29,7 @@
                   <div class="mx-auto-8 left-0 m-auto flex h-full w-full flex-wrap content-center items-center px-4">
                     <div class="flex w-full flex-wrap justify-center pb-5 text-center">
                       <svg-icon svgClass="w-8 h-8" src="assets/icons/upload.svg"></svg-icon>
-                      <p class="w-full pt-1 text-sm">Upload Logo</p>
+                      <p class="w-full pt-1 text-sm">{{ 'settings.themeSetting.uploadLogo' | translate }}</p>
                     </div>
                   </div>
                 </div>
@@ -45,14 +45,14 @@
                       <div
                         class="pointer-events-none absolute top-0 right-0 left-0 m-auto flex h-full w-full cursor-pointer flex-wrap content-center items-center justify-center">
                         <svg-icon svgClass="w-7 h-7" src="assets/icons/upload.svg"></svg-icon>
-                        <p class="w-full pt-1 text-center text-xs">Tập tin cục bộ</p>
+                        <p class="w-full pt-1 text-center text-xs">{{ 'settings.themeSetting.localFile' | translate }}</p>
                       </div>
                     </div>
                     <div
                       class="flex h-12 cursor-pointer flex-wrap items-center justify-center px-2"
                       (click)="openFilesCenterDialog()">
                       <svg-icon svgClass="w-7 h-7" src="assets/icons/media.svg"></svg-icon>
-                      <p class="w-full pt-1 text-center text-xs">Trung tâm phương tiện</p>
+                      <p class="w-full pt-1 text-center text-xs">{{ 'settings.themeSetting.mediaCenter' | translate }}</p>
                     </div>
                   </div>
                 </ng-template>
@@ -98,12 +98,12 @@
                 [nzRequired]="true"
                 nzFor="tenantName"
                 class="!flex !items-center !justify-start !font-medium"
-                >Tên doanh nghiệp</nz-form-label
+                >{{ 'settings.themeSetting.businessName' | translate }}</nz-form-label
               >
               <nz-form-control [nzErrorTip]="tenantNameErrorTpl" class="!flex flex-col">
                 <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzActive]="true">
                   <nz-input-group [nzSuffix]="tenantNameClearTpl" class="custom-nz-input-group">
-                    <input type="text" nz-input formControlName="tenantName" placeholder="Nhập tên doanh nghiệp" />
+                    <input type="text" nz-input formControlName="tenantName" [placeholder]="'settings.themeSetting.placeholderBusinessName' | translate" />
                   </nz-input-group>
                 </nz-skeleton>
                 <ng-template #tenantNameClearTpl>
@@ -117,7 +117,8 @@
                 </ng-template>
                 <ng-template #tenantNameErrorTpl let-control>
                   <span class="mt-1 !text-xs text-red-500">
-                    @if (mainForm.controls['tenantName'].errors?.['required']) { Vui lòng nhập tên doanh nghiệp } @else if (mainForm.controls['tenantName'].errors?.['minlength']) { Tên phải có ít nhất 2 ký tự }
+                    @if (mainForm.controls['tenantName'].errors?.['required']) { {{ 'settings.themeSetting.errorBusinessNameRequired' | translate }} }
+                    @else if (mainForm.controls['tenantName'].errors?.['minlength']) { {{ 'settings.themeSetting.errorBusinessNameMinLength' | translate }} }
                   </span>
                 </ng-template>
               </nz-form-control>
@@ -133,7 +134,7 @@
                   [nzNoColon]="true"
                   nzFor="primaryColor"
                   class="!flex !items-center !justify-start !font-medium"
-                  >Màu chính</nz-form-label
+                  >{{ 'settings.themeSetting.primaryColor' | translate }}</nz-form-label
                 >
                 <nz-form-control class="!flex flex-col">
                   <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzActive]="true">
@@ -152,7 +153,7 @@
                   [nzNoColon]="true"
                   nzFor="secondaryColor"
                   class="!flex !items-center !justify-start !font-medium"
-                  >Màu phụ</nz-form-label
+                  >{{ 'settings.themeSetting.secondaryColor' | translate }}</nz-form-label
                 >
                 <nz-form-control class="!flex flex-col">
                   <nz-skeleton [nzLoading]="!isLoaded" [nzParagraph]="false" [nzActive]="true">
@@ -171,7 +172,7 @@
               class="!bg-primary !min-w-24 !flex !h-max !justify-center !rounded-lg !px-3 !py-2 !text-white hover:!border-green-500 hover:!bg-green-500"
               nz-button
               type="submit">
-              SAVE
+              {{ 'buttons.Save' | translate }}
             </button>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface DialogData {
   title: string;
@@ -16,7 +17,7 @@ export interface DialogData {
 @Component({
   selector: 'app-material-dialog',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, MatDialogClose, CommonModule],
+  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, MatDialogClose, CommonModule, TranslateModule],
   templateUrl: './material-dialog.component.html',
   styleUrl: './material-dialog.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

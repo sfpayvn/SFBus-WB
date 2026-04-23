@@ -18,6 +18,7 @@ import { BusLayoutTemplatesService } from '../../../bus-layout-templates/service
 import { BusTemplate } from '../../../bus-templates/model/bus-template.model';
 import { BusTemplatesService } from '../../../bus-templates/service/bus-templates.servive';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface BusLayoutTemplateWithLayoutsMatrix extends BusLayoutTemplate {
   layoutsForMatrix: any;
@@ -66,6 +67,7 @@ export class BusDetailComponent implements OnInit {
     private busTemplatesService: BusTemplatesService,
     private router: Router,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -298,7 +300,7 @@ export class BusDetailComponent implements OnInit {
         if (res) {
           const updatedState = { ...history.state, bus: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('Bus update successfully');
+          toast.success(this.translate.instant('messages.busUpdated'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),
@@ -313,7 +315,7 @@ export class BusDetailComponent implements OnInit {
           const updatedState = { ...history.state, bus: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
           this.initForm();
-          toast.success('Bus added successfully');
+          toast.success(this.translate.instant('messages.busAdded'));
         }
       },
       error: (error: any) => this.utils.handleRequestError(error),

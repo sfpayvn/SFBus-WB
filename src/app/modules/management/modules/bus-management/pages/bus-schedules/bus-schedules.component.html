@@ -5,21 +5,21 @@
         (click)="changeViewDisplayMode('calendar')"
         [ngClass]="{ 'bg-white !text-indigo-600': viewDisplayMode == 'calendar' }"
         class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
-        Calendar
+        {{ 'labels.Calendar' | translate }}
       </button>
       <button
         (click)="changeViewDisplayMode('table')"
         [ngClass]="{ 'bg-white !text-indigo-600': viewDisplayMode == 'table' }"
         class="text-muted-foreground rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-indigo-600">
-        Table
+        {{ 'labels.Table' | translate }}
       </button>
     </div>
     <div class="flex items-center gap-4">
       <button
         class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
         nz-button
-        aria-label="Import CSV">
-        Import CSV
+        [attr.aria-label]="'buttons.Import CSV' | translate">
+        {{ 'buttons.Import CSV' | translate }}
       </button>
       <button
         class="!min-w-24 !bg-primary !flex !h-max !justify-center !rounded-lg !py-2 !px-3 !text-white hover:!border-red-500 hover:!bg-red-200 hover:!text-red-500"
@@ -29,7 +29,7 @@
         [capModule]="moduleKeys.BUS_SCHEDULE"
         [capFunction]="functionKeys.BUS_SCHEDULE.CREATE"
         type="button">
-        Add Bus Schedule
+        {{ 'labels.Add Bus Schedule' | translate }}
       </button>
     </div>
   </div>

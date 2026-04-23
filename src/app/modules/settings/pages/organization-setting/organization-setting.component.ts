@@ -3,10 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utils } from '@rsApp/shared/utils/utils';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 import { Setting, Setting2Create, Setting2Update } from '../../model/setting.model';
 import { SettingService } from '../../services/setting.service';
 import { SettingCacheService } from '../../services/setting-cache.service';
 import { firstValueFrom } from 'rxjs';
+import { User } from '@rsApp/modules/management/modules/user-management/model/user.model';
+import { CredentialService } from '@rsApp/shared/services/credential.service';
+import { OrganizationService } from '@rsApp/core/services/organization.service';
 
 @Component({
   selector: 'app-organization-setting',
@@ -15,6 +19,11 @@ import { firstValueFrom } from 'rxjs';
   standalone: false,
 })
 export class OrganizationSettingComponent implements OnInit {
+  maskConfig = {
+    dropSpecialCharacters: true,
+    showMaskTyped: true,
+  };
+
   mainForm!: FormGroup;
 
   settings: Setting[] = [];
@@ -23,27 +32,36 @@ export class OrganizationSettingComponent implements OnInit {
 
   isLoaded: boolean = false;
 
+  currentUser!: User;
+
   constructor(
     private fb: FormBuilder,
     public utils: Utils,
     private utilsModal: UtilsModal,
     private settingService: SettingService,
     private settingCacheService: SettingCacheService,
+    private credentialService: CredentialService,
+    private organizationService: OrganizationService,
+    private translate: TranslateService,
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.loadCurrentUser();
     this.initForm();
     this.loadCurrentSettings();
+  }
+
+  async loadCurrentUser() {
+    this.currentUser = await this.credentialService.getCurrentUser();
   }
 
   initForm() {
     this.mainForm = this.fb.group({
       organizationName: ['', [Validators.required, Validators.minLength(2)]],
-      organizationCode: ['', [Validators.required]],
+      tenantCode: [{ value: this.currentUser?.tenant?.code || '', disabled: true }, [Validators.required]],
       address: ['', [Validators.required]],
       phone: ['', [Validators.required, Validators.pattern(/^[0-9\-\+\(\)\s]+$/)]],
       email: ['', [Validators.required, Validators.email]],
-      website: [''],
     });
 
     this.initialFormValue = this.mainForm.getRawValue();
@@ -80,8 +98,6 @@ export class OrganizationSettingComponent implements OnInit {
         case 'organizationName':
           this.mainForm.patchValue({ organizationName: value });
           break;
-        case 'organizationCode':
-          this.mainForm.patchValue({ organizationCode: value });
           break;
         case 'address':
           this.mainForm.patchValue({ address: value });
@@ -117,7 +133,7 @@ export class OrganizationSettingComponent implements OnInit {
   async onSubmit() {
     if (!this.mainForm.valid) {
       this.utils.markFormGroupTouched(this.mainForm);
-      toast.error('Vui lòng điền đầy đủ thông tin theo yêu cầu');
+      toast.error(this.translate.instant('settings.organizationSetting.errorFillAllFields'));
       return;
     }
 
@@ -131,11 +147,6 @@ export class OrganizationSettingComponent implements OnInit {
       {
         name: 'organizationName',
         value: formValue.organizationName,
-        groupName: 'organization',
-      },
-      {
-        name: 'organizationCode',
-        value: formValue.organizationCode,
         groupName: 'organization',
       },
       {
@@ -169,7 +180,10 @@ export class OrganizationSettingComponent implements OnInit {
       // Update baseline after successful save
       this.initialFormValue = this.mainForm.getRawValue();
 
-      toast.success('Organization settings updated successfully');
+      // Update organization name everywhere (title + subscribers)
+      this.organizationService.updateOrganizationName(formValue.organizationName || 'SFBus');
+
+      toast.success(this.translate.instant('settings.organizationSetting.orgSettingsUpdated'));
     } catch (error: any) {
       this.utils.handleRequestError(error);
       throw error;
@@ -183,7 +197,7 @@ export class OrganizationSettingComponent implements OnInit {
         if (result) {
           this.mainForm.reset();
           this.initialFormValue = this.mainForm.getRawValue();
-          toast.success('Settings reset to default');
+          toast.success(this.translate.instant('buttons.Reset'));
         }
       });
   }

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { Driver } from '../../../../model/driver.model';
 import { toast } from 'ngx-sonner';
 import { Utils } from '@rsApp/shared/utils/utils';
@@ -21,7 +22,7 @@ export class UserDriverInfoComponent implements OnInit {
 
   isLoaded = false;
 
-  constructor(private fb: FormBuilder, private driversService: DriversService, private utils: Utils) {}
+  constructor(private fb: FormBuilder, private driversService: DriversService, private utils: Utils, private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.initData();
@@ -58,7 +59,7 @@ export class UserDriverInfoComponent implements OnInit {
 
   onSubmit() {
     if (!this.driverForm.valid) {
-      toast.error('Vui lòng kiểm tra lại thông tin');
+      toast.error(this.translate.instant('errors.checkInformation'));
       return;
     }
 
@@ -83,7 +84,7 @@ export class UserDriverInfoComponent implements OnInit {
         next: (driver: Driver) => {
           this.driver = driver;
           this.driverForm.markAsPristine();
-          toast.success('Tài xế đã được tạo thành công');
+          toast.success(this.translate.instant('messages.driverCreatedSuccess'));
           this.initialFormValue = JSON.parse(JSON.stringify(this.driverForm.getRawValue()));
         },
       });
@@ -106,7 +107,7 @@ export class UserDriverInfoComponent implements OnInit {
       this.driversService.updateDriver(driver2Update).subscribe({
         next: (driver: Driver) => {
           this.driver = driver;
-          toast.success('Tài xế đã được cập nhật thành công');
+          toast.success(this.translate.instant('messages.driverUpdatedSuccess'));
           this.driverForm.markAsPristine();
           this.initialFormValue = JSON.parse(JSON.stringify(this.driverForm.getRawValue()));
         },

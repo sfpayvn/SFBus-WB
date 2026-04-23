@@ -17,9 +17,9 @@ export class GoodsStatsCardComponent implements OnInit, OnChanges {
 
   isLoading = false;
   stats: StatisticCard = {
-    title: "Hàng hóa vận chuyển",
+    title: "goodsStats.title",
     value: 0,
-    unit: "kiện",
+    unit: "goodsStats.unit.package",
     icon: "assets/icons/heroicons/outline/cube.svg",
     color: "text-purple-600",
     bgColor: "bg-purple-50",

@@ -26,6 +26,7 @@ import { GoodsChartComponent } from './components/goods-chart/goods-chart.compon
 import { GoodsStatsCardComponent } from './components/goods-stats-card/goods-stats-card.component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { GoodsReportComponent } from './pages/goods-report/goods-report.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -37,6 +38,7 @@ import { GoodsReportComponent } from './pages/goods-report/goods-report.componen
     NZModule,
     BaseChartDirective,
     AngularSvgIconModule,
+    TranslateModule,
   ],
   declarations: [
     ReportComponent,

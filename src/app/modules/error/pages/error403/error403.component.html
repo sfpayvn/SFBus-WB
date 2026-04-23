@@ -16,17 +16,17 @@
     <h1 class="text-6xl font-bold text-red-600 mb-4">403</h1>
 
     <!-- Error Title -->
-    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Truy cập bị từ chối</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ 'errors.error403.title' | translate }}</h2>
 
     <!-- Error Description -->
     <p class="text-gray-600 mb-4">
-      Bạn không có quyền truy cập tài nguyên này. Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là một lỗi.
+      {{ 'errors.error403.description' | translate }}
     </p>
 
     <!-- Info Box -->
     <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
       <p class="text-sm text-red-700">
-        <strong>Tại sao?</strong> Tài khoản của bạn không có các quyền cần thiết để truy cập phần này của ứng dụng.
+        <strong>{{ 'errors.error403.why' | translate }}</strong> {{ 'errors.error403.whyDescription' | translate }}
       </p>
     </div>
 
@@ -36,22 +36,22 @@
         routerLink="/dashboard"
         class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
       >
-        ← Quay lại Dashboard
+        {{ 'errors.error403.backToDashboard' | translate }}
       </a>
 
       <a
         routerLink="/"
         class="inline-block px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
       >
-        Trang chủ
+        {{ 'errors.error403.homepage' | translate }}
       </a>
     </div>
 
     <!-- Contact Support -->
     <div class="mt-8 pt-8 border-t border-gray-200">
       <p class="text-sm text-gray-500">
-        Nếu bạn cần hỗ trợ, vui lòng
-        <a href="mailto:support@example.com" class="text-blue-600 hover:underline font-medium">liên hệ bộ phận hỗ trợ</a>
+        {{ 'errors.error403.support' | translate }}
+        <a href="mailto:support@example.com" class="text-blue-600 hover:underline font-medium">{{ 'errors.error403.contactSupport' | translate }}</a>
       </p>
     </div>
   </div>

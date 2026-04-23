@@ -1,11 +1,14 @@
 {
   "sidebar": {
+    "Base": "Base",
+    "Config": "Config",
     "Dashboard": "Dashboard",
     "Users Management": "User Management",
     "Client": "Client",
     "Driver": "Driver",
     "POS": "POS",
     "Operator": "Operator",
+    "Tenant": "Tenant",
 
     "Media Center": "Media Center",
 
@@ -27,7 +30,7 @@
     "Bus Schedule Templates": "Bus Schedule Templates",
 
     "Bus Routes": "Bus Routes",
-    "Bus Layout Templates": "Bus Layout Templates",
+    "Bus Layout Template": "Bus Layout Templates",
 
     "Bus Settings": "Bus Settings",
     "Bus Provices": "Bus Provinces",
@@ -40,15 +43,980 @@
     "Booking Management": "Booking Management",
     "Payment Management": "Payment Management",
     "Payment Methods": "Payment Methods",
+    "Fee Tax Management": "Fee Tax Management",
+    "Tenant Management": "Tenant Management",
+    "Subscription Management": "Subscription Management",
     "Notification Management": "Notification Management",
 
     "Content Management": "Content Management",
     "Layouts": "Layouts",
-    "Widgets": "Widgets",
+    "Widget": "Widget",
 
     "Settings": "Settings",
     "Theme setting": "Theme setting",
     "Bus schedule setting": "Bus schedule setting",
-    "Organization setting": "Organization setting"
+    "Organization setting": "Organization setting",
+    "Default setting": "Default setting"
+  },
+
+  "buttons": {
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "Submit": "Submit",
+    "Add": "Add",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Close": "Close",
+    "Confirm": "Confirm",
+    "Search": "Search",
+    "Reset": "Reset",
+    "reset": "Reset",
+    "Back": "Back",
+    "Next": "Next",
+    "Previous": "Previous",
+    "Create": "Create",
+    "Update": "Update",
+    "Clone": "Clone",
+    "Import CSV": "Import CSV",
+    "Dismiss": "Dismiss",
+    "Yes": "Yes",
+    "No": "No",
+    "OK": "OK",
+    "preview": "Preview",
+    "selectImage": "Select Image",
+    "editAddress": "Edit Address",
+    "deleteAddress": "Delete Address",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "importCSV": "Import CSV",
+    "editSetting": "Edit Setting",
+    "cloneSetting": "Clone Setting",
+    "deleteSetting": "Delete Setting",
+    "SignUp": "Sign Up",
+    "SignIn": "Sign In"
+  },
+
+  "common": {
+    "Back": "Back",
+    "Name": "Name",
+    "Email": "Email",
+    "Phone": "Phone",
+    "Phone Number": "Phone Number",
+    "Address": "Address",
+    "Code": "Code",
+    "Status": "Status",
+    "Description": "Description",
+    "Value": "Value",
+    "Required": "Required",
+    "Optional": "Optional",
+    "Loading": "Loading",
+    "Error": "Error",
+    "Success": "Success",
+    "Warning": "Warning",
+    "Info": "Info",
+    "Message": "Message",
+    "License Plate": "License Plate",
+    "No data found": "No data found",
+    "Select all": "Select all",
+    "Avatar": "Avatar",
+    "Image": "Image",
+    "Role": "Role",
+    "or": "or"
+  },
+
+  "auth": {
+    "tagline": "Fast, Efficient and Productive",
+    "description": "SFBus WB is a comprehensive management platform for bus transit and freight transportation. With powerful features including ticket booking management, electronic invoice creation, detailed analytics, and user role-based access control, we help you optimize your business processes and enhance customer service.",
+    "Hello Again": "Hello Again",
+    "Enter your credential to access your account": "Enter your credential to access your account",
+    "Tenant Code": "Tenant Code",
+    "Please enter your phone number": "Please enter your phone number",
+    "Verify OTP": "Verify OTP",
+    "Server Error": "Oops! Server Error",
+    "signInGoogle": "Sign in with Google",
+    "signIn": {
+      "greeting": "Hello Again!",
+      "title": "Sign In"
+    },
+    "signUp": {
+      "title": "Sign Up!",
+      "subtitle": "Let's get started with your 30 day free trial",
+      "googleButton": "Sign Up with Google",
+      "acceptTerms": "I agree to the terms and conditions"
+    },
+    "newPassword": {
+      "title": "Setup New Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "common": {
+      "or": "or"
+    },
+    "verifyOtp": {
+      "title": "Phone Number Verification",
+      "description": "Enter the verification code we sent to",
+      "resendButton": "Re-Sent OTP",
+      "resendOtp": "Re-Sent OTP",
+      "submit": "Submit"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "description": "Enter your email to reset your password",
+      "phoneNumber": "Phone Number",
+      "placeholder": "Enter Phone Number",
+      "requiredPhone": "Please enter phone number",
+      "invalidPhone": "Please enter valid phone number",
+      "submit": "Submit"
+    },
+    "phoneNumberInvalid": "Invalid phone number",
+    "tenantCodeRequired": "Tenant Code is required",
+    "forgotPasswordQuestion": "Forgot your password?",
+    "notMemberYet": "Not a member yet?",
+    "rememberMe": "Remember Me"
+  },
+
+  "account": {
+    "myAccount": "My Account",
+    "basicInfo": "Basic Information",
+    "mySubscriptions": "My Subscriptions",
+    "mySubscription": "My Subscription",
+    "changePassword": "Change Password",
+    "oldPassword": "Old Password",
+    "loading": "Loading..."
+  },
+
+  "user": {
+    "driverInfo": "Driver Information"
+  },
+
+  "reports": {
+    "title": "Report Statistics",
+    "statisticsReport": {
+      "title": "Report Statistics"
+    },
+    "bookingReport": {
+      "title": "Booking Report"
+    },
+    "bookingAnalysis": {
+      "title": "Booking Detailed Analysis"
+    },
+    "goodsAnalysis": {
+      "title": "Goods Detailed Analysis"
+    },
+    "tabs": {
+      "ticketsSold": "Tickets Sold",
+      "revenue": "Revenue",
+      "trips": "Trips",
+      "goods": "Goods",
+      "goodsRevenue": "Goods Revenue"
+    },
+    "ticketSales": "Ticket Sales",
+    "revenue": "Revenue",
+    "busTrips": "Bus Trips",
+    "goods": "Goods",
+    "goodsRevenue": "Goods Revenue"
+  },
+
+  "report": {
+    "currentPeriod": "Current Period",
+    "comparisonPeriod": "Comparison Period"
+  },
+
+  "labels": {
+    "Fee Type": "Fee Type",
+    "All Types": "All Types",
+    "All Statuses": "All Statuses",
+    "Add Fee/Tax": "Add Fee/Tax",
+    "Add New Fee/Tax": "Add New Fee/Tax",
+    "Edit Fee/Tax": "Edit Fee/Tax",
+    "Fee Type is required": "Fee Type is required",
+    "Name": "Name",
+    "Name is required": "Name is required",
+    "Applied On": "Applied On",
+    "Applied On is required": "Applied On is required",
+    "Calculation Type": "Calculation Type",
+    "Calculation Type is required": "Calculation Type is required",
+    "Value is required": "Value is required",
+    "Value must be greater than 0": "Value must be greater than 0",
+    "Priority (0-1000)": "Priority (0-1000)",
+    "Priority is required": "Priority is required",
+    "Priority must be >= 0": "Priority must be >= 0",
+    "Priority must be <= 1000": "Priority must be <= 1000",
+    "Valid From": "Valid From",
+    "Valid To": "Valid To",
+    "Add optional description": "Add optional description",
+    "e.g., Booking Fee": "e.g., Booking Fee",
+    "Fee": "Fee",
+    "Tax": "Tax",
+    "Fixed Amount": "Fixed Amount",
+    "Percentage": "Percentage",
+    "Ticket Price": "Ticket Price",
+    "Total Booking": "Total Booking",
+    "After Discount": "After Discount",
+    "Active": "Active",
+    "Inactive": "Inactive",
+    "Type": "Type",
+    "Calculation": "Calculation",
+    "Priority": "Priority",
+    "Actions": "Actions",
+    "password": "Password",
+    "View Details": "View Details",
+    "Manage booking fees and taxes configurations": "Manage booking fees and taxes configurations",
+    "Please fill all required fields": "Please fill all required fields",
+    "Please fill all required fields correctly": "Please fill all required fields correctly",
+    "Lower numbers apply first. Fees at priority 10, Taxes at 50": "Lower numbers apply first. Fees at priority 10, Taxes at 50",
+    "Select date": "Select date",
+    "Original Price": "Original Price",
+    "Discount": "Discount",
+    "Subtotal": "Subtotal",
+    "Fees": "Fees",
+    "Taxes": "Taxes",
+    "Total Fees": "Total Fees",
+    "Total Taxes": "Total Taxes",
+    "Total Amount Payable": "Total Amount Payable",
+    "Tenant Name": "Tenant Name",
+    "Enter tenant name": "Enter tenant name",
+    "enterName": "Enter Name",
+    "Please enter tenant name": "Please enter tenant name",
+    "Name must be at least 2 characters": "Name must be at least 2 characters",
+    "Organization Name": "Organization Name",
+    "Enter organization name": "Enter organization name",
+    "Organization name is required": "Organization name is required",
+    "Organization Code": "Organization Code",
+    "Enter organization code": "Enter organization code",
+    "Organization code is required": "Organization code is required",
+    "Enter address": "Enter address",
+    "Address is required": "Address is required",
+    "Enter phone number": "Enter phone number",
+    "Phone number is required": "Phone number is required",
+    "Please enter valid phone number": "Please enter valid phone number",
+    "Add Bus": "Add Bus",
+    "Add Bus Station": "Add Bus Station",
+    "Add Bus Type": "Add Bus Type",
+    "Add Bus Service": "Add Bus Service",
+    "Add Bus Template": "Add Bus Template",
+    "Add Bus Route": "Add Bus Route",
+    "Add Bus Schedule": "Add Bus Schedule",
+    "Add Bus Layout Template": "Add Bus Layout Template",
+    "Add Bus Province": "Add Bus Province",
+    "Add Bus Schedule Template": "Add Bus Schedule Template",
+    "Add Bus Schedule Auto": "Add Bus Schedule Auto",
+    "Add Seat Type": "Add Seat Type",
+    "Add Goods Category": "Add Goods Category",
+    "All Goods Category": "All Goods Category",
+    "All Bus Schedule": "All Bus Schedule",
+    "Is Environment": "Is Environment",
+    "Is Office": "Is Office",
+    "Is Active": "Is Active",
+    "Gender": "Gender",
+    "Bus Route": "Bus Route",
+    "Bus Services": "Bus Services",
+    "busScheduleTemplate": "Bus Schedule Template",
+    "selectBusScheduleTemplate": "Select Bus Schedule Template",
+    "busDrivers": "Bus Drivers",
+    "selectBusDrivers": "Select Bus Drivers",
+    "busTemplates": "Bus Templates",
+    "selectTemplate": "Select Template",
+    "selectBusServices": "Select Bus Services",
+    "selectBusType": "Select Bus Type",
+    "selectBusLayoutTemplate": "Select Bus Layout Template",
+    "Bus Layout Template Review": "Bus Layout Template Review",
+    "Layout Bus Template": "Layout Bus Template",
+    "Show per page": "Show per page",
+    "passwordRequirements": "Password Requirements",
+    "tenantName": "Tenant Name",
+    "tenantCode": "Tenant Code",
+    "phoneNumber": "Phone Number",
+    "password": "Password",
+    "advancedFilter": "Advanced Filters",
+    "mainPeriod": "Main Period",
+    "comparisonPeriod": "Comparison Period",
+    "results": "Results",
+    "availabilityDueDate": "Schedule Availability Cutoff",
+    "name": "Name",
+    "email": "Email",
+    "birthDate": "Birth Date",
+    "address": "Address",
+    "addressType": "Address Type",
+    "avatar": "Avatar",
+    "gender": "Gender",
+    "Calendar": "Calendar",
+    "Table": "Table",
+    "Run rule every": "Run rule every",
+    "Repeat Types": "Repeat Types",
+    "Days": "Days",
+    "Weeks": "Weeks",
+    "PreGenerate Days": "PreGenerate Days",
+    "Start Date": "Start Date",
+    "End Date": "End Date",
+    "Never": "Never",
+    "On": "On",
+    "At": "At",
+    "Add Specific TimeSlot": "Add Specific TimeSlot",
+    "Layout Name": "Layout Name",
+    "Select Type": "Select Type",
+    "Add Layout": "Add Layout",
+    "Details": "Details",
+    "Edit": "Edit",
+    "Add New": "Add New",
+    "Distance": "Distance",
+    "Distance Time": "Distance Time",
+    "Break Points": "Break Points",
+    "Add Break Point": "Add Break Point",
+    "Select Bus Station": "Select Bus Station",
+    "Please select at least 2 bus stations": "Please select at least 2 bus stations",
+    "Cannot select duplicate bus stations": "Cannot select duplicate bus stations"
+  },
+
+  "calendar": {
+    "today": "Today",
+    "list": "List",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month"
+  },
+
+  "messages": {
+    "error": {
+      "title": "Oh no! Something went wrong.",
+      "tryLater": "Please try again later",
+      "requestFailed": "Oh No! Some things wrong error"
+    },
+    "busType": {
+      "deleteConfirm": "Delete Bus Type",
+      "deleteMessage": "Are you sure you want to delete this bus type? All of your data will be permanently removed. This action cannot be undone.",
+      "deletedSuccess": "Bus Type deleted successfully",
+      "createdSuccess": "Add Bus Type successfully",
+      "updatedSuccess": "Update Bus Type successfully",
+      "clonedSuccess": "Bus Type cloned successfully"
+    },
+    "Fee/Tax created successfully": "Fee/Tax created successfully",
+    "Fee/Tax updated successfully": "Fee/Tax updated successfully",
+    "Fee/Tax deleted successfully": "Fee/Tax deleted successfully",
+    "Failed to load fee/tax configurations": "Failed to load fee/tax configurations",
+    "Failed to create fee/tax": "Failed to create fee/tax",
+    "Failed to update fee/tax": "Failed to update fee/tax",
+    "Failed to delete fee/tax": "Failed to delete fee/tax",
+    "Are you sure you want to delete this fee/tax configuration?": "Are you sure you want to delete this fee/tax configuration?",
+    "goodsCreatedSuccess": "Goods created successfully",
+    "goodsUpdatedSuccess": "Goods updated successfully",
+    "goodsDeletedSuccess": "Goods deleted successfully",
+    "busLayoutSaved": "Bus layout saved",
+    "busLayoutCreated": "Bus layout created successfully",
+    "confirmAction": "Confirm action",
+    "operationFailed": "Operation failed",
+    "exceedImageLimit": "Maximum {{count}} images allowed. Please delete old images before adding new ones.",
+    "imageExceededLimit": "{{count}} images exceed the limit of {{limit}} images",
+    "imageDeletedSuccess": "Image deleted successfully",
+    "imageDeleted": "Image deleted successfully",
+    "fillAllRequiredInfo": "Please fill in all required information",
+    "paymentSuccessful": "Payment successful",
+    "paymentSuccess": "Payment successful",
+    "paymentFailed": "Payment failed",
+    "seatNameInvalid": "Invalid name. Name must be in format A01, A02, ..., A99.",
+    "seatNameAlreadyUsed": "This name is already used. Please choose another name.",
+    "BusLayoutTemplateUpdated": "Bus layout template updated successfully",
+    "BusLayoutTemplateCreated": "Bus layout template created successfully",
+    "busLayoutUpdated": "Bus layout template updated successfully",
+    "busLayoutAdded": "Bus layout template created successfully",
+    "busRouteUpdated": "Bus Route updated successfully",
+    "busRouteAdded": "Bus Route added successfully",
+    "imagePastedSuccess": "Image pasted successfully",
+    "fileDeletedSuccess": "File deleted successfully",
+    "fileAdded": "File added successfully",
+    "folderUpdated": "Folder updated successfully",
+    "folderCreated": "Folder created successfully",
+    "folderDeleted": "Folder deleted successfully",
+    "goodsUpdated": "Goods updated successfully",
+    "goodsAdded": "Goods added successfully",
+    "promotionUpdated": "Promotion updated successfully",
+    "promotionAdded": "Promotion added successfully",
+    "driverCreatedSuccess": "Driver created successfully",
+    "driverUpdatedSuccess": "Driver updated successfully",
+    "userInfoUpdatedSuccess": "User information updated successfully",
+    "userInfoCreatedSuccess": "User information created successfully",
+    "passwordUpdatedSuccess": "Password updated successfully",
+    "resetLinkSentSuccess": "Link reset password has been resent successfully",
+    "passwordResetSuccess": "Password has been reset successfully",
+    "ticketDeletedSuccess": "Ticket deleted successfully",
+    "ticketDeleteFailed": "Failed to delete ticket",
+    "busScheduleSettingsUpdated": "Bus Schedule settings updated successfully",
+    "settingsResetDefault": "Settings reset to default",
+    "settingDeletedSuccess": "Setting deleted successfully",
+    "settingUpdatedSuccess": "Setting updated successfully",
+    "settingAddedSuccess": "Setting added successfully",
+    "settingClonedSuccess": "Setting cloned successfully",
+    "organizationSettingsUpdated": "Organization settings updated successfully",
+    "settingsSavedSuccess": "Settings saved successfully",
+    "noChangesToSave": "No changes to save",
+    "contentLayoutAdded": "Content Layout added successfully",
+    "contentLayoutUpdated": "Content Layout updated successfully",
+    "contentLayoutDeletedSuccess": "Content layout deleted successfully",
+    "widgetBlockAdded": "Widget Block added successfully",
+    "goodsCategoryDeletedSuccess": "Goods Category deleted successfully",
+    "goodsCategoryUpdatedSuccess": "Goods Category updated successfully",
+    "seatTypeAddedSuccess": "Seat Type added successfully",
+    "paymentMethodUpdated": "Payment Method updated successfully",
+    "paymentMethodAdded": "Payment Method added successfully",
+    "paymentMethodDeletedSuccess": "Payment Method deleted successfully",
+    "subscriptionCategoryDeletedSuccess": "Subscription deleted successfully",
+    "tenantSubscriptionRegistered": "Tenant subscription registered successfully",
+    "tenantUpdated": "Tenant updated successfully",
+    "tenantAdded": "Tenant added successfully",
+    "tenantCategoryDeletedSuccess": "Tenant deleted successfully",
+    "seatTypeDeletedSuccess": "Seat Type deleted successfully",
+    "seatTypeUpdatedSuccess": "Seat Type updated successfully",
+    "busLayoutTemplateDeletedSuccess": "Bus Layout Template deleted successfully",
+    "busDeletedSuccess": "Bus deleted successfully",
+    "clonedSuccess": "Cloned successfully",
+    "busScheduleRunSuccess": "Run bus schedule successfully",
+    "busTypeDeletedSuccess": "Bus Type deleted successfully",
+    "busTypeUpdatedSuccess": "Bus Type updated successfully",
+    "busTypeAddedSuccess": "Bus Type added successfully",
+    "busUpdated": "Bus updated successfully",
+    "busAdded": "Bus added successfully",
+    "busServiceDeletedSuccess": "Bus Service deleted successfully",
+    "busServiceUpdatedSuccess": "Bus Service updated successfully",
+    "busServiceAddedSuccess": "Bus Service added successfully",
+    "busStationDeletedSuccess": "Bus Station deleted successfully",
+    "busStationUpdatedSuccess": "Bus Station updated successfully",
+    "busStationAddedSuccess": "Bus Station added successfully",
+    "provinceDeletedSuccess": "Province deleted successfully",
+    "updateSuccess": "Updated successfully",
+    "provinceAddedSuccess": "Province added successfully",
+    "userDeletedSuccess": "User deleted successfully",
+    "excelExportDeveloping": "Excel export feature is being developed",
+    "qrPaymentDeveloping": "QR payment feature is being developed",
+    "otpResendSuccess": "OTP has been resent successfully"
+  },
+
+  "tooltips": {
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Save": "Save",
+    "View Details": "View Details",
+    "Create": "Create",
+    "Update": "Update"
+  },
+
+  "errors": {
+    "unauthorized": {
+      "action": "You do not have permission to perform this action"
+    },
+    "fillRequiredFields": "Please fill in all required fields",
+    "copyImageFirst": "Please copy an image before pasting",
+    "pasteImageFailed": "Failed to paste image. Please check clipboard permissions or try another method",
+    "maxImagesReached": "Maximum {{MAX_IMAGES}} images reached. Please delete old images before adding new ones.",
+    "imagesExceededLimit": "{{exceededCount}} images exceed the limit of {{MAX_IMAGES}} images",
+    "invalidSeatName": "Invalid name. Name must be in format A01, A02, ..., A99.",
+    "seatNameExists": "This name is already used. Please choose another name.",
+    "cannotUpdatePublished": "Cannot update already published schedule",
+    "checkInformation": "Please check the information again",
+    "failedLoadRoutes": "Failed to load routes list",
+    "selectImageFile": "Please select an image file",
+    "savingSettingsFailed": "Failed to save settings",
+    "fileUploadFailed": "File upload failed",
+    "noSubscriptionsAvailable": "No subscriptions available",
+    "selectSubscriptionPlan": "Please select a subscription plan",
+    "otpVerificationFailed": "OTP verification failed",
+    "authenticationError": "An error occurred during authentication. Please try again later.",
+    "selectDateRange": "Please select a date range",
+    "folderUpdateFailed": "Failed to update folder",
+    "folderCreationFailed": "Failed to create folder",
+    "folderDeleteFailed": "Failed to delete folder",
+    "genericError": "Oh No! Some things wrong error",
+    "tryAgainLater": "Please try again later",
+    "somethingWentWrong": "Oh no! Something went wrong.",
+    "quotaExceeded": "You have exceeded your quota for this feature.",
+    "error403": {
+      "title": "Access Denied",
+      "description": "You do not have permission to access this resource. Please contact the administrator if you think this is an error.",
+      "why": "Why?",
+      "whyDescription": "Your account does not have the necessary permissions to access this part of the application.",
+      "backToDashboard": "← Back to Dashboard",
+      "homepage": "Homepage",
+      "support": "If you need support, please",
+      "contactSupport": "contact our support team"
+    },
+    "error404": {
+      "title": "Oops!",
+      "description": "We can't find that page. You can go back to the previous page or go to the homepage.",
+      "homepage": "Homepage"
+    },
+    "error500": {
+      "title": "Oops! Server Error",
+      "description": "Please try again later. If the issue persists, feel free to contact us for assistance.",
+      "homepage": "Homepage"
+    },
+    "fillAllRequiredFields": "Please fill all required fields"
+  },
+
+  "settings": {
+    "organization": {
+      "title": "Organization Settings",
+      "organizationName": "Organization Name",
+      "address": "Address",
+      "phone": "Phone Number",
+      "email": "Email"
+    },
+    "theme": {
+      "title": "Theme Settings",
+      "tenantName": "Business Name"
+    },
+    "busSchedule": {
+      "title": "Bus Schedule Settings",
+      "editor": "Editor",
+      "json": "JSON",
+      "enterJson": "Enter JSON",
+      "transitPolicy": "Transit Policy",
+      "enterTransitPolicy": "Enter transit policy...",
+      "bookingCancellationPolicy": "Booking Cancellation Policy",
+      "enterBookingPolicy": "Enter booking cancellation policy...",
+      "boardingRequirements": "Boarding Requirements Policy",
+      "enterBoardingPolicy": "Enter boarding requirements...",
+      "carryOnBaggage": "Carry On Baggage Policy",
+      "enterBaggagePolicy": "Enter carry on baggage policy...",
+      "childAndPregnancy": "Child and Pregnancy Policy",
+      "enterPregnancyPolicy": "Enter child and pregnancy policy...",
+      "roadsidePickup": "Roadside Pickup Policy",
+      "enterPickupPolicy": "Enter roadside pickup policy...",
+      "otherPolicy": "Other Policy",
+      "enterOtherPolicy": "Enter other policy...",
+      "scheduleAvailabilityCutoff": "Schedule Availability Cutoff"
+    },
+    "themeSetting": {
+      "title": "Theme Settings",
+      "logo": "Logo",
+      "uploadLogo": "Upload Logo",
+      "localFile": "Local File",
+      "mediaCenter": "Media Center",
+      "businessName": "Business Name",
+      "placeholderBusinessName": "Enter business name",
+      "errorBusinessNameRequired": "Please enter business name",
+      "errorBusinessNameMinLength": "Name must be at least 2 characters",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "errorSelectImage": "Please select an image file",
+      "settingsSaved": "Settings saved successfully",
+      "saveFailed": "Failed to save settings",
+      "uploadFailed": "Upload failed",
+      "noChanges": "No changes to save",
+      "resetToDefault": "Reset to default"
+    },
+    "organizationSetting": {
+      "title": "Organization Settings",
+      "organizationName": "Organization Name",
+      "placeholderOrganizationName": "Enter organization name",
+      "errorOrganizationNameRequired": "Organization name is required",
+      "organizationCode": "Organization Code",
+      "placeholderOrganizationCode": "Enter organization code",
+      "placeholderAddress": "Enter address",
+      "errorAddressRequired": "Address is required",
+      "placeholderPhone": "Enter phone number",
+      "errorPhoneRequired": "Phone number is required",
+      "errorPhoneInvalid": "Please enter valid phone number",
+      "placeholderEmail": "Enter email",
+      "errorEmailRequired": "Email is required",
+      "errorEmailInvalid": "Email is invalid",
+      "errorFillAllFields": "Please fill all required information",
+      "orgSettingsUpdated": "Organization settings updated successfully"
+    },
+    "busScheduleSetting": {
+      "errorFillAllFields": "Please fill all required information",
+      "busScheduleSettingsUpdated": "Bus Schedule settings updated successfully"
+    },
+    "defaultSetting": {
+      "title": "Default Settings",
+      "addSetting": "Add Setting",
+      "name": "Name",
+      "groupName": "Group Name",
+      "value": "Value",
+      "actions": "Actions",
+      "settingDeleted": "Setting deleted successfully",
+      "settingUpdated": "Setting updated successfully",
+      "settingAdded": "Setting added successfully"
+    },
+    "common": {
+      "resetDefault": "Reset Default",
+      "save": "Save",
+      "reset": "Reset"
+    }
+  },
+
+  "placeholders": {
+    "auth": {
+      "phoneNumber": "Enter Phone Number",
+      "tenantCode": "Enter Tenant Code",
+      "tenantName": "Enter Tenant Name",
+      "password": "Enter password",
+      "confirmPassword": "Re-enter password"
+    },
+    "account": {
+      "oldPassword": "Enter old password",
+      "newPassword": "Enter new password",
+      "gender": "Select Gender",
+      "role": "Select Role"
+    },
+    "goods": {
+      "routeSelect": "Select route",
+      "scheduleSelect": "Select Bus Schedule",
+      "pickupMethod": "Select pickup method",
+      "deliveryMethod": "Select delivery method",
+      "senderPhone": "Enter phone number",
+      "customerName": "Enter customer name",
+      "address": "Enter address",
+      "stationSelect": "Select station"
+    },
+    "bus": {
+      "name": "Enter Name",
+      "licensePlate": "Enter License Plate",
+      "driverSelect": "Select Drivers",
+      "busTemplate": "Select Bus Template"
+    },
+    "enterAddress": "Enter Address",
+    "enterAmount": "Enter Amount",
+    "enterName": "Enter Name",
+    "enterQuantity": "Enter Quantity",
+    "enterLength": "Enter Length",
+    "enterWidth": "Enter Width",
+    "enterHeight": "Enter Height",
+    "enterWeight": "Enter Weight",
+    "enterAddressType": "Enter Address Type",
+    "selectPaymentMethod": "Select Payment Method",
+    "selectCategory": "Select Category",
+    "selectPayer": "Select Payer",
+    "selectBusRoute": "Select Bus Route",
+    "selectBusSchedule": "Select Bus Schedule",
+    "selectRoute": "Select Route",
+    "search": {
+      "placeholder": "Search",
+      "byId": "Search by name / _id / tenantId"
+    },
+    "filter": {
+      "status": "Filter by status"
+    }
+  },
+
+  "reportHeader": {
+    "businessReport": "Business Report",
+    "dataAnalysis": "Business data statistics and analysis",
+    "reload": "Reload",
+    "exportReport": "Export Report",
+    "exportExcel": "Export Excel",
+    "exportPdf": "Export PDF",
+    "comparison": "Comparison",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "last7Days": "7 Days",
+    "last30Days": "30 Days",
+    "custom": "Custom",
+    "dateRange": {
+      "start": "Select comparison date",
+      "from": "Compare from",
+      "to": "Compare to",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    }
+  },
+  "bookingReport": {
+    "title": "Booking Report",
+    "advancedFilter": "Advanced Filters",
+    "filters": {
+      "route": "Route",
+      "status": "Status"
+    },
+    "placeholders": {
+      "selectRoute": "Select Route",
+      "selectStatus": "Select Status"
+    },
+    "periods": {
+      "main": "Main Period",
+      "comparison": "Comparison Period"
+    },
+    "results": {
+      "title": "Results"
+    },
+    "table": {
+      "time": "Time",
+      "tickets": "Tickets",
+      "revenue": "Revenue"
+    },
+    "errors": {
+      "loadRoutes": "Failed to load routes"
+    }
+  },
+  "goodsReport": {
+    "title": "Goods Report",
+    "advancedFilter": "Advanced Filters",
+    "filters": {
+      "route": "Route",
+      "status": "Status"
+    },
+    "placeholders": {
+      "selectRoute": "Select Route",
+      "selectStatus": "Select Status"
+    },
+    "periods": {
+      "main": "Main Period",
+      "comparison": "Comparison Period"
+    },
+    "results": {
+      "title": "Results"
+    },
+    "table": {
+      "time": "Time",
+      "tickets": "Qty",
+      "revenue": "Revenue"
+    },
+    "errors": {
+      "loadRoutes": "Failed to load routes"
+    }
+  },
+  "scheduleChart": {
+    "title": "Schedule Chart",
+    "tripsLabel": "Trips"
+  },
+  "revenueGoodsChart": {
+    "title": "Goods Revenue Chart"
+  },
+  "topRoute": {
+    "title": "Top Routes",
+    "table": {
+      "route": "Route",
+      "tickets": "Tickets",
+      "revenue": "Revenue",
+      "percentage": "%"
+    }
+  },
+  "bookingRecent": {
+    "title": "Recent Bookings",
+    "table": {
+      "qty": "Qty",
+      "total": "Total"
+    },
+    "seatInfo": "Seat Info",
+    "labels": {
+      "pickup": "Pickup",
+      "dropoff": "Dropoff",
+      "seatPrice": "Seat Price",
+      "seatType": "Seat Type"
+    }
+  },
+  "goodsRecent": {
+    "title": "Recent Goods",
+    "table": {
+      "name": "Name",
+      "qty": "Qty",
+      "shipping": "Shipping"
+    },
+    "details": "Details",
+    "labels": {
+      "sender": "Sender"
+    }
+  },
+  "table": {
+    "idx": "No.",
+    "name": "Name",
+    "phone": "Phone",
+    "status": "Status",
+    "createdAt": "Created At",
+    "actions": "Actions"
+  },
+  "common": {
+    "noInfo": "No information",
+    "unknown": "Unknown",
+    "total": "Total",
+    "detail": "Detail"
+  },
+  "bookingStats": {
+    "totalSold": "Total Sold",
+    "unit": {
+      "ticket": "ticket"
+    }
+  },
+  "scheduleStats": {
+    "title": "Schedule Statistics",
+    "unit": {
+      "trip": "trip"
+    }
+  },
+  "goodsStats": {
+    "title": "Goods Statistics",
+    "unit": {
+      "package": "package"
+    }
+  },
+  "revenueGoodsStats": {
+    "title": "Goods Revenue Statistics"
+  },
+  "goodsChart": {
+    "title": "Goods Chart"
+  },
+  "table": {
+    "headers": {
+      "avatar": "Avatar",
+      "name": "Name",
+      "phoneNumber": "Phone Number",
+      "role": "Role",
+      "actions": "Actions",
+      "plan": "Plan",
+      "price": "Price",
+      "duration": "Duration",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
+    "pagination": {
+      "show": "Show",
+      "perPage": "per page",
+      "of": "of"
+    }
+  },
+  "dialogs": {
+    "confirmDeleteTicket": "Are you sure you want to delete ticket <b>{{bookingNumber}}</b>?"
+  },
+  "hints": {
+    "jsonFormatting": "Ctrl/⌘ + Enter"
+  },
+  "labels": {
+    "localFile": "Local File",
+    "mediaCenter": "Media Center",
+    "licenseExpirationDate": "License Expiration Date",
+    "search": "Search",
+    "reset": "Reset",
+    "senderPhone": "Phone Number",
+    "senderName": "Sender Name",
+    "currentStation": "Current Station",
+    "goodsCode": "Goods Code",
+    "status": "Status",
+    "shippingFee": "Shipping Fee",
+    "paymentMethod": "Payment Method",
+    "busRoute": "Bus Route",
+    "stopPoints": "Stop Points",
+    "provinceCity": "Province/City",
+    "isActive": "Is Active",
+    "icon": "Icon",
+    "actions": "Actions",
+    "member": "Member",
+    "username": "Username",
+    "hobbies": "Hobbies",
+    "occupation": "Occupation",
+    "phone": "Phone",
+    "item": "Item",
+    "openPrice": "Open Price",
+    "recentOffer": "Recent Offer",
+    "timeLeft": "Time Left",
+    "view": "View"
+  },
+  "forms": {
+    "addGoods": "Add Goods",
+    "editGoods": "Edit Goods",
+    "scheduleInformation": "Schedule Information",
+    "senderInformation": "Sender Information",
+    "goodsInformation": "Goods Information",
+    "createPaymentRefund": "Create Refund Payment",
+    "createPayment": "Create Payment",
+    "noPaymentInformation": "No payment information",
+    "deleteFolder": "Delete Folder",
+    "createScheduleInformation": "Create Schedule Information",
+    "editScheduleInformation": "Edit Schedule Information"
+  },
+  "validations": {
+    "passwordRequired": "Please enter password",
+    "passwordInvalid": "Please enter correct password format",
+    "passwordsMismatch": "Passwords do not match",
+    "enterAmount": "Enter amount",
+    "enterPrice": "Please enter price",
+    "priceGreaterThanZero": "Price must be greater than 0",
+    "fillThisField": "Please fill in this field"
+  },
+  "dashboard": {
+    "nftDashboard": {
+      "title": "NFTs Dashboard",
+      "label": "NFTs"
+    },
+    "activeAuctions": {
+      "title": "Active Auctions"
+    }
+  },
+  "placeholders": {
+    "enterPhoneNumber": "Enter Phone Number",
+    "enterEmail": "Enter Email",
+    "enterName": "Enter Name",
+    "selectGender": "Select Gender",
+    "selectRole": "Select Role",
+    "enterOldPassword": "Enter old password",
+    "enterPassword": "Enter password",
+    "confirmPassword": "Confirm password",
+    "enterTenantCode": "Enter Tenant Code",
+    "enterTenantName": "Enter Tenant Name",
+    "searchByNameOrId": "Search by name / _id / tenantId",
+    "filterByStatus": "Filter by status",
+    "enterJSON": "Enter JSON",
+    "selectRoute": "Select Route",
+    "selectStatus": "Select Status",
+    "enterSettingName": "Enter setting name",
+    "enterGroupName": "Enter group name",
+    "enterOrgName": "Enter Organization Name",
+    "enterOrgCode": "Enter Organization Code",
+    "enterAddress": "Enter Address",
+    "enterCompanyName": "Enter Company Name",
+    "enterPasteJSON": "Enter/Paste JSON...",
+    "enterLicenseNumber": "Enter License Number",
+    "enterLicenseType": "Enter License Type",
+    "selectRoute": "Select Route",
+    "selectBusRoute": "Select Bus Route",
+    "searchGoods": "Search",
+    "enterAmount": "Enter amount",
+    "enterAddress": "Enter Address",
+    "enterQuantity": "Enter Quantity",
+    "enterLength": "Enter Length",
+    "enterWidth": "Enter Width",
+    "enterHeight": "Enter Height",
+    "enterWeight": "Enter Weight",
+    "enterAddressType": "Enter Address Type",
+    "selectPaymentMethod": "Select Payment Method",
+    "selectCategory": "Select Category",
+    "selectPayer": "Select Payer",
+    "selectBusSchedule": "Select Bus Schedule",
+    "auth": {
+      "phoneNumber": "Enter Phone Number",
+      "tenantCode": "Enter Tenant Code",
+      "tenantName": "Enter Tenant Name",
+      "password": "Enter password",
+      "confirmPassword": "Re-enter password"
+    },
+    "account": {
+      "oldPassword": "Enter old password",
+      "newPassword": "Enter new password",
+      "gender": "Select Gender",
+      "role": "Select Role"
+    },
+    "goods": {
+      "routeSelect": "Select route",
+      "scheduleSelect": "Select Bus Schedule",
+      "pickupMethod": "Select pickup method",
+      "deliveryMethod": "Select delivery method",
+      "senderPhone": "Enter phone number",
+      "customerName": "Enter customer name",
+      "address": "Enter address",
+      "stationSelect": "Select station"
+    },
+    "bus": {
+      "name": "Enter Name",
+      "licensePlate": "Enter License Plate",
+      "driverSelect": "Select Drivers",
+      "busTemplate": "Select Bus Template"
+    },
+    "search": {
+      "placeholder": "Search",
+      "byId": "Search by name / _id / tenantId"
+    },
+    "filter": {
+      "status": "Filter by status"
+    }
+  },
+  "language": {
+    "vietnamese": "Vietnamese",
+    "english": "English"
   }
 }

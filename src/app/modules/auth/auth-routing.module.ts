@@ -23,7 +23,7 @@ const routes: Routes = [
         data: { returnUrl: window.location.pathname },
         canActivate: [NoAuthGuard],
       },
-      { path: 'sign-up', component: SignUpComponent, canActivate: [NoAuthGuard] },
+      // { path: 'sign-up', component: SignUpComponent, canActivate: [NoAuthGuard] },
       { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [NoAuthGuard] },
       { path: 'verify-otp', component: VerifyOtpComponent, canActivate: [SetupAccountGuard] },
       { path: 'new-password', component: NewPasswordComponent, canActivate: [NoAuthGuard] },

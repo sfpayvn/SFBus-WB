@@ -11,6 +11,7 @@ import { BusStation } from '../bus-stations/model/bus-station.model';
 import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { Utils } from 'src/app/shared/utils/utils';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface filteredProvinces extends BusProvince {
   busStations: BusStation[];
@@ -56,6 +57,7 @@ export class BusProvincesComponent implements OnInit {
     private utils: Utils,
     private dialog: MatDialog,
     public defaultFlagService: DefaultFlagService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -177,7 +179,7 @@ export class BusProvincesComponent implements OnInit {
                   (bp) => bp._id !== busProvince._id,
                 );
                 this.filterProvinces();
-                toast.success('Xóa Tỉnh/Thành Phố thành công');
+                toast.success(this.translate.instant('messages.provinceDeletedSuccess'));
               }
             },
             error: (err: any) => this.utils.handleRequestError(err.error),
@@ -226,7 +228,7 @@ export class BusProvincesComponent implements OnInit {
 
               if (anyUpdated) {
                 this.loadData();
-                toast.success('Cập nhật thành công');
+                toast.success(this.translate.instant('messages.updateSuccess'));
               }
               // nếu none -> không thông báo gì
             });
@@ -251,7 +253,7 @@ export class BusProvincesComponent implements OnInit {
             next: (res: BusProvince) => {
               if (res) {
                 this.loadData();
-                toast.success('Thêm Tỉnh/Thành Phố thành công');
+                toast.success(this.translate.instant('messages.provinceAddedSuccess'));
               }
             },
             error: (err: any) => this.utils.handleRequestError(err.error),
@@ -277,7 +279,7 @@ export class BusProvincesComponent implements OnInit {
         next: (res: BusProvince) => {
           if (res) {
             this.loadData();
-            toast.success('Nhân bản thành công');
+            toast.success(this.translate.instant('messages.clonedSuccess'));
           }
         },
         error: (err: any) => this.utils.handleRequestError(err.error),

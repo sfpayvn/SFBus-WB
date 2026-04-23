@@ -16,18 +16,26 @@ export interface DialogData {
 export class BusScheduleAutogeneratorsDetailDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<BusScheduleAutogeneratorsDetailDialogComponent>);
   data = inject<DialogData>(MAT_DIALOG_DATA);
+  isReloadData: boolean = false;
 
   constructor() {}
 
-  ngOnInit(): void {
-    console.log('🚀 ~ BusScheduleDetailDialogComponent ~ ngOnInit ~ data.busSchedule:', this.data);
-  }
+  ngOnInit(): void {}
 
   onButtonClick() {}
 
   downloadFile(link: string) {}
 
-  closeDialog(busScheduleAutoGenerator?: BusScheduleAutoGenerator): void {
-    this.dialogRef.close(busScheduleAutoGenerator);
+  closeDialog(): void {
+    this.dialogRef.close(this.isReloadData);
+  }
+
+  closeDialogWithReloadData(): void {
+    this.isReloadData = true;
+    this.dialogRef.close(this.isReloadData);
+  }
+
+  saveSchedule(): void {
+    this.isReloadData = true;
   }
 }

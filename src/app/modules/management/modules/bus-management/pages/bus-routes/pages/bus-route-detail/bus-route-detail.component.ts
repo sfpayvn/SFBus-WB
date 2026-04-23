@@ -14,6 +14,7 @@ import { BusProvincesService } from '../../../bus-provices/service/bus-provinces
 import { BusProvince } from '../../../bus-provices/model/bus-province.model';
 import { DefaultFlagService } from '@rsApp/shared/services/default-flag.service';
 import { UtilsModal } from '@rsApp/shared/utils/utils-modal';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bus-route-detail',
@@ -42,6 +43,7 @@ export class BusRouteDetailComponent implements OnInit {
     private router: Router,
     public defaultFlagService: DefaultFlagService,
     private utilsModal: UtilsModal,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -62,6 +64,9 @@ export class BusRouteDetailComponent implements OnInit {
 
     let request = [findAllBusStations, findAllBusProvinces];
     combineLatest(request).subscribe(async ([busStations, busProvinces]) => {
+      console.log('🔍 initData - busStations from API:', busStations);
+      console.log('🔍 initData - busStations length:', busStations.length);
+
       this.busStations = busStations;
       this.busProvinces = busProvinces;
       this.filterProvinces();
@@ -101,6 +106,7 @@ export class BusRouteDetailComponent implements OnInit {
   }
 
   createBreakPoint(busStationId: string = ''): FormGroup {
+    // Nếu không có busStationId được truyền vào, dùng station đầu tiên làm mặc định
     return this.fb.group({
       busStationId: [
         { value: busStationId, disabled: this.defaultFlagService.isDefault(this.busRoute) },
@@ -222,7 +228,7 @@ export class BusRouteDetailComponent implements OnInit {
         if (res) {
           const updatedState = { ...history.state, busRoute: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);
-          toast.success('Bus Route update successfully');
+          toast.success(this.translate.instant('messages.busRouteUpdated'));
           this.initialFormValue = this.busRouteDetailForm.getRawValue();
         }
       },
@@ -234,7 +240,7 @@ export class BusRouteDetailComponent implements OnInit {
     this.busRoutesService.createBusRoute(busRoute2Create).subscribe({
       next: (res: BusRoute) => {
         if (res) {
-          toast.success('Bus Route added successfully');
+          toast.success(this.translate.instant('messages.busRouteAdded'));
           this.busRoute = res;
           const updatedState = { ...history.state, busRoute: JSON.stringify(res) };
           window.history.replaceState(updatedState, '', window.location.href);

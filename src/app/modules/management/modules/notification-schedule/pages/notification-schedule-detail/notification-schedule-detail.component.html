@@ -251,7 +251,7 @@
               [ngModelOptions]="{ standalone: true }"
               placeholder="Enter user ID" />
           </nz-input-group>
-          <button type="button" nz-button nzType="primary" (click)="addRecipient()">Add</button>
+          <button type="button" nz-button nzType="primary" (click)="addRecipient()">{{ 'buttons.Add' | translate }}</button>
         </div>
 
         <div class="space-y-2">
@@ -314,7 +314,7 @@
           Saving...
         </span>
       </button>
-      <button (click)="cancel()" nz-button nzType="default" class="!flex-initial">Cancel</button>
+      <button (click)="cancel()" nz-button nzType="default" class="!flex-initial">{{ 'buttons.Cancel' | translate }}</button>
     </div>
   </div>
 </div>

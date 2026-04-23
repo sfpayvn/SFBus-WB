@@ -1,7 +1,7 @@
 <div class="bg-white rounded-lg shadow-sm p-4">
   <div class="flex items-center justify-between mb-4">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Biểu đồ doanh thu</h3>
-    <span (click)="viewDetail()" class="text-sm text-blue-600 underline cursor-pointer">Chi tiết</span>
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ 'reports.revenue' | translate }}</h3>
+    <span (click)="viewDetail()" class="text-sm text-blue-600 underline cursor-pointer">{{ 'labels.View Details' | translate }}</span>
   </div>
   <app-canvas-chart
     [isLoading]="isLoading"
@@ -12,6 +12,6 @@
     [endDate]="endDate"
     chartType="line"
     [chartOptions]="chartOptions"
-    loadingTip="Đang tải dữ liệu..."
+    [loadingTip]="'common.Loading' | translate"
   ></app-canvas-chart>
 </div>

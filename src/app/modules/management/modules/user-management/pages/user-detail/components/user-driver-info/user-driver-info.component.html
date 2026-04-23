@@ -11,7 +11,7 @@
             <nz-input-group
               [nzSuffix]="driverFormLicenseNumberClearTpl"
               class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-              <input type="text" nz-input formControlName="licenseNumber" placeholder="Nhập License Number" />
+              <input type="text" nz-input formControlName="licenseNumber" [attr.placeholder]="'placeholders.enterLicenseNumber' | translate" />
             </nz-input-group>
             <ng-template #driverFormLicenseNumberClearTpl>
               <span
@@ -33,7 +33,7 @@
             <nz-input-group
               [nzSuffix]="driverFormLicenseTypeClearTpl"
               class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-              <input type="text" nz-input formControlName="licenseType" placeholder="Nhập License Type" />
+              <input type="text" nz-input formControlName="licenseType" [attr.placeholder]="'placeholders.enterLicenseType' | translate" />
             </nz-input-group>
             <ng-template #driverFormLicenseTypeClearTpl>
               <span
@@ -49,7 +49,7 @@
       <div class="flex w-4/12">
         <nz-form-item class="!min-h-[96px] !w-full">
           <nz-form-label nzFor="licenseExpirationDate" class="!flex !h-[36px] !items-center !justify-start"
-            >License Expiration Date</nz-form-label
+            >{{ 'labels.licenseExpirationDate' | translate }}</nz-form-label
           >
           <nz-form-control class="!flex w-full flex-col">
             <nz-date-picker

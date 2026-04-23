@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from "@angular/core";
+import { TranslateService } from '@ngx-translate/core';
 import { StatisticCard, StatsRequest } from "../../models/report.model";
 import { ReportService } from "../../services/report.service";
 import { Utils } from "@rsApp/shared/utils/utils";
@@ -18,7 +19,7 @@ export class RevenueBookingStatsCardComponent implements OnInit, OnChanges {
 
   isLoading = false;
   stats: StatisticCard = {
-    title: "Doanh thu vé bán",
+    title: '',
     value: "0",
     unit: "đ",
     icon: "assets/icons/heroicons/outline/cash.svg",
@@ -29,7 +30,10 @@ export class RevenueBookingStatsCardComponent implements OnInit, OnChanges {
     percentage: 0,
   };
 
-  constructor(private reportService: ReportService, public utils: Utils) {}
+  constructor(private reportService: ReportService, public utils: Utils, private translate: TranslateService) {
+    // initialize translated title
+    this.stats.title = this.translate.instant('reports.ticketSales');
+  }
 
   ngOnInit(): void {
     // Don't load here - wait for inputs to be set

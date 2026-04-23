@@ -22,12 +22,13 @@ import { toast } from 'ngx-sonner';
 import { CredentialService } from '@rsApp/shared/services/credential.service';
 import { AuthRescue, VerifyAuthRescue } from '../../model/auth.model';
 import { UserService } from '@rsApp/shared/services/user.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-verify-otp',
   templateUrl: './verify-otp.component.html',
   styleUrls: ['./verify-otp.component.scss'],
-  imports: [FormsModule, ReactiveFormsModule, AngularSvgIconModule, ButtonComponent, NZModule, A11yModule],
+  imports: [FormsModule, ReactiveFormsModule, AngularSvgIconModule, ButtonComponent, NZModule, A11yModule, TranslateModule],
 })
 export class VerifyOtpComponent implements OnInit {
   form!: FormGroup;
@@ -40,6 +41,7 @@ export class VerifyOtpComponent implements OnInit {
     private authService: AuthService,
     private readonly _router: Router,
     private userService: UserService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -70,7 +72,7 @@ export class VerifyOtpComponent implements OnInit {
         return;
       }
       this.form.patchValue({ otp: res.debugToken || '' });
-      toast.success('OTP has been resent successfully');
+      toast.success(this.translate.instant('messages.otpResendSuccess'));
     });
   }
 
@@ -92,7 +94,7 @@ export class VerifyOtpComponent implements OnInit {
       const otpResult = await this.authService.validateOtp(verifyAuthRescueDto).toPromise();
 
       if (!otpResult || otpResult.error) {
-        toast.error(otpResult?.error?.message || otpResult?.message || 'Xác thực OTP không thành công');
+        toast.error(otpResult?.error?.message || otpResult?.message || this.translate.instant('errors.otpVerificationFailed'));
         return;
       }
 
@@ -100,7 +102,7 @@ export class VerifyOtpComponent implements OnInit {
       this._router.navigate(['/']);
     } catch (err) {
       console.error('OTP verification error:', err);
-      toast.error('Đã xảy ra lỗi trong quá trình xác thực, vui lòng thử lại sau.');
+      toast.error(this.translate.instant('errors.authenticationError'));
     }
   }
 }

@@ -189,6 +189,12 @@ export class Menu {
           ],
         },
         {
+          icon: 'assets/icons/heroicons/outline/banknotes.svg',
+          label: 'Fee Tax Management',
+          route: '/management/fee-tax-management',
+          moduleKey: MODULE_KEYS.FEE_TAX_MANAGEMENT,
+        },
+        {
           icon: 'assets/icons/heroicons/outline/building.svg',
           label: 'Tenant Management',
           route: '/management/tenant-management/tenant',

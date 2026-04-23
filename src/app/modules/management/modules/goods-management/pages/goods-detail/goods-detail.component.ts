@@ -17,6 +17,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import {
   GOODS_STATUS_OPTIONS,
   GOODS_STATUS,
@@ -163,6 +164,7 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
     private paymentMethodService: PaymentMethodService,
     private cdr: ChangeDetectorRef,
     private location: Location,
+    private translate: TranslateService,
   ) {
     this.eventSubscription = [];
   }
@@ -1142,7 +1144,7 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
 
     // Check if already at max capacity
     if (availableSlots <= 0) {
-      toast.warning(`Đã đủ ${MAX_IMAGES} ảnh. Vui lòng xóa ảnh cũ trước khi thêm mới.`);
+      toast.warning(this.translate.instant('messages.exceedImageLimit', { count: MAX_IMAGES }));
       event.target.value = '';
       return;
     }
@@ -1177,7 +1179,7 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
     }
 
     if (exceededCount > 0) {
-      toast.warning(`${exceededCount} ảnh vượt quá giới hạn ${MAX_IMAGES} ảnh`);
+      toast.warning(this.translate.instant('messages.imageExceededLimit', { count: exceededCount, limit: MAX_IMAGES }));
     }
 
     // Clear input để có thể chọn lại cùng file
@@ -1219,7 +1221,7 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
     // Xóa khỏi goodsImages
     this.goodsImages.splice(index, 1);
 
-    toast.success('Đã xóa ảnh');
+    toast.success(this.translate.instant('messages.imageDeletedSuccess'));
   }
 
   removeFileImage() {
@@ -1283,7 +1285,7 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
   async onSubmit() {
     if (!this.mainForm.valid) {
       this.utils.markFormGroupTouched(this.mainForm);
-      toast.error('Vui lòng điền đầy đủ thông tin theo yêu cầu');
+      toast.error(this.translate.instant('messages.fillAllRequiredInfo'));
       return;
     }
 
@@ -1341,12 +1343,12 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
       };
 
       if (actionName == 'update') {
-        toast.success('Goods update successfully');
+        toast.success(this.translate.instant('messages.goodsUpdatedSuccess'));
         return;
       } else {
         this.initListenEvent();
         this.mode = 'update';
-        toast.success('Goods added successfully');
+        toast.success(this.translate.instant('messages.goodsCreatedSuccess'));
         this.loadPayment(this.goods._id || '');
       }
     } catch (error: any) {
@@ -1573,7 +1575,7 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
       if (this.hasFormChanged()) {
         if (!this.mainForm.valid) {
           this.utils.markFormGroupTouched(this.mainForm);
-          toast.error('Vui lòng điền đầy đủ thông tin theo yêu cầu');
+          toast.error(this.translate.instant('messages.fillAllRequiredInfo'));
           return;
         }
 
@@ -1667,21 +1669,21 @@ export class GoodsDetailComponent implements OnInit, OnDestroy {
       this.paymentService.paymentGoods(requestPaymentDto).subscribe(
         (payment2Result: Payment[]) => {
           if (!payment2Result || payment2Result.length === 0) {
-            toast.error('Thanh toán không thành công');
+            toast.error(this.translate.instant('messages.paymentFailed'));
             return;
           }
 
-          toast.success('Thanh toán thành công');
+          toast.success(this.translate.instant('messages.paymentSuccessful'));
           this.toggleCreatePaymentForm();
 
           this.loadPayment(this.goods._id);
         },
         (error) => {
-          toast.error('Thanh toán không thành công');
+          toast.error(this.translate.instant('messages.paymentFailed'));
         },
       );
     } catch (error: any) {
-      toast.error('Thanh toán không thành công');
+      toast.error(this.translate.instant('messages.paymentFailed'));
     }
   }
 

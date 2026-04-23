@@ -19,12 +19,13 @@ import { NZModule } from '@rsApp/library-modules/nz-module';
 import { toast } from 'ngx-sonner';
 import { RequestResetPassword } from '../../model/auth.model';
 import { map } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-new-password',
   templateUrl: './new-password.component.html',
   styleUrls: ['./new-password.component.css'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, ButtonComponent, NgClass, NZModule],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, ButtonComponent, NgClass, NZModule, TranslateModule],
 })
 export class NewPasswordComponent implements OnInit {
   form!: FormGroup;
@@ -48,6 +49,7 @@ export class NewPasswordComponent implements OnInit {
     private authService: AuthService,
     private _router: Router,
     private route: ActivatedRoute,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +77,7 @@ export class NewPasswordComponent implements OnInit {
       confirmPassword: ['@Solid2023', [Validators.required]],
     });
 
-    // Add custom validator for confirmPassword khi password thay đổi
+    // Add custom validator for confirmPassword when password changes
     this.form.get('password')?.valueChanges.subscribe(() => {
       this.form.get('confirmPassword')?.updateValueAndValidity();
     });
@@ -101,9 +103,9 @@ export class NewPasswordComponent implements OnInit {
   optionalValidator(validator: ValidatorFn): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value || control.value.trim() === '') {
-        return null; // Không validate nếu không có giá trị
+        return null; // Do not validate if no value
       }
-      return validator(control); // Thực hiện validate khi có giá trị
+      return validator(control); // Perform validation when value exists
     };
   }
 
@@ -147,7 +149,7 @@ export class NewPasswordComponent implements OnInit {
         toast.error(res.error.message || res.message);
         return;
       }
-      toast.success('Password has been reset successfully');
+      toast.success(this.translate.instant('messages.passwordResetSuccess'));
       this._router.navigate(['/auth/sign-in']);
     });
   }

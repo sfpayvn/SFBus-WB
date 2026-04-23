@@ -20,7 +20,7 @@
           <nz-input-group
             [nzSuffix]="userAddressFormAddressTypeClearTpl"
             class="!mt-0 !mb-0 !h-[36px] !rounded border-gray-200">
-            <input type="text" nz-input formControlName="addressType" placeholder="Nhập Address Type" />
+            <input type="text" nz-input formControlName="addressType" [attr.placeholder]="'placeholders.enterAddressType' | translate" />
           </nz-input-group>
           <ng-template #userAddressFormAddressTypeClearTpl>
             <span

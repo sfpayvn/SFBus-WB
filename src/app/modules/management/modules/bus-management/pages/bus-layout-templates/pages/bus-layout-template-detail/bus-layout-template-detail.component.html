@@ -4,25 +4,25 @@
       class="!min-w-24 !text-foreground hover:!text-foreground !flex !h-max !justify-center !rounded-lg border border-gray-300 !bg-gray-200 !py-2 !px-3 hover:!border-gray-300 hover:!bg-gray-300"
       nz-button
       (click)="backPage()">
-      Back
+      {{ 'buttons.Back' | translate }}
     </button>
   </div>
 </div>
 
 <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-6">
   <span class="mb-5 text-xl font-bold">{{
-    defaultFlagService.isDefault(busLayoutTemplate) ? 'Chi Tiết' : busLayoutTemplate ? 'Chỉnh sửa' : 'Thêm mới'
+    defaultFlagService.isDefault(busLayoutTemplate) ? ('labels.Details' | translate) : busLayoutTemplate ? ('labels.Edit' | translate) : ('labels.Add New' | translate)
   }}</span>
 
   <form [formGroup]="busTemplateDetailForm" nz-form *ngIf="busTemplateDetailForm">
     <div class="mb-5 w-full">
       <nz-form-item>
         <nz-form-label [nzNoColon]="true" [nzRequired]="true" nzFor="name" class="!flex !items-center !justify-start"
-          >Name</nz-form-label
+          >{{ 'common.Name' | translate }}</nz-form-label
         >
         <nz-form-control [nzErrorTip]="busTemplateDetailNameErrorTpl" class="!flex !h-[56px] flex-col">
           <nz-input-group [nzSuffix]="busTemplateDetailNameClearTpl" class="custom-nz-input-group !mt-0 !mb-0">
-            <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+            <input type="text" nz-input formControlName="name" [placeholder]="'labels.enterName' | translate" />
           </nz-input-group>
           <ng-template #busTemplateDetailNameClearTpl>
             @if(f['name'].value && !defaultFlagService.isDefault(busLayoutTemplate)) {
@@ -36,7 +36,7 @@
           </ng-template>
           <ng-template #busTemplateDetailNameErrorTpl let-control>
             <span class="mt-1 !text-xs text-red-500">
-              @if (busTemplateDetailForm.controls['name'].errors?.['required']) { Vui lòng nhập trường này }
+              @if (busTemplateDetailForm.controls['name'].errors?.['required']) { {{ 'validations.fillThisField' | translate }} }
             </span>
           </ng-template>
         </nz-form-control>
@@ -61,11 +61,11 @@
               [nzRequired]="true"
               nzFor="name"
               class="!flex !items-center !justify-start !font-medium"
-              >Layout Name</nz-form-label
+              >{{ 'labels.Layout Name' | translate }}</nz-form-label
             >
             <nz-form-control [nzErrorTip]="busTemplateLayoutNameErrorTpl" class="!flex !h-[56px] flex-col !pt-2">
               <nz-input-group [nzSuffix]="busTemplateLayoutNameClearTpl" class="!mt-0 !mb-0">
-                <input type="text" nz-input formControlName="name" placeholder="Nhập Name" />
+                <input type="text" nz-input formControlName="name" [placeholder]="'labels.enterName' | translate" />
               </nz-input-group>
               <ng-template #busTemplateLayoutNameClearTpl>
                 @if(layout.get('name')?.value && !defaultFlagService.isDefault(busLayoutTemplate)) {
@@ -79,7 +79,7 @@
               </ng-template>
               <ng-template #busTemplateLayoutNameErrorTpl let-control>
                 <span class="mt-1 !text-xs text-red-500">
-                  @if (layout.get('name')?.errors?.['required']) { Vui lòng nhập trường này }
+                  @if (layout.get('name')?.errors?.['required']) { {{ 'validations.fillThisField' | translate }} }
                 </span>
               </ng-template>
             </nz-form-control>
@@ -89,7 +89,7 @@
           <div class="flex flex-col pt-5">
             <div class="flex justify-between">
               <div>
-                <label class="font-medium">Chọn Kiểu:</label>
+                <label class="font-medium">{{ 'labels.Select Type' | translate }}:</label>
               </div>
               <div class="flex gap-4">
                 <button
@@ -97,7 +97,7 @@
                   nz-button
                   nzType="default"
                   (click)="resetLayout()">
-                  Reset
+                  {{ 'buttons.Reset' | translate }}
                 </button>
               </div>
             </div>
@@ -171,7 +171,7 @@
         nz-button
         nzType="default"
         (click)="onSubmit()">
-        SAVE
+        {{ 'buttons.Save' | translate }}
       </button>
     </div>
     }

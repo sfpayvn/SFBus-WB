@@ -10,10 +10,11 @@ import {
 import { Observable, tap } from 'rxjs';
 import { CapsService } from '@rsApp/shared/services/caps.service';
 import { toast } from 'ngx-sonner';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class QuotaInterceptor implements HttpInterceptor {
-  constructor(private caps: CapsService) {}
+  constructor(private caps: CapsService, private translate: TranslateService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const moduleKey = req.headers.get('X-Feature-Module') ?? '';
@@ -47,7 +48,7 @@ export class QuotaInterceptor implements HttpInterceptor {
             if (body?.resetAt)
               resetAtMs = typeof body.resetAt === 'number' ? body.resetAt : Date.parse(body.resetAt) || null;
             await this.caps.applyQuotaUpdate(moduleKey, functionKey || null, 0, resetAtMs ?? undefined);
-            const t = await toast.error('You have exceeded your quota for this feature.');
+            const t = await toast.error(this.translate.instant('errors.quotaExceeded'));
           }
         },
       }),

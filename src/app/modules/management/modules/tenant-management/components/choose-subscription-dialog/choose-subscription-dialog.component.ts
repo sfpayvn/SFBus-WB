@@ -6,6 +6,7 @@ import { UtilsModal } from 'src/app/shared/utils/utils-modal';
 import { SubscriptionService } from '../../../subscription-management/service/subscription.service';
 import { toast } from 'ngx-sonner';
 import { Subscription } from '../../../subscription-management/model/subscription.model';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface DialogData {
   title: string;
@@ -32,6 +33,7 @@ export class ChooseSubscriptionDialogComponent implements OnInit {
     public utils: Utils,
     private utilsModal: UtilsModal,
     private subscriptionService: SubscriptionService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class ChooseSubscriptionDialogComponent implements OnInit {
   initData(): void {
     this.subscriptionService.findAllAvailable().subscribe((subscriptions) => {
       if (!subscriptions || subscriptions.length === 0) {
-        toast.error('No subscriptions available');
+        toast.error(this.translate.instant('errors.noSubscriptionsAvailable'));
         return;
       }
       this.subscriptions = subscriptions;
@@ -65,7 +67,7 @@ export class ChooseSubscriptionDialogComponent implements OnInit {
 
   confirmSelection() {
     if (!this.selected) {
-      toast.error('Please select a subscription plan');
+      toast.error(this.translate.instant('errors.selectSubscriptionPlan'));
       return;
     }
     this.dialogRef.close(this.selected);

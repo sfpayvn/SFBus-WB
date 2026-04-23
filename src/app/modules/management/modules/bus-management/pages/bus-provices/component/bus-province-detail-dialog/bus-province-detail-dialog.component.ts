@@ -77,7 +77,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   async initData() {
     this.isLoaddedBusStations = true;
     // Lấy tất cả bus stations
-    const allBusStationsRes = await this.busStationsService.findAll(true).toPromise();
+    const allBusStationsRes = await this.busStationsService.findAllUnAssignedAvailable(true).toPromise();
     this.busStations = allBusStationsRes || [];
 
     this.busStations = await _.difference(this.busStations, this.busProvince.busStations);
@@ -237,7 +237,7 @@ export class BusProvinceDetailDialogComponent implements OnInit {
   }
 
   toggleBusStation(busStation: any, isProvinceStation: boolean = false) {
-    if (this.defaultFlagService.isDefault(this.busProvince)) return;
+    if (this.defaultFlagService.isDefault(this.busProvince) || this.defaultFlagService.isDefault(busStation)) return;
 
     const targetMap = isProvinceStation ? this.selectedProvinceStationsMap : this.selectedBusStationsMap;
     const currentState = targetMap.get(busStation._id) || false;

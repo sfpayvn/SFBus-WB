@@ -7,7 +7,7 @@
           <input nz-input formControlName="keyword" placeholder="Search by name / _id / tenantId" />
         </nz-input-group>
         <ng-template #searchBtnTpl>
-          <button nz-button nzType="primary" [disabled]="loading" htmlType="submit">Search</button>
+          <button nz-button nzType="primary" [disabled]="loading" htmlType="submit">{{ 'buttons.Search' | translate }}</button>
         </ng-template>
       </div>
       <div nz-col [nzSpan]="6">
@@ -19,7 +19,7 @@
         <nz-range-picker style="width: 100%" formControlName="dateRange"></nz-range-picker>
       </div>
       <div nz-col [nzSpan]="2" class="text-right">
-        <button nz-button nzType="default" (click)="reset()" [disabled]="loading">Reset</button>
+        <button nz-button nzType="default" (click)="reset()" [disabled]="loading">{{ 'buttons.Reset' | translate }}</button>
       </div>
     </div>
   </form> -->

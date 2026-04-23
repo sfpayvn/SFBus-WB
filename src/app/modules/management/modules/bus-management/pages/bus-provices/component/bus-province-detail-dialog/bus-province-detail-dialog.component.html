@@ -23,9 +23,9 @@
             [nzNoColon]="true"
             [nzRequired]="true"
             class="!flex !items-center !justify-start !text-sm"
-            >Tỉnh/Thành Phố</nz-form-label
+            >{{ 'labels.provinceCity' | translate }}</nz-form-label
           >
-          <label nz-checkbox formControlName="isActive" class="min-w-24 !m-0 text-sm"> Is Active </label>
+          <label nz-checkbox formControlName="isActive" class="min-w-24 !m-0 text-sm"> {{ 'labels.isActive' | translate }} </label>
         </div>
 
         <nz-form-control [nzErrorTip]="busProvinceNameErrorTpl" class="!flex flex-col">
@@ -51,7 +51,7 @@
       </nz-form-item>
     </div>
     <div class="mb-5">
-      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Các điểm dừng</label>
+      <label for="base-input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{{ 'labels.stopPoints' | translate }}</label>
       <diV class="flex items-center justify-center gap-4">
         <div class="drag-drop-container">
           <div class="flex w-full pb-4">
@@ -86,6 +86,7 @@
                 class="drag-drop-box"
                 (click)="toggleBusStation(busStation)"
                 cdkDrag
+                [cdkDragDisabled]="defaultFlagService.isDefault(busStation)"
                 [ngClass]="{ 'drag-drop-box-selected': isStationSelected(busStation) }">
                 {{ busStation.name }} {{ defaultFlagService.defaultTextFlag(busStation) }}
               </div>
