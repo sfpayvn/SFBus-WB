@@ -1,4 +1,8 @@
-export const environment = {
-  production: true,
-  domain: 'sf-workbench.com',
-};
+import { Environment } from './environment.model';
+
+export class environment extends Environment {
+  public override production: boolean = true;
+  public override domain: string = 'sf-workbench.com';
+}
+
+export const ENV: Environment = new environment();

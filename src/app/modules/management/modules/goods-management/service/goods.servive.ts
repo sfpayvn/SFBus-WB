@@ -3,8 +3,7 @@ import { bufferTime, catchError, filter, from, mergeMap, Observable, of, Subject
 import { ApiGatewayService } from 'src/app/api-gateway/api-gateaway.service';
 import { Goods, Goods2Create, Goods2Update } from '../model/goods.model';
 import { FilesService } from '../../files-center-management/service/files-center.servive';
-import { ENV } from 'src/environments/environment.development';
-import io from 'socket.io-client';
+import { SocketService } from 'src/app/shared/services/socket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,22 +11,15 @@ import io from 'socket.io-client';
 export class GoodsService {
   url = '/admin/goods';
 
-  private socket: any;
   private goodsChangeSubjects = new Map<string, Subject<any>>();
   private socketHandlers = new Map<string, (goods: any) => void>();
   private registeredEvents = new Set<string>(); // Track registered events
 
-  constructor(private apiGatewayService: ApiGatewayService, private filesService: FilesService) {
-    this.socket = io(ENV.WEBSOCKET_URL);
-
-    this.socket.on('connect', () => {
-      console.log('✅ Connected to WebSocket server, socket.id:', this.socket.id);
-    });
-
-    this.socket.on('disconnect', () => {
-      console.log('❌ Disconnected from WebSocket server');
-    });
-  }
+  constructor(
+    private apiGatewayService: ApiGatewayService,
+    private filesService: FilesService,
+    private socketService: SocketService,
+  ) {}
 
   findAll() {
     const url = `${this.url}/find-all`;
@@ -128,14 +120,14 @@ export class GoodsService {
   listenGoodsChangeOfId(Id: string): Observable<any> {
     const eventName = `goodsChangeOfId/${Id}`;
 
-    // Check if we already have a Subject for this busScheduleId
+    // Check if we already have a Subject for this goods id
     if (!this.goodsChangeSubjects.has(Id)) {
       const subject = new Subject<any>();
       this.goodsChangeSubjects.set(Id, subject);
     }
 
-    // CRITICAL: Only register socket listener if not already registered
-    if (!this.registeredEvents.has(eventName)) {
+    // Only register socket listener once per goods id
+    if (!this.registeredEvents.has(eventName) && this.socketService.isEnabled()) {
       const subject = this.goodsChangeSubjects.get(Id)!;
 
       const handler = (goods: any) => {
@@ -143,7 +135,7 @@ export class GoodsService {
       };
 
       this.socketHandlers.set(eventName, handler);
-      this.socket.on(eventName, handler);
+      this.socketService.on(eventName, handler);
       this.registeredEvents.add(eventName);
     }
 
